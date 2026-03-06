@@ -1,10 +1,4 @@
-﻿# CMakeList.txt : CMake project for MirageEngine, include source and define
-# project specific logic here.
-#
-
-
-
-# CMake Version
+﻿# CMake Version
 cmake_minimum_required(VERSION 3.16)
 
 # Project Name
