@@ -2,16 +2,16 @@
 # project specific logic here.
 #
 
+
+
+# CMake Version
 cmake_minimum_required(VERSION 3.16)
 
-project(MirageEngine)
+# Project Name
+project(CustomEngine)
 
 # Add source to this project's executable.
 add_executable (MirageEngine "main.cpp")
-
-if (CMAKE_VERSION VERSION_GREATER 3.12)
-  set_property(TARGET MirageEngine PROPERTY CXX_STANDARD 20)
-endif()
 
 # Set C standard version
 target_compile_features(MirageEngine PRIVATE c_std_11)
@@ -27,4 +27,9 @@ target_compile_options(MirageEngine PRIVATE -Wall -Wextra -Wpedantic -Werror)
 endif()
 
 # Add preprocessor definition
-target_compile_definitions(MirageEngine PRIVATE USE_RHI_VULKAN=1)
+# target_compile_definitions(MirageEngine PRIVATE USE_RHI_VULKAN=1)
+
+# Search for CMakeLists.txt in glfw/ and add it to the build tree
+add_subdirectory(glfw)
+# Add glfw dependency to target
+target_link_libraries(MirageEngine PRIVATE glfw)
