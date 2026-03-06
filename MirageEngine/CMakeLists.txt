@@ -24,6 +24,6 @@ endif()
 # target_compile_definitions(MirageEngine PRIVATE USE_RHI_VULKAN=1)
 
 # Search for CMakeLists.txt in glfw/ and add it to the build tree
-add_subdirectory(glfw)
+add_subdirectory(../Libraries/GLFW GLFW)
 # Add glfw dependency to target
 target_link_libraries(MirageEngine PRIVATE glfw)
