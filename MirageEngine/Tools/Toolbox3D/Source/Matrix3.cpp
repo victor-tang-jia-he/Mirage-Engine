@@ -75,20 +75,20 @@ Matrix3 Matrix3::luDecomposition() const
 
     return lower * upper;
 }
-Matrix3 Matrix3::RotateMatrixVector(const Vector3& vec, float angle)
+Matrix3 Matrix3::RotateMatrixVector(const Vector3& vec, float rad)
 {
 	float length = vec.GetNorm();
 	float x = vec.x / length;
 	float y = vec.y / length;
 	float z = vec.z / length;
 
-	float c = std::cos(ToRad(angle));
-	float s = std::sin(ToRad(angle));
+	float c = std::cos(rad);
+	float s = std::sin(rad);
 	float oneMinusC = 1 - c;
 
 	// Rodrigues formula
 	return Matrix3(
-		c + x * x * oneMinusC, x * y * oneMinusC - z * s, x * z * oneMinusC + y * s,
-		y * x * oneMinusC + z * s, c + y * y * oneMinusC, y * z * oneMinusC - x * s,
-		z * x * oneMinusC - y * s, z * y * oneMinusC + x * s, c + z * z * oneMinusC);
+		c + x * x * oneMinusC, y * x * oneMinusC + z * s, z * x * oneMinusC - y * s,
+        x * y * oneMinusC - z * s, c + y * y * oneMinusC, z * y * oneMinusC + x * s,
+        x * z * oneMinusC + y * s, y * z * oneMinusC - x * s, c + z * z * oneMinusC);
 }

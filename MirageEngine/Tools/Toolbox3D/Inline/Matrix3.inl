@@ -95,31 +95,31 @@ inline Matrix3 Matrix3::RotateMatrix(float _x, float _y, float _z)
 	Matrix3 rotZ = CreateZRotationMatrix(_z);
 	return rotZ * rotY * rotX;
 }
-inline Matrix3 Matrix3::CreateXRotationMatrix(float angle)
+inline Matrix3 Matrix3::CreateXRotationMatrix(float rad)
 {
 	return Matrix3(1.f, 0.f, 0.f,
-		0.f, cos(angle), -sin(angle),
-		0.f, sin(angle), cos(angle));
+		0.f, cos(rad), -sin(rad),
+		0.f, sin(rad), cos(rad));
 }
-inline Matrix3 Matrix3::CreateYRotationMatrix(float angle)
+inline Matrix3 Matrix3::CreateYRotationMatrix(float rad)
 {
 	return Matrix3(
-		cos(angle), 0.f, sin(angle),
+		cos(rad), 0.f, sin(rad),
 		0.f, 1.f, 0.f,
-		-sin(angle), 0.f, cos(angle));
+		-sin(rad), 0.f, cos(rad));
 }
-inline Matrix3 Matrix3::CreateZRotationMatrix(float angle)
+inline Matrix3 Matrix3::CreateZRotationMatrix(float rad)
 {
-	return Matrix3(cos(angle), -sin(angle), 0.f,
-		sin(angle), cos(angle), 0.f,
+	return Matrix3(cos(rad), -sin(rad), 0.f,
+		sin(rad), cos(rad), 0.f,
 		0, 0, 1.f);
 }
 inline void Matrix3::Print() const
 {
 	std::cout
-		<< m[0][0] << " " << m[1][0] << " " << m[2][0] << "\n"
-		<< m[0][1] << " " << m[1][1] << " " << m[2][1] << "\n"
-		<< m[0][2] << " " << m[1][2] << " " << m[2][2] << "\n";
+		<< m[0][0] << " " << m[0][1] << " " << m[0][2] << "\n"
+		<< m[1][0] << " " << m[1][1] << " " << m[1][2] << "\n"
+		<< m[2][0] << " " << m[2][1] << " " << m[2][2] << "\n";
 }
 inline Matrix3 Matrix3::operator*(const Matrix3& other) const
 {

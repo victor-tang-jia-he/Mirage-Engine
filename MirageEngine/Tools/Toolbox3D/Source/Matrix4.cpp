@@ -17,20 +17,15 @@ using namespace Bwt::Core::Maths;
 //	}
 //	return subMatrix;
 //}
-//float Matrix4::Determinant() const
-//{
-//	const float s0 = tab[10] * tab[15] - tab[11] * tab[14];
-//	const float s1 = tab[9] * tab[15] - tab[11] * tab[13];
-//	const float s2 = tab[9] * tab[14] - tab[10] * tab[13];
-//	const float s3 = tab[8] * tab[15] - tab[11] * tab[12];
-//	const float s4 = tab[8] * tab[14] - tab[10] * tab[12];
-//	const float s5 = tab[8] * tab[13] - tab[9] * tab[12];
-//
-//	return tab[0] * (tab[5] * s0 - tab[6] * s1 + tab[7] * s2)
-//		- tab[4] * (tab[1] * s0 - tab[2] * s1 + tab[3] * s2)
-//		+ tab[8] * (tab[1] * s1 - tab[2] * s3 + tab[3] * s4)
-//		- tab[12] * (tab[1] * s2 - tab[2] * s4 + tab[3] * s5);
-//}
+float Matrix4::Determinant() const
+{
+	float det = 0.0f;
+	for (int col = 0; col < 4; ++col) {
+		float sign = (col % 2 == 0) ? 1.0f : -1.0f;
+		det += sign * tab[0][col] * GetSubMatrix3x3Determinant(0, col);
+	}
+	return det;
+}
 //float Matrix4::GetDeterminantSSE() const
 //{
 //	__m128 c0 = _mm_load_ps(&tab[0]);  //  0  1  2  3
@@ -89,7 +84,7 @@ Matrix4 Matrix4::Inverse() const
 
 			float subDet = GetSubMatrix3x3Determinant(i, j);
 
-			inv.tab[j * 4 + i] = sign * subDet * invDet;
+			inv.tab[i][j] = sign * subDet * invDet;
 		}
 	}
 
@@ -97,18 +92,19 @@ Matrix4 Matrix4::Inverse() const
 }
 float Matrix4::GetSubMatrix3x3Determinant(int excludeRow, int excludeCol) const
 {
-	int idx = 0;
-	float elements[9];
+	float sub[3][3];
+	int index = 0;
 	for (int col = 0; col < 4; ++col) {
 		if (col == excludeCol) continue;
 		for (int row = 0; row < 4; ++row) {
 			if (row == excludeRow) continue;
-			elements[idx++] = tab[col * 4 + row];
+			sub[index / 3][index % 3] = tab[col][row];
+			++index;
 		}
 	}
-	return elements[0] * (elements[4] * elements[8] - elements[5] * elements[7])
-		- elements[1] * (elements[3] * elements[8] - elements[5] * elements[6])
-		+ elements[2] * (elements[3] * elements[7] - elements[4] * elements[6]);
+	return sub[0][0] * (sub[1][1] * sub[2][2] - sub[1][2] * sub[2][1]) -
+		   sub[0][1] * (sub[1][0] * sub[2][2] - sub[1][2] * sub[2][0]) +
+		sub[0][2] * (sub[1][0] * sub[2][1] - sub[1][1] * sub[2][0]);
 }
 Matrix4 Matrix4::CreateTransformMatrix(const Vector3& position, const Vector3& rotation, const Vector3& scale)
 {
@@ -118,43 +114,66 @@ Matrix4 Matrix4::CreateTransformMatrix(const Vector3& position, const Vector3& r
 			CreateZRotationMatrix(rotation.z) *
 			CreateScaleMatrix(scale));
 }
-Vector3 Matrix4::operator*(const Vector4& mult) const
-{
-	// Chargement du vecteur dans un registre SIMD
-	__m128 v = _mm_set_ps(mult.w, mult.z, mult.y, mult.x);
-
-	// Multiplications SIMD (4 composantes en parall¨¨le)
-	__m128 r0 = _mm_mul_ps(_mm_loadu_ps(&tab[0]), v);
-	__m128 r1 = _mm_mul_ps(_mm_loadu_ps(&tab[4]), v);
-	__m128 r2 = _mm_mul_ps(_mm_loadu_ps(&tab[8]), v);
-	__m128 r3 = _mm_mul_ps(_mm_loadu_ps(&tab[12]), v);
-
-	// R¨¦duction horizontale (somme des 4 composantes)
-	r0 = _mm_hadd_ps(_mm_hadd_ps(r0, r1), _mm_hadd_ps(r2, r3));
-
-	// Extraction des r¨¦sultats
-	alignas(16) float res[4];
-	_mm_store_ps(res, r0);
-
-	// Division homog¨¨ne
-	const float inv_w = 1.0f / (res[3] + static_cast<float>(res[3] == 0.0f));
-	return Vector3(res[0] * inv_w, res[1] * inv_w, res[2] * inv_w);
-}
+//Vector3 Matrix4::operator*(const Vector4& mult) const
+//{
+//	// Chargement du vecteur dans un registre SIMD
+//	__m128 v = _mm_set_ps(mult.w, mult.z, mult.y, mult.x);
+//
+//	// Multiplications SIMD (4 composantes en parall¨¨le)
+//	__m128 r0 = _mm_mul_ps(_mm_loadu_ps(&tab[0]), v);
+//	__m128 r1 = _mm_mul_ps(_mm_loadu_ps(&tab[4]), v);
+//	__m128 r2 = _mm_mul_ps(_mm_loadu_ps(&tab[8]), v);
+//	__m128 r3 = _mm_mul_ps(_mm_loadu_ps(&tab[12]), v);
+//
+//	// R¨¦duction horizontale (somme des 4 composantes)
+//	r0 = _mm_hadd_ps(_mm_hadd_ps(r0, r1), _mm_hadd_ps(r2, r3));
+//
+//	// Extraction des r¨¦sultats
+//	alignas(16) float res[4];
+//	_mm_store_ps(res, r0);
+//
+//	// Division homog¨¨ne
+//	const float inv_w = 1.0f / (res[3] + static_cast<float>(res[3] == 0.0f));
+//	return Vector3(res[0] * inv_w, res[1] * inv_w, res[2] * inv_w);
+//}
 Matrix4 Matrix4::GetPerspectiveMatrix(unsigned int width, unsigned int height, float near, float far, float fov)
 {
-	Matrix4 result;
+	float aspectRatio = static_cast<float>(width) / static_cast<float>(height);
+	float fovRad = fov * (PI / 180.0f);
+	float tanHalfFov = tan(fovRad / 2.0f);
+	Matrix4 perspective;
+	perspective.tab[0][0] = 1.0f / (aspectRatio * tanHalfFov);
+	perspective.tab[1][1] = 1.0f / tanHalfFov;
+	perspective.tab[2][2] = -(far + near) / (far - near);
+	perspective.tab[3][2] = -(2.0f * far * near) / (far - near);
+	perspective.tab[2][3] = -1.0f;
+	return perspective;
+}
 
-	float q = 1.0f / tan(0.5f * fov * PI / 180.f);
-	float a = q / ((float)width / height);
+Vector3 Bwt::Core::Maths::Matrix4::operator*(const Vector4& mult) const
+{
+	float x = tab[0][0]*mult.x + tab[1][0]*mult.y + tab[2][0]*mult.z + tab[3][0]*mult.w;
+	float y = tab[0][1]*mult.x + tab[1][1]*mult.y + tab[2][1]*mult.z + tab[3][1]*mult.w;
+	float z = tab[0][2]*mult.x + tab[1][2]*mult.y + tab[2][2]*mult.z + tab[3][2]*mult.w;
+	float w = tab[0][3]*mult.x + tab[1][3]*mult.y + tab[2][3]*mult.z + tab[3][3]*mult.w;
+	if (std::abs(w) > EPSILON)
+	{
+		x /= w;
+		y /= w;
+		z /= w;
+	}
+	return Vector3(x, y, z);
+}
 
-	float b = (near + far) / (near - far);
-	float c = (2.0f * near * far) / (near - far);
-
-	result.tab[0] = a;
-	result.tab[5] = q;
-	result.tab[10] = b;
-	result.tab[14] = -1.0f;
-	result.tab[11] = c;
-
-	return result;
+bool Bwt::Core::Maths::Matrix4::operator==(const Matrix4& other) const
+{
+	for (int col = 0; col < 4; ++col)
+	{
+		for (int row = 0; row < 4; ++row)
+		{
+			if (std::abs(tab[col][row] - other.tab[col][row]) >= EPSILON)
+				return false;
+		}
+	}
+	return true;
 }

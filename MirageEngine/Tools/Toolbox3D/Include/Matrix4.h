@@ -11,36 +11,20 @@ namespace Bwt
 			class Matrix4
 			{
 			public:
-				float tab[16];
+				float tab[4][4];
 
 				Matrix4(const Matrix4& copy);
-				Matrix4(const float* values);
-				inline Matrix4(float m0 = 0.f, float m1 = 0.f, float m2 = 0.f, float m3 = 0.f,
-					float m4 = 0.f, float m5 = 0.f, float m6 = 0.f, float m7 = 0.f,
-					float m8 = 0.f, float m9 = 0.f, float m10 = 0.f, float m11 = 0.f,
-					float m12 = 0.f, float m13 = 0.f, float m14 = 0.f, float m15 = 0.f
-				)
-					: tab{ m0, m4, m8, m12, m1, m5, m9, m13, m2 ,m6, m10, m14, m3, m7, m11, m15 } {
-				}
-
-
-				// -------------------------------------------------------------------------------- //	
-				// Matrix value getter
-				// -------------------------------------------------------------------------------- //
-
-				class Row {
-				private:
-					float* rowData;
-				public:
-					Row(float* rowData) : rowData(rowData) {}
-
-					inline float& operator[](int col) {
-						return rowData[col];
-					}
+				inline Matrix4(
+					float m00 = 0.f, float m01 = 0.f, float m02 = 0.f, float m03 = 0.f,
+					float m10 = 0.f, float m11 = 0.f, float m12 = 0.f, float m13 = 0.f,
+					float m20 = 0.f, float m21 = 0.f, float m22 = 0.f, float m23 = 0.f,
+					float m30 = 0.f, float m31 = 0.f, float m32 = 0.f, float m33 = 0.f)
+				{
+					tab[0][0] = m00; tab[0][1] = m01; tab[0][2] = m02; tab[0][3] = m03;
+					tab[1][0] = m10; tab[1][1] = m11; tab[1][2] = m12; tab[1][3] = m13;
+					tab[2][0] = m20; tab[2][1] = m21; tab[2][2] = m22; tab[2][3] = m23;
+					tab[3][0] = m30; tab[3][1] = m31; tab[3][2] = m32; tab[3][3] = m33;
 				};
-				inline Row operator[](int row) {
-					return Row(&tab[row * 4]);
-				}
 
 				// -------------------------------------------------------------------------------- //
 				// Basic Matrix Operations
@@ -50,7 +34,7 @@ namespace Bwt
 				/// Returns the 4x4 identity matrix.
 				/// </summary>
 				/// <returns>The identity matrix.</returns>
-				static Matrix4 GetIdentity4();
+				static Matrix4 Identity();
 
 				/// <summary>
 				/// Returns the diagonal vector of the matrix.
@@ -62,7 +46,7 @@ namespace Bwt
 				/// Returns the additive inverse (negated version) of the matrix.
 				/// </summary>
 				/// <returns>The opposed matrix.</returns>
-				Matrix4 GetOpposed4() const;
+				Matrix4 Opposed() const;
 
 				/// <summary>
 				/// Returns the transpose of the matrix.
@@ -74,7 +58,7 @@ namespace Bwt
 				// -------------------------------------------------------------------------------- //	
 				// Arithmetic Operations on the Matrix
 				// -------------------------------------------------------------------------------- //	
-				
+
 				/// <summary>
 				/// Returns the sum of this matrix and another matrix.
 				/// </summary>
@@ -131,18 +115,18 @@ namespace Bwt
 
 				float GetSubMatrix3x3Determinant(int excludeRow, int excludeCol) const;
 
-				static Matrix4 PerspectiveRH_NO(float fovy, float aspect, float zNear, float zFar)
-				{
-					float const tanHalfFovy = tan(fovy / 2.f);
+				//static Matrix4 PerspectiveRH_NO(float fovy, float aspect, float zNear, float zFar)
+				//{
+				//	float const tanHalfFovy = tan(fovy / 2.f);
 
-					Matrix4 Result = Matrix4::GetIdentity4();
-					Result.tab[0]= static_cast<float>(1) / (aspect * tanHalfFovy);
-					Result.tab[5] = static_cast<float>(1) / (tanHalfFovy);
-					Result.tab[10] = -(zFar + zNear) / (zFar - zNear);
-					Result.tab[11] = -static_cast<float>(1);
-					Result.tab[15] = -(static_cast<float>(2) * zFar * zNear) / (zFar - zNear);
-					return Result;
-				}
+				//	Matrix4 Result = Matrix4::GetIdentity4();
+				//	Result.tab[0] = static_cast<float>(1) / (aspect * tanHalfFovy);
+				//	Result.tab[5] = static_cast<float>(1) / (tanHalfFovy);
+				//	Result.tab[10] = -(zFar + zNear) / (zFar - zNear);
+				//	Result.tab[11] = -static_cast<float>(1);
+				//	Result.tab[15] = -(static_cast<float>(2) * zFar * zNear) / (zFar - zNear);
+				//	return Result;
+				//}
 				// -------------------------------------------------------------------------------- //		
 				// Rotation matrix      
 				// -------------------------------------------------------------------------------- //
@@ -197,18 +181,20 @@ namespace Bwt
 				inline void Print() const
 				{
 					std::cout
-						<< tab[0] << " " << tab[1] << " " << tab[2] << " " << tab[3] << "\n"
-						<< tab[4] << " " << tab[5] << " " << tab[6] << " " << tab[7] << "\n"
-						<< tab[8] << " " << tab[9] << " " << tab[10] << " " << tab[11] << "\n"
-						<< tab[12] << " " << tab[13] << " " << tab[14] << " " << tab[15] << "\n";
+						<< tab[0][0] << " " << tab[0][1] << " " << tab[0][2] << " " << tab[0][3] << "\n"
+						<< tab[1][0] << " " << tab[1][1] << " " << tab[1][2] << " " << tab[1][3] << "\n"
+						<< tab[2][0] << " " << tab[2][1] << " " << tab[2][2] << " " << tab[2][3] << "\n"
+						<< tab[3][0] << " " << tab[3][1] << " " << tab[3][2] << " " << tab[3][3] << "\n";
 				}
 
 				inline std::array<float, 16> ToArray() const
 				{
-					return { tab[0], tab[1], tab[2], tab[3],
-							 tab[4], tab[5], tab[6], tab[7],
-							 tab[8], tab[9], tab[10], tab[11],
-							 tab[12], tab[13], tab[14], tab[15] };
+					return {
+						tab[0][0], tab[0][1], tab[0][2], tab[0][3],
+						tab[1][0], tab[1][1], tab[1][2], tab[1][3],
+						tab[2][0], tab[2][1], tab[2][2], tab[2][3],
+						tab[3][0], tab[3][1], tab[3][2], tab[3][3]
+					};
 				}
 
 				// -------------------------------------------------------------------------------- //	
@@ -229,6 +215,8 @@ namespace Bwt
 				Matrix4 operator*=(float n);
 
 				Vector3 operator*(const Vector4& mult) const;
+
+				bool operator==(const Matrix4& other) const;
 			};
 		}
 	}
