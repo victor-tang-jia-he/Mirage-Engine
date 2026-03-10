@@ -1,7 +1,7 @@
 ﻿// MirageEngine.cpp : Defines the entry point for the application.
 //
 
-#include <../../GLFW/deps/glad/gl.h>
+#include <glad/gl.h>
 #include <GLFW/glfw3.h>
 
 #include "main.h"
@@ -15,7 +15,7 @@ int main()
 	//glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 
 
-	GLFWwindow* window = glfwCreateWindow(1920, 1080, "Hello", NULL, NULL);
+	GLFWwindow* window = glfwCreateWindow(1920, 1080, "Mirage Enginexc", NULL, NULL);
 	while (!glfwWindowShouldClose(window))
 	{
 		glfwSwapBuffers(window);
