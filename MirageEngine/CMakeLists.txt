@@ -5,7 +5,7 @@ cmake_minimum_required(VERSION 3.16)
 project(CustomEngine)
 
 # Create global variable (project-level) to store output directory
-set(MY_BIN_OUTPUT_DIR "${CMAKE_SOURCE_DIR}/build/${CMAKE_CXX_COMPILER_ID}_$<CONFIG>")
+# set(MY_BIN_OUTPUT_DIR "${CMAKE_SOURCE_DIR}/Build/${CMAKE_CXX_COMPILER_ID}_$<CONFIG>")
 # Log directory at configuration-time
 message("[${CMAKE_PROJECT_NAME}]: Output directory: ${MY_BIN_OUTPUT_DIR}")
 
