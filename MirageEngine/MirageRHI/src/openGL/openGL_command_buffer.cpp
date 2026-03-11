@@ -1,6 +1,7 @@
 #include "../../include/openGL/openGL_command_buffer.h"
 #include "../../include/openGL/openGL_pipeline.h"
 #include "../../include/openGL/openGL_buffer.h"
+#include "../../include/openGL/openGL_render_pass.h"
 
 void MirageRHI::OpenGLCommandBuffer::BindPipeline(IPipeline* pipeline)
 {
@@ -15,6 +16,11 @@ void MirageRHI::OpenGLCommandBuffer::BindVertexBuffer(IBuffer* buffer)
 void MirageRHI::OpenGLCommandBuffer::BindIndexBuffer(IBuffer* buffer)
 {
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, buffer->API_OpenGL().GetGLHandle());
+}
+
+void MirageRHI::OpenGLCommandBuffer::BeginRenderPass(IRenderPass* renderPass)
+{
+	renderPass->API_OpenGL().Begin();
 }
 
 void MirageRHI::OpenGLCommandBuffer::DrawIndexed(uint32_t indexCount)

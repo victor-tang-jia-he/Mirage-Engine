@@ -19,6 +19,8 @@ namespace MirageRHI
 		virtual void BindPipeline(IPipeline* pipeline) = 0;
 		virtual void BindVertexBuffer(IBuffer* buffer) = 0;
 		virtual void BindIndexBuffer(IBuffer* buffer) = 0;
+		virtual void BeginRenderPass(IRenderPass* renderPass) = 0;
+		virtual void EndRenderPass(IRenderPass* renderPass) = 0;
 		virtual void DrawIndexed(uint32_t indexCount) = 0;
 	};
 }

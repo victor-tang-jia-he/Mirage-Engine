@@ -19,6 +19,9 @@ namespace MirageRHI
         void BindVertexBuffer(IBuffer* buffer) override;
         void BindIndexBuffer(IBuffer* buffer) override;
 
+        void BeginRenderPass(IRenderPass* renderPass) override;
+        void EndRenderPass(IRenderPass* renderPass) override {}
+
         void DrawIndexed(uint32_t indexCount) override;
     };
 }

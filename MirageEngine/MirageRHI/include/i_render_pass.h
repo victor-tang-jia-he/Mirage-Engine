@@ -8,8 +8,10 @@ namespace MirageRHI
 	{
 	public:
 		virtual ~IRenderPass() = default;
-		virtual void Create(IDevice* device, ISwapChain* swapChain) = 0;
-		virtual void Destroy(IDevice* device) = 0;
-		//virtual VulkanRenderPass& API_Vulkan() { throw std::runtime_error("Bad API Call : object is not a VulkanRenderPass"); }
+		virtual void Create(float r, float g, float b, float a, float depth) = 0;
+		virtual void Destroy() = 0;
+		virtual OpenGLRenderPass& API_OpenGL() { throw std::runtime_error("Bad API Call : object is not an OpenGLRenderPass"); }
+		virtual void Begin() = 0;
+		virtual void End() = 0;
 	};
 }
