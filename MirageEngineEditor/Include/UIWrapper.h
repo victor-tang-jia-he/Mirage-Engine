@@ -12,7 +12,13 @@ namespace Mirage
 		static void BeginFrame();
 		static void EndFrame();
 
+		// window
+		static bool BeginWindow(const char* windowName, bool* isOpen = nullptr);
+		static void EndWindow();
+
 		// Widgets
+		static void CreateSeparatorText(const char* separatorName);
+
 		static bool CreateSliderInt(const char* sliderName, int* value, int vMin, int vMax);
 		static bool CreateSliderFloat(const char* sliderName, float* value, float vMin, float vMax);
 		static bool CreateButton(const char* buttonName);

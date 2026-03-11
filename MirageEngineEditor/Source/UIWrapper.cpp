@@ -1,9 +1,9 @@
 #include "../Include/UIWrapper.h"
 
-#include "../../Libraries/imgui/imgui.h"
-#include "../../Libraries/imgui/backends/imgui_impl_glfw.h"
-#include "../../Libraries/imgui/backends/imgui_impl_opengl3.h"
-#include "../../Libraries/GLFW/include/GLFW/glfw3.h"
+#include "imgui.h"
+#include "imgui_impl_glfw.h"
+#include "imgui_impl_opengl3.h"
+#include "GLFW/glfw3.h"
 
 namespace Mirage
 {
@@ -41,27 +41,38 @@ namespace Mirage
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 	}
 
+	bool UIWrapper::BeginWindow(const char* windowName, bool* isOpen)
+	{
+		return ImGui::Begin(windowName, isOpen);
+	}
+
+	void UIWrapper::EndWindow()
+	{
+		ImGui::End();
+	}
+
+	void UIWrapper::CreateSeparatorText(const char* separatorName)
+	{
+		ImGui::SeparatorText(separatorName);
+	}
+
 	bool UIWrapper::CreateSliderInt(const char* sliderName, int* value, int vMin, int vMax)
 	{
-		ImGui::SliderInt(sliderName, value, vMin, vMax);
-		return false;
+		return ImGui::SliderInt(sliderName, value, vMin, vMax);
 	}
 
 	bool UIWrapper::CreateSliderFloat(const char* sliderName, float* value, float vMin, float vMax)
 	{
-		ImGui::SliderFloat(sliderName, value, vMin, vMax, "%.3f");
-		return false;
+		return ImGui::SliderFloat(sliderName, value, vMin, vMax, "%.3f");
 	}
 
 	bool UIWrapper::CreateButton(const char* buttonName)
 	{ 
-		ImGui::Button(buttonName);
-		return false;
+		return ImGui::Button(buttonName);
 	}
 
 	bool UIWrapper::CreateCheckbox(const char* checkboxName, bool* check)
 	{
-		ImGui::Checkbox(checkboxName, check);
-		return false;
+		return ImGui::Checkbox(checkboxName, check);
 	}
 }

@@ -27,6 +27,10 @@ int main()
 		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
 		Mirage::UIWrapper::BeginFrame();
+		Mirage::UIWrapper::BeginWindow("Hierarchy");
+		Mirage::UIWrapper::CreateButton("Cube");
+		Mirage::UIWrapper::CreateButton("Sphere");
+		Mirage::UIWrapper::EndWindow();
 		Mirage::UIWrapper::EndFrame();	
 		glfwSwapBuffers(window);
 	}
