@@ -12,4 +12,4 @@ endif()
 project ("CustomEngine")
 
 # Include sub-projects.
-add_subdirectory ("MirageEngine")
+add_subdirectory ("MirageEngine" Toolbox)

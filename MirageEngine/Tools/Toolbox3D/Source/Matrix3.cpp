@@ -26,7 +26,6 @@ Matrix3 Matrix3::Inverse() const
 
     return inverse;
 }
-
 Matrix2 Matrix3::GetSubMatrix(int excludeRow, int excludeCol) const
 {
     Matrix2 sub;
@@ -49,7 +48,6 @@ Matrix2 Matrix3::GetSubMatrix(int excludeRow, int excludeCol) const
 
     return sub;
 }
-
 Matrix3 Matrix3::luDecomposition() const
 {
     Matrix3 lower = Matrix3::Identity();
