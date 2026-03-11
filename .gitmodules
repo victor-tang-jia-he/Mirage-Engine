@@ -1,6 +1,3 @@
 [submodule "MirageEngine/glfw"]
 	path = MirageEngine/glfw
 	url = https://github.com/glfw/glfw.git
-[submodule "Libraries/GLM"]
-	path = Libraries/GLM
-	url = https://github.com/g-truc/glm.git
