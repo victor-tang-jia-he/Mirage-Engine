@@ -1,29 +1,26 @@
-﻿# CMake Version
-cmake_minimum_required(VERSION 3.16)
+﻿# Project executable
+add_executable(MirageEngineEditor)
 
-# Project Name
-project(CustomEngine)
+# Sources
+file(GLOB_RECURSE MIRAGE_ENGINE_EDITOR_SOURCE
+	"*.cpp"
+	"*.h"
+	"*.hpp"
+)
 
-# Add source to this project's executable.
-add_executable (MirageEngineEditor "main.cpp" "Include/UIWrapper.h" "Source/UIWrapper.cpp")
+target_sources(MirageEngineEditor PRIVATE ${MIRAGE_ENGINE_EDITOR_SOURCE})
 
-# Set C standard version
-target_compile_features(MirageEngineEditor PRIVATE c_std_11)
+# Include directories
+target_include_directories(MirageEngineEditor PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/include
+)
 
-# Set C++ standard version
-target_compile_features(MirageEngineEditor PRIVATE cxx_std_20)
+# Link third-party libraries
+target_link_libraries(MirageEngineEditor PRIVATE ThirdParty)
 
 # Set Warning level 4 and warnings as errors flags
 if(MSVC)
-target_compile_options(MirageEngineEditor PRIVATE /W4 /WX)
+	target_compile_options(MirageEngineEditor PRIVATE /W4 /WX)
 else()
-target_compile_options(MirageEngineEditor PRIVATE -Wall -Wextra -Wpedantic -Werror)
+	target_compile_options(MirageEngineEditor PRIVATE -Wall -Wextra -Wpedantic -Werror)
 endif()
-
-# Add preprocessor definition
-# target_compile_definitions(MirageEngineEditor PRIVATE USE_RHI_VULKAN=1)
-
-# Search for CMakeLists.txt in glfw/ and add it to the build tree
-# add_subdirectory(glfw)
-# Add glfw dependency to target
-# target_link_libraries(MirageEngineEditor PRIVATE glfw)

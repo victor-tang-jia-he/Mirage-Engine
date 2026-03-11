@@ -44,20 +44,24 @@ namespace Mirage
 	bool UIWrapper::CreateSliderInt(const char* sliderName, int* value, int vMin, int vMax)
 	{
 		ImGui::SliderInt(sliderName, value, vMin, vMax);
+		return false;
 	}
 
 	bool UIWrapper::CreateSliderFloat(const char* sliderName, float* value, float vMin, float vMax)
 	{
 		ImGui::SliderFloat(sliderName, value, vMin, vMax, "%.3f");
+		return false;
 	}
 
 	bool UIWrapper::CreateButton(const char* buttonName)
 	{ 
 		ImGui::Button(buttonName);
+		return false;
 	}
 
 	bool UIWrapper::CreateCheckbox(const char* checkboxName, bool* check)
 	{
 		ImGui::Checkbox(checkboxName, check);
+		return false;
 	}
 }
