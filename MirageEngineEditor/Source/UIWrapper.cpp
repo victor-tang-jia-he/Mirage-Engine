@@ -40,4 +40,24 @@ namespace Mirage
 		ImGui::Render();
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 	}
+
+	bool UIWrapper::CreateSliderInt(const char* sliderName, int* value, int vMin, int vMax)
+	{
+		ImGui::SliderInt(sliderName, value, vMin, vMax);
+	}
+
+	bool UIWrapper::CreateSliderFloat(const char* sliderName, float* value, float vMin, float vMax)
+	{
+		ImGui::SliderFloat(sliderName, value, vMin, vMax, "%.3f");
+	}
+
+	bool UIWrapper::CreateButton(const char* buttonName)
+	{ 
+		ImGui::Button(buttonName);
+	}
+
+	bool UIWrapper::CreateCheckbox(const char* checkboxName, bool* check)
+	{
+		ImGui::Checkbox(checkboxName, check);
+	}
 }
