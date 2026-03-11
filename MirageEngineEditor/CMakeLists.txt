@@ -5,7 +5,7 @@ cmake_minimum_required(VERSION 3.16)
 project(CustomEngine)
 
 # Add source to this project's executable.
-add_executable (MirageEngineEditor "main.cpp")
+add_executable (MirageEngineEditor "main.cpp" "Include/UIWrapper.h" "Source/UIWrapper.cpp")
 
 # Set C standard version
 target_compile_features(MirageEngineEditor PRIVATE c_std_11)
