@@ -10,8 +10,8 @@ cmake_minimum_required(VERSION 3.16)
 # Project Name
 project(CustomEngine)
 
-# Add source to this project's executable.
-add_executable (MirageEngine "main.cpp")
+# Add source to this project's execumle.
+add_executable(MirageEngine "main.cpp")
 
 # Set C standard version
 target_compile_features(MirageEngine PRIVATE c_std_11)

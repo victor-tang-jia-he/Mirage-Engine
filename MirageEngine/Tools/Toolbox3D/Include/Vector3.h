@@ -182,7 +182,7 @@ namespace Bwt
 					std::cout << "x : " << x << " y : " << y << " z : " << z << "\n";
 				}
 
-				float* AsList() const;
+				std::array<float,3> AsList() const;
 
 				// -------------------------------------------------------------------------------- //	
 				// Overload operators inline
@@ -194,7 +194,7 @@ namespace Bwt
 				}
 				inline Vector3 operator-(const Vector3& vec)
 				{
-					return AddVector3(GetOpposed());
+					return AddVector3(vec.GetOpposed());
 				}
 				inline Vector3 operator*(const Vector3& vec)
 				{

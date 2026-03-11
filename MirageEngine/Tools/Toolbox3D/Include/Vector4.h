@@ -150,9 +150,12 @@ namespace Bwt
 				}
 				inline Vector4 operator-(const Vector4& vec)
 				{
-					return AddVector4(GetOpposed());
+					return AddVector4(vec.GetOpposed());
 				}
-				Vector4 operator*(const Vector4& vec);
+				inline Vector4 operator*(const Vector4& vec)
+				{
+					return ElementWiseProduct(vec);
+				}
 				inline Vector4 operator/(const Vector4& vec)
 				{
 					assert(vec.x != 0 && vec.y != 0 && vec.z != 0 && vec.w != 0 && "Division by zero in Vector4D");
@@ -208,7 +211,7 @@ namespace Bwt
 					return (index == 0) ? x : (index == 1) ? y : (index == 2) ? z : w;
 				}
 
-				float* AsList() const;
+				std::array<float, 4> AsList() const;
 			};
 		}
 	}

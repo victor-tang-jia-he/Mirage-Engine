@@ -12,7 +12,7 @@ using namespace Bwt::Core::Maths;
 //		for (int row = 0; row < 4; ++row)
 //		{
 //			if (row == excludeRow) continue;
-//			subMatrix.tab[index++] = tab[col * 4 + row];
+//			subMatrix[index++] = m[col * 4 + row];
 //		}
 //	}
 //	return subMatrix;
@@ -22,16 +22,16 @@ float Matrix4::Determinant() const
 	float det = 0.0f;
 	for (int col = 0; col < 4; ++col) {
 		float sign = (col % 2 == 0) ? 1.0f : -1.0f;
-		det += sign * tab[0][col] * GetSubMatrix3x3Determinant(0, col);
+		det += sign * m[0][col] * GetSubMatrix3x3Determinant(0, col);
 	}
 	return det;
 }
 //float Matrix4::GetDeterminantSSE() const
 //{
-//	__m128 c0 = _mm_load_ps(&tab[0]);  //  0  1  2  3
-//	__m128 c1 = _mm_load_ps(&tab[4]);  //  4 ( 5  6  7)
-//	__m128 c2 = _mm_load_ps(&tab[8]);  //  8 ( 9 10 11)
-//	__m128 c3 = _mm_load_ps(&tab[12]); // 12 (13 14 15)
+//	__m128 c0 = _mm_load_ps(&m[0]);  //  0  1  2  3
+//	__m128 c1 = _mm_load_ps(&m[4]);  //  4 ( 5  6  7)
+//	__m128 c2 = _mm_load_ps(&m[8]);  //  8 ( 9 10 11)
+//	__m128 c3 = _mm_load_ps(&m[12]); // 12 (13 14 15)
 //
 //#define CALC_DET2(a, b) _mm_sub_ps( \
 //    _mm_mul_ps( \
@@ -47,23 +47,23 @@ float Matrix4::Determinant() const
 //	__m128 ss1 = CALC_DET2(c1, c3); 
 //	__m128 ss2 = CALC_DET2(c1, c2);
 //
-//	__m128 n0 = _mm_set1_ps(tab[1]);
-//	__m128 n1 = _mm_set1_ps(tab[2]);
+//	__m128 n0 = _mm_set1_ps(m[1]);
+//	__m128 n1 = _mm_set1_ps(m[2]);
 //	// Calcul des 4 sous-d¨¦terminants n¨¦cessaires
-//	__m128 s0 = _mm_add_ps(_mm_sub_ss(_mm_mul_ps(_mm_set1_ps(tab[5]), ss0), _mm_mul_ps(_mm_set1_ps(tab[6]), ss1)), _mm_mul_ps(_mm_set1_ps(tab[7]), ss2));
-//	__m128 s1 = _mm_add_ps(_mm_sub_ss(_mm_mul_ps(n0, ss0), _mm_mul_ps(n1, ss1)), _mm_mul_ps(_mm_set1_ps(tab[3]), ss2));
-//	__m128 s2 = _mm_add_ps(_mm_sub_ss(_mm_mul_ps(n0, ss1), _mm_mul_ps(n1, CALC_DET2(c0, c3))), _mm_mul_ps(_mm_set1_ps(tab[3]), CALC_DET2(c0, c2)));
-//	__m128 s3 = _mm_add_ps(_mm_sub_ss(_mm_mul_ps(n0, ss2), _mm_mul_ps(n1, CALC_DET2(c0, c2))), _mm_mul_ps(_mm_set1_ps(tab[3]), CALC_DET2(c0, c1)));
+//	__m128 s0 = _mm_add_ps(_mm_sub_ss(_mm_mul_ps(_mm_set1_ps(m[5]), ss0), _mm_mul_ps(_mm_set1_ps(m[6]), ss1)), _mm_mul_ps(_mm_set1_ps(m[7]), ss2));
+//	__m128 s1 = _mm_add_ps(_mm_sub_ss(_mm_mul_ps(n0, ss0), _mm_mul_ps(n1, ss1)), _mm_mul_ps(_mm_set1_ps(m[3]), ss2));
+//	__m128 s2 = _mm_add_ps(_mm_sub_ss(_mm_mul_ps(n0, ss1), _mm_mul_ps(n1, CALC_DET2(c0, c3))), _mm_mul_ps(_mm_set1_ps(m[3]), CALC_DET2(c0, c2)));
+//	__m128 s3 = _mm_add_ps(_mm_sub_ss(_mm_mul_ps(n0, ss2), _mm_mul_ps(n1, CALC_DET2(c0, c2))), _mm_mul_ps(_mm_set1_ps(m[3]), CALC_DET2(c0, c1)));
 //
 //	//// R¨¦duction finale
 //	return _mm_cvtss_f32(_mm_sub_ps(
 //		_mm_add_ps(
-//			_mm_mul_ps(_mm_set1_ps(tab[0]), s0),
-//			_mm_mul_ps(_mm_set1_ps(tab[8]), s2)
+//			_mm_mul_ps(_mm_set1_ps(m[0]), s0),
+//			_mm_mul_ps(_mm_set1_ps(m[8]), s2)
 //		),
 //		_mm_add_ps(
-//			_mm_mul_ps(_mm_set1_ps(tab[4]), s1),
-//			_mm_mul_ps(_mm_set1_ps(tab[12]), s3)
+//			_mm_mul_ps(_mm_set1_ps(m[4]), s1),
+//			_mm_mul_ps(_mm_set1_ps(m[12]), s3)
 //		)
 //	));
 //}
@@ -84,7 +84,7 @@ Matrix4 Matrix4::Inverse() const
 
 			float subDet = GetSubMatrix3x3Determinant(i, j);
 
-			inv.tab[i][j] = sign * subDet * invDet;
+			inv.m[i][j] = sign * subDet * invDet;
 		}
 	}
 
@@ -98,7 +98,7 @@ float Matrix4::GetSubMatrix3x3Determinant(int excludeRow, int excludeCol) const
 		if (col == excludeCol) continue;
 		for (int row = 0; row < 4; ++row) {
 			if (row == excludeRow) continue;
-			sub[index / 3][index % 3] = tab[col][row];
+			sub[index / 3][index % 3] = m[col][row];
 			++index;
 		}
 	}
@@ -120,10 +120,10 @@ Matrix4 Matrix4::CreateTransformMatrix(const Vector3& position, const Vector3& r
 //	__m128 v = _mm_set_ps(mult.w, mult.z, mult.y, mult.x);
 //
 //	// Multiplications SIMD (4 composantes en parall¨¨le)
-//	__m128 r0 = _mm_mul_ps(_mm_loadu_ps(&tab[0]), v);
-//	__m128 r1 = _mm_mul_ps(_mm_loadu_ps(&tab[4]), v);
-//	__m128 r2 = _mm_mul_ps(_mm_loadu_ps(&tab[8]), v);
-//	__m128 r3 = _mm_mul_ps(_mm_loadu_ps(&tab[12]), v);
+//	__m128 r0 = _mm_mul_ps(_mm_loadu_ps(&m[0]), v);
+//	__m128 r1 = _mm_mul_ps(_mm_loadu_ps(&m[4]), v);
+//	__m128 r2 = _mm_mul_ps(_mm_loadu_ps(&m[8]), v);
+//	__m128 r3 = _mm_mul_ps(_mm_loadu_ps(&m[12]), v);
 //
 //	// R¨¦duction horizontale (somme des 4 composantes)
 //	r0 = _mm_hadd_ps(_mm_hadd_ps(r0, r1), _mm_hadd_ps(r2, r3));
@@ -142,20 +142,20 @@ Matrix4 Matrix4::GetPerspectiveMatrix(unsigned int width, unsigned int height, f
 	float fovRad = fov * (PI / 180.0f);
 	float tanHalfFov = tan(fovRad / 2.0f);
 	Matrix4 perspective;
-	perspective.tab[0][0] = 1.0f / (aspectRatio * tanHalfFov);
-	perspective.tab[1][1] = 1.0f / tanHalfFov;
-	perspective.tab[2][2] = -(far + near) / (far - near);
-	perspective.tab[3][2] = -(2.0f * far * near) / (far - near);
-	perspective.tab[2][3] = -1.0f;
+	perspective.m[0][0] = 1.0f / (aspectRatio * tanHalfFov);
+	perspective.m[1][1] = 1.0f / tanHalfFov;
+	perspective.m[2][2] = -(far + near) / (far - near);
+	perspective.m[3][2] = -(2.0f * far * near) / (far - near);
+	perspective.m[2][3] = -1.0f;
 	return perspective;
 }
 
 Vector3 Bwt::Core::Maths::Matrix4::operator*(const Vector4& mult) const
 {
-	float x = tab[0][0]*mult.x + tab[1][0]*mult.y + tab[2][0]*mult.z + tab[3][0]*mult.w;
-	float y = tab[0][1]*mult.x + tab[1][1]*mult.y + tab[2][1]*mult.z + tab[3][1]*mult.w;
-	float z = tab[0][2]*mult.x + tab[1][2]*mult.y + tab[2][2]*mult.z + tab[3][2]*mult.w;
-	float w = tab[0][3]*mult.x + tab[1][3]*mult.y + tab[2][3]*mult.z + tab[3][3]*mult.w;
+	float x = m[0][0]*mult.x + m[1][0]*mult.y + m[2][0]*mult.z + m[3][0]*mult.w;
+	float y = m[0][1]*mult.x + m[1][1]*mult.y + m[2][1]*mult.z + m[3][1]*mult.w;
+	float z = m[0][2]*mult.x + m[1][2]*mult.y + m[2][2]*mult.z + m[3][2]*mult.w;
+	float w = m[0][3]*mult.x + m[1][3]*mult.y + m[2][3]*mult.z + m[3][3]*mult.w;
 	if (std::abs(w) > EPSILON)
 	{
 		x /= w;
@@ -171,7 +171,7 @@ bool Bwt::Core::Maths::Matrix4::operator==(const Matrix4& other) const
 	{
 		for (int row = 0; row < 4; ++row)
 		{
-			if (std::abs(tab[col][row] - other.tab[col][row]) >= EPSILON)
+			if (std::abs(m[col][row] - other.m[col][row]) >= EPSILON)
 				return false;
 		}
 	}

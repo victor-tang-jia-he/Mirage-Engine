@@ -1,4 +1,4 @@
-# Ex¨¦cutable de test
+# Ex¨¦cumle de test
 add_executable(toolbox_tests
     Test.cpp
 )

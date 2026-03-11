@@ -1,7 +1,6 @@
 ﻿#pragma once
 
 #include "Matrix2.h"
-#include <array>
 
 namespace Bwt
 {

@@ -79,7 +79,8 @@ float Vector3::GetPerspective(float t) const
 
 Vector3 Bwt::Core::Maths::Vector3::Reflect(Vector3 I, Vector3 N)
 {
-	return I - N.Normalized() * (2 * I.DotProductVector3(N));
+	// R = I - 2 * (I ¡¤ N) * N
+	return I - N.Normalized() * (2.0f * I.DotProductVector3(N.Normalized()));
 }
 
 float Vector3::DotProductVector3(const Vector3& other) const
@@ -104,30 +105,27 @@ float Vector3::GetAngle(const Vector3& v2) const
 	return acosf(DotProductVector3(v2) / denom) * (180.f / PI);
 }
 
-void Vector3::Rotation(float angleX, float angleY, float angleZ)
-{
+void Vector3::Rotation(float angleX, float angleY, float angleZ) {
 	float cosX = cosf(angleX), sinX = sinf(angleX);
 	float cosY = cosf(angleY), sinY = sinf(angleY);
 	float cosZ = cosf(angleZ), sinZ = sinf(angleZ);
 
-	float y1 = cosX * y - sinX * z;
-	float z1 = sinX * y + cosX * z;
+	float x0 = x, y0 = y, z0 = z;
 
-	float x2 = cosY * x + sinY * z1;
-	float z2 = -sinY * x + cosY * z1;
+	float y1 = y0 * cosX - z0 * sinX;
+	float z1 = y0 * sinX + z0 * cosX;
 
-	float x3 = cosZ * x2 - sinZ * y1;
-	float y3 = sinZ * x2 + cosZ * y1;
+	float x2 = x0 * cosY + z1 * sinY;
+	float z2 = -x0 * sinY + z1 * cosY;
 
-	x = x3;
-	y = y3;
+	x = x2 * cosZ - y1 * sinZ;
+	y = x2 * sinZ + y1 * cosZ;
 	z = z2;
 }
 
-float* Vector3::AsList() const
+std::array<float, 3> Vector3::AsList() const
 {
-	float tab[3]{x, y, z};
-	return tab;
+	return { x, y, z };
 }
 
 std::ostream& Bwt::Core::Maths::operator<<(std::ostream& os, const Vector3& vec)

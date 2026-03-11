@@ -11,7 +11,7 @@ namespace Bwt
 			class Matrix2
 			{
 			public:
-				float m[2][2]; // tab[col][row]
+				float m[2][2]; // m[col][row]
 
 				Matrix2(const Matrix2& copy);
 				Matrix2(float m00 = 0.f, float m01 = 0.f, float m10 = 0.f, float m11 = 0.f);
@@ -134,14 +134,16 @@ namespace Bwt
 
 				bool operator==(const Matrix2& other) const;
 
-				float* operator[](size_t col)
+				float* operator[](size_t row) 
 				{
-					return m[col];
+					assert(row < 2);
+					return m[row];
 				}
 
-				const float* operator[](size_t col) const
+				const float* operator[](size_t row) const 
 				{
-					return m[col];
+					assert(row < 2);
+					return m[row];
 				}
 
 			};

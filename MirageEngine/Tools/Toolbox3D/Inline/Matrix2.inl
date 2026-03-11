@@ -33,8 +33,8 @@ inline Matrix2 Matrix2::Opposed() const
 inline Matrix2 Matrix2::Transpose() const
 {
 	return Matrix2(
-		m[0][0], m[0][1],
-		m[1][0], m[1][1]);
+		m[0][0], m[1][0],
+		m[0][1], m[1][1]);
 }
 inline Matrix2 Matrix2::AddMatrix2(const Matrix2& other) const
 {

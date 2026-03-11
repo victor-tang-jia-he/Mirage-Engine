@@ -23,7 +23,6 @@ namespace Bwt
 		};
 		struct Job 
 		{
-			JobPriority m_priority;
 			std::function<void()> m_func;
 		};
 
@@ -54,7 +53,6 @@ namespace Bwt
 
 				std::shared_ptr<Bwt::Core::Job> job = std::make_shared<Job>();
 				job->m_func = [task]() { (*task)(); };
-				job->m_priority = prio;
 
 				// bind the function and integrate the args into parameter
 				std::future<ReturnType> result = task->get_future();

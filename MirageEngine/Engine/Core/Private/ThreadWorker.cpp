@@ -32,7 +32,6 @@ void Bwt::Core::ThreadWorker::Work()
                     !m_threadPool->m_queuesLow.empty();
                 });
 
-            // Vérifier le shutdown APRÈS le réveil
             if (m_threadPool->m_shutdownRequested) 
             {
                 if (m_threadPool->m_queuesHigh.empty() &&

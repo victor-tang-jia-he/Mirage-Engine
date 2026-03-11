@@ -234,13 +234,13 @@ inline bool Matrix3::operator==(const Matrix3& other) const
 		std::abs(m[2][1] - other.m[2][1]) < EPSILON &&
 		std::abs(m[2][2] - other.m[2][2]) < EPSILON;
 }
-//inline Vector3 Matrix3::operator[](int index) const
-//{
-//	assert(index >= 0 && index < 3 && "Index out of range");
-//	return Vector3(m[index * 3], m[index * 3 + 1], m[index * 3 + 2]);
-//}
-//inline Vector3& Matrix3::operator[](int index)
-//{
-//	assert(index >= 0 && index < 3 && "Index out of range");
-//	return *reinterpret_cast<Vector3*>(&m[index * 3]);
-//}
+inline Vector3 Matrix3::operator[](int index) const
+{
+	assert(index >= 0 && index < 3 && "Index out of range");
+	return Vector3(m[index][0], m[index][1], m[index][2]);
+}
+inline Vector3& Matrix3::operator[](int index)
+{
+	assert(index >= 0 && index < 3 && "Index out of range");
+	return *reinterpret_cast<Vector3*>(&m[index]);
+}

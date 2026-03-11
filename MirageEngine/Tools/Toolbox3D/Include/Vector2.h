@@ -4,6 +4,7 @@
 #include <iostream>
 #include <cassert>
 #include <immintrin.h>
+#include <array>
 
 #define PI 3.14159265359f
 #define EPSILON 1e-6f
@@ -189,7 +190,7 @@ namespace Bwt
 				}
 				inline Vector2 operator-(const Vector2& vec)
 				{
-					return AddVector2(GetOpposed());
+					return AddVector2(vec.GetOpposed());
 				}
 				inline Vector2 operator*(const Vector2& vec)
 				{
