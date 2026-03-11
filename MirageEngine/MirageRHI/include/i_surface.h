@@ -1,0 +1,17 @@
+#pragma once
+
+#include "general_include.h"
+
+namespace MirageRHI
+{
+	class ISurface
+	{
+	public:
+		virtual ~ISurface() = default;
+
+		virtual void Create(int w, int h, const char* title) = 0;
+		virtual void Destroy() = 0;
+
+		virtual OpenGLSurface& API_OpenGL() { throw std::runtime_error("Bad API Call : object is not an OpenGLSurface"); }
+	};
+}
