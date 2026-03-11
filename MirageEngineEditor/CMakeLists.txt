@@ -1,29 +1,34 @@
-﻿# CMake Version
-cmake_minimum_required(VERSION 3.16)
+﻿# Project executable
+# Editor executable (with WIN32 to hide console on Windows)
+if(WIN32)
+    add_executable(MirageEngineEditor WIN32)
+else()
+    add_executable(MirageEngineEditor)
+endif()
 
-# Project Name
-project(CustomEngine)
+# Sources
+file(GLOB_RECURSE MIRAGE_ENGINE__EDITOR_SOURCE 
+    "*.cpp"
+    "*.c"
+)
 
-# Add source to this project's executable.
-add_executable (MirageEngineEditor "main.cpp")
+target_sources(MirageEngineEditor PRIVATE ${MIRAGE_ENGINE__EDITOR_SOURCE})
 
-# Set C standard version
-target_compile_features(MirageEngineEditor PRIVATE c_std_11)
+# Include directories
+target_include_directories(MirageEngineEditor PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/src
+    ${CMAKE_SOURCE_DIR}/Projects/MirageEngine/include
+)
 
-# Set C++ standard version
-target_compile_features(MirageEngineEditor PRIVATE cxx_std_20)
+# Link engine and third-party
+target_link_libraries(MirageEngineEditor PRIVATE
+    # MirageEngine  # Link the engine itself
+    ThirdParty    # And third-party libs
+)
 
 # Set Warning level 4 and warnings as errors flags
 if(MSVC)
-target_compile_options(MirageEngineEditor PRIVATE /W4 /WX)
+	target_compile_options(MirageEngine PRIVATE /W4 /WX)
 else()
-target_compile_options(MirageEngineEditor PRIVATE -Wall -Wextra -Wpedantic -Werror)
+	target_compile_options(MirageEngine PRIVATE -Wall -Wextra -Wpedantic -Werror)
 endif()
-
-# Add preprocessor definition
-# target_compile_definitions(MirageEngineEditor PRIVATE USE_RHI_VULKAN=1)
-
-# Search for CMakeLists.txt in glfw/ and add it to the build tree
-# add_subdirectory(glfw)
-# Add glfw dependency to target
-# target_link_libraries(MirageEngineEditor PRIVATE glfw)
