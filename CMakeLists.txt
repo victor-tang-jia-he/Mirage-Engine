@@ -1,15 +1,135 @@
-﻿# CMakeList.txt : Top-level CMake project file, do global configuration
-# and include sub-projects here.
-#
-cmake_minimum_required (VERSION 3.8)
+﻿# CMake version
+cmake_minimum_required(VERSION 3.16)
 
-# Enable Hot Reload for MSVC compilers if supported.
-if (POLICY CMP0141)
-  cmake_policy(SET CMP0141 NEW)
-  set(CMAKE_MSVC_DEBUG_INFORMATION_FORMAT "$<IF:$<AND:$<C_COMPILER_ID:MSVC>,$<CXX_COMPILER_ID:MSVC>>,$<$<CONFIG:Debug,RelWithDebInfo>:EditAndContinue>,$<$<CONFIG:Debug,RelWithDebInfo>:ProgramDatabase>>")
+# Project name
+project(CustomEngine)
+
+# Create global variable (project-level) to store output directory
+set(MY_BIN_OUTPUT_DIR "${CMAKE_SOURCE_DIR}/Build/${CMAKE_CXX_COMPILER_ID}_$<CONFIG>")
+# Log directory at configuration-time
+message("[${CMAKE_PROJECT_NAME}]: Output directory: ${MY_BIN_OUTPUT_DIR}")
+
+# Set output directory for compiled libs and exe (project-level)
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${MY_BIN_OUTPUT_DIR}/libs")
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${MY_BIN_OUTPUT_DIR}/libs")
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${MY_BIN_OUTPUT_DIR}")
+
+# Set C standard version
+set(CMAKE_C_STANDARD 11)
+set(CMAKE_C_STANDARD_REQUIRED ON)
+
+# Set C++ standard version
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+message(STATUS "Adding external libraries...")
+
+# ============================================================================
+# GLFW
+# ============================================================================
+# option(BUILD_SHARED_LIBS "Build shared libraries" OFF)
+# option(GLFW_BUILD_EXAMPLES "Build the GLFW example programs" ${GLFW_STANDALONE})
+# option(GLFW_BUILD_TESTS "Build the GLFW test programs" ${GLFW_STANDALONE})
+# option(GLFW_BUILD_DOCS "Build the GLFW documentation" ON)
+# option(GLFW_INSTALL "Generate installation target" ON)
+add_subdirectory(Libraries/GLFW GLFW)
+
+# ============================================================================
+# GLAD (OpenGL loader) - needed for ImGui OpenGL backend
+# ============================================================================
+# Check if glad has its own CMakeLists
+if(EXISTS ${CMAKE_SOURCE_DIR}/Libraries/glad/CMakeLists.txt)
+    add_subdirectory(Libraries/glad glad)
+else()
+    # Create simple glad target
+    if(EXISTS ${CMAKE_SOURCE_DIR}/Libraries/glad/src/glad.c)
+        add_library(glad STATIC Libraries/glad/src/glad.c)
+        target_include_directories(glad PUBLIC Libraries/glad/include)
+    else()
+        message(WARNING "glad.c not found! Please generate glad files first.")
+    endif()
 endif()
 
-project ("CustomEngine")
+# ============================================================================
+# ImGUI - Manual configuration (since it lacks CMakeLists.txt)
+# ============================================================================
+# Collect all ImGui source files including backends
+file(GLOB IMGUI_CORE_SOURCES
+    ${CMAKE_SOURCE_DIR}/Libraries/imgui/*.cpp
+)
 
-# Include sub-projects.
-add_subdirectory ("MirageEngine")
+file(GLOB IMGUI_BACKEND_SOURCES
+    ${CMAKE_SOURCE_DIR}/Libraries/imgui/backends/imgui_impl_glfw.cpp
+    ${CMAKE_SOURCE_DIR}/Libraries/imgui/backends/imgui_impl_opengl3.cpp
+)
+
+# Combine all sources
+set(IMGUI_ALL_SOURCES ${IMGUI_CORE_SOURCES} ${IMGUI_BACKEND_SOURCES})
+
+# Create ImGui library
+add_library(imgui STATIC ${IMGUI_ALL_SOURCES})
+
+# Add include directories
+target_include_directories(imgui PRIVATE
+    ${CMAKE_SOURCE_DIR}/Libraries/imgui
+    ${CMAKE_SOURCE_DIR}/Libraries/imgui/backends
+    ${CMAKE_SOURCE_DIR}/Libraries/glad/include  # For glad headers
+)
+# Link dependencies to ImGui
+find_package(OpenGL REQUIRED)
+target_link_libraries(imgui PRIVATE
+    glfw          # Link GLFW to ImGui
+    glad          # Link glad to ImGui
+    OpenGL::GL    # Link OpenGL
+)
+
+# Tell ImGui we're using glad as OpenGL loader
+target_compile_definitions(imgui PRIVATE
+    IMGUI_IMPL_OPENGL_LOADER_GLAD
+)
+
+# ============================================================================
+# System Engine Library (Core)
+# ============================================================================
+add_subdirectory(${CMAKE_SOURCE_DIR}/MirageEngine/Engine/Core)
+add_subdirectory(${CMAKE_SOURCE_DIR}/MirageEngine/Tools/Toolbox3D)
+
+# Create Convenience Interface for All Dependencies
+add_library(ThirdParty INTERFACE)
+
+target_include_directories(ThirdParty INTERFACE
+    ${CMAKE_SOURCE_DIR}/Libraries/glad/include
+    ${CMAKE_SOURCE_DIR}/Libraries/GLFW/include
+    ${CMAKE_SOURCE_DIR}/Libraries/imgui
+    ${CMAKE_SOURCE_DIR}/Libraries/imgui/backends
+)
+
+target_link_libraries(ThirdParty INTERFACE
+    glfw
+    glad
+    imgui
+    OpenGL::GL
+    Toolbox
+    Core
+)
+
+# Engine project
+message(STATUS "Adding MirageEngine project...")
+add_subdirectory(MirageEngine)
+
+# Editor project
+message(STATUS "Adding MirageEngineEditor project...")
+add_subdirectory(MirageEngineEditor)
+
+# Final Log
+message(STATUS "")
+message(STATUS "========================================")
+message(STATUS "${PROJECT_NAME} Configuration Complete")
+message(STATUS "========================================")
+message(STATUS "Build Directory: ${MY_BIN_OUTPUT_DIR}")
+message(STATUS "Build Engine: ${BUILD_ENGINE}")
+message(STATUS "Build Editor: ${BUILD_EDITOR}")
+message(STATUS "Build Type: ${CMAKE_BUILD_TYPE}")
+message(STATUS "Compiler: ${CMAKE_CXX_COMPILER_ID}")
+message(STATUS "C++ Standard: ${CMAKE_CXX_STANDARD}")
+message(STATUS "========================================")

@@ -1,3 +1,6 @@
-[submodule "MirageEngine/glfw"]
-	path = MirageEngine/glfw
+[submodule "Libraries/GLFW"]
+	path = Libraries/GLFW
 	url = https://github.com/glfw/glfw.git
+[submodule "Libraries/imgui"]
+	path = Libraries/imgui
+	url = https://github.com/ocornut/imgui.git
