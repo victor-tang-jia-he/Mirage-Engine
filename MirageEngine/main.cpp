@@ -14,8 +14,6 @@
 #include <imgui_impl_glfw.h>
 #include <imgui_impl_opengl3.h>      // This needs glad to be already included!
 
-#include "main.h"
-
 int main()
 {
 	glfwInit();

@@ -1,10 +1,5 @@
 ﻿# Project executable
-# Editor executable (with WIN32 to hide console on Windows)
-if(WIN32)
-    add_executable(MirageEngineEditor WIN32)
-else()
-    add_executable(MirageEngineEditor)
-endif()
+add_executable(MirageEngineEditor)
 
 # Sources
 file(GLOB_RECURSE MIRAGE_ENGINE__EDITOR_SOURCE 

@@ -1,14 +1,14 @@
 ﻿# Project executable
-add_executable(MirageEngine)
+add_executable(MirageEngine "main.cpp")
 
 # Sources
-file(GLOB_RECURSE MIRAGE_ENGINE_SOURCE
-	"*.cpp"
-	"*.h"
-	"*.hpp"
-)
-
-target_sources(MirageEngine PRIVATE ${MIRAGE_ENGINE_SOURCE})
+# file(GLOB_RECURSE MIRAGE_ENGINE_SOURCE
+# 	"*.cpp"
+# 	"*.h"
+# 	"*.hpp"
+# )
+# 
+# target_sources(MirageEngine PRIVATE ${MIRAGE_ENGINE_SOURCE})
 
 # Include directories
 target_include_directories(MirageEngine PRIVATE

@@ -27,6 +27,11 @@ message(STATUS "Adding external libraries...")
 # ============================================================================
 # GLFW
 # ============================================================================
+# option(BUILD_SHARED_LIBS "Build shared libraries" OFF)
+# option(GLFW_BUILD_EXAMPLES "Build the GLFW example programs" ${GLFW_STANDALONE})
+# option(GLFW_BUILD_TESTS "Build the GLFW test programs" ${GLFW_STANDALONE})
+# option(GLFW_BUILD_DOCS "Build the GLFW documentation" ON)
+# option(GLFW_INSTALL "Generate installation target" ON)
 add_subdirectory(Libraries/GLFW GLFW)
 
 # ============================================================================
@@ -65,12 +70,11 @@ set(IMGUI_ALL_SOURCES ${IMGUI_CORE_SOURCES} ${IMGUI_BACKEND_SOURCES})
 add_library(imgui STATIC ${IMGUI_ALL_SOURCES})
 
 # Add include directories
-target_include_directories(imgui PUBLIC
+target_include_directories(imgui PRIVATE
     ${CMAKE_SOURCE_DIR}/Libraries/imgui
     ${CMAKE_SOURCE_DIR}/Libraries/imgui/backends
     ${CMAKE_SOURCE_DIR}/Libraries/glad/include  # For glad headers
 )
-
 # Link dependencies to ImGui
 find_package(OpenGL REQUIRED)
 target_link_libraries(imgui PRIVATE
@@ -83,6 +87,12 @@ target_link_libraries(imgui PRIVATE
 target_compile_definitions(imgui PRIVATE
     IMGUI_IMPL_OPENGL_LOADER_GLAD
 )
+
+# ============================================================================
+# System Engine Library (Core)
+# ============================================================================
+add_subdirectory(${CMAKE_SOURCE_DIR}/MirageEngine/Engine/Core)
+add_subdirectory(${CMAKE_SOURCE_DIR}/MirageEngine/Tools/Toolbox3D)
 
 # Create Convenience Interface for All Dependencies
 add_library(ThirdParty INTERFACE)
@@ -99,6 +109,8 @@ target_link_libraries(ThirdParty INTERFACE
     glad
     imgui
     OpenGL::GL
+    Toolbox
+    Core
 )
 
 # Engine project
