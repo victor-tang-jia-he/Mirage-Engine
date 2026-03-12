@@ -30,8 +30,7 @@ file(GLOB_RECURSE TOOLBOX_HEADERS
 )
 add_library(Toolbox STATIC
     ${TOOLBOX_SOURCES}
-    ${TOOLBOX_HEADERS}
-)
+    ${TOOLBOX_HEADERS})
 target_include_directories(Toolbox
     PUBLIC
         ${CMAKE_CURRENT_SOURCE_DIR}/include
