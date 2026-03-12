@@ -18,5 +18,7 @@ namespace MirageRHI
 
 		OpenGLPipeline& API_OpenGL() override { return *this; }
 		GLuint GetProgramGLHandle() const { return program; }
+
+		void SetLayout();
 	};
 }

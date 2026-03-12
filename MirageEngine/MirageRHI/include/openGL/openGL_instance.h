@@ -6,9 +6,11 @@ namespace MirageRHI
 {
     class OpenGLInstance : public IInstance
     {
+        std::string name;
+
     public:
-        void Create() override;
-        void Destroy() override;
+        void Create(std::string _name) override;
+        void Destroy() override {}
 
         OpenGLInstance& API_OpenGL() override { return *this; }
     };
