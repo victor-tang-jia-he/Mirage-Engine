@@ -13,12 +13,19 @@ namespace MirageRHI
 		GLuint vao = 0;
 
 	public:
-		void Create(const char* vertSrc, const char* fragSrc) override;
+		void Create(const char* vertPath, const char* fragPath) override;
 		void Destroy() override;
 
 		OpenGLPipeline& API_OpenGL() override { return *this; }
 		GLuint GetProgramGLHandle() const { return program; }
 
+		bool SetVertexShader(const std::string& path);
+		bool SetFragmentShader(const std::string& path);
+		bool Link();
+
 		void SetLayout();
+
+	private:
+		bool CompileShader(const std::string& path, unsigned int type, unsigned int& shaderOut);
 	};
 }
