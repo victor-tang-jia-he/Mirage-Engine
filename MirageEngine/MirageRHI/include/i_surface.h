@@ -9,7 +9,7 @@ namespace MirageRHI
 	public:
 		virtual ~ISurface() = default;
 
-		virtual void Create(GLFWwindow* window) = 0;
+		virtual void Create(GLFWwindow* window, float _width, float _hight) = 0;
 		virtual void Destroy() = 0;
 
 		virtual OpenGLSurface& API_OpenGL() { throw std::runtime_error("Bad API Call : object is not an OpenGLSurface"); }

@@ -9,13 +9,14 @@ namespace MirageRHI
 	public:
 		virtual ~ISwapChain() = default;
 
-		virtual void Create(IDevice* device, IInstance* instance, ISurface* surface, GLFWwindow* window) = 0;
-		virtual void Destroy(IDevice* device) = 0;
+		virtual void Create() = 0;
+		virtual void Destroy() = 0;
 
-		//virtual VulkanSwapChain& API_Vulkan() { throw std::runtime_error("Bad API Call : object is not a VulkanSwapChain"); }
+		virtual OpenGLSwapChain& API_OpenGL() { throw std::runtime_error("Bad API Call : object is not an OpenGLSwapChain"); }
 
-		virtual void RecreateSwapchain(IDevice* device, IInstance* instance, ISurface* surface, IFramebuffers* framebuffers, IRenderPass* renderPass, GLFWwindow* window) = 0;
+		virtual void IsScreenResized(ISurface* surface) = 0;
+		virtual void RecreateSwapchain(ISurface* surface, int newWidth, int newHight) = 0;
 
-		virtual uint32_t AcquireNextImage(uint32_t currentFrame, IDevice* device) = 0;
+		virtual uint32_t AcquireNextImage() = 0;
 	};
 }
