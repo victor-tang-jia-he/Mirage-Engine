@@ -10,8 +10,8 @@ int main()
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-	float width = 1920;
-	float height = 1080;
+	int width = 1920;
+	int height = 1080;
 
 	GLFWwindow* window = glfwCreateWindow(width, height, "Mirage Engine", nullptr, nullptr);
 	if (!window) {
