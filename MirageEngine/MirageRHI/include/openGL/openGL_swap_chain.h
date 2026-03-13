@@ -17,5 +17,6 @@ namespace MirageRHI
         void RecreateSwapchain(ISurface* surface, int newWidth, int newHight) override;
 
         uint32_t AcquireNextImage() override {}
+        void Present(OpenGLSurface surface);
     };
 }

@@ -22,5 +22,6 @@ namespace MirageRHI
 		virtual void BeginRenderPass(IRenderPass* renderPass) = 0;
 		virtual void EndRenderPass(IRenderPass* renderPass) = 0;
 		virtual void DrawIndexed(uint32_t indexCount) = 0;
+		virtual void SubmitAndPresent(ISwapChain* swapchain, ISurface* surface) = 0;
 	};
 }

@@ -15,3 +15,9 @@ void MirageRHI::OpenGLSwapChain::RecreateSwapchain(ISurface* surface, int newWid
     surface->API_OpenGL().SetSize(newWidth, newHight);
     glViewport(0, 0, newWidth, newHight);
 }
+
+void MirageRHI::OpenGLSwapChain::Present(OpenGLSurface surface)
+{
+    glfwSwapBuffers(surface.GetContextGLHandle);
+}
+

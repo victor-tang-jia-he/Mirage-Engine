@@ -28,5 +28,8 @@ namespace MirageRHI
 
         // Draw Binded Buffers
         void DrawIndexed(uint32_t indexCount) override;
+
+        // Swap Buffers
+        void SubmitAndPresent(ISwapChain* swapchain, ISurface* surface) override;
     };
 }
