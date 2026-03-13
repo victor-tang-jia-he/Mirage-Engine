@@ -1,6 +1,6 @@
 ﻿// MirageEngine.cpp : Defines the entry point for the application.
 //
-
+  
 #include "Include/UIWrapper.h"
 #include "../Libraries/GLFW/deps/glad/gl.h"
 #include "GLFW/glfw3.h"

@@ -7,7 +7,7 @@ file(GLOB_RECURSE MIRAGE_ENGINE__EDITOR_SOURCE
     "*.c"
 )
 
-target_sources(MirageEngineEditor PRIVATE ${MIRAGE_ENGINE__EDITOR_SOURCE} "Include/IPanel.h" )
+target_sources(MirageEngineEditor PRIVATE ${MIRAGE_ENGINE__EDITOR_SOURCE} "Include/IPanel.h"  "Include/Explorer.h" "Source/Explorer.cpp" "Include/Console.h" "Source/Console.cpp")
 
 # Include directories
 target_include_directories(MirageEngineEditor PRIVATE
