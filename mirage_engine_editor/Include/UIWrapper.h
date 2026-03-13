@@ -1,6 +1,8 @@
 #pragma once
 #include <string>
-//#include "glm/glm.hpp"
+#include "vector3.h"
+
+namespace Math = Bwt::Core::Maths;
 
 namespace Mirage
 {
@@ -19,7 +21,7 @@ namespace Mirage
 
 		// Widgets
 		static void CreateSeparatorText(const char* separatorName);
-		//static void CreateColorPicker(glm::vec3* color);
+		static void CreateColorPicker(Math::Vector3* color);
 
 		static bool CreateSliderInt(const char* sliderName, int* value, int vMin, int vMax);
 		static bool CreateSliderFloat(const char* sliderName, float* value, float vMin, float vMax);

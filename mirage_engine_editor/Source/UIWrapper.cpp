@@ -1,9 +1,12 @@
 #include "../Include/UIWrapper.h"
+#include "vector3.h"
 
 #include "imgui.h"
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_opengl3.h"
 #include "GLFW/glfw3.h"
+
+namespace Math = Bwt::Core::Maths;
 
 namespace Mirage
 {
@@ -69,6 +72,17 @@ namespace Mirage
 	void UIWrapper::CreateSeparatorText(const char* separatorName)
 	{
 		ImGui::SeparatorText(separatorName);
+	}
+
+	void UIWrapper::CreateColorPicker(Math::Vector3* color)
+	{
+		ImVec4 Color(color->x / 255.0f, color->y / 255.0f, color->z / 255.0f, 1.0f);
+		ImVec4 refVecColor(1.0f, 0.0f, 1.0f, 1.0f);
+		ImGuiColorEditFlags color_picker_flags = ImGuiColorEditFlags_NoAlpha;
+		ImGuiColorEditFlags base_flags = ImGuiColorEditFlags_None;
+
+		ImGuiColorEditFlags flags = base_flags | color_picker_flags;
+		ImGui::ColorPicker4("MyColor##4", (float*)&Color, flags, false ? &refVecColor.x : NULL);
 	}
 
 	bool UIWrapper::CreateSliderInt(const char* sliderName, int* value, int vMin, int vMax)
