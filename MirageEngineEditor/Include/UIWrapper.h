@@ -1,5 +1,6 @@
 #pragma once
 #include <string>
+//#include "glm/glm.hpp"
 
 namespace Mirage
 {
@@ -18,6 +19,7 @@ namespace Mirage
 
 		// Widgets
 		static void CreateSeparatorText(const char* separatorName);
+		//static void CreateColorPicker(glm::vec3* color);
 
 		static bool CreateSliderInt(const char* sliderName, int* value, int vMin, int vMax);
 		static bool CreateSliderFloat(const char* sliderName, float* value, float vMin, float vMax);

@@ -8,7 +8,7 @@ file(GLOB_RECURSE MIRAGE_ENGINE_EDITOR_SOURCE
 	"*.hpp"
 )
 
-target_sources(MirageEngineEditor PRIVATE ${MIRAGE_ENGINE_EDITOR_SOURCE})
+target_sources(MirageEngineEditor PRIVATE ${MIRAGE_ENGINE_EDITOR_SOURCE} "Include/Inspector.h" "Source/Inspector.cpp" "Include/Game.h" "Source/Game.cpp" "Include/Hierarchy.h" "Source/Hierarchy.cpp")
 
 # Include directories
 target_include_directories(MirageEngineEditor PRIVATE

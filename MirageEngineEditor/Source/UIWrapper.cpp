@@ -14,6 +14,9 @@ namespace Mirage
 		ImGuiIO& io = ImGui::GetIO();
 		io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
 		io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;
+		io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
+		//io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
+		ImGui::StyleColorsDark();
 
 		GLFWwindow* window = static_cast<GLFWwindow*>(windowHandler);
 		ImGui_ImplGlfw_InitForOpenGL(window, true);
@@ -32,6 +35,7 @@ namespace Mirage
 		ImGui_ImplOpenGL3_NewFrame();
 		ImGui_ImplGlfw_NewFrame();
 		ImGui::NewFrame();
+		ImGui::DockSpaceOverViewport(0, ImGui::GetMainViewport(), ImGuiDockNodeFlags_PassthruCentralNode);
 		ImGui::ShowDemoWindow();
 	}
 
@@ -39,6 +43,17 @@ namespace Mirage
 	{
 		ImGui::Render();
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
+		//ImGuiIO& io = ImGui::GetIO();
+		//if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
+		//{
+		//	GLFWwindow* backup_current_context = glfwGetCurrentContext();
+
+		//	ImGui::UpdatePlatformWindows();
+		//	ImGui::RenderPlatformWindowsDefault();
+
+		//	glfwMakeContextCurrent(backup_current_context);
+		//}
 	}
 
 	bool UIWrapper::BeginWindow(const char* windowName, bool* isOpen)

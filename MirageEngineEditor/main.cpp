@@ -4,8 +4,7 @@
 #include "main.h"
 #include "Include/UIWrapper.h"
 #include "../Libraries/GLFW/deps/glad/gl.h"
-#include "../Libraries/GLFW/include/GLFW/glfw3.h"
-
+#include "GLFW/glfw3.h"
 
 int main()
 {
