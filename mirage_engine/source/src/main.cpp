@@ -1,23 +1,22 @@
-﻿// MirageEngine.cpp : Defines the entry point for the application.
-//
-
-// 1. OpenGL loader FIRST - always before any OpenGL headers
-#include <glad/glad.h>              // ⬅️ MUST BE FIRST!
-
-// 2. GLFW (may include OpenGL headers, but glad is already loaded)
+﻿// OpenGL
+#include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
-// 3. ImGui core
+// ImGUI
 #include <imgui.h>
 
-// 4. ImGui backends (depend on both GLFW and OpenGL)
+// ImGUI Backends
 #include <imgui_impl_glfw.h>
-#include <imgui_impl_opengl3.h>      // This needs glad to be already included!
+#include <imgui_impl_opengl3.h>
 
-#include "main.h"
+// Includes
+#include "test_engine.hpp"
 
 int main()
 {
+	TestEngine testEngine;
+	testEngine.PrintTest();
+
 	glfwInit();
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
