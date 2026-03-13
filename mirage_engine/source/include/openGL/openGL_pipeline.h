@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../i_pipeline.h"
+#include "i_pipeline.h"
 
 namespace MirageRHI
 {
@@ -26,6 +26,13 @@ namespace MirageRHI
 
 		// Applies the vertex attributes
 		void SetLayout();
+
+		void SetInt(const std::string& name, int value) const;
+		void SetFloat(const std::string& name, float value) const;
+		void SetVec3(const std::string& name, const Vector3& value) const;
+		void SetMat3(const std::string& name, const Matrix3& mat) const;
+		void SetMat4(const std::string& name, const Matrix4& mat) const;
+		void SetBool(const std::string& name, bool value)const;
 
 	private:
 		bool CompileShader(const std::string& path, unsigned int type, unsigned int& shaderOut);

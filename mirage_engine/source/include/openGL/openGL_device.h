@@ -1,6 +1,6 @@
 #pragma once
 
-#include "..\i_device.h"
+#include "i_device.h"
 
 namespace MirageRHI
 {
@@ -10,6 +10,8 @@ namespace MirageRHI
         // TODO : Add more ?
         void Create() override {}
         void Destroy() override {}
+
+        void WaitIdle() override {}
 
         GLuint CreateBuffer();
         GLuint CreateTexture();

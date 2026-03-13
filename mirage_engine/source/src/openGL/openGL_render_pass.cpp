@@ -1,11 +1,11 @@
 #include "openGL/openGL_render_pass.h"
 
-void MirageRHI::OpenGLRenderPass::Create(float r, float g, float b, float a, float depth)
+void MirageRHI::OpenGLRenderPass::Create(Vector4 color, float depth)
 {
-    clearColor[0] = r;
-    clearColor[1] = g;
-    clearColor[2] = b;
-    clearColor[3] = a;
+    clearColor[0] = color.x;
+    clearColor[1] = color.y;
+    clearColor[2] = color.z;
+    clearColor[3] = color.w;
     clearDepth = depth;
 }
 

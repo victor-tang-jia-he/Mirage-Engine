@@ -135,7 +135,7 @@ inline Matrix4 Matrix4::operator+(const Matrix4& other) const
 }
 inline Matrix4 Matrix4::operator-(const Matrix4& other) const
 {
-	return Matrix4();
+	return AddMatrix4(other.Opposed());
 }
 inline Matrix4& Matrix4::operator*=(const Matrix4& other)
 {

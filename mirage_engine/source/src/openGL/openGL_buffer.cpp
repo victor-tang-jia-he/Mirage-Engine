@@ -1,4 +1,4 @@
-#include "../../include/openGL/openGL_buffer.h"
+#include "openGL/openGL_buffer.h"
 
 void MirageRHI::OpenGLBuffer::Create(const void* data, size_t size)
 {

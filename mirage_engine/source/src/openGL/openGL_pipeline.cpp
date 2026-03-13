@@ -1,4 +1,4 @@
-#include "../../include/openGL/openGL_pipeline.h"
+#include "openGL/openGL_pipeline.h"
 
 void MirageRHI::OpenGLPipeline::Create(const char* vertPath, const char* fragPath)
 {
@@ -9,8 +9,12 @@ void MirageRHI::OpenGLPipeline::Create(const char* vertPath, const char* fragPat
     glAttachShader(program, vertexShader);
     glAttachShader(program, fragmentShader);
     glLinkProgram(program);
+    glUseProgram(program);
 
     glGenVertexArrays(1, &vao);
+    glBindVertexArray(vao);
+
+    Link();
 }
 
 void MirageRHI::OpenGLPipeline::Destroy()
@@ -67,6 +71,47 @@ void MirageRHI::OpenGLPipeline::SetLayout()
 
     glEnableVertexAttribArray(2);
     glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, uv));
+}
+
+void MirageRHI::OpenGLPipeline::SetInt(const std::string& name, int value) const
+{
+    glUniform1i(glGetUniformLocation(program, name.c_str()), value);
+}
+
+void MirageRHI::OpenGLPipeline::SetFloat(const std::string& name, float value) const
+{
+    glUniform1f(glGetUniformLocation(program, name.c_str()), value);
+}
+
+void MirageRHI::OpenGLPipeline::SetVec3(const std::string& name, const Vector3& value) const
+{
+    int location = glGetUniformLocation(program, name.c_str());
+    float array[3];
+    array[0] = value.x;
+    array[1] = value.y;
+    array[2] = value.z;
+    glUniform3fv(location, 1, array);
+}
+
+void MirageRHI::OpenGLPipeline::SetMat3(const std::string& name, const Matrix3& mat) const
+{
+    int location = glGetUniformLocation(program, name.c_str());
+    glUniformMatrix3fv(location, 1, GL_TRUE, mat.m[0]);
+}
+
+void MirageRHI::OpenGLPipeline::SetMat4(const std::string& name, const Matrix4& mat) const
+{
+    int location = glGetUniformLocation(program, name.c_str());
+    glUniformMatrix4fv(location, 1, GL_FALSE, mat.m[0]);
+}
+
+void MirageRHI::OpenGLPipeline::SetBool(const std::string& name, bool value) const
+{
+    GLint location = glGetUniformLocation(program, name.c_str());
+    if (location == -1) {
+        std::cerr << "Warning: uniform '" << name << "' doesn't exist or is not used.\n";
+    }
+    glUniform1i(location, static_cast<int>(value));
 }
 
 bool MirageRHI::OpenGLPipeline::CompileShader(const std::string& path, unsigned int type, unsigned int& shaderOut)

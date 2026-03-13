@@ -1,4 +1,4 @@
-#include "../../include/openGL/openGL_device.h"
+#include "openGL/openGL_device.h"
 
 GLuint MirageRHI::OpenGLDevice::CreateBuffer()
 {

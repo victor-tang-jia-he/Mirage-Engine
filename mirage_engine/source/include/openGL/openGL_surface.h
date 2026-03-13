@@ -1,6 +1,6 @@
 #pragma once
 
-#include "..\i_surface.h"
+#include "i_surface.h"
 
 namespace MirageRHI
 {
@@ -10,17 +10,17 @@ namespace MirageRHI
     private:
         GLFWwindow* context = nullptr;
         int width;
-        int hight;
+        int height;
 
     public:
-        void Create(GLFWwindow* _context, int _width, int _hight) override;
+        void Create(GLFWwindow* _context, int _width, int _height) override;
         void Destroy() override {}
 
         OpenGLSurface& API_OpenGL() override { return *this; }
         GLFWwindow* GetContextGLHandle() const { return context; }
         int GetWidth() const { return width; }
-        int GetHight() const { return hight; }
+        int GetHeight() const { return height; }
 
-        void SetSize(int _width, int _hight);
+        void SetSize(int _width, int _height);
     };
 }

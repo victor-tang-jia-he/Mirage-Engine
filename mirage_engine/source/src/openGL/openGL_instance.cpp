@@ -1,4 +1,4 @@
-#include "../../include/openGL/openGL_instance.h"
+#include "openGL/openGL_instance.h"
 
 void MirageRHI::OpenGLInstance::Create(std::string _name)
 {

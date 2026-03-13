@@ -1,6 +1,6 @@
 #pragma once
 
-#include "..\i_buffer.h"
+#include "i_buffer.h"
 
 namespace MirageRHI
 {
@@ -16,6 +16,5 @@ namespace MirageRHI
 
         OpenGLBuffer& API_OpenGL() override { return *this; }
         GLuint GetGLHandle() const { return buffer; }
-        // TODO : Add Texture support
 	};
 }

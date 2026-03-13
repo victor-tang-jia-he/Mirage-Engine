@@ -1,6 +1,6 @@
 #pragma once
 
-#include "..\i_command_buffer.h"
+#include "i_command_buffer.h"
 
 namespace MirageRHI
 {
@@ -19,8 +19,10 @@ namespace MirageRHI
 
         // Binding Functions
         void BindPipeline(IPipeline* pipeline) override;
-        void BindVertexBuffer(IBuffer* buffer) override;
-        void BindIndexBuffer(IBuffer* buffer) override;
+        void BindBuffers(IBuffer* indexBuffer, IBuffer* vertexBuffer, IPipeline* pipeline) override;
+        void BindVertexBuffer(OpenGLBuffer buffer);
+        void BindIndexBuffer(OpenGLBuffer buffer);
+        void SetVertAttrLayout(OpenGLPipeline pipeline);
 
         // Clear Framebuffers
         void BeginRenderPass(IRenderPass* renderPass) override;

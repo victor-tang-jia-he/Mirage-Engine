@@ -1,6 +1,6 @@
 #pragma once
 
-#include "..\i_instance.h"
+#include "i_instance.h"
 
 namespace MirageRHI
 {

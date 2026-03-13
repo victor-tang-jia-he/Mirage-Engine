@@ -1,6 +1,6 @@
 #pragma once
 
-#include "..\i_render_pass.h"
+#include "i_render_pass.h"
 
 namespace MirageRHI
 {
@@ -13,7 +13,7 @@ namespace MirageRHI
         GLbitfield clearMask = GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT;
 
     public:
-        void Create(float r, float g, float b, float a, float depth) override; // TODO: Change floats to quaternions
+        void Create(Vector4 color, float depth) override;
         void Destroy() override {}
 
         OpenGLRenderPass& API_OpenGL() override { return *this; }
