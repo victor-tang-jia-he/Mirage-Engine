@@ -1,10 +1,8 @@
 ﻿#pragma once
 
 #include "vector2.h"
-#include <cmath>
-#include <ostream>
 
-namespace Bwt
+namespace MirageEngine
 {
 	namespace Core
 	{
@@ -69,6 +67,7 @@ namespace Bwt
 				/// <returns>The resulting vector after addition of the scalar.</returns>
 				Vector3 ProductScalar(float scalar) const;
 
+				bool NearlyEqual(const Vector3& other, float epsilon = EPSILON) const;
 
 				// -------------------------------------------------------------------------------- //	
 				// Geometric & standard calculations
@@ -177,87 +176,39 @@ namespace Bwt
 				/// </summary>
 				/// <param name="">None</param>
 				/// <returns>None</returns>
-				inline void Print() const
-				{
-					std::cout << "x : " << x << " y : " << y << " z : " << z << "\n";
-				}
+				void Print() const;
 
-				std::array<float,3> AsList() const;
+				std::array<float, 3> AsList() const;
 
 				// -------------------------------------------------------------------------------- //	
 				// Overload operators inline
 				// -------------------------------------------------------------------------------- //
 
-				inline Vector3 operator+(const Vector3& vec)
-				{
-					return AddVector3(vec);
-				}
-				inline Vector3 operator-(const Vector3& vec)
-				{
-					return AddVector3(vec.GetOpposed());
-				}
-				inline Vector3 operator*(const Vector3& vec)
-				{
-					return ElementWiseProduct(vec);
-				}
-				inline Vector3 operator/(const Vector3& vec)
-				{
-					assert(vec.x != 0 && vec.y != 0 && vec.z != 0 && "Division by zero in Vector3D");
-					return Vector3(x / vec.x, y / vec.y, z / vec.z);
-				}
-				inline Vector3& operator+=(const Vector3& vec)
-				{
-					x += vec.x;
-					y += vec.y;
-					z += vec.z;
-					return *this;
-				}
-				inline Vector3& operator-=(const Vector3& vec)
-				{
-					x -= vec.x;
-					y -= vec.y;
-					z -= vec.z;
-					return *this;
-				}
-				inline Vector3& operator*=(const Vector3& vec)
-				{
-					x *= vec.x;
-					y *= vec.y;
-					z *= vec.z;
-					return *this;
-				}
-				inline Vector3& operator/=(const Vector3& vec)
-				{
-					assert(vec.x != 0 && vec.y != 0 && vec.z != 0 && "Division by zero in Vector3D");
-					x /= vec.x;
-					y /= vec.y;
-					z /= vec.z;
-					return *this;
-				}
+				Vector3 operator+(const Vector3& vec) const;
+				Vector3 operator-(const Vector3& vec) const;
+				Vector3 operator*(const Vector3& vec) const;
+				Vector3 operator/(const Vector3& vec) const;
+				Vector3& operator+=(const Vector3& vec);
+				Vector3& operator-=(const Vector3& vec);
+				Vector3& operator*=(const Vector3& vec);
+				Vector3& operator/=(const Vector3& vec);
 
-				inline Vector3 operator*(float scalar)
-				{
-					return Vector3(x * scalar, y * scalar, z * scalar);
-				}
+				Vector3 operator*(float scalar) const;
+				Vector3 operator/(float scalar) const;
+				Vector3& operator*=(float scalar);
+				Vector3& operator/=(float scalar);
 
-				inline Vector3 operator-() const
-				{
-					return Vector3{ -x, -y, -z };
-				}
+				Vector3 operator-() const;
 
+				explicit operator Vector2() const;
 
-				inline float& operator[](int index)
-				{
-					assert(index >= 0 && index < 3 && "Index out of range in Vector3D");
-					return (index == 0) ? x : (index == 1) ? y : z;
-				}
-				inline const float& operator[](int index) const
-				{
-					assert(index >= 0 && index < 3 && "Index out of range in Vector3D");
-					return (index == 0) ? x : (index == 1) ? y : z;
-				}
+				float& operator[](int index);
+				const float& operator[](int index) const;
+
+				bool operator==(const Vector3& other) const;
+				bool operator!=(const Vector3& other) const;
 			};
-
+			Vector3 operator*(float scalar, const Vector3& vec);
 			std::ostream& operator<<(std::ostream& os, const Vector3& vec);
 		}
 	}

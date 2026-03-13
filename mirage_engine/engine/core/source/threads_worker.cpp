@@ -3,13 +3,13 @@
 #include <mutex>
 #include <functional>
 
-Bwt::Core::ThreadWorker::ThreadWorker(uint64_t threadId, ThreadPool* threadpool)
+MirageEngine::Core::ThreadWorker::ThreadWorker(uint64_t threadId, ThreadPool* threadpool)
 	:m_threadId(threadId), m_threadPool(threadpool)
 {
 	m_thread = std::make_unique<std::thread>(&ThreadWorker::Work, this);
 }
 
-Bwt::Core::ThreadWorker::~ThreadWorker()
+MirageEngine::Core::ThreadWorker::~ThreadWorker()
 {
 	if (m_thread && m_thread->joinable()) 
 	{
@@ -17,7 +17,7 @@ Bwt::Core::ThreadWorker::~ThreadWorker()
 	}
 }
 
-void Bwt::Core::ThreadWorker::Work()
+void MirageEngine::Core::ThreadWorker::Work()
 {
     while (true)
     {
@@ -60,25 +60,25 @@ void Bwt::Core::ThreadWorker::Work()
     }
 }
 
-void Bwt::Core::ThreadWorker::Join()
+void MirageEngine::Core::ThreadWorker::Join()
 {
     if (m_thread->joinable()) m_thread->join();
 }
 
-std::shared_ptr<Bwt::Core::Job> Bwt::Core::ThreadWorker::GetNextJob()
+std::shared_ptr<MirageEngine::Core::Job> MirageEngine::Core::ThreadWorker::GetNextJob()
 {
     if (!m_threadPool->m_queuesHigh.empty()) {
-        std::shared_ptr< Bwt::Core::Job> job = m_threadPool->m_queuesHigh.front();
+        std::shared_ptr< MirageEngine::Core::Job> job = m_threadPool->m_queuesHigh.front();
         m_threadPool->m_queuesHigh.pop_front();
         return job;
     }
     if (!m_threadPool->m_queuesNormal.empty()) {
-        std::shared_ptr< Bwt::Core::Job> job = m_threadPool->m_queuesNormal.front();
+        std::shared_ptr< MirageEngine::Core::Job> job = m_threadPool->m_queuesNormal.front();
         m_threadPool->m_queuesNormal.pop_front();
         return job;
     }
     if (!m_threadPool->m_queuesLow.empty()) {
-        std::shared_ptr< Bwt::Core::Job> job = m_threadPool->m_queuesLow.front();
+        std::shared_ptr< MirageEngine::Core::Job> job = m_threadPool->m_queuesLow.front();
         m_threadPool->m_queuesLow.pop_front();
         return job;
     }

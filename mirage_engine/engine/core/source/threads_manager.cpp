@@ -3,7 +3,7 @@
 
 DEFINE_LOG_CATEGORY(THREAD)
 
-Bwt::Core::ThreadPool::ThreadPool(size_t num_threads)
+MirageEngine::Core::ThreadPool::ThreadPool(size_t num_threads)
 {
 	if (num_threads > 1000)
 		num_threads = 1000;
@@ -17,12 +17,12 @@ Bwt::Core::ThreadPool::ThreadPool(size_t num_threads)
 	LOG(logDebug, THREAD, "Initializing ", num_threads, " threads.");
 }
 
-Bwt::Core::ThreadPool::~ThreadPool()
+MirageEngine::Core::ThreadPool::~ThreadPool()
 {	
 	ShutDown();
 }
 
-void Bwt::Core::ThreadPool::ShutDown()
+void MirageEngine::Core::ThreadPool::ShutDown()
 {
 	if (m_shutdownRequested.exchange(true))
 		return;

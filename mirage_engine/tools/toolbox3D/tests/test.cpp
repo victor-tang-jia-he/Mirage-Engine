@@ -1,8 +1,10 @@
 ﻿#include <gtest/gtest.h>
 #include <matrix4.h>
+#include <array>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
+using namespace MirageEngine::Core::Maths;
 // TEST TEMPLATEx
 //TEST(/*Name*/, /*Name*/)
 //{
@@ -1728,7 +1730,7 @@ TEST(Matrix4Test, Equal)
 }
 TEST(Matrix4Test, Diagonal)
 {
-	Vector3 newVec = Mat4.Diagonal();
+	Vector3 newVec(Mat4.Diagonal());
 	EXPECT_TRUE((newVec.x - glmMat4[0][0]) < EPSILON);
 	EXPECT_TRUE((newVec.y - glmMat4[1][1]) < EPSILON);
 	EXPECT_TRUE((newVec.z - glmMat4[2][2]) < EPSILON);
