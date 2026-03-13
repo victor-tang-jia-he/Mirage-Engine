@@ -3,8 +3,10 @@
 void MirageRHI::OpenGLInstance::Create(std::string _name)
 {
 	name = _name;
+    version = glGetString(GL_VERSION);
+    renderer = glGetString(GL_RENDERER);
+    vendor = glGetString(GL_VENDOR);
 
-    std::string version = glGetString(GL_VERSION);
     if (version) {
         DEBUG_LOG("OpenGL Version: %s.\n", version);
     }
@@ -12,17 +14,15 @@ void MirageRHI::OpenGLInstance::Create(std::string _name)
         DEBUG_THROW("Failed to get OpenGL Version!\n");
     }
 
-    std::string renderer = glGetString(GL_RENDERER);
     if (renderer) {
-        DEBUG_LOG("OpenGL Renderer: %s.\n", version);
+        DEBUG_LOG("OpenGL Renderer: %s.\n", renderer);
     }
     else {
         DEBUG_THROW("Failed to get OpenGL Renderer!\n");
     }
 
-    std::string vendor = glGetString(GL_VENDOR);
-    if (renderer) {
-        DEBUG_LOG("OpenGL Vendor: %s.\n", version);
+    if (vendor) {
+        DEBUG_LOG("OpenGL Vendor: %s.\n", vendor);
     }
     else {
         DEBUG_THROW("Failed to get OpenGL Vendor!\n");

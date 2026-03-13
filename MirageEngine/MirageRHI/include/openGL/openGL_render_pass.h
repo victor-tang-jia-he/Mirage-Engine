@@ -4,6 +4,7 @@
 
 namespace MirageRHI
 {
+    // Clear Framebuffer before drawing
     class OpenGLRenderPass : public IRenderPass
     {
     private:

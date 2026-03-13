@@ -19,10 +19,12 @@ namespace MirageRHI
 		OpenGLPipeline& API_OpenGL() override { return *this; }
 		GLuint GetProgramGLHandle() const { return program; }
 
+		// Shader Setup and linking
 		bool SetVertexShader(const std::string& path);
 		bool SetFragmentShader(const std::string& path);
 		bool Link();
 
+		// Applies the vertex attributes
 		void SetLayout();
 
 	private:
