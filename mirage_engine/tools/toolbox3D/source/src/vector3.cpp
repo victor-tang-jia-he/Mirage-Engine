@@ -168,6 +168,33 @@ Vector3& Vector3::operator/=(const Vector3& vec)
 	z /= vec.z;
 	return *this;
 }
+Vector3 Vector3::operator*(float scalar) const
+{
+	return ProductScalar(scalar);
+}
+Vector3 Vector3::operator/(float scalar) const
+{
+	assert(scalar != 0.0f && "Division par z¨¦ro");
+
+	float invScalar = (scalar != 0.0f) ? 1.0f / scalar : 0.0f;
+	return ProductScalar(invScalar);
+}
+Vector3& Vector3::operator*=(float scalar)
+{
+	x *= scalar;
+	y *= scalar;
+	z *= scalar;
+	return *this;
+}
+Vector3& Vector3::operator/=(float scalar)
+{
+	assert(scalar != 0.0f && "Division par z¨¦ro");
+	float invScalar = (scalar != 0.0f) ? 1.0f / scalar : 0.0f;
+	x *= invScalar;
+	y *= invScalar;
+	z *= invScalar;
+	return *this;
+}
 Vector3 Vector3::operator-() const
 {
 	return Vector3{ -x, -y, -z };

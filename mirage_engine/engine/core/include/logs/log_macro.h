@@ -6,7 +6,7 @@
 	extern LogCategory Name;
 
 #define DEFINE_LOG_CATEGORY(Name) \
-	LogCategory Name{#Name, true, Colors::DEFAULT};
+	LogCategory Name{#Name, true, nullptr};
 
 #define DEFINE_LOG_CATEGORY_WITH_COLOR(Name, Color) \
 	LogCategory Name{#Name, true, Color};

@@ -133,6 +133,34 @@ Vector4& Vector4::operator/=(const Vector4& vec)
 	w /= vec.w;
 	return *this;
 }
+Vector4 Vector4::operator*(float scalar) const
+{
+	return ProductScalar(scalar);
+}
+Vector4 Vector4::operator/(float scalar) const
+{
+	assert(scalar != 0.0f && "Division by zero in Vector4D");
+	float invScalar = (scalar != 0.0f) ? 1.0f / scalar : 0.0f;
+	return ProductScalar(invScalar);
+}
+Vector4& Vector4::operator*=(float scalar)
+{
+	x *= scalar;
+	y *= scalar;
+	z *= scalar;
+	w *= scalar;
+	return *this;
+}
+Vector4& Vector4::operator/=(float scalar)
+{
+	assert(scalar != 0.0f && "Division by zero in Vector4D");
+	float invScalar = (scalar != 0.0f) ? 1.0f / scalar : 0.0f;
+	x *= invScalar;
+	y *= invScalar;
+	z *= invScalar;
+	w *= invScalar;
+	return *this;
+}
 float& Vector4::operator[](int index)
 {
 	assert(index >= 0 && index < 4 && "Index out of range in Vector4D");

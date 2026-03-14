@@ -145,6 +145,30 @@ Vector2 Vector2::operator-() const
 {
 	return Vector2{ -x, -y };
 }
+Vector2 Vector2::operator*(float scalar) const
+{
+	return ProductScalar(scalar);
+}
+Vector2 Vector2::operator/(float scalar) const
+{
+	assert(scalar != 0.0f && "Division par z¨¦ro");
+	float invScalar = (scalar != 0.0f) ? 1.0f / scalar : 0.0f;
+	return ProductScalar(invScalar);
+}
+Vector2& Vector2::operator*=(float scalar)
+{
+	x *= scalar;
+	y *= scalar;
+	return *this;
+}
+Vector2& Vector2::operator/=(float scalar)
+{
+	assert(scalar != 0.0f && "Division par z¨¦ro");
+	float invScalar = (scalar != 0.0f) ? 1.0f / scalar : 0.0f;
+	x *= invScalar;
+	y *= invScalar;
+	return *this;
+}
 float& Vector2::operator[](int index)
 {
 	assert(index >= 0 && index < 2 && "Index out of range in Vector2D");

@@ -146,22 +146,6 @@ Matrix2 Matrix2::operator*(float n) const
 {
 	return ProductScalar(n);
 }
-Vector2 Vector2::operator/(float scalar) const
-{
-	assert(scalar != 0.0f && "Division par z¨¦ro");
-
-	float invScalar = (scalar != 0.0f) ? 1.0f / scalar : 0.0f;
-	return ProductScalar(invScalar);
-}
-Vector2& MirageEngine::Core::Maths::Vector2::operator/=(float scalar)
-{
-	assert(scalar != 0.0f && "Division par z¨¦ro");
-
-	float invScalar = (scalar != 0.0f) ? 1.0f / scalar : 0.0f;
-	x = x * invScalar;
-	y = y * invScalar;
-	return *this;
-}
 Matrix2& Matrix2::operator*=(float n)
 {
 	m[0][0] = m[0][0] * n;

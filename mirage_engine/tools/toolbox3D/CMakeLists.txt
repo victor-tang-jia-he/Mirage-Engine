@@ -6,18 +6,18 @@ option(TOOLBOX_BUILD_TESTS "Build tests" ON)
 include(FetchContent)
 
 # GLM (header-only library)
-message(STATUS "Fetching GLM...")
-FetchContent_Declare(
-	glm
-	GIT_REPOSITORY	https://github.com/g-truc/glm.git
-	GIT_TAG 	0af55ccecd98d4e5a8d1fad7de25ba429d60e863 #refs/tags/1.0.1
-)
-set(GLM_BUILD_TESTS OFF CACHE BOOL "" FORCE)
-FetchContent_MakeAvailable(glm)
-
-# Check GLM
-if(NOT glm_POPULATED)
-    message(FATAL_ERROR "GLM failed to populate")
+if(EXISTS "${CMAKE_SOURCE_DIR}/libraries/glm")
+    message(STATUS "Using local GLM")
+    add_subdirectory(${CMAKE_SOURCE_DIR}/libraries/glm ${CMAKE_BINARY_DIR}/glm)
+else()
+    message(STATUS "Fetching GLM...")
+    FetchContent_Declare(
+        glm
+        GIT_REPOSITORY https://github.com/g-truc/glm.git
+        GIT_TAG 0af55ccecd98d4e5a8d1fad7de25ba429d60e863
+        SOURCE_DIR ${CMAKE_SOURCE_DIR}/libraries/glm
+    )
+    FetchContent_MakeAvailable(glm)
 endif()
 
 # Main Toolbox
