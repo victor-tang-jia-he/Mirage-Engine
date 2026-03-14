@@ -2,7 +2,7 @@
 #include <memory>
 #include <thread>
 
-namespace Bwt
+namespace MirageEngine
 {
 	namespace Core
 	{

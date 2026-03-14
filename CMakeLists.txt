@@ -30,27 +30,23 @@ include(FetchContent)
 # GLFW
 # ============================================================================
 
-message(STATUS "Fetching GLFW...")
-
-FetchContent_Declare(
-    glfw
-    GIT_REPOSITORY https://github.com/glfw/glfw.git
-    GIT_TAG 3.4
-    SOURCE_DIR ${CMAKE_SOURCE_DIR}/libraries/GLFW
-)
-
-set(GLFW_BUILD_DOCS OFF CACHE BOOL "Build documentation" FORCE)
-set(GLFW_BUILD_TESTS OFF CACHE BOOL "Build tests" FORCE)
-set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "Build examples" FORCE)
-set(GLFW_INSTALL OFF CACHE BOOL "Generate installation target" FORCE)
-
-FetchContent_MakeAvailable(glfw)
-
-if(NOT glfw_POPULATED)
-    message(FATAL_ERROR "GLFW failed to populate")
+if(EXISTS "${CMAKE_SOURCE_DIR}/libraries/GLFW")
+    message(STATUS "Using local GLFW")
+    add_subdirectory(${CMAKE_SOURCE_DIR}/libraries/GLFW ${CMAKE_BINARY_DIR}/GLFW)
+else()
+    message(STATUS "Fetching GLFW...")
+    FetchContent_Declare(
+        glfw
+        GIT_REPOSITORY https://github.com/glfw/glfw.git
+        GIT_TAG 3.4
+        SOURCE_DIR ${CMAKE_SOURCE_DIR}/libraries/GLFW
+    )
+    set(GLFW_BUILD_DOCS OFF CACHE BOOL "Build documentation" FORCE)
+    set(GLFW_BUILD_TESTS OFF CACHE BOOL "Build tests" FORCE)
+    set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "Build examples" FORCE)
+    set(GLFW_INSTALL OFF CACHE BOOL "Generate installation target" FORCE)
+    FetchContent_MakeAvailable(glfw)
 endif()
-
-message(STATUS "GLFW fetched successfully")
 
 if(TARGET glfw)
     message(STATUS "GLFW target created successfully")
@@ -86,14 +82,12 @@ endif()
 # ============================================================================
 
 message(STATUS "Fetching ImGui...")
-
 FetchContent_Declare(
     imgui 
     GIT_REPOSITORY https://github.com/ocornut/imgui.git
     GIT_TAG "origin/docking"
     SOURCE_DIR ${CMAKE_SOURCE_DIR}/libraries/imgui
 )
-
 FetchContent_MakeAvailable(imgui)
 
 if(NOT imgui_POPULATED)

@@ -1,10 +1,5 @@
 ﻿#pragma once
-
-#include <cmath>
-#include <iostream>
-#include <cassert>
-#include <immintrin.h>
-#include <array>
+#include <ostream>
 
 #define PI 3.14159265359f
 #define EPSILON 1e-6f
@@ -14,7 +9,7 @@ inline float ToRad(float angle)
 	return angle * PI / 180.f;
 }
 
-namespace Bwt
+namespace MirageEngine
 {
 	namespace Core
 	{
@@ -74,6 +69,7 @@ namespace Bwt
 				/// <returns>The resulting vector after addition of the scalar.</returns>
 				Vector2 ProductScalar(float scalar) const;
 
+				bool NearlyEqual(const Vector2& other, float epsilon = EPSILON) const;
 
 				// -------------------------------------------------------------------------------- //	
 				// Geometric & standard calculations
@@ -173,10 +169,7 @@ namespace Bwt
 				/// </summary>
 				/// <param name="">None</param>
 				/// <returns>None</returns>
-				inline void Print() const
-				{
-					std::cout << "x : " << x << " y : " << y << "\n";
-				}
+				void Print() const;
 
 
 				// -------------------------------------------------------------------------------- //	
@@ -184,58 +177,30 @@ namespace Bwt
 				// -------------------------------------------------------------------------------- //
 
 
-				inline Vector2 operator+(const Vector2& vec)
-				{
-					return AddVector2(vec);
-				}
-				inline Vector2 operator-(const Vector2& vec)
-				{
-					return AddVector2(vec.GetOpposed());
-				}
-				inline Vector2 operator*(const Vector2& vec)
-				{
-					return ElementWiseProduct(vec);
-				}
-				inline Vector2 operator/(const Vector2& vec)
-				{
-					assert(vec.x != 0 && vec.y != 0 && "Division by zero in Vector2D");
-					return Vector2(x / vec.x, y / vec.y);
-				}
-				inline Vector2& operator+=(const Vector2& vec)
-				{
-					x += vec.x;
-					y += vec.y;
-					return *this;
-				}
-				inline Vector2& operator-=(const Vector2& vec)
-				{
-					x -= vec.x;
-					y -= vec.y;
-					return *this;
-				}
-				inline Vector2& operator*=(const Vector2& vec)
-				{
-					x *= vec.x;
-					y *= vec.y;
-					return *this;
-				}
-				inline Vector2& operator/=(const Vector2& vec)
-				{
-					x /= vec.x;
-					y /= vec.y;
-					return *this;
-				}
-				inline float& operator[](int index)
-				{
-					assert(index >= 0 && index < 2 && "Index out of range in Vector2D");
-					return (index == 0) ? x : y;
-				}
-				inline const float& operator[](int index) const
-				{
-					assert(index >= 0 && index < 2 && "Index out of range in Vector2D");
-					return (index == 0) ? x : y;
-				}
+				Vector2 operator+(const Vector2& vec) const;
+				Vector2 operator-(const Vector2& vec) const;
+				Vector2 operator*(const Vector2& vec) const;
+				Vector2 operator/(const Vector2& vec) const;
+				Vector2& operator+=(const Vector2& vec);
+				Vector2& operator-=(const Vector2& vec);
+				Vector2& operator*=(const Vector2& vec);
+				Vector2& operator/=(const Vector2& vec);
+
+				Vector2 operator*(float scalar) const;
+				Vector2 operator/(float scalar) const;
+				Vector2& operator*=(float scalar);
+				Vector2& operator/=(float scalar);
+
+				Vector2 operator-() const;
+
+				float& operator[](int index);
+				const float& operator[](int index) const;
+
+				bool operator==(const Vector2& other) const;
+				bool operator!=(const Vector2& other) const;
 			};
+			Vector2 operator*(float scalar, const Vector2& vec);
+			std::ostream& operator<<(std::ostream& os, const Vector2& vec);
 		}
 	}
 }

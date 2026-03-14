@@ -2,7 +2,7 @@
 
 #include "vector4.h"
 
-namespace Bwt
+namespace MirageEngine
 {
 	namespace Core
 	{
@@ -134,21 +134,11 @@ namespace Bwt
 
 				bool operator==(const Matrix2& other) const;
 
-				float* operator[](size_t row) 
-				{
-					assert(row < 2);
-					return m[row];
-				}
+				float* operator[](size_t row);
 
-				const float* operator[](size_t row) const 
-				{
-					assert(row < 2);
-					return m[row];
-				}
+				const float* operator[](size_t row) const;
 
 			};
 		}
 	}
 }
-
-#include "../Inline/Matrix2.inl"

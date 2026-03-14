@@ -11,7 +11,7 @@
 DECLARE_LOG_CATEGORY_EXTERN(THREAD)
 
 
-namespace Bwt
+namespace MirageEngine
 {
 	namespace Core
 	{
@@ -52,7 +52,7 @@ namespace Bwt
 
 				auto task = std::make_shared<std::packaged_task<ReturnType()>>(std::bind(std::forward<Func>(func), std::forward<Args>(args)...));
 
-				std::shared_ptr<Bwt::Core::Job> job = std::make_shared<Job>();
+				std::shared_ptr<MirageEngine::Core::Job> job = std::make_shared<Job>();
 				job->m_func = [task]() { (*task)(); };
 				job->m_priority = prio;
 
@@ -66,13 +66,13 @@ namespace Bwt
 					// enqueue task
 					switch (prio)
 					{
-					case Bwt::Core::JobPriority::High:
+					case MirageEngine::Core::JobPriority::High:
 						m_queuesHigh.push_back(job);
 						break;
-					case Bwt::Core::JobPriority::Normal:
+					case MirageEngine::Core::JobPriority::Normal:
 						m_queuesNormal.push_back(job);
 						break;
-					case Bwt::Core::JobPriority::Low:
+					case MirageEngine::Core::JobPriority::Low:
 						m_queuesLow.push_back(job);
 						break;
 					default:

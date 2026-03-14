@@ -1,8 +1,7 @@
 ﻿#pragma once
 
-#include <cassert>
 #include "vector3.h"
-namespace Bwt
+namespace MirageEngine
 {
 	namespace Core
 	{
@@ -62,7 +61,7 @@ namespace Bwt
 				/// <returns>The resulting vector after addition of the scalar.</returns>
 				Vector4 ProductScalar(float scalar) const;
 
-
+				bool NearlyEqual(const Vector4& other, float epsilon = EPSILON) const;
 				// -------------------------------------------------------------------------------- //	
 				// Geometric & standard calculations
 				// -------------------------------------------------------------------------------- //
@@ -134,85 +133,44 @@ namespace Bwt
 				/// </summary>
 				/// <param name="">None</param>
 				/// <returns>None</returns>
-				inline void Print() const
-				{
-					std::cout << "x : " << x << " y : " << y << " z : " << z << " w : " << w << "\n";
-				}
+				inline void Print() const;
 
+				std::array<float, 4> AsList() const;
 
 				// -------------------------------------------------------------------------------- //	
 				// Overload operators inline
 				// -------------------------------------------------------------------------------- //
 
-				inline Vector4 operator+(const Vector4& vec)
-				{
-					return AddVector4(vec);
-				}
-				inline Vector4 operator-(const Vector4& vec)
-				{
-					return AddVector4(vec.GetOpposed());
-				}
-				inline Vector4 operator*(const Vector4& vec)
-				{
-					return ElementWiseProduct(vec);
-				}
-				inline Vector4 operator/(const Vector4& vec)
-				{
-					assert(vec.x != 0 && vec.y != 0 && vec.z != 0 && vec.w != 0 && "Division by zero in Vector4D");
-					return Vector4(x / vec.x, y / vec.y, z / vec.z, w / vec.w);
-				}
-				inline Vector4& operator+=(const Vector4& vec)
-				{
-					x += vec.x;
-					y += vec.y;
-					z += vec.z;
-					w += vec.w;
-					return *this;
-				}
-				inline Vector4& operator-=(const Vector4& vec)
-				{
-					x -= vec.x;
-					y -= vec.y;
-					z -= vec.z;
-					w -= vec.w;
-					return *this;
-				}
-				inline Vector4& operator*=(const Vector4& vec)
-				{
-					x *= vec.x;
-					y *= vec.y;
-					z *= vec.z;
-					w *= vec.w;
-					return *this;
-				}
-				inline Vector4& operator/=(const Vector4& vec)
-				{
-					assert(vec.x != 0 && vec.y != 0 && vec.z != 0 && vec.w != 0 && "Division by zero in Vector4D");
-					x /= vec.x;
-					y /= vec.y;
-					z /= vec.z;
-					w /= vec.w;
-					return *this;
-				}
+				Vector4 operator+(const Vector4& vec) const;
+				Vector4 operator-(const Vector4& vec) const;
+				Vector4 operator*(const Vector4& vec) const;
+				Vector4 operator/(const Vector4& vec) const;
+				Vector4& operator+=(const Vector4& vec);
+				Vector4& operator-=(const Vector4& vec);
+				Vector4& operator*=(const Vector4& vec);
+				Vector4& operator/=(const Vector4& vec);
 
-				inline operator Vector3() const
-				{
-					return Vector3(x, y, z);
-				}
+				Vector4 operator*(float scalar) const;
+				Vector4 operator/(float scalar) const;
+				Vector4& operator*=(float scalar);
+				Vector4& operator/=(float scalar);
 
-				inline float& operator[](int index)
-				{
-					assert(index >= 0 && index < 4 && "Index out of range in Vector4D");
-					return (index == 0) ? x : (index == 1) ? y : (index == 2) ? z : w;
-				}
-				inline const float& operator[](int index) const
-				{
-					assert(index >= 0 && index < 4 && "Index out of range in Vector4D");
-					return (index == 0) ? x : (index == 1) ? y : (index == 2) ? z : w;
-				}
+				Vector4 operator-() const;
 
-				std::array<float, 4> AsList() const;
+				// cast operators
+				explicit operator Vector3() const;
+				explicit operator Vector2() const;
+
+				float& operator[](int index);
+				const float& operator[](int index) const;
+
+				bool operator==(const Vector4& other) const;
+				bool operator!=(const Vector4& other) const;
+
+				Vector3 operator=(const Vector4& vec4);
 			};
+			Vector4 operator*(float scalar, const Vector4& vec);
+			std::ostream& operator<<(std::ostream& os, const Vector4& vec);
 		}
 	}
 }
