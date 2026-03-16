@@ -7,6 +7,9 @@ namespace Mirage
 	{
 	public:
 		Console(const char* _name) : IPanel(_name) {};
+		
+		void InitPanel() override;
 		void DrawPanel() override;
+		void ShutdownPanel() override;
 	};
 }

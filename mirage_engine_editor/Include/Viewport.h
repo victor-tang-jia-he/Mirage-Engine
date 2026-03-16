@@ -7,6 +7,9 @@ namespace Mirage
 	{
 	public:
 		Viewport(const char* _name) : IPanel(_name) {};
+		
+		void InitPanel() override;
 		void DrawPanel() override;
+		void ShutdownPanel() override;
 	};
 }

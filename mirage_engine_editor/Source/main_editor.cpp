@@ -20,22 +20,22 @@ int main()
 	{
 		return -1;
 	}
-	Mirage::UIWrapper::Init(window);
+
+	Mirage::EditorApp myEditor;
+	myEditor.Init(window);
+
 	while (!glfwWindowShouldClose(window))
 	{
 		glfwPollEvents();
 		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
-		Mirage::UIWrapper::BeginFrame();
-		Mirage::UIWrapper::BeginWindow("Hierarchy");
-		Mirage::UIWrapper::CreateButton("Cube");
-		Mirage::UIWrapper::CreateButton("Sphere");
-		Mirage::UIWrapper::EndWindow();
-		Mirage::UIWrapper::EndFrame();	
+
+		myEditor.Update();
+
 		glfwSwapBuffers(window);
 	}
 
-	Mirage::UIWrapper::Shutdown();
+	myEditor.Shutdown();
 	glfwTerminate();
 	return 0;
 }

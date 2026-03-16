@@ -39,7 +39,7 @@ namespace Mirage
 		ImGui_ImplGlfw_NewFrame();
 		ImGui::NewFrame();
 		ImGui::DockSpaceOverViewport(0, ImGui::GetMainViewport(), ImGuiDockNodeFlags_PassthruCentralNode);
-		ImGui::ShowDemoWindow();
+		//ImGui::ShowDemoWindow();
 	}
 
 	void UIWrapper::EndFrame()
