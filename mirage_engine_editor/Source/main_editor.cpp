@@ -1,8 +1,9 @@
 ﻿// MirageEngine.cpp : Defines the entry point for the application.
 //
   
-#include "Include/UIWrapper.h"
-#include "../Libraries/GLFW/deps/glad/gl.h"
+#include "UI_wrapper.h"
+#include "editor_app.h"
+#include "glad/glad.h"
 #include "GLFW/glfw3.h"
 
 int main()
@@ -15,7 +16,8 @@ int main()
 	GLFWwindow* window = glfwCreateWindow(1920, 1080, "Mirage Enginexc", NULL, NULL);
 	glfwMakeContextCurrent(window);
 
-	if (!gladLoadGL(glfwGetProcAddress)) {
+	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
+	{
 		return -1;
 	}
 	Mirage::UIWrapper::Init(window);

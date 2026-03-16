@@ -1,4 +1,4 @@
-#include "../Include/UIWrapper.h"
+#include "UI_wrapper.h"
 #include "vector3.h"
 
 #include "imgui.h"
@@ -10,7 +10,7 @@ namespace Math = MirageEngine::Core::Maths;
 
 namespace Mirage
 {
-	void UIWrapper::Init(void* windowHandle)
+	void UIWrapper::Init(void* _windowHandle)
 	{
 		IMGUI_CHECKVERSION();
 		ImGui::CreateContext();
@@ -21,7 +21,7 @@ namespace Mirage
 		//io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
 		ImGui::StyleColorsDark();
 
-		GLFWwindow* window = static_cast<GLFWwindow*>(windowHandle);
+		GLFWwindow* window = static_cast<GLFWwindow*>(_windowHandle);
 		ImGui_ImplGlfw_InitForOpenGL(window, true);
 		ImGui_ImplOpenGL3_Init();
 	}
@@ -59,9 +59,9 @@ namespace Mirage
 		//}
 	}
 
-	bool UIWrapper::BeginWindow(const char* windowName, bool* isOpen)
+	bool UIWrapper::BeginWindow(const char* _windowName, bool* _isOpen)
 	{
-		return ImGui::Begin(windowName, isOpen);
+		return ImGui::Begin(_windowName, _isOpen);
 	}
 
 	void UIWrapper::EndWindow()
@@ -69,14 +69,14 @@ namespace Mirage
 		ImGui::End();
 	}
 
-	void UIWrapper::CreateSeparatorText(const char* separatorName)
+	void UIWrapper::CreateSeparatorText(const char* _separatorName)
 	{
-		ImGui::SeparatorText(separatorName);
+		ImGui::SeparatorText(_separatorName);
 	}
 
-	void UIWrapper::CreateColorPicker(Math::Vector3* color)
+	void UIWrapper::CreateColorPicker(Math::Vector3* _color)
 	{
-		ImVec4 Color(color->x / 255.0f, color->y / 255.0f, color->z / 255.0f, 1.0f);
+		ImVec4 Color(_color->x / 255.0f, _color->y / 255.0f, _color->z / 255.0f, 1.0f);
 		ImVec4 refVecColor(1.0f, 0.0f, 1.0f, 1.0f);
 		ImGuiColorEditFlags color_picker_flags = ImGuiColorEditFlags_NoAlpha;
 		ImGuiColorEditFlags base_flags = ImGuiColorEditFlags_None;
@@ -85,23 +85,23 @@ namespace Mirage
 		ImGui::ColorPicker4("MyColor##4", (float*)&Color, flags, false ? &refVecColor.x : NULL);
 	}
 
-	bool UIWrapper::CreateSliderInt(const char* sliderName, int* value, int vMin, int vMax)
+	bool UIWrapper::CreateSliderInt(const char* _sliderName, int* _value, int _vMin, int _vMax)
 	{
-		return ImGui::SliderInt(sliderName, value, vMin, vMax);
+		return ImGui::SliderInt(_sliderName, _value, _vMin, _vMax);
 	}
 
-	bool UIWrapper::CreateSliderFloat(const char* sliderName, float* value, float vMin, float vMax)
+	bool UIWrapper::CreateSliderFloat(const char* _sliderName, float* _value, float _vMin, float _vMax)
 	{
-		return ImGui::SliderFloat(sliderName, value, vMin, vMax, "%.3f");
+		return ImGui::SliderFloat(_sliderName, _value, _vMin, _vMax, "%.3f");
 	}
 
-	bool UIWrapper::CreateButton(const char* buttonName)
+	bool UIWrapper::CreateButton(const char* _buttonName)
 	{ 
-		return ImGui::Button(buttonName);
+		return ImGui::Button(_buttonName);
 	}
 
-	bool UIWrapper::CreateCheckbox(const char* checkboxName, bool* check)
+	bool UIWrapper::CreateCheckbox(const char* _checkboxName, bool* _check)
 	{
-		return ImGui::Checkbox(checkboxName, check);
+		return ImGui::Checkbox(_checkboxName, _check);
 	}
 }
