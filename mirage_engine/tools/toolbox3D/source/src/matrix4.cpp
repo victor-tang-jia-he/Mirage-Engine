@@ -3,7 +3,7 @@
 #include <array>
 #include <assert.h>
 
-using namespace MirageEngine::Core::Maths;
+using namespace MirageEngine::Core::Math;
 Matrix4::Matrix4(const Matrix4& copy)
 {
 	m[0][0] = copy[0][0]; m[0][1] = copy[0][1]; m[0][2] = copy[0][2]; m[0][3] = copy[0][3];

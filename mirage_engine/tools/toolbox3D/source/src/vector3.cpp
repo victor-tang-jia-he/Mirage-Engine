@@ -4,8 +4,8 @@
 #include <array>
 #include <assert.h>
 
-using namespace MirageEngine::Core::Maths;
-Vector3 Vector3::GetOpposed() const
+using namespace MirageEngine::Core::Math;
+Vector3 Vector3::Opposed() const
 {
 	return Vector3(-x, -y, -z);
 }
@@ -29,33 +29,33 @@ bool Vector3::NearlyEqual(const Vector3& other, float epsilon) const
 {
 	return std::abs(x - other.x) < epsilon && std::abs(y - other.y) < epsilon && std::abs(z - other.z) < epsilon;
 }
-Vector3 Vector3::GetMid(const Vector3& other) const
+Vector3 Vector3::Mid(const Vector3& other) const
 {
 	return AddVector3(other).ProductScalar(1.f / 2.f);
 }
-float Vector3::GetDistance(const Vector3& other) const
+float Vector3::Distance(const Vector3& other) const
 {
-	return sqrt(GetDistancePow(other));
+	return sqrt(DistancePow(other));
 }
-float Vector3::GetDistancePow(const Vector3& other) const
+float Vector3::DistancePow(const Vector3& other) const
 {
 	float dx = other.x - x;
 	float dy = other.y - y;
 	float dz = other.z - z;
 	return dx * dx + dy * dy + dz * dz;
 }
-float Vector3::GetNorm() const
+float Vector3::Norm() const
 {
 	return sqrt(x * x + y * y + z * z);
 }
-float Vector3::GetSquareNorm() const
+float Vector3::SquareNorm() const
 {
 	return x * x + y * y + z * z;
 }
 Vector3 Vector3::Normalized() const
 {
 	Vector3 vec;
-	float magnitude = GetNorm();
+	float magnitude = Norm();
 
 	if (magnitude == 0)
 	{
@@ -67,15 +67,14 @@ Vector3 Vector3::Normalized() const
 	vec.z = z / magnitude;
 	return vec;
 }
-float Vector3::GetPerspective(float t) const
+float Vector3::Perspective(float t) const
 {
 	if (t <= 0) return 0;
 
-	return GetSquareNorm() / t;
+	return SquareNorm() / t;
 }
 Vector3 Vector3::Reflect(Vector3 I, Vector3 N)
 {
-	// R = I - 2 * (I ¡¤ N) * N
 	return I - N.Normalized() * (2.0f * I.DotProductVector3(N.Normalized()));
 }
 float Vector3::DotProductVector3(const Vector3& other) const
@@ -90,14 +89,14 @@ Vector3 Vector3::CrossProductVector3(const Vector3& other) const
 		x * other.y - y * other.x
 	);
 }
-float Vector3::GetAngle(const Vector3& v2) const
+float Vector3::Angle(const Vector3& v2) const
 {
-	float denom = GetNorm() * v2.GetNorm();
+	float denom = Norm() * v2.Norm();
 	if (denom == 0.0f) return 0.0f;
 
-	return acosf(DotProductVector3(v2) / denom) * (180.f / PI);
+	return acosf(DotProductVector3(v2) / denom);
 }
-void Vector3::Rotation(float angleX, float angleY, float angleZ) {
+Vector3 Vector3::Rotate(float angleX, float angleY, float angleZ) const {
 	float cosX = cosf(angleX), sinX = sinf(angleX);
 	float cosY = cosf(angleY), sinY = sinf(angleY);
 	float cosZ = cosf(angleZ), sinZ = sinf(angleZ);
@@ -109,10 +108,11 @@ void Vector3::Rotation(float angleX, float angleY, float angleZ) {
 
 	float x2 = x0 * cosY + z1 * sinY;
 	float z2 = -x0 * sinY + z1 * cosY;
-
-	x = x2 * cosZ - y1 * sinZ;
-	y = x2 * sinZ + y1 * cosZ;
-	z = z2;
+	return Vector3(
+		x2 * cosZ - y1 * sinZ,
+		x2 * sinZ + y1 * cosZ,
+		z2
+	);
 }
 void Vector3::Print() const
 {
@@ -128,7 +128,7 @@ Vector3 Vector3::operator+(const Vector3& vec) const
 }
 Vector3 Vector3::operator-(const Vector3& vec) const
 {
-	return AddVector3(vec.GetOpposed());
+	return AddVector3(vec.Opposed());
 }
 Vector3 Vector3::operator*(const Vector3& vec) const
 {
@@ -136,7 +136,7 @@ Vector3 Vector3::operator*(const Vector3& vec) const
 }
 Vector3 Vector3::operator/(const Vector3& vec) const
 {
-	assert(vec.x != 0 && vec.y != 0 && vec.z != 0 && "Division by zero in Vector3D");
+	assert(vec.x != 0 && vec.y != 0 && vec.z != 0 && "Division by zero");
 	return Vector3(x / vec.x, y / vec.y, z / vec.z);
 }
 Vector3& Vector3::operator+=(const Vector3& vec)
@@ -162,11 +162,19 @@ Vector3& Vector3::operator*=(const Vector3& vec)
 }
 Vector3& Vector3::operator/=(const Vector3& vec)
 {
-	assert(vec.x != 0 && vec.y != 0 && vec.z != 0 && "Division by zero in Vector3D");
+	assert(vec.x != 0 && vec.y != 0 && vec.z != 0 && "Division by zero");
 	x /= vec.x;
 	y /= vec.y;
 	z /= vec.z;
 	return *this;
+}
+Vector3 Vector3::operator+(float scalar) const
+{
+	return AddScalar(scalar);
+}
+Vector3 Vector3::operator-(float scalar) const
+{
+	return AddScalar(-scalar);
 }
 Vector3 Vector3::operator*(float scalar) const
 {
@@ -174,7 +182,7 @@ Vector3 Vector3::operator*(float scalar) const
 }
 Vector3 Vector3::operator/(float scalar) const
 {
-	assert(scalar != 0.0f && "Division par z¨¦ro");
+	assert(scalar != 0.0f && "Division by zero");
 
 	float invScalar = (scalar != 0.0f) ? 1.0f / scalar : 0.0f;
 	return ProductScalar(invScalar);
@@ -188,7 +196,7 @@ Vector3& Vector3::operator*=(float scalar)
 }
 Vector3& Vector3::operator/=(float scalar)
 {
-	assert(scalar != 0.0f && "Division par z¨¦ro");
+	assert(scalar != 0.0f && "Division by zero");
 	float invScalar = (scalar != 0.0f) ? 1.0f / scalar : 0.0f;
 	x *= invScalar;
 	y *= invScalar;
@@ -201,31 +209,31 @@ Vector3 Vector3::operator-() const
 }
 float& Vector3::operator[](int index)
 {
-	assert(index >= 0 && index < 3 && "Index out of range in Vector3D");
+	assert(index >= 0 && index < 3 && "Index out of range");
 	return (index == 0) ? x : (index == 1) ? y : z;
 }
 const float& Vector3::operator[](int index) const
 {
-	assert(index >= 0 && index < 3 && "Index out of range in Vector3D");
+	assert(index >= 0 && index < 3 && "Index out of range");
 	return (index == 0) ? x : (index == 1) ? y : z;
 }
 Vector3::operator Vector2() const
 {
 	return Vector2(x, y);
 }
-bool MirageEngine::Core::Maths::Vector3::operator==(const Vector3& other) const
+bool MirageEngine::Core::Math::Vector3::operator==(const Vector3& other) const
 {
 	return x == other.x && y == other.y && z == other.z;
 }
-bool MirageEngine::Core::Maths::Vector3::operator!=(const Vector3& other) const
+bool MirageEngine::Core::Math::Vector3::operator!=(const Vector3& other) const
 {
 	return !(*this == other);
 }
-Vector3 MirageEngine::Core::Maths::operator*(float scalar, const Vector3& vec)
+Vector3 MirageEngine::Core::Math::operator*(float scalar, const Vector3& vec)
 {
 	return { vec.x * scalar, vec.y * scalar, vec.z * scalar };
 }
-std::ostream& MirageEngine::Core::Maths::operator<<(std::ostream& os, const Vector3& vec)
+std::ostream& MirageEngine::Core::Math::operator<<(std::ostream& os, const Vector3& vec)
 {
 	return os << "(" << vec.x << ", " << vec.y << ", " << vec.y << ")";
 }

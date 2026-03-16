@@ -2,7 +2,7 @@
 #include <iostream>
 #include "vector2.h"
 #include <assert.h>
-using namespace MirageEngine::Core::Maths;
+using namespace MirageEngine::Core::Math;
 
 Matrix2::Matrix2(const Matrix2& copy)
 {
@@ -79,7 +79,7 @@ Matrix2 Matrix2::Inverse() const
 		-m[1][0] / det, m[0][0] / det
 	);
 }
-Matrix2 Matrix2::Rotation(float angle)
+Matrix2 Matrix2::Rotate(float angle)
 {
 	return Matrix2(cos(angle), sin(angle), -sin(angle), cos(angle));
 }

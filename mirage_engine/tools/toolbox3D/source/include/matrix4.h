@@ -6,7 +6,7 @@ namespace MirageEngine
 {
 	namespace Core
 	{
-		namespace Maths
+		namespace Math
 		{
 			class Matrix4
 			{

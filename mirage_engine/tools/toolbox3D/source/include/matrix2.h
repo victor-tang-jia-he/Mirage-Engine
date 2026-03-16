@@ -6,7 +6,7 @@ namespace MirageEngine
 {
 	namespace Core
 	{
-		namespace Maths
+		namespace Math
 		{
 			class Matrix2
 			{
@@ -103,7 +103,7 @@ namespace MirageEngine
 				/// </summary>
 				/// <param name="angle">The angle by which to rotate the matrix.</param>
 				/// <returns>The resulting rotated matrix.</returns>
-				Matrix2 Rotation(float angle);
+				Matrix2 Rotate(float angle);
 
 				// -------------------------------------------------------------------------------- //	
 				// Display

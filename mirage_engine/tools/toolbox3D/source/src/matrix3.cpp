@@ -3,7 +3,7 @@
 #include <iostream>
 #include <assert.h>
 
-using namespace MirageEngine::Core::Maths;
+using namespace MirageEngine::Core::Math;
 Matrix3::Matrix3(const Matrix3& copy)
 {
 	m[0][0] = copy.m[0][0]; m[0][1] = copy.m[0][1]; m[0][2] = copy.m[0][2];
@@ -198,7 +198,7 @@ Matrix3 Matrix3::luDecomposition() const
 }
 Matrix3 Matrix3::RotateMatrixVector(const Vector3& vec, float rad)
 {
-	float length = vec.GetNorm();
+	float length = vec.Norm();
 	float x = vec.x / length;
 	float y = vec.y / length;
 	float z = vec.z / length;
