@@ -24,15 +24,42 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 message(STATUS "Adding external libraries...")
 
+# Include Fetch system
+include(FetchContent)
 # ============================================================================
 # GLFW
 # ============================================================================
-# option(BUILD_SHARED_LIBS "Build shared libraries" OFF)
-# option(GLFW_BUILD_EXAMPLES "Build the GLFW example programs" ${GLFW_STANDALONE})
-# option(GLFW_BUILD_TESTS "Build the GLFW test programs" ${GLFW_STANDALONE})
-# option(GLFW_BUILD_DOCS "Build the GLFW documentation" ON)
-# option(GLFW_INSTALL "Generate installation target" ON)
-add_subdirectory(libraries/GLFW GLFW)
+
+if(EXISTS "${CMAKE_SOURCE_DIR}/libraries/GLFW")
+    message(STATUS "Using local GLFW")
+    add_subdirectory(${CMAKE_SOURCE_DIR}/libraries/GLFW ${CMAKE_BINARY_DIR}/GLFW)
+else()
+    message(STATUS "Fetching GLFW...")
+    FetchContent_Declare(
+        glfw
+        GIT_REPOSITORY https://github.com/glfw/glfw.git
+        GIT_TAG 3.4
+        SOURCE_DIR ${CMAKE_SOURCE_DIR}/libraries/GLFW
+    )
+    set(GLFW_BUILD_DOCS OFF CACHE BOOL "Build documentation" FORCE)
+    set(GLFW_BUILD_TESTS OFF CACHE BOOL "Build tests" FORCE)
+    set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "Build examples" FORCE)
+    set(GLFW_INSTALL OFF CACHE BOOL "Generate installation target" FORCE)
+    FetchContent_MakeAvailable(glfw)
+endif()
+
+if(TARGET glfw)
+    message(STATUS "GLFW target created successfully")
+    get_target_property(GLFW_TYPE glfw TYPE)
+    message(STATUS "GLFW target type: ${GLFW_TYPE}")
+else()
+    message(WARNING "GLFW target not found, checking for glfw::glfw...")
+    if(TARGET glfw::glfw)
+        message(STATUS "Found glfw::glfw target")
+    else()
+        message(FATAL_ERROR "No GLFW target found")
+    endif()
+endif()
 
 # ============================================================================
 # GLAD (OpenGL loader) - needed for ImGui OpenGL backend
@@ -53,40 +80,83 @@ endif()
 # ============================================================================
 # ImGUI - Manual configuration (since it lacks CMakeLists.txt)
 # ============================================================================
-# Collect all ImGui source files including backends
-file(GLOB IMGUI_CORE_SOURCES
-    ${CMAKE_SOURCE_DIR}/libraries/imgui/*.cpp
+
+if(NOT EXISTS ${CMAKE_SOURCE_DIR}/libraries/imgui)
+    message(STATUS "Fetching ImGui...")
+    FetchContent_Declare(
+        imgui 
+        GIT_REPOSITORY https://github.com/ocornut/imgui.git
+        GIT_TAG v1.92.6
+        SOURCE_DIR ${CMAKE_SOURCE_DIR}/libraries/imgui
+    )
+    FetchContent_MakeAvailable(imgui)
+    if(NOT imgui_POPULATED)
+        message(FATAL_ERROR "ImGui failed to populate")
+    endif()
+else()
+    message(STATUS "Using local ImGui")
+endif()
+message(STATUS "ImGui fetched successfully")
+set(imgui_SOURCE_DIR ${CMAKE_SOURCE_DIR}/libraries/imgui)
+
+
+# Explicit list of ImGui core files (more reliable than GLOB)
+set(IMGUI_CORE_SOURCES
+    ${imgui_SOURCE_DIR}/imgui.cpp
+    ${imgui_SOURCE_DIR}/imgui_demo.cpp
+    ${imgui_SOURCE_DIR}/imgui_draw.cpp
+    ${imgui_SOURCE_DIR}/imgui_tables.cpp
+    ${imgui_SOURCE_DIR}/imgui_widgets.cpp
 )
 
-file(GLOB IMGUI_BACKEND_SOURCES
-    ${CMAKE_SOURCE_DIR}/libraries/imgui/backends/imgui_impl_glfw.cpp
-    ${CMAKE_SOURCE_DIR}/libraries/imgui/backends/imgui_impl_opengl3.cpp
+# Backends
+set(IMGUI_BACKEND_SOURCES
+    ${imgui_SOURCE_DIR}/backends/imgui_impl_glfw.cpp
+    ${imgui_SOURCE_DIR}/backends/imgui_impl_opengl3.cpp
 )
+
+# ImGUI miscs
+# set(IMGUI_EXTRA_SOURCES
+#     ${imgui_SOURCE_DIR}/misc/cpp/imgui_stdlib.cpp
+# )
 
 # Combine all sources
-set(IMGUI_ALL_SOURCES ${IMGUI_CORE_SOURCES} ${IMGUI_BACKEND_SOURCES})
+set(IMGUI_ALL_SOURCES
+    ${IMGUI_CORE_SOURCES}
+    ${IMGUI_BACKEND_SOURCES}
+    # ${IMGUI_EXTRA_SOURCES}
+)
 
-# Create ImGui library
+# Create the ImGui library
 add_library(imgui STATIC ${IMGUI_ALL_SOURCES})
 
-# Add include directories
-target_include_directories(imgui PRIVATE
-    ${CMAKE_SOURCE_DIR}/libraries/imgui
-    ${CMAKE_SOURCE_DIR}/libraries/imgui/backends
-    ${CMAKE_SOURCE_DIR}/libraries/glad/include  # For glad headers
-)
-# Link dependencies to ImGui
-find_package(OpenGL REQUIRED)
-target_link_libraries(imgui PRIVATE
-    glfw          # Link GLFW to ImGui
-    glad          # Link glad to ImGui
-    OpenGL::GL    # Link OpenGL
+# Properties to improve compilation times
+target_compile_features(imgui PRIVATE cxx_std_11)
+
+target_include_directories(imgui
+    PUBLIC
+        ${imgui_SOURCE_DIR}
+        ${imgui_SOURCE_DIR}/backends
 )
 
-# Tell ImGui we're using glad as OpenGL loader
-target_compile_definitions(imgui PRIVATE
-    IMGUI_IMPL_OPENGL_LOADER_GLAD
+# Linking dependencies
+find_package(OpenGL REQUIRED)
+target_link_libraries(imgui
+    PUBLIC
+        glfw          # GLFW must be PUBLIC because it is used in the backend headers
+        OpenGL::GL    # OpenGL is also public
+    PRIVATE           
+        glad          # glad can remain private if used only in .cpp files
 )
+
+# Definitions for ImGui
+target_compile_definitions(imgui
+    PUBLIC
+        IMGUI_IMPL_OPENGL_LOADER_GLAD 
+)
+
+# Optional: Create an alias for clarity
+add_library(ImGui::imgui ALIAS imgui)
 
 # ============================================================================
 # System Engine Library (Core)
@@ -111,7 +181,7 @@ target_link_libraries(third_party INTERFACE
     OpenGL::GL
     Toolbox
     Core
-)
+) 
 
 # Engine project
 message(STATUS "Adding mirage_engine project...")
