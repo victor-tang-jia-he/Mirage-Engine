@@ -30,7 +30,7 @@ include(FetchContent)
 # GLFW
 # ============================================================================
 
-if(EXISTS "${CMAKE_SOURCE_DIR}/libraries/GLFW")
+if(EXISTS "${CMAKE_SOURCE_DIR}/libraries/GLFW" AND EXISTS "${CMAKE_SOURCE_DIR}/libraries/GLFW/CMakeLists.txt")
     message(STATUS "Using local GLFW")
     add_subdirectory(${CMAKE_SOURCE_DIR}/libraries/GLFW ${CMAKE_BINARY_DIR}/GLFW)
 else()
@@ -81,21 +81,26 @@ endif()
 # ImGUI - Manual configuration (since it lacks CMakeLists.txt)
 # ============================================================================
 
-if(NOT EXISTS ${CMAKE_SOURCE_DIR}/libraries/imgui)
+file(GLOB RESULT ${CMAKE_SOURCE_DIR}/libraries/imgui/*)
+list(LENGTH RESULT RES_LEN)
+
+if(NOT EXISTS ${CMAKE_SOURCE_DIR}/libraries/imgui OR RES_LEN EQUAL 0)
     message(STATUS "Fetching ImGui...")
     FetchContent_Declare(
-        imgui 
+        imgui
         GIT_REPOSITORY https://github.com/ocornut/imgui.git
         GIT_TAG v1.92.6
         SOURCE_DIR ${CMAKE_SOURCE_DIR}/libraries/imgui
     )
     FetchContent_MakeAvailable(imgui)
+
     if(NOT imgui_POPULATED)
         message(FATAL_ERROR "ImGui failed to populate")
     endif()
 else()
     message(STATUS "Using local ImGui")
 endif()
+
 message(STATUS "ImGui fetched successfully")
 set(imgui_SOURCE_DIR ${CMAKE_SOURCE_DIR}/libraries/imgui)
 

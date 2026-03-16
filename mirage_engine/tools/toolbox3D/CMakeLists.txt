@@ -6,7 +6,7 @@ option(TOOLBOX_BUILD_TESTS "Build tests" ON)
 include(FetchContent)
 
 # GLM (header-only library)
-if(EXISTS "${CMAKE_SOURCE_DIR}/libraries/glm")
+if(EXISTS "${CMAKE_SOURCE_DIR}/libraries/glm" AND EXISTS "${CMAKE_SOURCE_DIR}/libraries/glm/CMakeLists.txt")
     message(STATUS "Using local GLM")
     add_subdirectory(${CMAKE_SOURCE_DIR}/libraries/glm ${CMAKE_BINARY_DIR}/glm)
 else()
