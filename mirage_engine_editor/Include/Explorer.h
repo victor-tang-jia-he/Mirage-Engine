@@ -3,7 +3,7 @@
 
 namespace Mirage
 {
-	class Explorer : IPanel
+	class Explorer : public IPanel
 	{
 
 	};

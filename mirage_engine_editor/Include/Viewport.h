@@ -3,7 +3,7 @@
 
 namespace Mirage
 {
-	class Viexport : IPanel
+	class Viewport : public IPanel
 	{
 
 	};

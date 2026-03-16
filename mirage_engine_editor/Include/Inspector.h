@@ -3,7 +3,7 @@
 
 namespace Mirage
 {
-	class Inspector : IPanel
+	class Inspector : public IPanel
 	{
 
 	};

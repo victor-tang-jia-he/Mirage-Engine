@@ -3,7 +3,7 @@
 
 namespace Mirage
 {
-	class Hierarchy : IPanel
+	class Hierarchy : public IPanel
 	{
 
 	};

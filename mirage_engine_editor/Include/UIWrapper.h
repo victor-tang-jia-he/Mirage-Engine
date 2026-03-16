@@ -9,7 +9,7 @@ namespace Mirage
 	class UIWrapper
 	{
 	public:
-		static void Init(void* windowHandler);
+		static void Init(void* windowHandle);
 		static void Shutdown();
 
 		static void BeginFrame();

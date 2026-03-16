@@ -10,7 +10,7 @@ namespace Math = MirageEngine::Core::Maths;
 
 namespace Mirage
 {
-	void UIWrapper::Init(void* windowHandler)
+	void UIWrapper::Init(void* windowHandle)
 	{
 		IMGUI_CHECKVERSION();
 		ImGui::CreateContext();
@@ -21,7 +21,7 @@ namespace Mirage
 		//io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
 		ImGui::StyleColorsDark();
 
-		GLFWwindow* window = static_cast<GLFWwindow*>(windowHandler);
+		GLFWwindow* window = static_cast<GLFWwindow*>(windowHandle);
 		ImGui_ImplGlfw_InitForOpenGL(window, true);
 		ImGui_ImplOpenGL3_Init();
 	}
