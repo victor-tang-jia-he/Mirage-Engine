@@ -6,7 +6,7 @@
 #include "imgui_impl_opengl3.h"
 #include "GLFW/glfw3.h"
 
-namespace Math = Bwt::Core::Maths;
+namespace Math = MirageEngine::Core::Maths;
 
 namespace Mirage
 {

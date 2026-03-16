@@ -2,7 +2,7 @@
 #include <string>
 #include "vector3.h"
 
-namespace Math = Bwt::Core::Maths;
+namespace Math = MirageEngine::Core::Maths;
 
 namespace Mirage
 {
