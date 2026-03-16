@@ -1,5 +1,5 @@
-#include "openGL/openGL_swap_chain.h"
-#include "openGL/openGL_surface.h"
+#include "OpenGL/openGL_swap_chain.h"
+#include "OpenGL/openGL_surface.h"
 
 void MirageRHI::OpenGLSwapChain::IsScreenResized(ISurface* _surface)
 {

@@ -1,6 +1,6 @@
 #include "general_include.h"
 
-#include "openGL/openGL_render_interface.h"
+#include "OpenGL/openGL_render_interface.h"
 
 #include "i_instance.h"
 #include "i_surface.h"
@@ -8,6 +8,7 @@
 #include "i_swap_chain.h"
 #include "i_render_pass.h"
 #include "i_pipeline.h"
+#include "i_shader.h"
 #include "i_framebuffer.h"
 #include "i_buffer.h"
 #include "i_uniform_buffer.h"
@@ -24,7 +25,10 @@ int main(MirageRHI::IRenderInterface::API api)
 	MirageRHI::IDevice* device = nullptr;
 	MirageRHI::ISwapChain* swapChain = nullptr;
 	MirageRHI::IRenderPass* renderPass = nullptr;
+	MirageRHI::IShader* vertexShader = nullptr;
+	MirageRHI::IShader* fragmentShader = nullptr;
 	MirageRHI::IPipeline* pipeline = nullptr;
+	MirageRHI::IBuffer* VAO = nullptr;
 	MirageRHI::IFramebuffer* framebuffer = nullptr;
 	MirageRHI::IBuffer* bufferTriangleVertices = nullptr;
 	MirageRHI::IBuffer* bufferTriangleIndices = nullptr;
@@ -34,7 +38,7 @@ int main(MirageRHI::IRenderInterface::API api)
 	std::vector<uint32_t> indicesTriangle;
 
 	if (!glfwInit()) {
-		DEBUG_THROW("Failed to init GLFW\n");
+		DEBUG_THROW("Failed to init GLFW");
 	}
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
@@ -46,7 +50,7 @@ int main(MirageRHI::IRenderInterface::API api)
 	GLFWwindow* window = glfwCreateWindow(width, height, "Mirage Engine", nullptr, nullptr);
 	if (!window) {
 		glfwTerminate();
-		DEBUG_THROW("Failed to create window\n");
+		DEBUG_THROW("Failed to create window");
 	}
 
 	glfwMakeContextCurrent(window);
@@ -65,7 +69,7 @@ int main(MirageRHI::IRenderInterface::API api)
 	default:
 		DEBUG_THROW("Unsupported RHI API");
 	}
-	DEBUG_LOG("Render Interface Created\n");
+	DEBUG_LOG("Render Interface Created");
 
 	// Instantiate All Classes
 	instance = renderInterface->InstantiateInstance();
@@ -73,12 +77,15 @@ int main(MirageRHI::IRenderInterface::API api)
 	device = renderInterface->InstantiateDevice();
 	swapChain = renderInterface->InstantiateSwapChain();
 	renderPass = renderInterface->InstantiateRenderPass();
+	vertexShader = renderInterface->InstantiateShader();
+	fragmentShader = renderInterface->InstantiateShader();
 	pipeline = renderInterface->InstantiatePipeline();
+	VAO = renderInterface->InstantiateBuffer();
 	framebuffer = renderInterface->InstantiateFramebuffer();
 	bufferTriangleVertices = renderInterface->InstantiateBuffer();
 	bufferTriangleIndices = renderInterface->InstantiateBuffer();
 	commandBuffer = renderInterface->InstantiateCommandBuffer();
-	DEBUG_LOG("All Classes Instantiated\n");
+	DEBUG_LOG("All Classes Instantiated");
 
 	verticesTriangle = // Set Vertices to draw Triangle
 	{
@@ -93,7 +100,7 @@ int main(MirageRHI::IRenderInterface::API api)
 		0, 1, 2
 	};
 	uint32_t indicesTriangleListSize = (uint32_t)(sizeof(indicesTriangle[0]) * indicesTriangle.size());
-	DEBUG_LOG("Vertex and Index Data Created\n");
+	DEBUG_LOG("Vertex and Index Data Created");
 
 	// Create All Classes
 	instance->Create("Mirage");
@@ -101,9 +108,12 @@ int main(MirageRHI::IRenderInterface::API api)
 	device->Create();
 	swapChain->Create();
 	renderPass->Create(Vector4(0.2f, 0, 0.1f, 1.0f), 1.0f);
-	pipeline->Create("assets/shaders/vertex.glsl", "assets/shaders/fragment.glsl");
-	bufferTriangleVertices->Create(verticesTriangle.data(), verticesTriangle.size() * sizeof(Vertex));
-	bufferTriangleIndices->Create(indicesTriangle.data(), indicesTriangle.size() * sizeof(Vertex));
+	vertexShader->Create("assets/shaders/vertex.glsl", MirageRHI::IShader::ShaderType::Vertex);
+	fragmentShader->Create("assets/shaders/fragment.glsl", MirageRHI::IShader::ShaderType::Fragment);
+	pipeline->Create(vertexShader, fragmentShader);
+	VAO->Create(NULL, 0, MirageRHI::IBuffer::BufferType::VertexAttributes);
+	bufferTriangleVertices->Create(verticesTriangle.data(), verticesTriangle.size() * sizeof(Vertex), MirageRHI::IBuffer::BufferType::Vertices);
+	bufferTriangleIndices->Create(indicesTriangle.data(), indicesTriangle.size() * sizeof(Vertex), MirageRHI::IBuffer::BufferType::Indices);
 	commandBuffer->Create();
 	DEBUG_LOG("All Classes Created\n");
 
@@ -118,7 +128,7 @@ int main(MirageRHI::IRenderInterface::API api)
 		commandBuffer->BeginRenderPass(renderPass);
 		commandBuffer->BeginDraw();
 		commandBuffer->BindPipeline(pipeline);
-		commandBuffer->BindBuffers(bufferTriangleIndices, bufferTriangleVertices, pipeline);
+		commandBuffer->BindBuffers(bufferTriangleIndices, bufferTriangleVertices, VAO);
 		Matrix4 model = Matrix4::CreateTranslationMatrix(Vector3(0, 0, -10));
 		Matrix4 view = Matrix4::Identity();
 		Matrix4 projection = Matrix4::GetPerspectiveMatrix(width, height, 0.1f, 100.f, 45.0f);

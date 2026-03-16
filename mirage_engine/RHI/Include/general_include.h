@@ -32,9 +32,9 @@
 using namespace MirageEngine::Core::Maths;
 struct Vertex
 {
-	Vector3 position;
-	Vector3 normal;
-	Vector2 uv;
+	Vector3 Position;
+	Vector3 Normal;
+	Vector2 UV;
 };
 
 namespace MirageRHI
@@ -46,11 +46,11 @@ namespace MirageRHI
 	class ISwapChain;
 	class IRenderPass;
 	class IPipeline;
+	class IShader;
 	class IFramebuffer;
 	class ITexture;
 	class IBuffer;
 	class IUniformBuffer;
-	class IDescriptors;
 	class ICommandBuffer;
 
 	class OpenGLRenderInterface;
@@ -60,10 +60,10 @@ namespace MirageRHI
 	class OpenGLSwapChain;
 	class OpenGLRenderPass;
 	class OpenGLPipeline;
+	class OpenGLShader;
 	class OpenGLFramebuffer;
 	class OpenGLTexture;
 	class OpenGLBuffer;
 	class OpenGLUniformBuffer;
-	class OpenGLDescriptors;
 	class OpenGLCommandBuffer;
 }

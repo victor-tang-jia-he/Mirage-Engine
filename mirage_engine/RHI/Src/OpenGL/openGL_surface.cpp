@@ -1,4 +1,4 @@
-#include "openGL/openGL_surface.h"
+#include "OpenGL/openGL_surface.h"
 
 void MirageRHI::OpenGLSurface::Create(GLFWwindow* _context, int _width, int _height)
 {

@@ -1,20 +1,20 @@
-#include "openGL/openGL_command_buffer.h"
-#include "openGL/openGL_pipeline.h"
-#include "openGL/openGL_buffer.h"
-#include "openGL/openGL_render_pass.h"
-#include "openGL/openGL_swap_chain.h"
-#include "openGL/openGL_surface.h"
+#include "OpenGL/openGL_command_buffer.h"
+#include "OpenGL/openGL_pipeline.h"
+#include "OpenGL/openGL_buffer.h"
+#include "OpenGL/openGL_render_pass.h"
+#include "OpenGL/openGL_swap_chain.h"
+#include "OpenGL/openGL_surface.h"
 
 void MirageRHI::OpenGLCommandBuffer::BindPipeline(IPipeline* _pipeline)
 {
 	glUseProgram(_pipeline->API_OpenGL().GetProgramGLHandle());
 }
 
-void MirageRHI::OpenGLCommandBuffer::BindBuffers(IBuffer* _indexBuffer, IBuffer* _vertexBuffer, IPipeline* _pipeline)
+void MirageRHI::OpenGLCommandBuffer::BindBuffers(IBuffer* _indexBuffer, IBuffer* _vertexBuffer, IBuffer* _VAO)
 {
 	BindVertexBuffer(_vertexBuffer->API_OpenGL());
 	BindIndexBuffer(_indexBuffer->API_OpenGL());
-	SetVertAttrLayout(_pipeline->API_OpenGL());
+	SetVertAttrLayout(_VAO->API_OpenGL());
 }
 
 void MirageRHI::OpenGLCommandBuffer::BindVertexBuffer(OpenGLBuffer _buffer)
@@ -27,9 +27,9 @@ void MirageRHI::OpenGLCommandBuffer::BindIndexBuffer(OpenGLBuffer _buffer)
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _buffer.GetGLHandle());
 }
 
-void MirageRHI::OpenGLCommandBuffer::SetVertAttrLayout(OpenGLPipeline _pipeline)
+void MirageRHI::OpenGLCommandBuffer::SetVertAttrLayout(OpenGLBuffer _VAO)
 {
-	_pipeline.SetLayout();
+	_VAO.SetLayout();
 }
 
 void MirageRHI::OpenGLCommandBuffer::BeginRenderPass(IRenderPass* _renderPass)

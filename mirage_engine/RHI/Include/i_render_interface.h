@@ -20,6 +20,7 @@ namespace MirageRHI
 		virtual ISwapChain* InstantiateSwapChain() = 0;
 		virtual IRenderPass* InstantiateRenderPass() = 0;
 		virtual IPipeline* InstantiatePipeline() = 0;
+		virtual IShader* InstantiateShader() = 0;
 		virtual IFramebuffer* InstantiateFramebuffer() = 0;
 		virtual IBuffer* InstantiateBuffer() = 0;
 		//virtual IUniformBuffer* InstantiateUniformBuffer() = 0;

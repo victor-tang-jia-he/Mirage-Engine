@@ -1,4 +1,4 @@
-#include "openGL/openGL_framebuffer.h"
+#include "OpenGL/openGL_framebuffer.h"
 
 void MirageRHI::OpenGLFramebuffer::Create()
 {

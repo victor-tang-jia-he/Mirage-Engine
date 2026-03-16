@@ -1,4 +1,4 @@
-#include "openGL/openGL_render_pass.h"
+#include "OpenGL/openGL_render_pass.h"
 
 void MirageRHI::OpenGLRenderPass::Create(Vector4 _color, float _depth)
 {

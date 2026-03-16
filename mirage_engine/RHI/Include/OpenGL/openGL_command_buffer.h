@@ -19,10 +19,10 @@ namespace MirageRHI
 
         // Binding Functions
         void BindPipeline(IPipeline* _pipeline) override;
-        void BindBuffers(IBuffer* _indexBuffer, IBuffer* _vertexBuffer, IPipeline* _pipeline) override;
+        void BindBuffers(IBuffer* _indexBuffer, IBuffer* _vertexBuffer, IBuffer* _VAO) override;
         void BindVertexBuffer(OpenGLBuffer _buffer);
         void BindIndexBuffer(OpenGLBuffer _buffer);
-        void SetVertAttrLayout(OpenGLPipeline _pipeline);
+        void SetVertAttrLayout(OpenGLBuffer _pipeline);
 
         // Clear Framebuffers
         void BeginRenderPass(IRenderPass* _renderPass) override;
