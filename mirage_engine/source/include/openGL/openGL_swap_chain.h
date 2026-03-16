@@ -13,10 +13,10 @@ namespace MirageRHI
 
         OpenGLSwapChain& API_OpenGL() override { return *this; }
 
-        void IsScreenResized(ISurface* surface) override;
-        void RecreateSwapchain(ISurface* surface, int newWidth, int newHeight) override;
+        void IsScreenResized(ISurface* _surface) override;
+        void RecreateSwapchain(ISurface* _surface, int _newWidth, int _newHeight) override;
 
         uint32_t AcquireNextImage() override { return 0; }
-        void Present(OpenGLSurface surface);
+        void Present(OpenGLSurface _surface);
     };
 }

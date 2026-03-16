@@ -16,11 +16,11 @@ namespace MirageRHI
 
 		virtual void BeginDraw() = 0;
 		virtual void EndDraw() = 0;
-		virtual void BindPipeline(IPipeline* pipeline) = 0;
-		virtual void BindBuffers(IBuffer* indexBuffer, IBuffer* vertexBuffer, IPipeline* pipeline) = 0;
-		virtual void BeginRenderPass(IRenderPass* renderPass) = 0;
+		virtual void BindPipeline(IPipeline* _pipeline) = 0;
+		virtual void BindBuffers(IBuffer* _indexBuffer, IBuffer* _vertexBuffer, IPipeline* _pipeline) = 0;
+		virtual void BeginRenderPass(IRenderPass* _renderPass) = 0;
 		virtual void EndRenderPass() = 0;
-		virtual void DrawIndexed(uint32_t indexCount) = 0;
-		virtual void SubmitAndPresent(ISwapChain* swapchain, ISurface* surface) = 0;
+		virtual void DrawIndexed(uint32_t _indexCount) = 0;
+		virtual void SubmitAndPresent(ISwapChain* _swapchain, ISurface* _surface) = 0;
 	};
 }
