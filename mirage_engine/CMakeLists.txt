@@ -28,3 +28,11 @@ if(MSVC)
 else()
 	target_compile_options(MirageEngine PRIVATE -Wall -Wextra -Wpedantic -Werror)
 endif()
+
+# Copy all asset in the build
+if(EXISTS ${PROJECT_SOURCE_DIR}/mirage_engine/assets)
+	add_custom_command(TARGET MirageEngine POST_BUILD
+		COMMAND ${CMAKE_COMMAND} -E copy_directory
+			"${CMAKE_SOURCE_DIR}/mirage_engine/assets"
+			"$<TARGET_FILE_DIR:MirageEngine>/assets")
+endif()
