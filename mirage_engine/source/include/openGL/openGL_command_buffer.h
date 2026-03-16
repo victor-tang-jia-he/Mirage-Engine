@@ -18,20 +18,20 @@ namespace MirageRHI
         void EndDraw() override {}
 
         // Binding Functions
-        void BindPipeline(IPipeline* pipeline) override;
-        void BindBuffers(IBuffer* indexBuffer, IBuffer* vertexBuffer, IPipeline* pipeline) override;
-        void BindVertexBuffer(OpenGLBuffer buffer);
-        void BindIndexBuffer(OpenGLBuffer buffer);
-        void SetVertAttrLayout(OpenGLPipeline pipeline);
+        void BindPipeline(IPipeline* _pipeline) override;
+        void BindBuffers(IBuffer* _indexBuffer, IBuffer* _vertexBuffer, IPipeline* _pipeline) override;
+        void BindVertexBuffer(OpenGLBuffer _buffer);
+        void BindIndexBuffer(OpenGLBuffer _buffer);
+        void SetVertAttrLayout(OpenGLPipeline _pipeline);
 
         // Clear Framebuffers
-        void BeginRenderPass(IRenderPass* renderPass) override;
+        void BeginRenderPass(IRenderPass* _renderPass) override;
         void EndRenderPass() override {}
 
         // Draw Binded Buffers
-        void DrawIndexed(uint32_t indexCount) override;
+        void DrawIndexed(uint32_t _indexCount) override;
 
         // Swap Buffers
-        void SubmitAndPresent(ISwapChain* swapchain, ISurface* surface) override;
+        void SubmitAndPresent(ISwapChain* _swapchain, ISurface* _surface) override;
     };
 }

@@ -6,11 +6,11 @@ namespace MirageRHI
 {
     class OpenGLInstance : public IInstance
     {
-        std::string name;
+        std::string m_Name;
         
-        const char* version;
-        const char* renderer;
-        const char* vendor;
+        const char* m_Version;
+        const char* m_Renderer;
+        const char* m_Vendor;
 
     public:
         // Check and store GPU infos

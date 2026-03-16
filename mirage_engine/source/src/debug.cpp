@@ -6,7 +6,7 @@
 #include <ctime>
 #include <iomanip>
 
-MirageRHI::Debug::Log* MirageRHI::Debug::Log::globalLog = nullptr;
+MirageRHI::Debug::Log* MirageRHI::Debug::Log::s_GlobalLog = nullptr;
 
 MirageRHI::Debug::Log::Log(std::string _fileName)
 {
@@ -20,35 +20,35 @@ MirageRHI::Debug::Log::~Log()
 
 void MirageRHI::Debug::Log::Destroy()
 {
-    if (fileStream.is_open())
+    if (m_FileStream.is_open())
     {
-        fileStream.close();
-        fileStream.clear();
+        m_FileStream.close();
+        m_FileStream.clear();
     }
 
-    if (globalLog != nullptr && !isDestroying)
+    if (s_GlobalLog != nullptr && !m_IsDestroying)
     {
-		isDestroying = true;
-        delete globalLog;
-        globalLog = nullptr;
+        m_IsDestroying = true;
+        delete s_GlobalLog;
+        s_GlobalLog = nullptr;
     }
 }
 
 MirageRHI::Debug::Log* MirageRHI::Debug::Log::GetGlobalLog()
 {
-    if (globalLog == nullptr)
+    if (s_GlobalLog == nullptr)
     {
-        globalLog = new Log();
+        s_GlobalLog = new Log();
     }
-    return globalLog;
+    return s_GlobalLog;
 }
 
 void MirageRHI::Debug::Log::OpenFile(std::string const& filename)
 {
-    if (!fileStream.is_open())
+    if (!m_FileStream.is_open())
     {
-        fileStream.open(filename, std::ios::out | std::ios::app);
-        if (!fileStream.is_open())
+        m_FileStream.open(filename, std::ios::out | std::ios::app);
+        if (!m_FileStream.is_open())
         {
             throw std::runtime_error("Failed to open log file: " + filename);
 		}
@@ -57,7 +57,7 @@ void MirageRHI::Debug::Log::OpenFile(std::string const& filename)
 
 void MirageRHI::Debug::Log::ResetFile(std::string const& filename)
 {
-    fileStream.open(filename, std::ios::out | std::ios::trunc);
+    m_FileStream.open(filename, std::ios::out | std::ios::trunc);
 }
 
 std::string MirageRHI::Debug::Log::Print(const char* format, ...)
@@ -79,9 +79,9 @@ std::string MirageRHI::Debug::Log::Print(const char* format, ...)
     std::ostringstream timestamp;
     timestamp << "[" << std::put_time(&localTime, "%H:%M:%S") << "] ";
 
-    if (fileStream.is_open()) {
-        fileStream << timestamp.str() << buffer << "\n";
-        fileStream.flush();
+    if (m_FileStream.is_open()) {
+        m_FileStream << timestamp.str() << buffer << "\n";
+        m_FileStream.flush();
     }
 
 	return std::string(buffer);
@@ -106,9 +106,9 @@ std::string MirageRHI::Debug::Log::Throw(const char* format, ...)
     std::ostringstream timestamp;
     timestamp << "[" << std::put_time(&localTime, "%H:%M:%S") << "] ";
 
-    if (fileStream.is_open()) {
-        fileStream << "\n\n" << timestamp.str() << "RHI EXCEPTION : " << buffer << "\n";
-        fileStream.flush();
+    if (m_FileStream.is_open()) {
+        m_FileStream << "\n\n" << timestamp.str() << "RHI EXCEPTION : " << buffer << "\n";
+        m_FileStream.flush();
     }
 
     return std::string(buffer);

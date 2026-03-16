@@ -19,9 +19,9 @@ namespace MirageRHI
     {
         class Log
         {
-            static Log* globalLog;
-            std::ofstream fileStream;
-			bool isDestroying = false;
+            static Log* s_GlobalLog;
+            std::ofstream m_FileStream;
+			bool m_IsDestroying = false;
 
         public:
             Log(std::string _fileName = "log.txt");
@@ -31,10 +31,10 @@ namespace MirageRHI
 
             static Log* GetGlobalLog();
 
-            void OpenFile(std::string const& filename);
-            void ResetFile(std::string const& filename);
-            std::string Print(const char* format, ...);
-			std::string Throw(const char* format, ...);
+            void OpenFile(std::string const& _filename);
+            void ResetFile(std::string const& _filename);
+            std::string Print(const char* _format, ...);
+			std::string Throw(const char* _format, ...);
         };
     }
 }
