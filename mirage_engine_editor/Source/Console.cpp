@@ -1,6 +1,10 @@
 #include "console.h"
 #include "UI_wrapper.h"
 
+#include <iostream>
+#include <fstream>
+#include <filesystem>
+
 #include "imgui.h"
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_opengl3.h"
@@ -28,7 +32,7 @@ namespace Mirage
 		ImGui::BeginChild("Scrolling Region", ImVec2(0, 230), ImGuiChildFlags_Borders);
 		for (auto& log : m_Logs)
 		{
-			ImGui::Text(log.c_str());
+			ImGui::TextColored(ImVec4(1, 1, 1, 1), log.c_str());
 		}
 		ImGui::SetScrollHereY(1.0f);
 		ImGui::EndChild();
@@ -38,6 +42,17 @@ namespace Mirage
 
 	void Console::ShutdownPanel()
 	{
+		if (!std::filesystem::exists("logs"))
+			std::filesystem::create_directories("logs");
+
+		std::ofstream File("logs/ConsoleLog.txt");
+
+		for (auto& log : m_Logs)
+		{
+			File << log;
+		}
+
+		File.close();
 		m_Logs.clear();
 	}
 
