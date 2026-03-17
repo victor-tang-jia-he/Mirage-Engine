@@ -6,47 +6,47 @@
 using namespace MirageEngine::Core::Math;
 Vector2 Vector2::Opposed() const
 {
-	return Vector2(-x, -y);
+	return Vector2(-X, -Y);
 }
-Vector2 Vector2::AddVector2(const Vector2& other) const
+Vector2 Vector2::AddVector2(const Vector2& _other) const
 {
-	return Vector2(x + other.x, y + other.y);
+	return Vector2(X + _other.X, Y + _other.Y);
 }
-Vector2 Vector2::AddScalar(float scalar) const
+Vector2 Vector2::AddScalar(float _scalar) const
 {
-	return Vector2(x + scalar, y + scalar);
+	return Vector2(X + _scalar, Y + _scalar);
 }
-Vector2 Vector2::ElementWiseProduct(const Vector2& other) const
+Vector2 Vector2::ElementWiseProduct(const Vector2& _other) const
 {
-	return Vector2(x * other.x, y * other.y);
+	return Vector2(X * _other.X, Y * _other.Y);
 }
-Vector2 Vector2::ProductScalar(float scalar) const
+Vector2 Vector2::ProductScalar(float _scalar) const
 {
-	return Vector2(x * scalar, y * scalar);
+	return Vector2(X * _scalar, Y * _scalar);
 }
-bool Vector2::NearlyEqual(const Vector2& other, float epsilon) const
+bool Vector2::NearlyEqual(const Vector2& _other, float _epsilon) const
 {
-	return std::abs(x - other.x) < epsilon && std::abs(y - other.y) < epsilon;
+	return std::abs(X - _other.X) < _epsilon && std::abs(Y - _other.Y) < _epsilon;
 }
-Vector2 Vector2::Mid(const Vector2& other) const
+Vector2 Vector2::Mid(const Vector2& _other) const
 {
-	return AddVector2(other).ProductScalar(1.f / 2.f);
+	return AddVector2(_other).ProductScalar(1.f / 2.f);
 }
-float Vector2::Distance(const Vector2& other) const
+float Vector2::Distance(const Vector2& _other) const
 {
-	return sqrt(DistancePow(other));
+	return sqrt(DistancePow(_other));
 }
-float Vector2::DistancePow(const Vector2& other) const
+float Vector2::DistancePow(const Vector2& _other) const
 {
-	return (other.x - x) * (other.x - x) + (other.y - y) * (other.y - y);
+	return (_other.X - X) * (_other.X - X) + (_other.Y - Y) * (_other.Y - Y);
 }
 float Vector2::Norm() const
 {
-	return sqrt(x * x + y * y);
+	return sqrt(X * X + Y * Y);
 }
 float Vector2::SquareNorm() const
 {
-	return x * x + y * y;
+	return X * X + Y * Y;
 }
 Vector2 Vector2::Normalized() const
 {
@@ -58,23 +58,23 @@ Vector2 Vector2::Normalized() const
 		return Vector2(0, 0);
 	}
 
-	vec.x = x / magnitude;
-	vec.y = y / magnitude;
+	vec.X = X / magnitude;
+	vec.Y = Y / magnitude;
 	return vec;
 }
-float Vector2::Perspective(float t) const
+float Vector2::Perspective(float _t) const
 {
-	if (t <= 0) return 0;
+	if (_t <= 0) return 0;
 
-	return SquareNorm() / t;
+	return SquareNorm() / _t;
 }
-float Vector2::DotProductVector2(const Vector2& other) const
+float Vector2::DotProductVector2(const Vector2& _other) const
 {
-	return x * other.x + y * other.y;
+	return X * _other.X + Y * _other.Y;
 }
-float Vector2::CrossProductVector2(const Vector2& other) const
+float Vector2::CrossProductVector2(const Vector2& _other) const
 {
-	return x * other.y - y * other.x;
+	return X * _other.Y - Y * _other.X;
 }
 float Vector2::Angle(const Vector2& v2) const
 {
@@ -88,123 +88,123 @@ Vector2 Vector2::Rotate(float rad) const
 	float cosA = cosf(rad);
 	float sinA = sinf(rad);
 
-	return Vector2(x * cosA - y * sinA, x * sinA + y * cosA);
+	return Vector2(X * cosA - Y * sinA, X * sinA + Y * cosA);
 }
 void Vector2::Print() const
 {
-	std::cout << "x : " << x << " y : " << y << "\n";
+	std::cout << "x : " << X << " y : " << Y << "\n";
 }
 
-Vector2 Vector2::operator+(const Vector2& vec) const
+Vector2 Vector2::operator+(const Vector2& _vec) const
 {
-	return AddVector2(vec);
+	return AddVector2(_vec);
 }
-Vector2 Vector2::operator-(const Vector2& vec) const
+Vector2 Vector2::operator-(const Vector2& _vec) const
 {
-	return AddVector2(vec.Opposed());
+	return AddVector2(_vec.Opposed());
 }
-Vector2 Vector2::operator*(const Vector2& vec) const
+Vector2 Vector2::operator*(const Vector2& _vec) const
 {
-	return ElementWiseProduct(vec);
+	return ElementWiseProduct(_vec);
 }
-Vector2 Vector2::operator/(const Vector2& vec) const
+Vector2 Vector2::operator/(const Vector2& _vec) const
 {
-	assert(vec.x != 0 && vec.y != 0 && "Division by zero");
-	return Vector2(x / vec.x, y / vec.y);
+	assert(_vec.X != 0 && _vec.Y != 0 && "Division by zero");
+	return Vector2(X / _vec.X, Y / _vec.Y);
 }
-Vector2& Vector2::operator+=(const Vector2& vec)
+Vector2& Vector2::operator+=(const Vector2& _vec)
 {
-	x += vec.x;
-	y += vec.y;
+	X += _vec.X;
+	Y += _vec.Y;
 	return *this;
 }
-Vector2& Vector2::operator-=(const Vector2& vec)
+Vector2& Vector2::operator-=(const Vector2& _vec)
 {
-	x -= vec.x;
-	y -= vec.y;
+	X -= _vec.X;
+	Y -= _vec.Y;
 	return *this;
 }
-Vector2& Vector2::operator*=(const Vector2& vec)
+Vector2& Vector2::operator*=(const Vector2& _vec)
 {
-	x *= vec.x;
-	y *= vec.y;
+	X *= _vec.X;
+	Y *= _vec.Y;
 	return *this;
 }
-Vector2& Vector2::operator/=(const Vector2& vec)
+Vector2& Vector2::operator/=(const Vector2& _vec)
 {
-	x /= vec.x;
-	y /= vec.y;
+	X /= _vec.X;
+	Y /= _vec.Y;
 	return *this;
 }
-Vector2 Vector2::operator+(float scalar) const
+Vector2 Vector2::operator+(float _scalar) const
 {
-	return AddScalar(scalar);
+	return AddScalar(_scalar);
 }
-Vector2 Vector2::operator-(float scalar) const
+Vector2 Vector2::operator-(float _scalar) const
 {
-	return AddScalar(-scalar);
+	return AddScalar(-_scalar);
 }
 Vector2 Vector2::operator-() const
 {
-	return Vector2{ -x, -y };
+	return Vector2{ -X, -Y };
 }
-Vector2 Vector2::operator*(float scalar) const
+Vector2 Vector2::operator*(float _scalar) const
 {
-	return ProductScalar(scalar);
+	return ProductScalar(_scalar);
 }
-Vector2 Vector2::operator/(float scalar) const
+Vector2 Vector2::operator/(float _scalar) const
 {
-	assert(scalar != 0.0f && "Division by zero");
-	float invScalar = (scalar != 0.0f) ? 1.0f / scalar : 0.0f;
+	assert(_scalar != 0.0f && "Division by zero");
+	float invScalar = (_scalar != 0.0f) ? 1.0f / _scalar : 0.0f;
 	return ProductScalar(invScalar);
 }
-Vector2& Vector2::operator*=(float scalar)
+Vector2& Vector2::operator*=(float _scalar)
 {
-	x *= scalar;
-	y *= scalar;
+	X *= _scalar;
+	Y *= _scalar;
 	return *this;
 }
-Vector2& Vector2::operator/=(float scalar)
+Vector2& Vector2::operator/=(float _scalar)
 {
-	assert(scalar != 0.0f && "Division by zero");
-	float invScalar = (scalar != 0.0f) ? 1.0f / scalar : 0.0f;
-	x *= invScalar;
-	y *= invScalar;
+	assert(_scalar != 0.0f && "Division by zero");
+	float invScalar = (_scalar != 0.0f) ? 1.0f / _scalar : 0.0f;
+	X *= invScalar;
+	Y *= invScalar;
 	return *this;
 }
-Vector2& Vector2::operator+=(float scalar)
+Vector2& Vector2::operator+=(float _scalar)
 {
-	x += scalar;
-	y += scalar;
+	X += _scalar;
+	Y += _scalar;
 	return *this;
 }
-Vector2& Vector2::operator-=(float scalar)
+Vector2& Vector2::operator-=(float _scalar)
 {
-	return *this += -scalar;
+	return *this += -_scalar;
 }
-float& Vector2::operator[](int index)
+float& Vector2::operator[](int _index)
 {
-	assert(index >= 0 && index < 2 && "Index out of range");
-	return (index == 0) ? x : y;
+	assert(_index >= 0 && _index < 2 && "Index out of range");
+	return (_index == 0) ? X : Y;
 }
-const float& Vector2::operator[](int index) const
+const float& Vector2::operator[](int _index) const
 {
-	assert(index >= 0 && index < 2 && "Index out of range");
-	return (index == 0) ? x : y;
+	assert(_index >= 0 && _index < 2 && "Index out of range");
+	return (_index == 0) ? X : Y;
 }
-bool MirageEngine::Core::Math::Vector2::operator==(const Vector2& other) const
+bool MirageEngine::Core::Math::Vector2::operator==(const Vector2& _other) const
 {
-	return x == other.x && y == other.y;
+	return X == _other.X && Y == _other.Y;
 }
-bool MirageEngine::Core::Math::Vector2::operator!=(const Vector2& other) const
+bool MirageEngine::Core::Math::Vector2::operator!=(const Vector2& _other) const
 {
-	return !(*this == other);
+	return !(*this == _other);
 }
-Vector2 MirageEngine::Core::Math::operator*(float scalar, const Vector2& vec)
+Vector2 MirageEngine::Core::Math::operator*(float _scalar, const Vector2& _vec)
 {
-	return { vec.x * scalar, vec.y * scalar };
+	return { _vec.X * _scalar, _vec.Y * _scalar };
 }
-std::ostream& MirageEngine::Core::Math::operator<<(std::ostream& os, const Vector2& vec)
+std::ostream& MirageEngine::Core::Math::operator<<(std::ostream& _os, const Vector2& _vec)
 {
-	return os << "(" << vec.x << ", " << vec.y << ")";
+	return _os << "(" << _vec.X << ", " << _vec.Y << ")";
 }

@@ -19,16 +19,16 @@ using namespace MirageEngine::Core::Math;
 // All Comparator & Define value
 // -------------------------------------------------------------------------------- //
 
-inline static bool operator==(const Quaternion& q1, const glm::quat& q2)
+inline static bool operator==(const Quaternion& _q1, const glm::quat& _q2)
 {
-	return std::abs(q1.x - q2.x) < EPSILON &&
-		std::abs(q1.y - q2.y) < EPSILON &&
-		std::abs(q1.z - q2.z) < EPSILON &&
-		std::abs(q1.w - q2.w) < EPSILON;
+	return std::abs(_q1.X - _q2.x) < EPSILON &&
+		std::abs(_q1.Y - _q2.y) < EPSILON &&
+		std::abs(_q1.Z - _q2.z) < EPSILON &&
+		std::abs(_q1.W - _q2.w) < EPSILON;
 }
 
 
-inline static bool operator==(const glm::quat& q1, const Quaternion& q2)
+inline static bool operator==(const glm::quat& _q1, const Quaternion& _q2)
 {
-	return q2 == q1;
+	return _q2 == _q1;
 }

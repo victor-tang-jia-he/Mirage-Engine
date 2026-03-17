@@ -12,24 +12,24 @@ namespace MirageEngine
 		{
 			struct Quaternion
 			{
-				float x = 0.f;
-				float y = 0.f;
-				float z = 0.f;
-				float w = 0.f;
+				float X = 0.f;
+				float Y = 0.f;
+				float Z = 0.f;
+				float W = 0.f;
 
 				// Constructor
-				Quaternion(float num = 0.f) noexcept;
+				Quaternion(float _num = 0.f) noexcept;
 				Quaternion(float _a, float _b, float _c, float _d) noexcept;
-				Quaternion(const Quaternion& q) noexcept;
-				Quaternion(Quaternion&& q) noexcept;
-				Quaternion(Vector3& axis, float angle);
-				Quaternion(float angleX, float angleY, float angleZ);
+				Quaternion(const Quaternion& _q) noexcept;
+				Quaternion(Quaternion&& _q) noexcept;
+				Quaternion(Vector3& _axis, float _angle);
+				Quaternion(float _angleX, float _angleY, float _angleZ);
 				Quaternion(Vector3& angles);
-				Quaternion(float x1, float x2, float x3, float x4,
-					float y1, float y2, float y3, float y4,
-					float z1, float z2, float z3, float z4,
-					float w1, float w2, float w3, float w4);
-				Quaternion(Matrix4 m);
+				Quaternion(float _x1, float _x2, float _x3, float _x4,
+					float _y1, float _y2, float _y3, float _y4,
+					float _z1, float z2, float _z3, float _z4,
+					float _w1, float _w2, float _w3, float _w4);
+				Quaternion(Matrix4 _m);
 				~Quaternion() = default;
 
 				// Getter
@@ -52,47 +52,47 @@ namespace MirageEngine
 
 				float SquaredNorm() const;
 				float Norm() const;
-				float DotProduct(const Quaternion& q) const;
+				float DotProduct(const Quaternion& _q) const;
 
-				static Vector3 Rotate(const Vector3& p = Vector3(0.f, 0.f, 0.f), const Quaternion& q = Quaternion(1.f, 0.f, 0.f, 0.f));
-				static Vector3 RotateInverse(const Vector3& p = Vector3(0.f, 0.f, 0.f), const Quaternion& q = Quaternion(1.f, 0.f, 0.f, 0.f));
+				static Vector3 Rotate(const Vector3& p = Vector3(0.f, 0.f, 0.f), const Quaternion& _q = Quaternion(1.f, 0.f, 0.f, 0.f));
+				static Vector3 RotateInverse(const Vector3& p = Vector3(0.f, 0.f, 0.f), const Quaternion& _q = Quaternion(1.f, 0.f, 0.f, 0.f));
 
-				static Quaternion Lerp(const Quaternion& q1, const Quaternion& q2, const float t);
-				static Quaternion Slerp(const Quaternion& q1, const Quaternion& q2, const float t);
-				static Quaternion Nlerp(const Quaternion& q1, const Quaternion& q2, const float t);
+				static Quaternion Lerp(const Quaternion& _q1, const Quaternion& _q2, const float _t);
+				static Quaternion Slerp(const Quaternion& _q1, const Quaternion& _q2, const float _t);
+				static Quaternion Nlerp(const Quaternion& _q1, const Quaternion& _q2, const float _t);
 
 				Matrix4 ToMatrix() const;
 				Vector3 ToEulerAngle() const;
 
 				void Print() const;
 
-				Quaternion operator+(const Quaternion& q) const;
-				Quaternion operator+(float scal) const;
-				Quaternion operator-(const Quaternion& q) const;
-				Quaternion operator-(float scal) const;
-				Quaternion operator*(const Quaternion& q) const;
-				Quaternion operator*(float scal) const;
-				Quaternion operator/(const Quaternion& q) const;
-				Quaternion operator/(float scal) const;
+				Quaternion operator+(const Quaternion& _q) const;
+				Quaternion operator+(float _scale) const;
+				Quaternion operator-(const Quaternion& _q) const;
+				Quaternion operator-(float _scale) const;
+				Quaternion operator*(const Quaternion& _q) const;
+				Quaternion operator*(float _scale) const;
+				Quaternion operator/(const Quaternion& _q) const;
+				Quaternion operator/(float _scale) const;
 
-				void operator+=(const Quaternion& q);
-				void operator+=(float scal);
-				void operator-=(const Quaternion& q);
-				void operator-=(float scal);
-				void operator*=(const Quaternion& q);
-				void operator*=(float scal);
-				void operator/=(const Quaternion& q);
-				void operator/=(float scal);
+				void operator+=(const Quaternion& _q);
+				void operator+=(float _scale);
+				void operator-=(const Quaternion& _q);
+				void operator-=(float _scale);
+				void operator*=(const Quaternion& _q);
+				void operator*=(float _scale);
+				void operator/=(const Quaternion& _q);
+				void operator/=(float _scale);
 
-				bool operator==(const Quaternion& q) const;
-				bool operator!=(const Quaternion& q) const;
+				bool operator==(const Quaternion& _q) const;
+				bool operator!=(const Quaternion& _q) const;
 
-				Quaternion& operator=(const Quaternion& q);
-				Quaternion& operator=(Quaternion&& q) noexcept;
-				float operator[](int index) const;
+				Quaternion& operator=(const Quaternion& _q);
+				Quaternion& operator=(Quaternion&& _q) noexcept;
+				float operator[](int _index) const;
 			};
 
-			std::ostream& operator<<(std::ostream& os, const Quaternion& q);
+			std::ostream& operator<<(std::ostream& _os, const Quaternion& _q);
 		}
 	}
 }

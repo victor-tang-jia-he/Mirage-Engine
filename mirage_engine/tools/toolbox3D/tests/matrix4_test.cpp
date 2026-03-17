@@ -3,25 +3,25 @@
 using namespace MirageEngine::Core::Math;
 
 // Mat4
-inline static bool operator==(const Matrix4& m1, const glm::mat4& m2)
+inline static bool operator==(const Matrix4& _m1, const glm::mat4& _m2)
 {
 	return
-		std::abs(m1(0, 0) - m2[0][0]) < EPSILON &&
-		std::abs(m1(0, 1) - m2[0][1]) < EPSILON &&
-		std::abs(m1(0, 2) - m2[0][2]) < EPSILON &&
-		std::abs(m1(0, 3) - m2[0][3]) < EPSILON &&
-		std::abs(m1(1, 0) - m2[1][0]) < EPSILON &&
-		std::abs(m1(1, 1) - m2[1][1]) < EPSILON &&
-		std::abs(m1(1, 2) - m2[1][2]) < EPSILON &&
-		std::abs(m1(1, 3) - m2[1][3]) < EPSILON &&
-		std::abs(m1(2, 0) - m2[2][0]) < EPSILON &&
-		std::abs(m1(2, 1) - m2[2][1]) < EPSILON &&
-		std::abs(m1(2, 2) - m2[2][2]) < EPSILON &&
-		std::abs(m1(2, 3) - m2[2][3]) < EPSILON;
+		std::abs(_m1(0, 0) - _m2[0][0]) < EPSILON &&
+		std::abs(_m1(0, 1) - _m2[0][1]) < EPSILON &&
+		std::abs(_m1(0, 2) - _m2[0][2]) < EPSILON &&
+		std::abs(_m1(0, 3) - _m2[0][3]) < EPSILON &&
+		std::abs(_m1(1, 0) - _m2[1][0]) < EPSILON &&
+		std::abs(_m1(1, 1) - _m2[1][1]) < EPSILON &&
+		std::abs(_m1(1, 2) - _m2[1][2]) < EPSILON &&
+		std::abs(_m1(1, 3) - _m2[1][3]) < EPSILON &&
+		std::abs(_m1(2, 0) - _m2[2][0]) < EPSILON &&
+		std::abs(_m1(2, 1) - _m2[2][1]) < EPSILON &&
+		std::abs(_m1(2, 2) - _m2[2][2]) < EPSILON &&
+		std::abs(_m1(2, 3) - _m2[2][3]) < EPSILON;
 }
-inline static bool operator==(const glm::mat4& m1, const Matrix4& m2)
+inline static bool operator==(const glm::mat4& _m1, const Matrix4& _m2)
 {
-	return m2 == m1;
+	return _m2 == _m1;
 }
 
 // -------------------------------------------------------------------------------- //	
@@ -50,9 +50,9 @@ TEST(Matrix4Test, Equal)
 TEST(Matrix4Test, Diagonal)
 {
 	Vector3 newVec(Mat4.Diagonal());
-	EXPECT_TRUE((newVec.x - glmMat4[0][0]) < EPSILON);
-	EXPECT_TRUE((newVec.y - glmMat4[1][1]) < EPSILON);
-	EXPECT_TRUE((newVec.z - glmMat4[2][2]) < EPSILON);
+	EXPECT_TRUE((newVec.X - glmMat4[0][0]) < EPSILON);
+	EXPECT_TRUE((newVec.Y - glmMat4[1][1]) < EPSILON);
+	EXPECT_TRUE((newVec.Z - glmMat4[2][2]) < EPSILON);
 }
 TEST(Matrix4Test, Oppose)
 {
@@ -181,10 +181,10 @@ TEST(Matrix4Test, PerspectiveVsGLM) {
 	EXPECT_TRUE(myMat == glmMat);
 }
 TEST(Matrix4Test, UltimateRowMajorTest) {
-	// Matrice de rotation non-symétrique
+	// Matrice de _rotation non-symétrique
 	Matrix4 myRot = Matrix4::CreateZRotationMatrix(PI / 3).Transpose();
 
-	// Même rotation en GLM
+	// Même _rotation en GLM
 	glm::mat4 glmRot = glm::rotate(glm::mat4(1.0f), PI / 3, glm::vec3(0, 0, 1));
 
 	// Si ça passe, c'est que tout est cohérent
@@ -197,6 +197,6 @@ TEST(Matrix4Test, UltimateRowMajorTest) {
 	Vector4 myTransformed = myRot * myVec;
 	glm::vec4 glmTransformed = glmRot * glmVec;
 
-	EXPECT_NEAR(myTransformed.x, glmTransformed.x, EPSILON);
-	EXPECT_NEAR(myTransformed.y, glmTransformed.y, EPSILON);
+	EXPECT_NEAR(myTransformed.X, glmTransformed.x, EPSILON);
+	EXPECT_NEAR(myTransformed.Y, glmTransformed.y, EPSILON);
 }

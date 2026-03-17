@@ -2,17 +2,17 @@
 #include <matrix2.h>
 using namespace MirageEngine::Core::Math;
 // Mat2
-inline static bool operator==(const Matrix2& mat2, const glm::mat2& mat)
+inline static bool operator==(const Matrix2& _mat2, const glm::mat2& _mat)
 {
 	return
-		std::abs(mat2(0, 0) - mat[0][0]) < EPSILON &&
-		std::abs(mat2(0, 1) - mat[0][1]) < EPSILON &&
-		std::abs(mat2(1, 0) - mat[1][0]) < EPSILON &&
-		std::abs(mat2(1, 1) - mat[1][1]) < EPSILON;
+		std::abs(_mat2(0, 0) - _mat[0][0]) < EPSILON &&
+		std::abs(_mat2(0, 1) - _mat[0][1]) < EPSILON &&
+		std::abs(_mat2(1, 0) - _mat[1][0]) < EPSILON &&
+		std::abs(_mat2(1, 1) - _mat[1][1]) < EPSILON;
 }
-inline static bool operator==(const glm::mat2& mat, const Matrix2& mat2)
+inline static bool operator==(const glm::mat2& _mat, const Matrix2& _mat2)
 {
-	return mat2 == mat;
+	return _mat2 == _mat;
 }
 
 
@@ -47,8 +47,8 @@ TEST(Matrix2Test, Diagonal)
 {
 	Vector2 v = Mat2.Diagonal();
 
-	EXPECT_FLOAT_EQ(v.x, 1.f);
-	EXPECT_FLOAT_EQ(v.y, 4.f);
+	EXPECT_FLOAT_EQ(v.X, 1.f);
+	EXPECT_FLOAT_EQ(v.Y, 4.f);
 }
 TEST(Matrix2Test, Opposed)
 {

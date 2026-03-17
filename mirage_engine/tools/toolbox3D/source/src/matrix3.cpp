@@ -4,17 +4,17 @@
 #include <assert.h>
 
 using namespace MirageEngine::Core::Math;
-Matrix3::Matrix3(const Matrix3& copy) noexcept
+Matrix3::Matrix3(const Matrix3& _copy) noexcept
 {
-	(*this)(0,0) = copy(0,0); (*this)(0,1) = copy(0,1); (*this)(0,2) = copy(0,2);
-	(*this)(1,0) = copy(1,0); (*this)(1,1) = copy(1,1); (*this)(1,2) = copy(1,2);
-	(*this)(2,0) = copy(2,0); (*this)(2,1) = copy(2,1); (*this)(2,2) = copy(2,2);
+	(*this)(0,0) = _copy(0,0); (*this)(0,1) = _copy(0,1); (*this)(0,2) = _copy(0,2);
+	(*this)(1,0) = _copy(1,0); (*this)(1,1) = _copy(1,1); (*this)(1,2) = _copy(1,2);
+	(*this)(2,0) = _copy(2,0); (*this)(2,1) = _copy(2,1); (*this)(2,2) = _copy(2,2);
 }
-Matrix3::Matrix3(float m00, float m01, float m02, float m10, float m11, float m12, float m20, float m21, float m22) noexcept
+Matrix3::Matrix3(float _m00, float _m01, float _m02, float _m10, float _m11, float _m12, float _m20, float _m21, float _m22) noexcept
 {
-	(*this)(0, 0) = m00; (*this)(0, 1) = m01; (*this)(0, 2) = m02;
-	(*this)(1, 0) = m10; (*this)(1, 1) = m11; (*this)(1, 2) = m12;
-	(*this)(2, 0) = m20; (*this)(2, 1) = m21; (*this)(2, 2) = m22;
+	(*this)(0, 0) = _m00; (*this)(0, 1) = _m01; (*this)(0, 2) = _m02;
+	(*this)(1, 0) = _m10; (*this)(1, 1) = _m11; (*this)(1, 2) = _m12;
+	(*this)(2, 0) = _m20; (*this)(2, 1) = _m21; (*this)(2, 2) = _m22;
 }
 Matrix3 Matrix3::Identity()
 {
@@ -45,49 +45,44 @@ Matrix3 Matrix3::Transpose() const
 		(*this)(0,1), (*this)(1,1), (*this)(2,1),
 		(*this)(0,2), (*this)(1,2), (*this)(2,2));
 }
-Matrix3 Matrix3::AddMatrix3(const Matrix3& other) const
+Matrix3 Matrix3::AddMatrix3(const Matrix3& _other) const
 {
 	return Matrix3(
-		(*this)(0,0) + other(0,0),
-		(*this)(0,1) + other(0,1),
-		(*this)(0,2) + other(0,2),
-		(*this)(1,0) + other(1,0),
-		(*this)(1,1) + other(1,1),
-		(*this)(1,2) + other(1,2),
-		(*this)(2,0) + other(2,0),
-		(*this)(2,1) + other(2,1),
-		(*this)(2,2) + other(2,2));
+		(*this)(0,0) + _other(0,0),
+		(*this)(0,1) + _other(0,1),
+		(*this)(0,2) + _other(0,2),
+		(*this)(1,0) + _other(1,0),
+		(*this)(1,1) + _other(1,1),
+		(*this)(1,2) + _other(1,2),
+		(*this)(2,0) + _other(2,0),
+		(*this)(2,1) + _other(2,1),
+		(*this)(2,2) + _other(2,2));
 }
-Matrix3 Matrix3::ProductScalar(float n) const
+Matrix3 Matrix3::ProductScalar(float _n) const
 {
 	return Matrix3(
-		(*this)(0,0) * n,
-		(*this)(0,1) * n,
-		(*this)(0,2) * n,
-		(*this)(1,0) * n,
-		(*this)(1,1) * n,
-		(*this)(1,2) * n,
-		(*this)(2,0) * n,
-		(*this)(2,1) * n,
-		(*this)(2,2) * n);
+		(*this)(0,0) * _n,
+		(*this)(0,1) * _n,
+		(*this)(0,2) * _n,
+		(*this)(1,0) * _n,
+		(*this)(1,1) * _n,
+		(*this)(1,2) * _n,
+		(*this)(2,0) * _n,
+		(*this)(2,1) * _n,
+		(*this)(2,2) * _n);
 }
-Matrix3 Matrix3::ProductMatrix3(const Matrix3& other) const
+Matrix3 Matrix3::ProductMatrix3(const Matrix3& _other) const
 {
 	return Matrix3(
-		// Colonne 1
-		(*this)(0,0) * other(0,0) + (*this)(0,1) * other(1,0) + (*this)(0,2) * other(2,0), // row 0
-		(*this)(0,0) * other(0,1) + (*this)(0,1) * other(1,1) + (*this)(0,2) * other(2,1), // row 0
-		(*this)(0,0) * other(0,2) + (*this)(0,1) * other(1,2) + (*this)(0,2) * other(2,2), // row 0
-
-		// Colonne 2
-		(*this)(1,0) * other(0,0) + (*this)(1,1) * other(1,0) + (*this)(1,2) * other(2,0), // row 1
-		(*this)(1,0) * other(0,1) + (*this)(1,1) * other(1,1) + (*this)(1,2) * other(2,1), // row 1
-		(*this)(1,0) * other(0,2) + (*this)(1,1) * other(1,2) + (*this)(1,2) * other(2,2), // row 1
-
-		// Colonne 3
-		(*this)(2,0) * other(0,0) + (*this)(2,1) * other(1,0) + (*this)(2,2) * other(2,0), // row 2
-		(*this)(2,0) * other(0,1) + (*this)(2,1) * other(1,1) + (*this)(2,2) * other(2,1), // row 2
-		(*this)(2,0) * other(0,2) + (*this)(2,1) * other(1,2) + (*this)(2,2) * other(2,2)  // row 2
+		(*this)(0,0) * _other(0,0) + (*this)(0,1) * _other(1,0) + (*this)(0,2) * _other(2,0),
+		(*this)(0,0) * _other(0,1) + (*this)(0,1) * _other(1,1) + (*this)(0,2) * _other(2,1),
+		(*this)(0,0) * _other(0,2) + (*this)(0,1) * _other(1,2) + (*this)(0,2) * _other(2,2),
+		(*this)(1,0) * _other(0,0) + (*this)(1,1) * _other(1,0) + (*this)(1,2) * _other(2,0),
+		(*this)(1,0) * _other(0,1) + (*this)(1,1) * _other(1,1) + (*this)(1,2) * _other(2,1),
+		(*this)(1,0) * _other(0,2) + (*this)(1,1) * _other(1,2) + (*this)(1,2) * _other(2,2),
+		(*this)(2,0) * _other(0,0) + (*this)(2,1) * _other(1,0) + (*this)(2,2) * _other(2,0),
+		(*this)(2,0) * _other(0,1) + (*this)(2,1) * _other(1,1) + (*this)(2,2) * _other(2,1),
+		(*this)(2,0) * _other(0,2) + (*this)(2,1) * _other(1,2) + (*this)(2,2) * _other(2,2) 
 	);
 }
 float Matrix3::Determinant() const
@@ -155,19 +150,19 @@ Matrix3 Matrix3::Inverse() const
 
     return inverse;
 }
-Matrix2 Matrix3::GetSubMatrix(int excludeRow, int excludeCol) const
+Matrix2 Matrix3::GetSubMatrix(int _excludeRow, int _excludeCol) const
 {
     Matrix2 sub;
 
     int subCol = 0;
     for (int col = 0; col < 3; ++col)
     {
-        if (col == excludeCol) continue;
+        if (col == _excludeCol) continue;
 
         int subRow = 0;
         for (int row = 0; row < 3; ++row)
         {
-            if (row == excludeRow) continue;
+            if (row == _excludeRow) continue;
 
             sub(subRow,subCol) = (*this)(row,col);
             ++subRow;
@@ -202,12 +197,12 @@ Matrix3 Matrix3::luDecomposition() const
 
     return lower * upper;
 }
-Matrix3 Matrix3::RotateMatrixVector(const Vector3& vec, float rad)
+Matrix3 Matrix3::RotateMatrixVector(const Vector3& _vec, float rad)
 {
-	float length = vec.Norm();
-	float x = vec.x / length;
-	float y = vec.y / length;
-	float z = vec.z / length;
+	float length = _vec.Norm();
+	float x = _vec.X / length;
+	float y = _vec.Y / length;
+	float z = _vec.Z / length;
 
 	float c = std::cos(rad);
 	float s = std::sin(rad);
@@ -226,33 +221,33 @@ void Matrix3::Print() const
 		<< (*this)(1,0) << " " << (*this)(1,1) << " " << (*this)(1,2) << "\n"
 		<< (*this)(2,0) << " " << (*this)(2,1) << " " << (*this)(2,2) << "\n";
 }
-Matrix3 Matrix3::operator*(const Matrix3& other) const
+Matrix3 Matrix3::operator*(const Matrix3& _other) const
 {
-	return ProductMatrix3(other);
+	return ProductMatrix3(_other);
 }
-Matrix3 Matrix3::operator/(const Matrix3& other) const
+Matrix3 Matrix3::operator/(const Matrix3& _other) const
 {
-	return ProductMatrix3(other.Inverse());
+	return ProductMatrix3(_other.Inverse());
 }
-Matrix3 Matrix3::operator+(const Matrix3& other) const
+Matrix3 Matrix3::operator+(const Matrix3& _other) const
 {
-	return AddMatrix3(other);
+	return AddMatrix3(_other);
 }
-Matrix3 Matrix3::operator-(const Matrix3& other) const
+Matrix3 Matrix3::operator-(const Matrix3& _other) const
 {
-	return AddMatrix3(other.Opposed());
+	return AddMatrix3(_other.Opposed());
 }
-Matrix3& Matrix3::operator*=(const Matrix3& other)
+Matrix3& Matrix3::operator*=(const Matrix3& _other)
 {
-	float m1 = (*this)(0,0) * other(0,0) + (*this)(0,1) * other(1,0) + (*this)(0,2) * other(2,0);
-	float m2 = (*this)(0,0) * other(0,1) + (*this)(0,1) * other(1,1) + (*this)(0,2) * other(2,1);
-	float m3 = (*this)(0,0) * other(0,2) + (*this)(0,1) * other(1,2) + (*this)(0,2) * other(2,2);
-	float m4 = (*this)(1,0) * other(0,0) + (*this)(1,1) * other(1,0) + (*this)(1,2) * other(2,0);
-	float m5 = (*this)(1,0) * other(0,1) + (*this)(1,1) * other(1,1) + (*this)(1,2) * other(2,1);
-	float m6 = (*this)(1,0) * other(0,2) + (*this)(1,1) * other(1,2) + (*this)(1,2) * other(2,2);
-	float m7 = (*this)(2,0) * other(0,0) + (*this)(2,1) * other(1,0) + (*this)(2,2) * other(2,0);
-	float m8 = (*this)(2,0) * other(0,1) + (*this)(2,1) * other(1,1) + (*this)(2,2) * other(2,1);
-	float m9 = (*this)(2,0) * other(0,2) + (*this)(2,1) * other(1,2) + (*this)(2,2) * other(2,2);
+	float m1 = (*this)(0,0) * _other(0,0) + (*this)(0,1) * _other(1,0) + (*this)(0,2) * _other(2,0);
+	float m2 = (*this)(0,0) * _other(0,1) + (*this)(0,1) * _other(1,1) + (*this)(0,2) * _other(2,1);
+	float m3 = (*this)(0,0) * _other(0,2) + (*this)(0,1) * _other(1,2) + (*this)(0,2) * _other(2,2);
+	float m4 = (*this)(1,0) * _other(0,0) + (*this)(1,1) * _other(1,0) + (*this)(1,2) * _other(2,0);
+	float m5 = (*this)(1,0) * _other(0,1) + (*this)(1,1) * _other(1,1) + (*this)(1,2) * _other(2,1);
+	float m6 = (*this)(1,0) * _other(0,2) + (*this)(1,1) * _other(1,2) + (*this)(1,2) * _other(2,2);
+	float m7 = (*this)(2,0) * _other(0,0) + (*this)(2,1) * _other(1,0) + (*this)(2,2) * _other(2,0);
+	float m8 = (*this)(2,0) * _other(0,1) + (*this)(2,1) * _other(1,1) + (*this)(2,2) * _other(2,1);
+	float m9 = (*this)(2,0) * _other(0,2) + (*this)(2,1) * _other(1,2) + (*this)(2,2) * _other(2,2);
 
 	(*this)(0,0) = m1;
 	(*this)(0,1) = m2;
@@ -266,90 +261,90 @@ Matrix3& Matrix3::operator*=(const Matrix3& other)
 
 	return *this;
 }
-Matrix3& Matrix3::operator/=(const Matrix3& other)
+Matrix3& Matrix3::operator/=(const Matrix3& _other)
 {
-	*this *= other.Inverse();
+	*this *= _other.Inverse();
 	return *this;
 }
-Matrix3& Matrix3::operator+=(const Matrix3& other)
+Matrix3& Matrix3::operator+=(const Matrix3& _other)
 {
-	(*this)(0,0) += other(0,0);
-	(*this)(0,1) += other(0,1);
-	(*this)(0,2) += other(0,2);
-	(*this)(1,0) += other(1,0);
-	(*this)(1,1) += other(1,1);
-	(*this)(1,2) += other(1,2);
-	(*this)(2,0) += other(2,0);
-	(*this)(2,1) += other(2,1);
-	(*this)(2,2) += other(2,2);
+	(*this)(0,0) += _other(0,0);
+	(*this)(0,1) += _other(0,1);
+	(*this)(0,2) += _other(0,2);
+	(*this)(1,0) += _other(1,0);
+	(*this)(1,1) += _other(1,1);
+	(*this)(1,2) += _other(1,2);
+	(*this)(2,0) += _other(2,0);
+	(*this)(2,1) += _other(2,1);
+	(*this)(2,2) += _other(2,2);
 
 	return *this;
 }
-Matrix3& Matrix3::operator-=(const Matrix3& other)
+Matrix3& Matrix3::operator-=(const Matrix3& _other)
 {
-	(*this)(0,0) -= other(0,0);
-	(*this)(0,1) -= other(0,1);
-	(*this)(0,2) -= other(0,2);
-	(*this)(1,0) -= other(1,0);
-	(*this)(1,1) -= other(1,1);
-	(*this)(1,2) -= other(1,2);
-	(*this)(2,0) -= other(2,0);
-	(*this)(2,1) -= other(2,1);
-	(*this)(2,2) -= other(2,2);
+	(*this)(0,0) -= _other(0,0);
+	(*this)(0,1) -= _other(0,1);
+	(*this)(0,2) -= _other(0,2);
+	(*this)(1,0) -= _other(1,0);
+	(*this)(1,1) -= _other(1,1);
+	(*this)(1,2) -= _other(1,2);
+	(*this)(2,0) -= _other(2,0);
+	(*this)(2,1) -= _other(2,1);
+	(*this)(2,2) -= _other(2,2);
 
 	return *this;
 }
-Matrix3 Matrix3::operator*(float n)
+Matrix3 Matrix3::operator*(float _n)
 {
-	return ProductScalar(n);
+	return ProductScalar(_n);
 }
-Matrix3 Matrix3::operator*=(float n)
+Matrix3 Matrix3::operator*=(float _n)
 {
-	(*this)(0,0) *= n;
-	(*this)(0,1) *= n;
-	(*this)(0,2) *= n;
-	(*this)(1,0) *= n;
-	(*this)(1,1) *= n;
-	(*this)(1,2) *= n;
-	(*this)(2,0) *= n;
-	(*this)(2,1) *= n;
-	(*this)(2,2) *= n;
+	(*this)(0,0) *= _n;
+	(*this)(0,1) *= _n;
+	(*this)(0,2) *= _n;
+	(*this)(1,0) *= _n;
+	(*this)(1,1) *= _n;
+	(*this)(1,2) *= _n;
+	(*this)(2,0) *= _n;
+	(*this)(2,1) *= _n;
+	(*this)(2,2) *= _n;
 
 	return *this;
 }
 Vector3 Matrix3::operator*(const Vector3& v)
 {
 	return Vector3(
-		(*this)(0,0) * v.x + (*this)(0,1) * v.y + (*this)(0,2) * v.z,
-		(*this)(1,0) * v.x + (*this)(1,1) * v.y + (*this)(1,2) * v.z,
-		(*this)(2,0) * v.x + (*this)(2,1) * v.y + (*this)(2,2) * v.z
+		(*this)(0,0) * v.X + (*this)(0,1) * v.Y + (*this)(0,2) * v.Z,
+		(*this)(1,0) * v.X + (*this)(1,1) * v.Y + (*this)(1,2) * v.Z,
+		(*this)(2,0) * v.X + (*this)(2,1) * v.Y + (*this)(2,2) * v.Z
 	);
 }
-bool Matrix3::operator==(const Matrix3& other) const
+bool Matrix3::operator==(const Matrix3& _other) const
 {
 	return
-		std::abs((*this)(0,0) - other(0,0)) < EPSILON &&
-		std::abs((*this)(0,1) - other(0,1)) < EPSILON &&
-		std::abs((*this)(0,2) - other(0,2)) < EPSILON &&
-		std::abs((*this)(1,0) - other(1,0)) < EPSILON &&
-		std::abs((*this)(1,1) - other(1,1)) < EPSILON &&
-		std::abs((*this)(1,2) - other(1,2)) < EPSILON &&
-		std::abs((*this)(2,0) - other(2,0)) < EPSILON &&
-		std::abs((*this)(2,1) - other(2,1)) < EPSILON &&
-		std::abs((*this)(2,2) - other(2,2)) < EPSILON;
+		std::abs((*this)(0,0) - _other(0,0)) < EPSILON &&
+		std::abs((*this)(0,1) - _other(0,1)) < EPSILON &&
+		std::abs((*this)(0,2) - _other(0,2)) < EPSILON &&
+		std::abs((*this)(1,0) - _other(1,0)) < EPSILON &&
+		std::abs((*this)(1,1) - _other(1,1)) < EPSILON &&
+		std::abs((*this)(1,2) - _other(1,2)) < EPSILON &&
+		std::abs((*this)(2,0) - _other(2,0)) < EPSILON &&
+		std::abs((*this)(2,1) - _other(2,1)) < EPSILON &&
+		std::abs((*this)(2,2) - _other(2,2)) < EPSILON;
 }
-Vector3 Matrix3::operator[](int index) const
+Vector3 Matrix3::operator[](int _index) const
 {
-	assert(index >= 0 && index < 3 && "Index out of range");
-	return Vector3((*this)(index,0), (*this)(index, 1), (*this)(index, 2));
+	assert(_index >= 0 && _index < 3 && "Index out of range");
+	return Vector3((*this)(_index,0), (*this)(_index, 1), (*this)(_index, 2));
 }
-const float& Matrix3::operator()(size_t row, size_t col) const
+const float& Matrix3::operator()(size_t _row, size_t _col) const
 {
-	assert(row < 3 && col < 3);
-	return m[col + row * 3];
+	assert(_row < 3 && _col < 3);
+	return M[_col + _row * 3];
 }
-float& Matrix3::operator()(size_t row, size_t col)
+float& Matrix3::operator()(size_t _row, size_t _col)
 {
-	assert(row < 3 && col < 3);
-	return m[col + row * 3];
+	assert(_row < 3 && _col < 3);
+	return M[_col + _row * 3];
 }

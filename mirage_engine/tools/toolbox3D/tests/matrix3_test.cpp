@@ -3,22 +3,22 @@
 using namespace MirageEngine::Core::Math;
 
 // Mat3
-inline static bool operator==(const Matrix3& m1, const glm::mat3& m2)
+inline static bool operator==(const Matrix3& _m1, const glm::mat3& _m2)
 {
 	return
-		std::abs(m1(0, 0) - m2[0][0]) < EPSILON &&
-		std::abs(m1(0, 1) - m2[0][1]) < EPSILON &&
-		std::abs(m1(0, 2) - m2[0][2]) < EPSILON &&
-		std::abs(m1(1, 0) - m2[1][0]) < EPSILON &&
-		std::abs(m1(1, 1) - m2[1][1]) < EPSILON &&
-		std::abs(m1(1, 2) - m2[1][2]) < EPSILON &&
-		std::abs(m1(2, 0) - m2[2][0]) < EPSILON &&
-		std::abs(m1(2, 1) - m2[2][1]) < EPSILON &&
-		std::abs(m1(2, 2) - m2[2][2]) < EPSILON;
+		std::abs(_m1(0, 0) - _m2[0][0]) < EPSILON &&
+		std::abs(_m1(0, 1) - _m2[0][1]) < EPSILON &&
+		std::abs(_m1(0, 2) - _m2[0][2]) < EPSILON &&
+		std::abs(_m1(1, 0) - _m2[1][0]) < EPSILON &&
+		std::abs(_m1(1, 1) - _m2[1][1]) < EPSILON &&
+		std::abs(_m1(1, 2) - _m2[1][2]) < EPSILON &&
+		std::abs(_m1(2, 0) - _m2[2][0]) < EPSILON &&
+		std::abs(_m1(2, 1) - _m2[2][1]) < EPSILON &&
+		std::abs(_m1(2, 2) - _m2[2][2]) < EPSILON;
 }
-inline static bool operator==(const glm::mat3& m1, const Matrix3& m2)
+inline static bool operator==(const glm::mat3& _m1, const Matrix3& _m2)
 {
-	return m2 == m1;
+	return _m2 == _m1;
 }
 
 // -------------------------------------------------------------------------------- //	
@@ -56,9 +56,9 @@ TEST(Matrix3Test, Equal)
 TEST(Matrix3Test, Diagonal)
 {
 	Vector3 newVec = Mat3.Diagonal();
-	EXPECT_TRUE((newVec.x - glmMat3[0][0]) < EPSILON);
-	EXPECT_TRUE((newVec.y - glmMat3[1][1]) < EPSILON);
-	EXPECT_TRUE((newVec.z - glmMat3[2][2]) < EPSILON);
+	EXPECT_TRUE((newVec.X - glmMat3[0][0]) < EPSILON);
+	EXPECT_TRUE((newVec.Y - glmMat3[1][1]) < EPSILON);
+	EXPECT_TRUE((newVec.Z - glmMat3[2][2]) < EPSILON);
 }
 TEST(Matrix3Test, Oppose)
 {
@@ -121,9 +121,9 @@ TEST(Matrix3Test, RotationX)
 	glm::vec3 glmV(1, 0, 0);
 	glm::vec3 glmOut = glmR * glmV;
 
-	EXPECT_TRUE((myOut.x - glmOut.x) < EPSILON);
-	EXPECT_TRUE((myOut.y - glmOut.y) < EPSILON);
-	EXPECT_TRUE((myOut.z - glmOut.z) < EPSILON);
+	EXPECT_TRUE((myOut.X - glmOut.x) < EPSILON);
+	EXPECT_TRUE((myOut.Y - glmOut.y) < EPSILON);
+	EXPECT_TRUE((myOut.Z - glmOut.z) < EPSILON);
 }
 TEST(Matrix3Test, RotationY)
 {
@@ -135,9 +135,9 @@ TEST(Matrix3Test, RotationY)
 	glm::vec3 glmV(1, 0, 0);
 	glm::vec3 glmOut = glmR * glmV;
 
-	EXPECT_TRUE((myOut.x - glmOut.x) < EPSILON);
-	EXPECT_TRUE((myOut.y - glmOut.y) < EPSILON);
-	EXPECT_TRUE((myOut.z - glmOut.z) < EPSILON);
+	EXPECT_TRUE((myOut.X - glmOut.x) < EPSILON);
+	EXPECT_TRUE((myOut.Y - glmOut.y) < EPSILON);
+	EXPECT_TRUE((myOut.Z - glmOut.z) < EPSILON);
 }
 TEST(Matrix3Test, RotationZ)
 {
@@ -149,13 +149,13 @@ TEST(Matrix3Test, RotationZ)
 	glm::vec3 glmV(1, 1, 0);
 	glm::vec3 glmOut = glmR * glmV;
 
-	EXPECT_TRUE((myOut.x - glmOut.x) < EPSILON);
-	EXPECT_TRUE((myOut.y - glmOut.y) < EPSILON);
-	EXPECT_TRUE((myOut.z - glmOut.z) < EPSILON);
+	EXPECT_TRUE((myOut.X - glmOut.x) < EPSILON);
+	EXPECT_TRUE((myOut.Y - glmOut.y) < EPSILON);
+	EXPECT_TRUE((myOut.Z - glmOut.z) < EPSILON);
 }
 TEST(Matrix3Test, Inverse)
 {
-	// Random rotation
+	// Random _rotation
 	float rx = 0.37f;
 	float ry = -1.12f;
 	float rz = 0.58f;
@@ -171,12 +171,12 @@ TEST(Matrix3Test, Inverse)
 	glm::mat3 glmM(g);
 	glm::mat3 glmInv = glm::inverse(glmM);
 
-	for (int col = 0; col < 3; ++col)
+	for (int _col = 0; _col < 3; ++_col)
 	{
-		for (int row = 0; row < 3; ++row)
+		for (int _row = 0; _row < 3; ++_row)
 		{
-			float a = myInv(col, row);
-			float b = glmInv[col][row];
+			float a = myInv(_col, _row);
+			float b = glmInv[_col][_row];
 
 			EXPECT_TRUE((a - b) < EPSILON);
 		}
@@ -195,7 +195,7 @@ TEST(Matrix3Test, LuDecomposition)
 }
 TEST(Matrix3Test, RotationXYZVector)
 {
-	// Random rotation
+	// Random _rotation
 	float rx = 0.37f;
 	float ry = -1.12f;
 	float rz = 0.58f;

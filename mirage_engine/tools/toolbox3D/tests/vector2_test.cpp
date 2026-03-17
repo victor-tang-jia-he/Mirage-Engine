@@ -2,15 +2,15 @@
 #include <vector2.h>
 using namespace MirageEngine::Core::Math;
 
-inline static bool operator==(const Vector2& v1, const glm::vec2& v2)
+inline static bool operator==(const Vector2& _v1, const glm::vec2& _v2)
 {
-	return std::abs(v1.x - v2.x) < EPSILON &&
-		std::abs(v1.y - v2.y) < EPSILON;
+	return std::abs(_v1.X - _v2.x) < EPSILON &&
+		std::abs(_v1.Y - _v2.y) < EPSILON;
 }
 
-inline static bool operator==(const glm::vec2& v1, const Vector2& v2)
+inline static bool operator==(const glm::vec2& _v1, const Vector2& _v2)
 {
-	return v2 == v1;
+	return _v2 == _v1;
 }
 
 // -------------------------------------------------------------------------------- //	
@@ -30,12 +30,12 @@ glm::vec2 glmVec2Add(1.f, 1.f);
 TEST(Vector2Test, Constructor)
 {
 	Vector2 v1;
-	EXPECT_FLOAT_EQ(v1.x, 0.0f);
-	EXPECT_FLOAT_EQ(v1.y, 0.0f);
+	EXPECT_FLOAT_EQ(v1.X, 0.0f);
+	EXPECT_FLOAT_EQ(v1.Y, 0.0f);
 
 	Vector2 v2(3.5f, -2.1f);
-	EXPECT_FLOAT_EQ(v2.x, 3.5f);
-	EXPECT_FLOAT_EQ(v2.y, -2.1f);
+	EXPECT_FLOAT_EQ(v2.X, 3.5f);
+	EXPECT_FLOAT_EQ(v2.Y, -2.1f);
 }
 TEST(Vector2Test, Opposed)
 {
@@ -86,8 +86,8 @@ TEST(Vector2Test, Mid)
 	Vector2 v2(10.0f, 10.0f);
 	Vector2 mid = v1.Mid(v2);
 
-	EXPECT_FLOAT_EQ(mid.x, 5.0f);
-	EXPECT_FLOAT_EQ(mid.y, 5.0f);
+	EXPECT_FLOAT_EQ(mid.X, 5.0f);
+	EXPECT_FLOAT_EQ(mid.Y, 5.0f);
 }
 TEST(Vector2Test, Distance) {
 	float result = vec2.Distance(vec2Add);
@@ -201,7 +201,7 @@ TEST(Vector2Test, OperatorDivide)
 }
 TEST(Vector2Test, OperatorPlusEqual)
 {
-	Vector2 vec2Copy(vec2); // using copy constructor
+	Vector2 vec2Copy(vec2); // using _copy constructor
 	glm::vec2 glmVec2Copy = glmVec2;
 
 	vec2Copy += vec2;
@@ -211,7 +211,7 @@ TEST(Vector2Test, OperatorPlusEqual)
 }
 TEST(Vector2Test, OperatorMinusEqual)
 {
-	Vector2 vec2Copy(vec2); // using copy constructor
+	Vector2 vec2Copy(vec2); // using _copy constructor
 	glm::vec2 glmVec2Copy = glmVec2;
 
 	vec2Copy -= vec2;
@@ -220,7 +220,7 @@ TEST(Vector2Test, OperatorMinusEqual)
 	EXPECT_TRUE(vec2Copy == glmVec2Copy);
 }
 TEST(Vector2Test, OperatorMultiplyEqual) {
-	Vector2 vec2Copy(vec2); // using copy constructor
+	Vector2 vec2Copy(vec2); // using _copy constructor
 	glm::vec2 glmVec2Copy = glmVec2;
 
 	vec2Copy *= vec2;
@@ -229,7 +229,7 @@ TEST(Vector2Test, OperatorMultiplyEqual) {
 	EXPECT_TRUE(vec2Copy == glmVec2Copy);
 }
 TEST(Vector2Test, OperatorDivideEqual) {
-	Vector2 vec2Copy(vec2); // using copy constructor
+	Vector2 vec2Copy(vec2); // using _copy constructor
 	glm::vec2 glmVec2Copy = glmVec2;
 
 	vec2Copy /= vec2;
@@ -246,8 +246,8 @@ TEST(Vector2Test, OperatorSubscript)
 
 	v[0] = 5.0f;
 	v[1] = 6.0f;
-	EXPECT_FLOAT_EQ(v.x, 5.0f);
-	EXPECT_FLOAT_EQ(v.y, 6.0f);
+	EXPECT_FLOAT_EQ(v.X, 5.0f);
+	EXPECT_FLOAT_EQ(v.Y, 6.0f);
 
 	EXPECT_DEATH(v[2], "Index out of range");
 }
@@ -285,7 +285,7 @@ TEST(Vector2Test, OperatorDivideScalar)
 }
 TEST(Vector2Test, OperatorMultiplyEqualScalar)
 {
-	Vector2 vec2Copy(vec2); // using copy constructor
+	Vector2 vec2Copy(vec2); // using _copy constructor
 	glm::vec2 glmVec2Copy = glmVec2;
 
 	vec2Copy *= 3.f;
@@ -294,7 +294,7 @@ TEST(Vector2Test, OperatorMultiplyEqualScalar)
 }
 TEST(Vector2Test, OperatorDivideEqualScalar)
 {
-	Vector2 vec2Copy(vec2); // using copy constructor
+	Vector2 vec2Copy(vec2); // using _copy constructor
 	glm::vec2 glmVec2Copy = glmVec2;
 
 	vec2Copy /= 3.f;
@@ -304,7 +304,7 @@ TEST(Vector2Test, OperatorDivideEqualScalar)
 }
 TEST(Vector2Test, OperatorAddEqualScalar)
 {
-	Vector2 vec2Copy(vec2); // using copy constructor
+	Vector2 vec2Copy(vec2); // using _copy constructor
 	glm::vec2 glmVec2Copy = glmVec2;
 
 	vec2Copy += 3.f;
@@ -313,7 +313,7 @@ TEST(Vector2Test, OperatorAddEqualScalar)
 }
 TEST(Vector2Test, OperatorSubEqualScalar)
 {
-	Vector2 vec2Copy(vec2); // using copy constructor
+	Vector2 vec2Copy(vec2); // using _copy constructor
 	glm::vec2 glmVec2Copy = glmVec2;
 
 	vec2Copy -= 3.f;

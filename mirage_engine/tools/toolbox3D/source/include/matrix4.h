@@ -10,14 +10,14 @@ namespace MirageEngine
 		{
 			struct Matrix4
 			{
-				float m[16];
+				float M[16];
 
-				Matrix4(const Matrix4& copy) noexcept;
+				Matrix4(const Matrix4& _copy) noexcept;
 				Matrix4(
-					float m00 = 0.f, float m01 = 0.f, float m02 = 0.f, float m03 = 0.f,
-					float m10 = 0.f, float m11 = 0.f, float m12 = 0.f, float m13 = 0.f,
-					float m20 = 0.f, float m21 = 0.f, float m22 = 0.f, float m23 = 0.f,
-					float m30 = 0.f, float m31 = 0.f, float m32 = 0.f, float m33 = 0.f) noexcept;
+					float _m00 = 0.f, float _m01 = 0.f, float _m02 = 0.f, float _m03 = 0.f,
+					float _m10 = 0.f, float _m11 = 0.f, float _m12 = 0.f, float _m13 = 0.f,
+					float _m20 = 0.f, float _m21 = 0.f, float _m22 = 0.f, float _m23 = 0.f,
+					float _m30 = 0.f, float _m31 = 0.f, float _m32 = 0.f, float _m33 = 0.f) noexcept;
 
 				// -------------------------------------------------------------------------------- //
 				// Basic Matrix Operations
@@ -55,23 +55,23 @@ namespace MirageEngine
 				/// <summary>
 				/// Returns the sum of this matrix and another matrix.
 				/// </summary>
-				/// <param name="other">The matrix to add.</param>
+				/// <param name="_other">The matrix to add.</param>
 				/// <returns>The resulting matrix after addition.</returns>
-				Matrix4 AddMatrix4(const Matrix4& other) const;
+				Matrix4 AddMatrix4(const Matrix4& _other) const;
 
 				/// <summary>
-				/// Returns the result of scalar multiplication on this matrix.
+				/// Returns the result of _scalar multiplication on this matrix.
 				/// </summary>
-				/// <param name="n">The scalar value to multiply the matrix by.</param>
+				/// <param name="_n">The _scalar value to multiply the matrix by.</param>
 				/// <returns>The resulting matrix after multiplication.</returns>
-				Matrix4 ProductScalar(float n);
+				Matrix4 ProductScalar(float _n);
 
 				/// <summary>
 				/// Returns the result of matrix multiplication with another 4x4 matrix.
 				/// </summary>
-				/// <param name="other">The matrix to multiply with.</param>
+				/// <param name="_other">The matrix to multiply with.</param>
 				/// <returns>The resulting matrix after multiplication.</returns>
-				Matrix4 ProductMatrix4(const Matrix4& other) const;
+				Matrix4 ProductMatrix4(const Matrix4& _other) const;
 
 
 				// -------------------------------------------------------------------------------- //	
@@ -99,58 +99,58 @@ namespace MirageEngine
 				Matrix4 Inverse() const;
 
 				/// <summary>
-				/// Returns the 3x3 submatrix by excluding one row and one column.
+				/// Returns the 3x3 submatrix by excluding one _row and one column.
 				/// </summary>
-				/// <param name="excludeRow">Row to exclude (0-3).</param>
-				/// <param name="excludeCol">Column to exclude (0-3).</param>
-				/// <returns>The resulting submatrix after exclusion of the specified row and column.</returns>
-				Matrix3 GetSubMatrix(int excludeRow, int excludeCol) const;
+				/// <param name="_excludeRow">Row to exclude (0-3).</param>
+				/// <param name="_excludeCol">Column to exclude (0-3).</param>
+				/// <returns>The resulting submatrix after exclusion of the specified _row and column.</returns>
+				Matrix3 GetSubMatrix(int _excludeRow, int _excludeCol) const;
 
-				float GetSubMatrix3x3Determinant(int excludeRow, int excludeCol) const;
+				float GetSubMatrix3x3Determinant(int _excludeRow, int _excludeCol) const;
 
 				// -------------------------------------------------------------------------------- //		
 				// Rotation matrix      
 				// -------------------------------------------------------------------------------- //
 
 				/// <summary>
-				/// Creates a transformation matrix from position, rotation, and scale.
+				/// Creates a transformation matrix from _position, _rotation, and _scale.
 				/// </summary>
-				/// <param name="position">Translation vector.</param>
-				/// <param name="rotation">Rotation in radian (pitch, yaw, roll).</param>
-				/// <param name="scale">Scaling vector.</param>
-				static Matrix4 CreateTransformMatrix(const Vector3& position = Vector3(0, 0, 0), const Vector3& rotation = Vector3(0, 0, 0), const Vector3& scale = Vector3(1, 1, 1));
+				/// <param name="_position">Translate vector.</param>
+				/// <param name="_rotation">Rotation in radian (pitch, yaw, roll).</param>
+				/// <param name="_scale">Scaling vector.</param>
+				static Matrix4 CreateTransformMatrix(const Vector3& _position = Vector3(0, 0, 0), const Vector3& _rotation = Vector3(0, 0, 0), const Vector3& _scale = Vector3(1, 1, 1));
 
 				/// <summary>
-				/// Creates a translation matrix.
+				/// Creates a _translate matrix.
 				/// </summary>
-				/// <param name="translation">Translation vector.</param>
-				static Matrix4 CreateTranslationMatrix(const Vector3& translation);
+				/// <param name="_translate">Translate vector.</param>
+				static Matrix4 CreateTranslationMatrix(const Vector3& _translate);
 
 				/// <summary>
-				/// Creates a scale matrix.
+				/// Creates a _scale matrix.
 				/// </summary>
-				/// <param name="scale">Scaling vector.</param>
-				static Matrix4 CreateScaleMatrix(const Vector3& scale);
+				/// <param name="_scale">Scaling vector.</param>
+				static Matrix4 CreateScaleMatrix(const Vector3& _scale);
 
 				/// <summary>
-				/// Creates a rotation matrix around the X-axis.
+				/// Creates a _rotation matrix around the X-axis.
 				/// </summary>
-				/// <param name="angle">Angle in Radian.</param>
-				static Matrix4 CreateXRotationMatrix(float angle);
+				/// <param name="_angle">Angle in Radian.</param>
+				static Matrix4 CreateXRotationMatrix(float _angle);
 
 				/// <summary>
-				/// Creates a rotation matrix around the Y-axis.
+				/// Creates a _rotation matrix around the Y-axis.
 				/// </summary>
-				/// <param name="angle">Angle in Radian.</param>
-				static Matrix4 CreateYRotationMatrix(float angle);
+				/// <param name="_angle">Angle in Radian.</param>
+				static Matrix4 CreateYRotationMatrix(float _angle);
 
 				/// <summary>
-				/// Creates a rotation matrix around the Z-axis.
+				/// Creates a _rotation matrix around the Z-axis.
 				/// </summary>
-				/// <param name="angle">Angle in Radian.</param>
-				static Matrix4 CreateZRotationMatrix(float angle);
+				/// <param name="_angle">Angle in Radian.</param>
+				static Matrix4 CreateZRotationMatrix(float _angle);
 
-				static Matrix4 GetPerspectiveMatrix(unsigned int width, unsigned int height, float near, float far, float fov);
+				static Matrix4 GetPerspectiveMatrix(unsigned int _width, unsigned int _height, float _near, float _far, float _fov);
 
 				// -------------------------------------------------------------------------------- //	
 				// Display inline
@@ -167,24 +167,24 @@ namespace MirageEngine
 				// Overload operators inline
 				// -------------------------------------------------------------------------------- //
 
-				Matrix4 operator*(const Matrix4& other) const;
-				Matrix4 operator/(const Matrix4& other)const;
-				Matrix4 operator+(const Matrix4& other) const;
-				Matrix4 operator-(const Matrix4& other) const;
-				Matrix4& operator*=(const Matrix4& other);
-				Matrix4& operator/=(const Matrix4& other);
-				Matrix4& operator+=(const Matrix4& other);
-				Matrix4& operator-=(const Matrix4& other);
-				Matrix4 operator*(float n);
-				Matrix4 operator*=(float n);
+				Matrix4 operator*(const Matrix4& _other) const;
+				Matrix4 operator/(const Matrix4& _other)const;
+				Matrix4 operator+(const Matrix4& _other) const;
+				Matrix4 operator-(const Matrix4& _other) const;
+				Matrix4& operator*=(const Matrix4& _other);
+				Matrix4& operator/=(const Matrix4& _other);
+				Matrix4& operator+=(const Matrix4& _other);
+				Matrix4& operator-=(const Matrix4& _other);
+				Matrix4 operator*(float _n);
+				Matrix4 operator*=(float _n);
 				Vector3 operator*(const Vector4& mult) const;
-				bool operator==(const Matrix4& other) const;
-				Vector4 operator[](int index) const;
+				bool operator==(const Matrix4& _other) const;
+				Vector4 operator[](int _index) const;
 
 				// -------------------------------------------------------------------------------- //
 
-				float& operator()(size_t row, size_t col);
-				const float& operator()(size_t row, size_t col) const;
+				float& operator()(size_t _row, size_t _col);
+				const float& operator()(size_t _row, size_t _col) const;
 			};
 		}
 	}

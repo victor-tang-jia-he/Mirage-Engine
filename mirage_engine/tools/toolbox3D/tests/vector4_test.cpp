@@ -2,17 +2,17 @@
 #include <vector4.h>
 using namespace MirageEngine::Core::Math;
 
-inline static bool operator==(const Vector4& v1, const glm::vec4& v2)
+inline static bool operator==(const Vector4& _v1, const glm::vec4& _v2)
 {
-	return std::abs(v1.x - v2.x) < EPSILON &&
-		std::abs(v1.y - v2.y) < EPSILON &&
-		std::abs(v1.z - v2.z) < EPSILON &&
-		std::abs(v1.w - v2.w) < EPSILON;
+	return std::abs(_v1.X - _v2.x) < EPSILON &&
+		std::abs(_v1.Y - _v2.y) < EPSILON &&
+		std::abs(_v1.Z - _v2.z) < EPSILON &&
+		std::abs(_v1.W - _v2.w) < EPSILON;
 }
 
-inline static bool operator==(const glm::vec4& v1, const Vector4& v2)
+inline static bool operator==(const glm::vec4& _v1, const Vector4& _v2)
 {
-	return v2 == v1;
+	return _v2 == _v1;
 }
 
 // -------------------------------------------------------------------------------- //	
@@ -31,49 +31,49 @@ glm::vec4 glmVec4Add(1.f, 1.f, 1.f, 1.f);
 
 TEST(Vector4Test, Constructor) {
 	Vector4 v1;
-	EXPECT_FLOAT_EQ(v1.x, 0.0f);
-	EXPECT_FLOAT_EQ(v1.y, 0.0f);
-	EXPECT_FLOAT_EQ(v1.z, 0.0f);
-	EXPECT_FLOAT_EQ(v1.w, 1.0f);
+	EXPECT_FLOAT_EQ(v1.X, 0.0f);
+	EXPECT_FLOAT_EQ(v1.Y, 0.0f);
+	EXPECT_FLOAT_EQ(v1.Z, 0.0f);
+	EXPECT_FLOAT_EQ(v1.W, 1.0f);
 
 	Vector4 v2(1.5f, -2.3f, 4.7f, 2.0f);
-	EXPECT_FLOAT_EQ(v2.x, 1.5f);
-	EXPECT_FLOAT_EQ(v2.y, -2.3f);
-	EXPECT_FLOAT_EQ(v2.z, 4.7f);
-	EXPECT_FLOAT_EQ(v2.w, 2.0f);
+	EXPECT_FLOAT_EQ(v2.X, 1.5f);
+	EXPECT_FLOAT_EQ(v2.Y, -2.3f);
+	EXPECT_FLOAT_EQ(v2.Z, 4.7f);
+	EXPECT_FLOAT_EQ(v2.W, 2.0f);
 
 	Vector4 v3(1.0f, 2.0f, 3.0f);
-	EXPECT_FLOAT_EQ(v3.x, 1.0f);
-	EXPECT_FLOAT_EQ(v3.y, 2.0f);
-	EXPECT_FLOAT_EQ(v3.z, 3.0f);
-	EXPECT_FLOAT_EQ(v3.w, 1.0f);
+	EXPECT_FLOAT_EQ(v3.X, 1.0f);
+	EXPECT_FLOAT_EQ(v3.Y, 2.0f);
+	EXPECT_FLOAT_EQ(v3.Z, 3.0f);
+	EXPECT_FLOAT_EQ(v3.W, 1.0f);
 }
 TEST(Vector4Test, ConstructorFromVector3) {
 	Vector3 v3(2.0f, 3.0f, 4.0f);
 	Vector4 v4(v3);
 
-	EXPECT_FLOAT_EQ(v4.x, 2.0f);
-	EXPECT_FLOAT_EQ(v4.y, 3.0f);
-	EXPECT_FLOAT_EQ(v4.z, 4.0f);
-	EXPECT_FLOAT_EQ(v4.w, 1.0f);
+	EXPECT_FLOAT_EQ(v4.X, 2.0f);
+	EXPECT_FLOAT_EQ(v4.Y, 3.0f);
+	EXPECT_FLOAT_EQ(v4.Z, 4.0f);
+	EXPECT_FLOAT_EQ(v4.W, 1.0f);
 
 	Vector4 v4b(v3, 5.0f);
-	EXPECT_FLOAT_EQ(v4b.x, 2.0f);
-	EXPECT_FLOAT_EQ(v4b.y, 3.0f);
-	EXPECT_FLOAT_EQ(v4b.z, 4.0f);
-	EXPECT_FLOAT_EQ(v4b.w, 5.0f);
+	EXPECT_FLOAT_EQ(v4b.X, 2.0f);
+	EXPECT_FLOAT_EQ(v4b.Y, 3.0f);
+	EXPECT_FLOAT_EQ(v4b.Z, 4.0f);
+	EXPECT_FLOAT_EQ(v4b.W, 5.0f);
 }
 TEST(Vector4Test, ConversionToVector3) {
 	Vector4 v4(1.0f, 2.0f, 3.0f, 4.0f);
 	Vector3 v3 = static_cast<Vector3>(v4);
 
-	EXPECT_FLOAT_EQ(v3.x, 1.0f);
-	EXPECT_FLOAT_EQ(v3.y, 2.0f);
-	EXPECT_FLOAT_EQ(v3.z, 3.0f);
+	EXPECT_FLOAT_EQ(v3.X, 1.0f);
+	EXPECT_FLOAT_EQ(v3.Y, 2.0f);
+	EXPECT_FLOAT_EQ(v3.Z, 3.0f);
 
 	Vector2 v2 = static_cast<Vector2>(v4);
-	EXPECT_FLOAT_EQ(v2.x, 1.0f);
-	EXPECT_FLOAT_EQ(v2.y, 2.0f);
+	EXPECT_FLOAT_EQ(v2.X, 1.0f);
+	EXPECT_FLOAT_EQ(v2.Y, 2.0f);
 }
 TEST(Vector4Test, Opposed) {
 	Vector4 result = vec4.Opposed();
@@ -106,10 +106,10 @@ TEST(Vector4Test, Mid) {
 	Vector4 v2(10.0f, 10.0f, 10.0f, 10.0f);
 	Vector4 mid = v1.Mid(v2);
 
-	EXPECT_FLOAT_EQ(mid.x, 5.0f);
-	EXPECT_FLOAT_EQ(mid.y, 5.0f);
-	EXPECT_FLOAT_EQ(mid.z, 5.0f);
-	EXPECT_FLOAT_EQ(mid.w, 5.0f);
+	EXPECT_FLOAT_EQ(mid.X, 5.0f);
+	EXPECT_FLOAT_EQ(mid.Y, 5.0f);
+	EXPECT_FLOAT_EQ(mid.Z, 5.0f);
+	EXPECT_FLOAT_EQ(mid.W, 5.0f);
 }
 TEST(Vector4Test, Distance) {
 	float result = vec4.Distance(vec4Add);
@@ -175,7 +175,7 @@ TEST(Vector4Test, OperatorUnaryMinus) {
 	EXPECT_TRUE(result == glmResult);
 }
 TEST(Vector4Test, OperatorPlusEqual) {
-	Vector4 vec4Copy(vec4); // using copy constructor
+	Vector4 vec4Copy(vec4); // using _copy constructor
 	glm::vec4 glmVec4Copy = glmVec4;
 
 	vec4Copy += vec4;
@@ -184,7 +184,7 @@ TEST(Vector4Test, OperatorPlusEqual) {
 	EXPECT_TRUE(vec4Copy == glmVec4Copy);
 }
 TEST(Vector4Test, OperatorMinusEqual) {
-	Vector4 vec4Copy(vec4); // using copy constructor
+	Vector4 vec4Copy(vec4); // using _copy constructor
 	glm::vec4 glmVec4Copy = glmVec4;
 
 	vec4Copy -= vec4;
@@ -193,7 +193,7 @@ TEST(Vector4Test, OperatorMinusEqual) {
 	EXPECT_TRUE(vec4Copy == glmVec4Copy);
 }
 TEST(Vector4Test, OperatorMultiplyEqual) {
-	Vector4 vec4Copy(vec4); // using copy constructor
+	Vector4 vec4Copy(vec4); // using _copy constructor
 	glm::vec4 glmVec4Copy = glmVec4;
 
 	vec4Copy *= vec4;
@@ -202,7 +202,7 @@ TEST(Vector4Test, OperatorMultiplyEqual) {
 	EXPECT_TRUE(vec4Copy == glmVec4Copy);
 }
 TEST(Vector4Test, OperatorDivideEqual) {
-	Vector4 vec4Copy(vec4); // using copy constructor
+	Vector4 vec4Copy(vec4); // using _copy constructor
 	glm::vec4 glmVec4Copy = glmVec4;
 
 	vec4Copy /= vec4;
@@ -221,9 +221,9 @@ TEST(Vector4Test, OperatorSubscript) {
 	v[0] = 6.0f;
 	v[1] = 7.0f;
 	v[2] = 8.0f;
-	EXPECT_FLOAT_EQ(v.x, 6.0f);
-	EXPECT_FLOAT_EQ(v.y, 7.0f);
-	EXPECT_FLOAT_EQ(v.z, 8.0f);
+	EXPECT_FLOAT_EQ(v.X, 6.0f);
+	EXPECT_FLOAT_EQ(v.Y, 7.0f);
+	EXPECT_FLOAT_EQ(v.Z, 8.0f);
 }
 TEST(Vector4Test, OperatorAddScalar)
 {
@@ -253,7 +253,7 @@ TEST(Vector4Test, OperatorDivideScalar)
 }
 TEST(Vector4Test, OperatorMultiplyEqualScalar)
 {
-	Vector4 vec4Copy(vec4); // using copy constructor
+	Vector4 vec4Copy(vec4); // using _copy constructor
 	glm::vec4 glmVec4Copy = glmVec4;
 
 	vec4Copy *= 3.f;
@@ -262,7 +262,7 @@ TEST(Vector4Test, OperatorMultiplyEqualScalar)
 }
 TEST(Vector4Test, OperatorDivideEqualScalar)
 {
-	Vector4 vec4Copy(vec4); // using copy constructor
+	Vector4 vec4Copy(vec4); // using _copy constructor
 	glm::vec4 glmVec4Copy = glmVec4;
 
 	vec4Copy /= 3.f;
@@ -272,7 +272,7 @@ TEST(Vector4Test, OperatorDivideEqualScalar)
 }
 TEST(Vector4Test, OperatorAddEqualScalar)
 {
-	Vector4 vec4Copy(vec4); // using copy constructor
+	Vector4 vec4Copy(vec4); // using _copy constructor
 	glm::vec4 glmVec4Copy = glmVec4;
 
 	vec4Copy += 3.f;
@@ -281,7 +281,7 @@ TEST(Vector4Test, OperatorAddEqualScalar)
 }
 TEST(Vector4Test, OperatorSubEqualScalar)
 {
-	Vector4 vec4Copy(vec4); // using copy constructor
+	Vector4 vec4Copy(vec4); // using _copy constructor
 	glm::vec4 glmVec4Copy = glmVec4;
 
 	vec4Copy -= 3.f;
@@ -298,7 +298,7 @@ TEST(Vector4Test, AsList) {
 	EXPECT_FLOAT_EQ(list[3], 4.0f);
 
 	list[0] = 42.0f;
-	EXPECT_FLOAT_EQ(v.x, 1.0f);
+	EXPECT_FLOAT_EQ(v.X, 1.0f);
 }
 TEST(Vector4Test, EdgeCases) {
 	Vector4 v1(1e6f, 1e6f, 1e6f, 1e6f);
@@ -316,7 +316,7 @@ TEST(Vector4Test, Vector3Consistency) {
 	Vector4 v4(v3, 5.0f);
 	Vector3 v3b = static_cast<Vector3>(v4);
 
-	EXPECT_FLOAT_EQ(v3b.x, v3.x);
-	EXPECT_FLOAT_EQ(v3b.y, v3.y);
-	EXPECT_FLOAT_EQ(v3b.z, v3.z);
+	EXPECT_FLOAT_EQ(v3b.X, v3.X);
+	EXPECT_FLOAT_EQ(v3b.Y, v3.Y);
+	EXPECT_FLOAT_EQ(v3b.Z, v3.Z);
 }

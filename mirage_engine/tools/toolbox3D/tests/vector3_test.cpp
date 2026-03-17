@@ -2,16 +2,16 @@
 #include <vector3.h>
 using namespace MirageEngine::Core::Math;
 
-inline static bool operator==(const Vector3& v1, const glm::vec3& v2)
+inline static bool operator==(const Vector3& _v1, const glm::vec3& _v2)
 {
-	return std::abs(v1.x - v2.x) < EPSILON &&
-		std::abs(v1.y - v2.y) < EPSILON &&
-		std::abs(v1.z - v2.z) < EPSILON;
+	return std::abs(_v1.X - _v2.x) < EPSILON &&
+		std::abs(_v1.Y - _v2.y) < EPSILON &&
+		std::abs(_v1.Z - _v2.z) < EPSILON;
 }
 
-inline static bool operator==(const glm::vec3& v1, const Vector3& v2)
+inline static bool operator==(const glm::vec3& _v1, const Vector3& _v2)
 {
-	return v2 == v1;
+	return _v2 == _v1;
 }
 
 // -------------------------------------------------------------------------------- //	
@@ -31,20 +31,20 @@ glm::vec3 glmVec3Add(1.f, 1.f, 1.f);
 TEST(Vector3Test, Constructor)
 {
 	Vector3 v1;
-	EXPECT_FLOAT_EQ(v1.x, 0.0f);
-	EXPECT_FLOAT_EQ(v1.y, 0.0f);
-	EXPECT_FLOAT_EQ(v1.z, 0.0f);
+	EXPECT_FLOAT_EQ(v1.X, 0.0f);
+	EXPECT_FLOAT_EQ(v1.Y, 0.0f);
+	EXPECT_FLOAT_EQ(v1.Z, 0.0f);
 
 	Vector3 v2(1.5f, -2.3f, 4.7f);
-	EXPECT_FLOAT_EQ(v2.x, 1.5f);
-	EXPECT_FLOAT_EQ(v2.y, -2.3f);
-	EXPECT_FLOAT_EQ(v2.z, 4.7f);
+	EXPECT_FLOAT_EQ(v2.X, 1.5f);
+	EXPECT_FLOAT_EQ(v2.Y, -2.3f);
+	EXPECT_FLOAT_EQ(v2.Z, 4.7f);
 
 	Vector2 v2d(3.0f, 4.0f);
 	Vector3 v3(v2d, 5.0f);
-	EXPECT_FLOAT_EQ(v3.x, 3.0f);
-	EXPECT_FLOAT_EQ(v3.y, 4.0f);
-	EXPECT_FLOAT_EQ(v3.z, 5.0f);
+	EXPECT_FLOAT_EQ(v3.X, 3.0f);
+	EXPECT_FLOAT_EQ(v3.Y, 4.0f);
+	EXPECT_FLOAT_EQ(v3.Z, 5.0f);
 }
 TEST(Vector3Test, Opposed)
 {
@@ -85,9 +85,9 @@ TEST(Vector3Test, Mid) {
 	Vector3 v2(10.0f, 10.0f, 10.0f);
 	Vector3 mid = v1.Mid(v2);
 
-	EXPECT_FLOAT_EQ(mid.x, 5.0f);
-	EXPECT_FLOAT_EQ(mid.y, 5.0f);
-	EXPECT_FLOAT_EQ(mid.z, 5.0f);
+	EXPECT_FLOAT_EQ(mid.X, 5.0f);
+	EXPECT_FLOAT_EQ(mid.Y, 5.0f);
+	EXPECT_FLOAT_EQ(mid.Z, 5.0f);
 }
 TEST(Vector3Test, Distance) {
 	float result = vec3.Distance(vec3Add);
@@ -172,7 +172,7 @@ TEST(Vector3Test, AsList)
 	EXPECT_FLOAT_EQ(list[2], 3.0f);
 
 	list[0] = 42.0f;
-	EXPECT_FLOAT_EQ(v.x, 1.0f);
+	EXPECT_FLOAT_EQ(v.X, 1.0f);
 }
 TEST(Vector3Test, OperatorPlus) {
 	Vector3 result = vec3 + vec3Add;
@@ -201,7 +201,7 @@ TEST(Vector3Test, OperatorUnaryMinus) {
 	EXPECT_TRUE(result == glmResult);
 }
 TEST(Vector3Test, OperatorPlusEqual) {
-	Vector3 vec3Copy(vec3); // using copy constructor
+	Vector3 vec3Copy(vec3); // using _copy constructor
 	glm::vec3 glmVec3Copy = glmVec3;
 
 	vec3Copy += vec3;
@@ -210,7 +210,7 @@ TEST(Vector3Test, OperatorPlusEqual) {
 	EXPECT_TRUE(vec3Copy == glmVec3Copy);
 }
 TEST(Vector3Test, OperatorMinusEqual) {
-	Vector3 vec3Copy(vec3); // using copy constructor
+	Vector3 vec3Copy(vec3); // using _copy constructor
 	glm::vec3 glmVec3Copy = glmVec3;
 
 	vec3Copy -= vec3;
@@ -219,7 +219,7 @@ TEST(Vector3Test, OperatorMinusEqual) {
 	EXPECT_TRUE(vec3Copy == glmVec3Copy);
 }
 TEST(Vector3Test, OperatorMultiplyEqual) {
-	Vector3 vec3Copy(vec3); // using copy constructor
+	Vector3 vec3Copy(vec3); // using _copy constructor
 	glm::vec3 glmVec3Copy = glmVec3;
 
 	vec3Copy *= vec3;
@@ -228,7 +228,7 @@ TEST(Vector3Test, OperatorMultiplyEqual) {
 	EXPECT_TRUE(vec3Copy == glmVec3Copy);
 }
 TEST(Vector3Test, OperatorDivideEqual) {
-	Vector3 vec3Copy(vec3); // using copy constructor
+	Vector3 vec3Copy(vec3); // using _copy constructor
 	glm::vec3 glmVec3Copy = glmVec3;
 
 	vec3Copy /= vec3;
@@ -247,9 +247,9 @@ TEST(Vector3Test, OperatorSubscript) {
 	v[0] = 6.0f;
 	v[1] = 7.0f;
 	v[2] = 8.0f;
-	EXPECT_FLOAT_EQ(v.x, 6.0f);
-	EXPECT_FLOAT_EQ(v.y, 7.0f);
-	EXPECT_FLOAT_EQ(v.z, 8.0f);
+	EXPECT_FLOAT_EQ(v.X, 6.0f);
+	EXPECT_FLOAT_EQ(v.Y, 7.0f);
+	EXPECT_FLOAT_EQ(v.Z, 8.0f);
 }
 TEST(Vector3Test, OperatorAddScalar)
 {
@@ -279,7 +279,7 @@ TEST(Vector3Test, OperatorDivideScalar)
 }
 TEST(Vector3Test, OperatorMultiplyEqualScalar)
 {
-	Vector3 vec3Copy(vec3); // using copy constructor
+	Vector3 vec3Copy(vec3); // using _copy constructor
 	glm::vec3 glmVec3Copy = glmVec3;
 
 	vec3Copy *= 3.f;
@@ -288,7 +288,7 @@ TEST(Vector3Test, OperatorMultiplyEqualScalar)
 }
 TEST(Vector3Test, OperatorDivideEqualScalar)
 {
-	Vector3 vec3Copy(vec3); // using copy constructor
+	Vector3 vec3Copy(vec3); // using _copy constructor
 	glm::vec3 glmVec3Copy = glmVec3;
 
 	vec3Copy /= 3.f;
@@ -298,7 +298,7 @@ TEST(Vector3Test, OperatorDivideEqualScalar)
 }
 TEST(Vector3Test, OperatorAddEqualScalar)
 {
-	Vector3 vec3Copy(vec3); // using copy constructor
+	Vector3 vec3Copy(vec3); // using _copy constructor
 	glm::vec3 glmVec3Copy = glmVec3;
 
 	vec3Copy += 3.f;
@@ -307,7 +307,7 @@ TEST(Vector3Test, OperatorAddEqualScalar)
 }
 TEST(Vector3Test, OperatorSubEqualScalar)
 {
-	Vector3 vec3Copy(vec3); // using copy constructor
+	Vector3 vec3Copy(vec3); // using _copy constructor
 	glm::vec3 glmVec3Copy = glmVec3;
 
 	vec3Copy -= 3.f;
@@ -348,15 +348,15 @@ TEST(Vector3Test, Vector2Conversion) {
 	Vector2 v2(3.0f, 4.0f);
 	Vector3 v3(v2, 5.0f);
 
-	EXPECT_FLOAT_EQ(v3.x, v2.x);
-	EXPECT_FLOAT_EQ(v3.y, v2.y);
-	EXPECT_FLOAT_EQ(v3.z, 5.0f);
+	EXPECT_FLOAT_EQ(v3.X, v2.X);
+	EXPECT_FLOAT_EQ(v3.Y, v2.Y);
+	EXPECT_FLOAT_EQ(v3.Z, 5.0f);
 
 	Vector3 v3b(1.0f, 2.0f, 3.0f);
 	Vector3 result = v3 + v3b;
-	EXPECT_FLOAT_EQ(result.x, 4.0f);
-	EXPECT_FLOAT_EQ(result.y, 6.0f);
-	EXPECT_FLOAT_EQ(result.z, 8.0f);
+	EXPECT_FLOAT_EQ(result.X, 4.0f);
+	EXPECT_FLOAT_EQ(result.Y, 6.0f);
+	EXPECT_FLOAT_EQ(result.Z, 8.0f);
 
 	Vector2 v2FromV3 = static_cast<Vector2>(v3);
 	EXPECT_TRUE(v2 == v2FromV3);

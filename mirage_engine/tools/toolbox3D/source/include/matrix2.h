@@ -10,10 +10,10 @@ namespace MirageEngine
 		{
 			struct Matrix2
 			{
-				float m[4];
+				float M[4];
 
-				Matrix2(const Matrix2& copy) noexcept;
-				Matrix2(float m00 = 0.f, float m01 = 0.f, float m10 = 0.f, float m11 = 0.f) noexcept;
+				Matrix2(const Matrix2& _copy) noexcept;
+				Matrix2(float _m00 = 0.f, float _m01 = 0.f, float _m10 = 0.f, float _m11 = 0.f) noexcept;
 
 				/// <summary>
 				/// Return the identity matrix of 2x2.
@@ -51,23 +51,23 @@ namespace MirageEngine
 				/// <summary>
 				/// Add another matrix to the current matrix.
 				/// </summary>
-				/// <param name="other">The matrix to add.</param>
+				/// <param name="_other">The matrix to add.</param>
 				/// <returns>The resulting matrix after addition.</returns>
-				Matrix2 AddMatrix2(const Matrix2& other) const;
+				Matrix2 AddMatrix2(const Matrix2& _other) const;
 
 				/// <summary>
-				/// Multiply the matrix by a scalar value.
+				/// Multiply the matrix by a _scalar value.
 				/// </summary>
-				/// <param name="n">The scalar value to multiply the matrix by.</param>
+				/// <param name="_n">The _scalar value to multiply the matrix by.</param>
 				/// <returns>The resulting matrix after multiplication.</returns>
-				Matrix2 ProductScalar(float n) const;
+				Matrix2 ProductScalar(float _n) const;
 
 				/// <summary>
 				/// Multiply the matrix by another matrix.
 				/// </summary>
-				/// <param name="other">The matrix to multiply with.</param>
+				/// <param name="_other">The matrix to multiply with.</param>
 				/// <returns>The resulting matrix after multiplication.</returns>
-				Matrix2 ProductMatrix2(const Matrix2& other) const;
+				Matrix2 ProductMatrix2(const Matrix2& _other) const;
 
 
 				// -------------------------------------------------------------------------------- //	
@@ -98,11 +98,11 @@ namespace MirageEngine
 				// -------------------------------------------------------------------------------- //
 
 				/// <summary>
-				/// Rotate the matrix by a given angle (in Radian).
+				/// Rotate the matrix by a given _angle (in Radian).
 				/// </summary>
-				/// <param name="angle">The angle by which to rotate the matrix.</param>
+				/// <param name="_angle">The _angle by which to rotate the matrix.</param>
 				/// <returns>The resulting rotated matrix.</returns>
-				Matrix2 Rotate(float angle);
+				Matrix2 Rotate(float _angle);
 
 				// -------------------------------------------------------------------------------- //	
 				// Display
@@ -118,27 +118,27 @@ namespace MirageEngine
 				// Overload operators inline
 				// -------------------------------------------------------------------------------- //
 
-				Matrix2 operator*(const Matrix2& other)const;
-				Matrix2 operator/(const Matrix2& other)const;
-				Matrix2 operator+(const Matrix2& other) const;
-				Matrix2 operator-(const Matrix2& other) const;
+				Matrix2 operator*(const Matrix2& _other)const;
+				Matrix2 operator/(const Matrix2& _other)const;
+				Matrix2 operator+(const Matrix2& _other) const;
+				Matrix2 operator-(const Matrix2& _other) const;
 
-				Matrix2& operator*=(const Matrix2& other);
-				Matrix2& operator/=(const Matrix2& other);
-				Matrix2& operator+=(const Matrix2& other);
-				Matrix2& operator-=(const Matrix2& other);
+				Matrix2& operator*=(const Matrix2& _other);
+				Matrix2& operator/=(const Matrix2& _other);
+				Matrix2& operator+=(const Matrix2& _other);
+				Matrix2& operator-=(const Matrix2& _other);
 
-				Matrix2 operator*(float other) const;
-				Matrix2& operator*=(float other);
+				Matrix2 operator*(float _other) const;
+				Matrix2& operator*=(float _other);
 
-				bool operator==(const Matrix2& other) const;
+				bool operator==(const Matrix2& _other) const;
 
-				Vector2 operator[](int index) const;
+				Vector2 operator[](int _index) const;
 
 				// -------------------------------------------------------------------------------- //
 
-				float& operator()(size_t row, size_t col);
-				const float& operator()(size_t row, size_t col) const;
+				float& operator()(size_t _row, size_t _col);
+				const float& operator()(size_t _row, size_t _col) const;
 			};
 		}
 	}
