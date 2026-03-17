@@ -29,7 +29,7 @@
 
 #include "debug.h"
 
-using namespace MirageEngine::Core::Maths;
+using namespace MirageEngine::Core::Math;
 struct Vertex
 {
 	Vector3 position;
