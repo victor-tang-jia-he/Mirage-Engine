@@ -10,18 +10,13 @@ namespace MirageEngine
 		{
 			struct Matrix3
 			{
-				float m[3][3]; //3x3
+				float m[9]; //3x3
 
 				Matrix3(const Matrix3& copy);
-				inline Matrix3(
+				Matrix3(
 					float m00 = 0.f, float m01 = 0.f, float m02 = 0.f,
 					float m10 = 0.f, float m11 = 0.f, float m12 = 0.f,
-					float m20 = 0.f, float m21 = 0.f, float m22 = 0.f)
-				{
-					m[0][0] = m00; m[0][1] = m01; m[0][2] = m02;
-					m[1][0] = m10; m[1][1] = m11; m[1][2] = m12;
-					m[2][0] = m20; m[2][1] = m21; m[2][2] = m22;
-				}
+					float m20 = 0.f, float m21 = 0.f, float m22 = 0.f);
 					
 
 
@@ -189,6 +184,11 @@ namespace MirageEngine
 				Vector3 operator*(const Vector3& m);
 				Vector3 operator[](int index) const;
 				Vector3& operator[](int index);
+
+				// -------------------------------------------------------------------------------- //
+
+				float& operator()(size_t row, size_t col);
+				const float& operator()(size_t row, size_t col) const;
 			};
 		}
 	}
