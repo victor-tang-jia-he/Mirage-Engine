@@ -13,11 +13,15 @@
 #include "i_uniform_buffer.h"
 #include "i_command_buffer.h"
 
+#include <logs/log.h>
+
 int main(MirageRHI::IRenderInterface::API api)
 {
 	api = MirageRHI::IRenderInterface::API::OPENGL;
 
 	MirageRHI::IRenderInterface* renderInterface = nullptr;
+
+	LOG(logInfo, LogCat::System, "Starting Mirage Engine with API: ", api == MirageRHI::IRenderInterface::OPENGL ? "OpenGL" : "Unknown");
 
 	MirageRHI::IInstance* instance = nullptr;
 	MirageRHI::ISurface* surface = nullptr;

@@ -2,10 +2,10 @@
 
 void MirageRHI::OpenGLRenderPass::Create(Vector4 color, float depth)
 {
-    clearColor[0] = color.x;
-    clearColor[1] = color.y;
-    clearColor[2] = color.z;
-    clearColor[3] = color.w;
+    clearColor[0] = color.X;
+    clearColor[1] = color.Y;
+    clearColor[2] = color.Z;
+    clearColor[3] = color.W;
     clearDepth = depth;
 }
 
