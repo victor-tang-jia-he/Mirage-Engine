@@ -14,10 +14,10 @@ namespace MirageEngine
 				float z;
 				float w;
 
-				inline Vector4(Vector3 vec3, float _w = 1.f)
+				inline Vector4(const Vector3 vec3, float _w = 1.f) noexcept
 					: x(vec3.x), y(vec3.y), z(vec3.z), w(_w) {
 				}
-				inline Vector4(float _x = 0.f, float _y = 0.f, float _z = 0.f, float _w = 1.f)
+				inline Vector4(float _x = 0.f, float _y = 0.f, float _z = 0.f, float _w = 1.f) noexcept
 					: x(_x), y(_y), z(_z), w(_w) {
 				}
 				~Vector4() = default;
@@ -155,6 +155,8 @@ namespace MirageEngine
 				Vector4 operator/(float scalar) const; // Checked
 				Vector4& operator*=(float scalar); // Checked
 				Vector4& operator/=(float scalar); // Checked
+				Vector4& operator+=(float scalar); // Checked
+				Vector4& operator-=(float scalar); // Checked
 
 				Vector4 operator-() const; // Checked
 

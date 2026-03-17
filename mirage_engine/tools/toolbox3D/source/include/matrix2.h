@@ -12,8 +12,8 @@ namespace MirageEngine
 			{
 				float m[4];
 
-				Matrix2(const Matrix2& copy);
-				Matrix2(float m00 = 0.f, float m01 = 0.f, float m10 = 0.f, float m11 = 0.f);
+				Matrix2(const Matrix2& copy) noexcept;
+				Matrix2(float m00 = 0.f, float m01 = 0.f, float m10 = 0.f, float m11 = 0.f) noexcept;
 
 				/// <summary>
 				/// Return the identity matrix of 2x2.

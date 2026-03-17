@@ -4,7 +4,7 @@
 #include <assert.h>
 
 using namespace MirageEngine::Core::Math;
-Matrix4::Matrix4(const Matrix4& copy)
+Matrix4::Matrix4(const Matrix4& copy) noexcept
 {
 	(*this)(0,0) = copy(0,0); (*this)(0,1) = copy(0,1); (*this)(0,2) = copy(0,2); (*this)(0,3) = copy(0,3);
 	(*this)(1,0) = copy(1,0); (*this)(1,1) = copy(1,1); (*this)(1,2) = copy(1,2); (*this)(1,3) = copy(1,3);
@@ -15,7 +15,7 @@ Matrix4::Matrix4(
 	float m00 , float m01 , float m02 , float m03,
 	float m10 , float m11 , float m12 , float m13,
 	float m20 , float m21 , float m22 , float m23,
-	float m30 , float m31 , float m32 , float m33)
+	float m30 , float m31 , float m32 , float m33) noexcept
 {
 	(*this)(0,0) = m00; (*this)(0,1) = m01; (*this)(0,2) = m02; (*this)(0,3) = m03;
 	(*this)(1,0) = m10; (*this)(1,1) = m11; (*this)(1,2) = m12; (*this)(1,3) = m13;

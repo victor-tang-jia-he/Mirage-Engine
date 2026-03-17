@@ -29,6 +29,10 @@ bool Vector3::NearlyEqual(const Vector3& other, float epsilon) const
 {
 	return std::abs(x - other.x) < epsilon && std::abs(y - other.y) < epsilon && std::abs(z - other.z) < epsilon;
 }
+bool Vector3::IsNull() const
+{
+	return x == 0 && y == 0 && z == 0;
+}
 Vector3 Vector3::Mid(const Vector3& other) const
 {
 	return AddVector3(other).ProductScalar(1.f / 2.f);
@@ -202,6 +206,17 @@ Vector3& Vector3::operator/=(float scalar)
 	y *= invScalar;
 	z *= invScalar;
 	return *this;
+}
+Vector3& Vector3::operator+=(float scalar)
+{
+	x += scalar;
+	y += scalar;
+	z += scalar;
+	return *this;
+}
+Vector3& Vector3::operator-=(float scalar)
+{
+	return *this += -scalar;
 }
 Vector3 Vector3::operator-() const
 {

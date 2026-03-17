@@ -12,12 +12,12 @@ namespace MirageEngine
 			{
 				float m[16];
 
-				Matrix4(const Matrix4& copy);
+				Matrix4(const Matrix4& copy) noexcept;
 				Matrix4(
 					float m00 = 0.f, float m01 = 0.f, float m02 = 0.f, float m03 = 0.f,
 					float m10 = 0.f, float m11 = 0.f, float m12 = 0.f, float m13 = 0.f,
 					float m20 = 0.f, float m21 = 0.f, float m22 = 0.f, float m23 = 0.f,
-					float m30 = 0.f, float m31 = 0.f, float m32 = 0.f, float m33 = 0.f);
+					float m30 = 0.f, float m31 = 0.f, float m32 = 0.f, float m33 = 0.f) noexcept;
 
 				// -------------------------------------------------------------------------------- //
 				// Basic Matrix Operations

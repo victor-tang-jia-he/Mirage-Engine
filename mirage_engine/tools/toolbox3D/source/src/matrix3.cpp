@@ -4,13 +4,13 @@
 #include <assert.h>
 
 using namespace MirageEngine::Core::Math;
-Matrix3::Matrix3(const Matrix3& copy)
+Matrix3::Matrix3(const Matrix3& copy) noexcept
 {
 	(*this)(0,0) = copy(0,0); (*this)(0,1) = copy(0,1); (*this)(0,2) = copy(0,2);
 	(*this)(1,0) = copy(1,0); (*this)(1,1) = copy(1,1); (*this)(1,2) = copy(1,2);
 	(*this)(2,0) = copy(2,0); (*this)(2,1) = copy(2,1); (*this)(2,2) = copy(2,2);
 }
-Matrix3::Matrix3(float m00, float m01, float m02, float m10, float m11, float m12, float m20, float m21, float m22)
+Matrix3::Matrix3(float m00, float m01, float m02, float m10, float m11, float m12, float m20, float m21, float m22) noexcept
 {
 	(*this)(0, 0) = m00; (*this)(0, 1) = m01; (*this)(0, 2) = m02;
 	(*this)(1, 0) = m10; (*this)(1, 1) = m11; (*this)(1, 2) = m12;

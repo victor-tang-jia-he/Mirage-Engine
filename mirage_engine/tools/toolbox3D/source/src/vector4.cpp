@@ -169,6 +169,18 @@ Vector4& Vector4::operator/=(float scalar)
 	w *= invScalar;
 	return *this;
 }
+Vector4& Vector4::operator+=(float scalar)
+{
+	x += scalar;
+	y += scalar;
+	z += scalar;
+	w += scalar;
+	return *this;
+}
+Vector4& Vector4::operator-=(float scalar)
+{
+	return *this += -scalar;
+}
 Vector4 Vector4::operator-() const
 {
 	return Vector4{ -x, -y, -z, -w };

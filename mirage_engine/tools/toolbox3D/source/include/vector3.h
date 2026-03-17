@@ -19,10 +19,10 @@ namespace MirageEngine
 				float z{ 0 };
 
 				Vector3() = default;
-				inline Vector3(Vector2 _vec2, float _z)
+				inline Vector3(Vector2 _vec2, float _z) noexcept
 					: x(_vec2.x), y(_vec2.y), z(_z) {
 				}
-				inline Vector3(float _x, float _y, float _z)
+				inline Vector3(float _x, float _y, float _z) noexcept
 					: x(_x), y(_y), z(_z) {
 				}
 				~Vector3() = default;
@@ -67,6 +67,8 @@ namespace MirageEngine
 				Vector3 ProductScalar(float scalar) const; // Checked
 
 				bool NearlyEqual(const Vector3& other, float epsilon = EPSILON) const;
+
+				bool IsNull() const; // Checked
 
 				// -------------------------------------------------------------------------------- //	
 				// Geometric & standard calculations
@@ -198,6 +200,8 @@ namespace MirageEngine
 				Vector3 operator/(float scalar) const; // Checked
 				Vector3& operator*=(float scalar); // Checked
 				Vector3& operator/=(float scalar); // Checked
+				Vector3& operator+=(float scalar); // Checked
+				Vector3& operator-=(float scalar); // Checked
 
 				Vector3 operator-() const; // Checked
 

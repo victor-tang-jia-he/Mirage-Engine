@@ -24,7 +24,7 @@ namespace MirageEngine
 				float x;
 				float y;
 
-				inline Vector2(float _x = 0, float _y = 0) // Checked
+				inline Vector2(float _x = 0, float _y = 0) noexcept// Checked
 					: x(_x), y(_y) {
 				}
 				~Vector2() = default;
@@ -191,6 +191,9 @@ namespace MirageEngine
 				Vector2 operator/(float scalar) const; // Checked
 				Vector2& operator*=(float scalar); // Checked
 				Vector2& operator/=(float scalar); // Checked
+				Vector2& operator+=(float scalar); // Checked
+				Vector2& operator-=(float scalar); // Checked
+
 
 				Vector2 operator-() const; // Checked
 

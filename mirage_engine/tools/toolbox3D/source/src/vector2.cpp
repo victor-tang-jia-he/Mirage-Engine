@@ -172,6 +172,16 @@ Vector2& Vector2::operator/=(float scalar)
 	y *= invScalar;
 	return *this;
 }
+Vector2& Vector2::operator+=(float scalar)
+{
+	x += scalar;
+	y += scalar;
+	return *this;
+}
+Vector2& Vector2::operator-=(float scalar)
+{
+	return *this += -scalar;
+}
 float& Vector2::operator[](int index)
 {
 	assert(index >= 0 && index < 2 && "Index out of range");
