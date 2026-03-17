@@ -97,7 +97,7 @@ Vector4 Vector4::operator*(const Vector4& vec) const
 }
 Vector4 Vector4::operator/(const Vector4& vec) const
 {
-	assert(vec.x != 0 && vec.y != 0 && vec.z != 0 && vec.w != 0 && "Division by zero in Vector4D");
+	assert(vec.x != 0 && vec.y != 0 && vec.z != 0 && vec.w != 0 && "Division by zero");
 	return Vector4(x / vec.x, y / vec.y, z / vec.z, w / vec.w);
 }
 Vector4& Vector4::operator += (const Vector4& vec)
