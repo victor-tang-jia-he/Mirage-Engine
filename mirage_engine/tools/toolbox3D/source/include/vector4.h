@@ -7,9 +7,8 @@ namespace MirageEngine
 	{
 		namespace Math
 		{
-			class Vector4
+			struct Vector4
 			{
-			public:
 				float x;
 				float y;
 				float z;

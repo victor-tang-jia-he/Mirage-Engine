@@ -8,9 +8,8 @@ namespace MirageEngine
 	{
 		namespace Math
 		{
-			class Matrix2
+			struct Matrix2
 			{
-			public:
 				float m[2][2]; // m[col][row]
 
 				Matrix2(const Matrix2& copy);

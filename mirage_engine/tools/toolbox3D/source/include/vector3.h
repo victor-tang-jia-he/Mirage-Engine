@@ -8,9 +8,8 @@ namespace MirageEngine
 	{
 		namespace Math
 		{
-			class Vector3
+			struct Vector3
 			{
-			public:
 				// -------------------------------------------------------------------------------- //	
 				// Constructor & variables
 				// -------------------------------------------------------------------------------- //
