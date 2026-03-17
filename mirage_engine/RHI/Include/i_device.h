@@ -12,7 +12,7 @@ namespace MirageRHI
 		virtual void Create() = 0;
 		virtual void Destroy() = 0;
 
-		virtual OpenGLDevice& API_OpenGl() { throw std::runtime_error("Bad API Call : object is not a OpenGlBuffer"); }
+		virtual OpenGLDevice& API_OpenGl() { throw std::runtime_error("Bad API Call : object is not an OpenGlDevice"); }
 
 		virtual void WaitIdle() = 0;
 	};

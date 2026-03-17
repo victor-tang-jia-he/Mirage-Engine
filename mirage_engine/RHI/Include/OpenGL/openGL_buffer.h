@@ -16,8 +16,10 @@ namespace MirageRHI
         void Destroy() override;
 
         OpenGLBuffer& API_OpenGL() override { return *this; }
-        GLuint GetGLHandle() const { return m_Buffer; }
 
         void SetLayout() const;
+
+        // Getters
+        GLuint GetGLHandle() const { return m_Buffer; }
 	};
 }

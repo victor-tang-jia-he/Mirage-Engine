@@ -15,6 +15,8 @@ namespace MirageRHI
 		void Destroy() override;
 
 		OpenGLShader& API_OpenGL() override { return *this; }
+
+		// Getters
 		GLuint GetGLHandle() const { return m_Shader; }
 		ShaderType GetType() const { return m_Type; }
 

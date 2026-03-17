@@ -26,7 +26,7 @@ namespace MirageRHI
 
         // Clear Framebuffers
         void BeginRenderPass(IRenderPass* _renderPass) override;
-        void EndRenderPass() override {}
+		void EndRenderPass() override {} // Nothing to do in OpenGL, as render pass is just a clear command.
 
         // Draw Binded Buffers
         void DrawIndexed(uint32_t _indexCount) override;

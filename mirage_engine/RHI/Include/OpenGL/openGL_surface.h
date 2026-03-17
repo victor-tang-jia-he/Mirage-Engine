@@ -17,10 +17,12 @@ namespace MirageRHI
         void Destroy() override {}
 
         OpenGLSurface& API_OpenGL() override { return *this; }
+
+        void SetSize(int _width, int _height);
+
+        // Getters
         GLFWwindow* GetContextGLHandle() const { return m_Context; }
         int GetWidth() const { return m_Width; }
         int GetHeight() const { return m_Height; }
-
-        void SetSize(int _width, int _height);
     };
 }

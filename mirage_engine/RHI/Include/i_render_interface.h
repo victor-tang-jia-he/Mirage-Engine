@@ -7,12 +7,14 @@ namespace MirageRHI
 	class IRenderInterface
 	{
 	public:
-		enum API
+		enum class API
 		{
 			OPENGL
 		};
 
 		virtual ~IRenderInterface() = default;
+
+		virtual OpenGLRenderInterface& API_OpenGL() { throw std::runtime_error("Bad API Call : object is not an OpenGLRenderInterface"); }
 
 		virtual IInstance* InstantiateInstance() = 0;
 		virtual ISurface* InstantiateSurface() = 0;
@@ -26,6 +28,5 @@ namespace MirageRHI
 		//virtual IUniformBuffer* InstantiateUniformBuffer() = 0;
 		virtual ICommandBuffer* InstantiateCommandBuffer() = 0;
 
-		virtual OpenGLRenderInterface& API_OpenGL() { throw std::runtime_error("Bad API Call : object is not an OpenGLRenderInterface"); }
 	};
 }

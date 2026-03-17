@@ -20,28 +20,7 @@ void MirageRHI::OpenGLPipeline::Destroy()
 
 bool MirageRHI::OpenGLPipeline::Link()
 {
-    glLinkProgram(m_Program);
-
-    GLint success;
-    glGetProgramiv(m_Program, GL_LINK_STATUS, &success);
-    if (!success) {
-        GLint logLength;
-        glGetProgramiv(m_Program, GL_INFO_LOG_LENGTH, &logLength);
-        char* log = new char[logLength];
-        glGetProgramInfoLog(m_Program, logLength, &logLength, log);
-        std::cerr << "Shader Program linking failed: " << log << "\n";
-        delete[] log;
-        return false;
-    }
-    if (m_VertexShader) {
-        glDetachShader(m_Program, m_VertexShader->API_OpenGL().GetGLHandle());
-        glDeleteShader(m_VertexShader->API_OpenGL().GetGLHandle());
-    }
-    if (m_FragmentShader) {
-        glDetachShader(m_Program, m_FragmentShader->API_OpenGL().GetGLHandle());
-        glDeleteShader(m_FragmentShader->API_OpenGL().GetGLHandle());
-    }
-    return true;
+    return false;
 }
 
 void MirageRHI::OpenGLPipeline::SetInt(const std::string& name, int value) const

@@ -16,7 +16,6 @@ namespace MirageRHI
 		void Destroy() override;
 
 		OpenGLPipeline& API_OpenGL() override { return *this; }
-		GLuint GetProgramGLHandle() const { return m_Program; }
 
 		// Shader linking
 		bool Link();
@@ -28,5 +27,8 @@ namespace MirageRHI
 		void SetMat3(const std::string& _name, const Matrix3& _mat) const;
 		void SetMat4(const std::string& _name, const Matrix4& _mat) const;
 		void SetBool(const std::string& _name, bool _value)const;
+
+		// Getters
+		GLuint GetProgramGLHandle() const { return m_Program; }
 	};
 }

@@ -42,8 +42,8 @@ void MirageRHI::OpenGLCommandBuffer::DrawIndexed(uint32_t _indexCount)
 	glDrawElements(GL_TRIANGLES, _indexCount, GL_UNSIGNED_INT, 0);
 }
 
-void MirageRHI::OpenGLCommandBuffer::SubmitAndPresent(ISwapChain* _swapchain, ISurface* _surface)
+void MirageRHI::OpenGLCommandBuffer::SubmitAndPresent(ISwapChain* _swapChain, ISurface* _surface)
 {
-	_swapchain->API_OpenGL().Present(_surface->API_OpenGL());
-	_swapchain->IsScreenResized(_surface);
+	_swapChain->API_OpenGL().Present(_surface->API_OpenGL());
+	_swapChain->IsScreenResized(_surface);
 }

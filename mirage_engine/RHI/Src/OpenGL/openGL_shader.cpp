@@ -22,7 +22,7 @@ bool MirageRHI::OpenGLShader::CompileShader(const std::string& _path, unsigned i
 {
     std::ifstream file(_path);
     if (!file.is_open()) {
-        DEBUG_THROW("Cant open shader file : %s\n", _path.c_str());
+        DEBUG_THROW("Cant open shader file : %s", _path.c_str());
         return false;
     }
 
@@ -40,10 +40,10 @@ bool MirageRHI::OpenGLShader::CompileShader(const std::string& _path, unsigned i
     if (!success) {
         char infoLog[512];
         glGetShaderInfoLog(_shaderOut, 512, nullptr, infoLog);
-        DEBUG_THROW("Shader compile error : [%c]\n", infoLog);
+        DEBUG_THROW("Shader compile error : [%s]", infoLog);
         return false;
     }
 
-    DEBUG_LOG("Shader Compiled\n");
+    DEBUG_LOG("Shader Compiled");
     return true;
 }

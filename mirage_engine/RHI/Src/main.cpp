@@ -55,7 +55,7 @@ int main(MirageRHI::IRenderInterface::API api)
 
 	glfwMakeContextCurrent(window);
 	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
-		DEBUG_THROW("Failed to init GLAD\n");
+		DEBUG_THROW("Failed to init GLAD");
 	}
 
 	glViewport(0, 0, width, height);
@@ -63,7 +63,7 @@ int main(MirageRHI::IRenderInterface::API api)
 	// Select RHI API
 	switch (api)
 	{
-	case MirageRHI::IRenderInterface::OPENGL:
+	case MirageRHI::IRenderInterface::API::OPENGL:
 		renderInterface = new MirageRHI::OpenGLRenderInterface();
 		break;
 	default:
@@ -101,6 +101,7 @@ int main(MirageRHI::IRenderInterface::API api)
 	};
 	uint32_t indicesTriangleListSize = (uint32_t)(sizeof(indicesTriangle[0]) * indicesTriangle.size());
 	DEBUG_LOG("Vertex and Index Data Created");
+	
 
 	// Create All Classes
 	instance->Create("Mirage");
@@ -115,7 +116,7 @@ int main(MirageRHI::IRenderInterface::API api)
 	bufferTriangleVertices->Create(verticesTriangle.data(), verticesTriangle.size() * sizeof(Vertex), MirageRHI::IBuffer::BufferType::Vertices);
 	bufferTriangleIndices->Create(indicesTriangle.data(), indicesTriangle.size() * sizeof(Vertex), MirageRHI::IBuffer::BufferType::Indices);
 	commandBuffer->Create();
-	DEBUG_LOG("All Classes Created\n");
+	DEBUG_LOG("All Classes Created");
 
 	glEnable(GL_DEPTH_TEST);
 
@@ -123,7 +124,7 @@ int main(MirageRHI::IRenderInterface::API api)
 	{
 		if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 			glfwSetWindowShouldClose(window, true);
-
+		
 		// Setup to Draw
 		commandBuffer->BeginRenderPass(renderPass);
 		commandBuffer->BeginDraw();
@@ -146,7 +147,6 @@ int main(MirageRHI::IRenderInterface::API api)
 		glfwPollEvents();
 	}
 	glfwMakeContextCurrent(window);
-
 	glfwTerminate();
 	return 0;
 }
