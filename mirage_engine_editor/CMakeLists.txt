@@ -2,12 +2,18 @@
 add_executable(MirageEngineEditor)
 
 # Sources
-file(GLOB_RECURSE MIRAGE_ENGINE__EDITOR_SOURCE 
+file(GLOB_RECURSE MIRAGE_ENGINE_EDITOR_SOURCES
     "*.cpp"
     "*.c"
 )
 
-target_sources(MirageEngineEditor PRIVATE ${MIRAGE_ENGINE__EDITOR_SOURCE})
+# Sources
+file(GLOB_RECURSE MIRAGE_ENGINE_EDITOR_HEADERS
+    "*.hpp"
+    "*.h"
+)
+
+target_sources(MirageEngineEditor PRIVATE ${MIRAGE_ENGINE_EDITOR_SOURCES} ${MIRAGE_ENGINE_EDITOR_HEADERS})
 
 # Include directories
 target_include_directories(MirageEngineEditor PRIVATE

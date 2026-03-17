@@ -30,8 +30,12 @@ include(FetchContent)
 # GLFW
 # ============================================================================
 
-if(EXISTS "${CMAKE_SOURCE_DIR}/libraries/GLFW")
+if(EXISTS "${CMAKE_SOURCE_DIR}/libraries/GLFW" AND EXISTS "${CMAKE_SOURCE_DIR}/libraries/GLFW/CMakeLists.txt")
     message(STATUS "Using local GLFW")
+    set(GLFW_BUILD_DOCS OFF CACHE BOOL "Build documentation" FORCE)
+    set(GLFW_BUILD_TESTS OFF CACHE BOOL "Build tests" FORCE)
+    set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "Build examples" FORCE)
+    set(GLFW_INSTALL OFF CACHE BOOL "Generate installation target" FORCE)
     add_subdirectory(${CMAKE_SOURCE_DIR}/libraries/GLFW ${CMAKE_BINARY_DIR}/GLFW)
 else()
     message(STATUS "Fetching GLFW...")
@@ -81,20 +85,29 @@ endif()
 # ImGUI - Manual configuration (since it lacks CMakeLists.txt)
 # ============================================================================
 
-message(STATUS "Fetching ImGui...")
-FetchContent_Declare(
-    imgui 
-    GIT_REPOSITORY https://github.com/ocornut/imgui.git
-    GIT_TAG v1.92.6
-    SOURCE_DIR ${CMAKE_SOURCE_DIR}/libraries/imgui
-)
-FetchContent_MakeAvailable(imgui)
+file(GLOB RESULT ${CMAKE_SOURCE_DIR}/libraries/imgui/*)
+list(LENGTH RESULT RES_LEN)
 
-if(NOT imgui_POPULATED)
-    message(FATAL_ERROR "ImGui failed to populate")
+if(NOT EXISTS ${CMAKE_SOURCE_DIR}/libraries/imgui OR RES_LEN EQUAL 0)
+    message(STATUS "Fetching ImGui...")
+    FetchContent_Declare(
+        imgui
+        GIT_REPOSITORY https://github.com/ocornut/imgui.git
+        GIT_TAG v1.92.6
+        SOURCE_DIR ${CMAKE_SOURCE_DIR}/libraries/imgui
+    )
+    FetchContent_MakeAvailable(imgui)
+
+    if(NOT imgui_POPULATED)
+        message(FATAL_ERROR "ImGui failed to populate")
+    endif()
+else()
+    message(STATUS "Using local ImGui")
 endif()
 
 message(STATUS "ImGui fetched successfully")
+set(imgui_SOURCE_DIR ${CMAKE_SOURCE_DIR}/libraries/imgui)
+
 
 # Explicit list of ImGui core files (more reliable than GLOB)
 set(IMGUI_CORE_SOURCES
@@ -111,12 +124,12 @@ set(IMGUI_BACKEND_SOURCES
     ${imgui_SOURCE_DIR}/backends/imgui_impl_opengl3.cpp
 )
 
-# Optional: Add additional backends if necessary
+# ImGUI miscs
 # set(IMGUI_EXTRA_SOURCES
 #     ${imgui_SOURCE_DIR}/misc/cpp/imgui_stdlib.cpp
 # )
 
-# Combiner toutes les sources
+# Combine all sources
 set(IMGUI_ALL_SOURCES
     ${IMGUI_CORE_SOURCES}
     ${IMGUI_BACKEND_SOURCES}
@@ -135,7 +148,7 @@ target_include_directories(imgui
         ${imgui_SOURCE_DIR}/backends
 )
 
-# Lier les dépendances
+# Linking dependencies
 find_package(OpenGL REQUIRED)
 target_link_libraries(imgui
     PUBLIC
@@ -177,7 +190,7 @@ target_link_libraries(third_party INTERFACE
     OpenGL::GL
     Toolbox
     Core
-)
+) 
 
 # Engine project
 message(STATUS "Adding mirage_engine project...")
