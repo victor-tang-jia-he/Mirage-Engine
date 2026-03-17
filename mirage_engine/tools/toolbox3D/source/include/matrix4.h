@@ -136,19 +136,19 @@ namespace MirageEngine
 				/// Creates a _rotation matrix around the X-axis.
 				/// </summary>
 				/// <param name="_angle">Angle in Radian.</param>
-				static Matrix4 CreateXRotationMatrix(float _angle);
+				static Matrix4 CreateXRotationMatrix(float _rad);
 
 				/// <summary>
 				/// Creates a _rotation matrix around the Y-axis.
 				/// </summary>
 				/// <param name="_angle">Angle in Radian.</param>
-				static Matrix4 CreateYRotationMatrix(float _angle);
+				static Matrix4 CreateYRotationMatrix(float _rad);
 
 				/// <summary>
 				/// Creates a _rotation matrix around the Z-axis.
 				/// </summary>
 				/// <param name="_angle">Angle in Radian.</param>
-				static Matrix4 CreateZRotationMatrix(float _angle);
+				static Matrix4 CreateZRotationMatrix(float _rad);
 
 				static Matrix4 GetPerspectiveMatrix(unsigned int _width, unsigned int _height, float _near, float _far, float _fov);
 
@@ -177,7 +177,7 @@ namespace MirageEngine
 				Matrix4& operator-=(const Matrix4& _other);
 				Matrix4 operator*(float _n);
 				Matrix4 operator*=(float _n);
-				Vector3 operator*(const Vector4& mult) const;
+				Vector3 operator*(const Vector4& _multiply) const;
 				bool operator==(const Matrix4& _other) const;
 				Vector4 operator[](int _index) const;
 

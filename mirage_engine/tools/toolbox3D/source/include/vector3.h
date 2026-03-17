@@ -218,7 +218,7 @@ namespace MirageEngine
 				bool operator!=(const Vector3& _other) const;
 			};
 			Vector3 operator*(float _scalar, const Vector3& _vec);
-			std::ostream& operator<<(std::ostream& _os, const Vector3& _vec);
+			std::ostream& operator<<(std::ostream& _oS, const Vector3& _vec);
 		}
 	}
 }

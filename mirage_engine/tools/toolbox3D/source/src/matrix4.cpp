@@ -108,29 +108,29 @@ Matrix4 Matrix4::CreateScaleMatrix(const Vector3& _scale)
 		0, 0, _scale.Z, 0,
 		0, 0, 0, 1);
 }
-Matrix4 Matrix4::CreateXRotationMatrix(float rad)
+Matrix4 Matrix4::CreateXRotationMatrix(float _rad)
 {
 	return Matrix4(
 		1, 0, 0, 0,
-		0, cos(rad), -sin(rad), 0,
-		0, sin(rad), cos(rad), 0,
+		0, cos(_rad), -sin(_rad), 0,
+		0, sin(_rad), cos(_rad), 0,
 		0, 0, 0, 1
 	);
 }
-Matrix4 Matrix4::CreateYRotationMatrix(float rad)
+Matrix4 Matrix4::CreateYRotationMatrix(float _rad)
 {
 	return Matrix4(
-		cos(rad), 0, sin(rad), 0,
+		cos(_rad), 0, sin(_rad), 0,
 		0, 1, 0, 0,
-		-sin(rad), 0, cos(rad), 0,
+		-sin(_rad), 0, cos(_rad), 0,
 		0, 0, 0, 1
 	);
 }
-Matrix4 Matrix4::CreateZRotationMatrix(float rad)
+Matrix4 Matrix4::CreateZRotationMatrix(float _rad)
 {
 	return Matrix4(
-		cos(rad), -sin(rad), 0, 0,
-		sin(rad), cos(rad), 0, 0,
+		cos(_rad), -sin(_rad), 0, 0,
+		sin(_rad), cos(_rad), 0, 0,
 		0, 0, 1, 0,
 		0, 0, 0, 1
 	);
@@ -327,12 +327,12 @@ Matrix4 Matrix4::operator*(float _n)
 {
 	return ProductScalar(_n);
 }
-Vector3 Matrix4::operator*(const Vector4& mult) const
+Vector3 Matrix4::operator*(const Vector4& _multiply) const
 {
-	float x = (*this)(0,0)*mult.X + (*this)(1,0)*mult.Y + (*this)(2,0)*mult.Z + (*this)(3,0)*mult.W;
-	float y = (*this)(0,1)*mult.X + (*this)(1,1)*mult.Y + (*this)(2,1)*mult.Z + (*this)(3,1)*mult.W;
-	float z = (*this)(0,2)*mult.X + (*this)(1,2)*mult.Y + (*this)(2,2)*mult.Z + (*this)(3,2)*mult.W;
-	float w = (*this)(0,3)*mult.X + (*this)(1,3)*mult.Y + (*this)(2,3)*mult.Z + (*this)(3,3)*mult.W;
+	float x = (*this)(0,0)*_multiply.X + (*this)(1,0)*_multiply.Y + (*this)(2,0)*_multiply.Z + (*this)(3,0)*_multiply.W;
+	float y = (*this)(0,1)*_multiply.X + (*this)(1,1)*_multiply.Y + (*this)(2,1)*_multiply.Z + (*this)(3,1)*_multiply.W;
+	float z = (*this)(0,2)*_multiply.X + (*this)(1,2)*_multiply.Y + (*this)(2,2)*_multiply.Z + (*this)(3,2)*_multiply.W;
+	float w = (*this)(0,3)*_multiply.X + (*this)(1,3)*_multiply.Y + (*this)(2,3)*_multiply.Z + (*this)(3,3)*_multiply.W;
 	if (std::abs(w) > EPSILON)
 	{
 		x /= w;

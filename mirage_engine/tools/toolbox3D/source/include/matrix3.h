@@ -132,24 +132,24 @@ namespace MirageEngine
 				/// Create an MatrixRotation axe X
 				/// Angle in rad.
 				/// </summary>
-				static Matrix3 CreateXRotationMatrix(float _angle);
+				static Matrix3 CreateXRotationMatrix(float _rad);
 
 				/// <summary>
 				/// Create an MatrixRotation axe Y
 				/// Angle in rad.
 				/// </summary>
-				static Matrix3 CreateYRotationMatrix(float _angle);
+				static Matrix3 CreateYRotationMatrix(float _rad);
 
 				/// <summary>
 				/// Create an MatrixRotation axe Z
 				/// Angle in rad.
 				/// </summary>
-				static Matrix3 CreateZRotationMatrix(float _angle);
+				static Matrix3 CreateZRotationMatrix(float _rad);
 
 				/// <summary>
 				/// Create an MatrixRotation around a point
 				/// </summary>
-				static Matrix3 RotateMatrixVector(const Vector3& _vec, float _angle);
+				static Matrix3 RotateMatrixVector(const Vector3& _vec, float _rad);
 
 
 				// -------------------------------------------------------------------------------- //	

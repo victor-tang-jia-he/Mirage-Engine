@@ -248,7 +248,7 @@ Vector3 MirageEngine::Core::Math::operator*(float _scalar, const Vector3& _vec)
 {
 	return { _vec.X * _scalar, _vec.Y * _scalar, _vec.Z * _scalar };
 }
-std::ostream& MirageEngine::Core::Math::operator<<(std::ostream& _os, const Vector3& _vec)
+std::ostream& MirageEngine::Core::Math::operator<<(std::ostream& _oS, const Vector3& _vec)
 {
 	return _os << "(" << _vec.X << ", " << _vec.Y << ", " << _vec.Y << ")";
 }

@@ -83,10 +83,10 @@ float Vector2::Angle(const Vector2& v2) const
 
 	return acosf(DotProductVector2(v2) / denom);
 }
-Vector2 Vector2::Rotate(float rad) const
+Vector2 Vector2::Rotate(float _rad) const
 {
-	float cosA = cosf(rad);
-	float sinA = sinf(rad);
+	float cosA = cosf(_rad);
+	float sinA = sinf(_rad);
 
 	return Vector2(X * cosA - Y * sinA, X * sinA + Y * cosA);
 }

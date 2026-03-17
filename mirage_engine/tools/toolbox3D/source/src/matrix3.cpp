@@ -99,23 +99,23 @@ Matrix3 Matrix3::RotateMatrix(float _x, float _y, float _z)
 	Matrix3 rotZ = CreateZRotationMatrix(_z);
 	return rotZ * rotY * rotX;
 }
-Matrix3 Matrix3::CreateXRotationMatrix(float rad)
+Matrix3 Matrix3::CreateXRotationMatrix(float _rad)
 {
 	return Matrix3(1.f, 0.f, 0.f,
-		0.f, cos(rad), -sin(rad),
-		0.f, sin(rad), cos(rad));
+		0.f, cos(_rad), -sin(_rad),
+		0.f, sin(_rad), cos(_rad));
 }
-Matrix3 Matrix3::CreateYRotationMatrix(float rad)
+Matrix3 Matrix3::CreateYRotationMatrix(float _rad)
 {
 	return Matrix3(
-		cos(rad), 0.f, sin(rad),
+		cos(_rad), 0.f, sin(_rad),
 		0.f, 1.f, 0.f,
-		-sin(rad), 0.f, cos(rad));
+		-sin(_rad), 0.f, cos(_rad));
 }
-Matrix3 Matrix3::CreateZRotationMatrix(float rad)
+Matrix3 Matrix3::CreateZRotationMatrix(float _rad)
 {
-	return Matrix3(cos(rad), -sin(rad), 0.f,
-		sin(rad), cos(rad), 0.f,
+	return Matrix3(cos(_rad), -sin(_rad), 0.f,
+		sin(_rad), cos(_rad), 0.f,
 		0, 0, 1.f);
 }
 std::array<float, 9> Matrix3::ToArray() const
@@ -197,15 +197,15 @@ Matrix3 Matrix3::luDecomposition() const
 
     return lower * upper;
 }
-Matrix3 Matrix3::RotateMatrixVector(const Vector3& _vec, float rad)
+Matrix3 Matrix3::RotateMatrixVector(const Vector3& _vec, float _rad)
 {
 	float length = _vec.Norm();
 	float x = _vec.X / length;
 	float y = _vec.Y / length;
 	float z = _vec.Z / length;
 
-	float c = std::cos(rad);
-	float s = std::sin(rad);
+	float c = std::cos(_rad);
+	float s = std::sin(_rad);
 	float oneMinusC = 1 - c;
 
 	// Rodrigues formula
