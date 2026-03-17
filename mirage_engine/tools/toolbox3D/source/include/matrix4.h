@@ -10,7 +10,7 @@ namespace MirageEngine
 		{
 			struct Matrix4
 			{
-				float m[4][4];
+				float m[16];
 
 				Matrix4(const Matrix4& copy);
 				Matrix4(
@@ -179,8 +179,12 @@ namespace MirageEngine
 				Matrix4 operator*=(float n);
 				Vector3 operator*(const Vector4& mult) const;
 				bool operator==(const Matrix4& other) const;
-				float* operator[](size_t row);
-				const float* operator[](size_t row) const;
+				Vector4 operator[](int index) const;
+
+				// -------------------------------------------------------------------------------- //
+
+				float& operator()(size_t row, size_t col);
+				const float& operator()(size_t row, size_t col) const;
 			};
 		}
 	}

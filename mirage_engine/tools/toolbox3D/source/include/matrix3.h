@@ -183,7 +183,6 @@ namespace MirageEngine
 
 				Vector3 operator*(const Vector3& m);
 				Vector3 operator[](int index) const;
-				Vector3& operator[](int index);
 
 				// -------------------------------------------------------------------------------- //
 

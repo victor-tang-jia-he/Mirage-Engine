@@ -28,10 +28,11 @@ using namespace MirageEngine::Core::Math;
 // Mat2
 inline static bool operator==(const Matrix2& mat2, const glm::mat2& mat)
 {
-	return std::abs(mat2[0][0] - mat[0][0]) < EPSILON &&
-		std::abs(mat2[0][1] - mat[0][1]) < EPSILON &&
-		std::abs(mat2[1][0] - mat[1][0]) < EPSILON &&
-		std::abs(mat2[1][1] - mat[1][1]) < EPSILON;
+	return 
+		std::abs(mat2(0,0) - mat[0][0]) < EPSILON &&
+		std::abs(mat2(0,1) - mat[0][1]) < EPSILON &&
+		std::abs(mat2(1,0) - mat[1][0]) < EPSILON &&
+		std::abs(mat2(1,1) - mat[1][1]) < EPSILON;
 }
 inline static bool operator==(const glm::mat2& mat, const Matrix2& mat2)
 {
@@ -42,15 +43,15 @@ inline static bool operator==(const glm::mat2& mat, const Matrix2& mat2)
 inline static bool operator==(const Matrix3& m1, const glm::mat3& m2)
 {
 	return
-		std::abs(m1[0][0] - m2[0][0]) < EPSILON &&
-		std::abs(m1[0][1] - m2[0][1]) < EPSILON &&
-		std::abs(m1[0][2] - m2[0][2]) < EPSILON &&
-		std::abs(m1[1][0] - m2[1][0]) < EPSILON &&
-		std::abs(m1[1][1] - m2[1][1]) < EPSILON &&
-		std::abs(m1[1][2] - m2[1][2]) < EPSILON &&
-		std::abs(m1[2][0] - m2[2][0]) < EPSILON &&
-		std::abs(m1[2][1] - m2[2][1]) < EPSILON &&
-		std::abs(m1[2][2] - m2[2][2]) < EPSILON;
+		std::abs(m1(0,0) - m2[0][0]) < EPSILON &&
+		std::abs(m1(0,1) - m2[0][1]) < EPSILON &&
+		std::abs(m1(0,2) - m2[0][2]) < EPSILON &&
+		std::abs(m1(1,0) - m2[1][0]) < EPSILON &&
+		std::abs(m1(1,1) - m2[1][1]) < EPSILON &&
+		std::abs(m1(1,2) - m2[1][2]) < EPSILON &&
+		std::abs(m1(2,0) - m2[2][0]) < EPSILON &&
+		std::abs(m1(2,1) - m2[2][1]) < EPSILON &&
+		std::abs(m1(2,2) - m2[2][2]) < EPSILON;
 }
 inline static bool operator==(const glm::mat3& m1, const Matrix3& m2)
 {
@@ -61,18 +62,18 @@ inline static bool operator==(const glm::mat3& m1, const Matrix3& m2)
 inline static bool operator==(const Matrix4& m1, const glm::mat4& m2)
 {
 	return
-		std::abs(m1[0][0] - m2[0][0]) < EPSILON &&
-		std::abs(m1[0][1] - m2[0][1]) < EPSILON &&
-		std::abs(m1[0][2] - m2[0][2]) < EPSILON &&
-		std::abs(m1[0][3] - m2[0][3]) < EPSILON &&
-		std::abs(m1[1][0] - m2[1][0]) < EPSILON &&
-		std::abs(m1[1][1] - m2[1][1]) < EPSILON &&
-		std::abs(m1[1][2] - m2[1][2]) < EPSILON &&
-		std::abs(m1[1][3] - m2[1][3]) < EPSILON &&
-		std::abs(m1[2][0] - m2[2][0]) < EPSILON &&
-		std::abs(m1[2][1] - m2[2][1]) < EPSILON &&
-		std::abs(m1[2][2] - m2[2][2]) < EPSILON &&
-		std::abs(m1[2][3] - m2[2][3]) < EPSILON;
+		std::abs(m1(0,0) - m2[0][0]) < EPSILON &&
+		std::abs(m1(0,1) - m2[0][1]) < EPSILON &&
+		std::abs(m1(0,2) - m2[0][2]) < EPSILON &&
+		std::abs(m1(0,3) - m2[0][3]) < EPSILON &&
+		std::abs(m1(1,0) - m2[1][0]) < EPSILON &&
+		std::abs(m1(1,1) - m2[1][1]) < EPSILON &&
+		std::abs(m1(1,2) - m2[1][2]) < EPSILON &&
+		std::abs(m1(1,3) - m2[1][3]) < EPSILON &&
+		std::abs(m1(2,0) - m2[2][0]) < EPSILON &&
+		std::abs(m1(2,1) - m2[2][1]) < EPSILON &&
+		std::abs(m1(2,2) - m2[2][2]) < EPSILON &&
+		std::abs(m1(2,3) - m2[2][3]) < EPSILON;
 }
 inline static bool operator==(const glm::mat4& m1, const Matrix4& m2)
 {
@@ -938,7 +939,7 @@ TEST(Vector4Test, OperatorDivide) {
 	Vector4 result = vec4 / vec4Add;
 	glm::vec4 glmResult = glmVec4 / glmVec4Add;
 	EXPECT_TRUE(result == glmResult);
-	EXPECT_ANY_THROW(vec4 / Vector4(0.0f, 0.0f, 0.0f));
+	EXPECT_DEATH(vec4 / Vector4(), "Division by zero");
 }
 TEST(Vector4Test, OperatorUnaryMinus) {
 	Vector4 result = -vec4;
@@ -980,7 +981,7 @@ TEST(Vector4Test, OperatorDivideEqual) {
 	glmVec4Copy /= glmVec4;
 
 	EXPECT_TRUE(vec4Copy == glmVec4Copy);
-	EXPECT_ANY_THROW(vec4Copy /= Vector4());
+	EXPECT_DEATH(vec4Copy / Vector4(), "Division by zero");
 }
 TEST(Vector4Test, OperatorSubscript) {
 	Vector4 v(3.0f, 4.0f, 5.0f);
@@ -1082,9 +1083,12 @@ TEST(Vector4Test, Vector3Consistency) {
 ///  Test Matrix2
 /// </summary>
 
-Matrix2 Mat2(1.f, 3.f, 2.f, 4.f);
-glm::mat2 glmMat2(1.f, 3.f, 2.f, 4.f);
-
+Matrix2 Mat2(
+	1.f, 3.f, 
+	2.f, 4.f);
+glm::mat2 glmMat2(
+	1.f, 3.f,
+	2.f, 4.f);
 TEST(Matrix2Test, Identity)
 {
 	Matrix2 newMat = Matrix2::Identity();
@@ -1377,7 +1381,7 @@ TEST(Matrix3Test, Inverse)
 	{
 		for (int row = 0; row < 3; ++row)
 		{
-			float a = myInv.m[col][row];
+			float a = myInv(col,row);
 			float b = glmInv[col][row];
 
 			EXPECT_TRUE((a - b) < EPSILON);
@@ -1387,9 +1391,9 @@ TEST(Matrix3Test, Inverse)
 TEST(Matrix3Test, LuDecomposition)
 {
 	Matrix3 A;
-	A.m[0][0] = 4; A.m[0][1] = 3; A.m[0][2] = 2;
-	A.m[1][0] = 3; A.m[1][1] = 2; A.m[1][2] = 1;
-	A.m[2][0] = 2; A.m[2][1] = 1; A.m[2][2] = 3;
+	A(0,0) = 4; A(0,1) = 3; A(0,2) = 2;
+	A(1,0) = 3; A(1,1) = 2; A(1,2) = 1;
+	A(2,0) = 2; A(2,1) = 1; A(2,2) = 3;
 
 	Matrix3 R = A.luDecomposition();
 

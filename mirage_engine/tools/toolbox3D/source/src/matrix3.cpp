@@ -343,11 +343,6 @@ Vector3 Matrix3::operator[](int index) const
 	assert(index >= 0 && index < 3 && "Index out of range");
 	return Vector3((*this)(index,0), (*this)(index, 1), (*this)(index, 2));
 }
-Vector3& Matrix3::operator[](int index)
-{
-	assert(index >= 0 && index < 3 && "Index out of range");
-	return *reinterpret_cast<Vector3*>(&(*this)[index]);
-}
 const float& Matrix3::operator()(size_t row, size_t col) const
 {
 	assert(row < 3 && col < 3);

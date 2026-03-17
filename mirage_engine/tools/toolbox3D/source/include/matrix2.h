@@ -133,8 +133,7 @@ namespace MirageEngine
 
 				bool operator==(const Matrix2& other) const;
 
-				float* operator[](size_t row);
-				const float* operator[](size_t row) const;
+				Vector2 operator[](int index) const;
 
 				// -------------------------------------------------------------------------------- //
 
