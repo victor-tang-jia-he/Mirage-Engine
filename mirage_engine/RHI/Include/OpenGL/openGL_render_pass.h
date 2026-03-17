@@ -1,5 +1,7 @@
 #pragma once
 
+#include <glad/glad.h>
+
 #include "i_render_pass.h"
 
 namespace MirageRHI

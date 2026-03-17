@@ -1,5 +1,3 @@
-#include "general_include.h"
-
 #include "OpenGL/openGL_render_interface.h"
 
 #include "i_instance.h"
@@ -34,7 +32,7 @@ int main(MirageRHI::IRenderInterface::API api)
 	MirageRHI::IBuffer* bufferTriangleIndices = nullptr;
 	MirageRHI::ICommandBuffer* commandBuffer = nullptr;
 
-	std::vector<Vertex> verticesTriangle;
+	std::vector<MirageRHI::Vertex> verticesTriangle;
 	std::vector<uint32_t> indicesTriangle;
 
 	if (!glfwInit()) {
@@ -113,8 +111,8 @@ int main(MirageRHI::IRenderInterface::API api)
 	fragmentShader->Create("assets/shaders/fragment.glsl", MirageRHI::IShader::ShaderType::Fragment);
 	pipeline->Create(vertexShader, fragmentShader);
 	VAO->Create(NULL, 0, MirageRHI::IBuffer::BufferType::VertexAttributes);
-	bufferTriangleVertices->Create(verticesTriangle.data(), verticesTriangle.size() * sizeof(Vertex), MirageRHI::IBuffer::BufferType::Vertices);
-	bufferTriangleIndices->Create(indicesTriangle.data(), indicesTriangle.size() * sizeof(Vertex), MirageRHI::IBuffer::BufferType::Indices);
+	bufferTriangleVertices->Create(verticesTriangle.data(), verticesTriangle.size() * sizeof(MirageRHI::Vertex), MirageRHI::IBuffer::BufferType::Vertices);
+	bufferTriangleIndices->Create(indicesTriangle.data(), indicesTriangle.size() * sizeof(MirageRHI::Vertex), MirageRHI::IBuffer::BufferType::Indices);
 	commandBuffer->Create();
 	DEBUG_LOG("All Classes Created");
 

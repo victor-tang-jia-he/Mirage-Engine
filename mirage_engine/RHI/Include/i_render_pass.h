@@ -1,6 +1,15 @@
 #pragma once
 
-#include "general_include.h"
+#include <iostream>
+
+#include <vector4.h>
+
+using namespace MirageEngine::Core::Maths;
+
+namespace MirageRHI
+{
+	class OpenGLRenderPass;
+}
 
 namespace MirageRHI
 {

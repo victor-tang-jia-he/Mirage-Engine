@@ -1,6 +1,13 @@
 #pragma once
 
-#include "general_include.h"
+#include <iostream>
+
+namespace MirageRHI
+{
+	class OpenGLSurface;
+}
+
+struct GLFWwindow;
 
 namespace MirageRHI
 {

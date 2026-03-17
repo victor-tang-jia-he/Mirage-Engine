@@ -2,6 +2,9 @@
 
 #include "i_instance.h"
 
+#include <glad/glad.h>
+#include <debug.h>
+
 namespace MirageRHI
 {
     class OpenGLInstance : public IInstance

@@ -1,6 +1,13 @@
 #pragma once
 
+#include <GLFW/glfw3.h>
+
 #include "i_swap_chain.h"
+
+namespace MirageRHI
+{
+    class OpenGLSurface;
+}
 
 namespace MirageRHI
 {

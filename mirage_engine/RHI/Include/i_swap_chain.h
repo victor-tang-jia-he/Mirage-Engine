@@ -1,6 +1,12 @@
 #pragma once
 
-#include "general_include.h"
+#include <iostream>
+
+namespace MirageRHI
+{
+	class OpenGLSwapChain;
+	class ISurface;
+}
 
 namespace MirageRHI
 {

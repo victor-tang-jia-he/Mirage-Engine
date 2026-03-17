@@ -21,7 +21,8 @@ void MirageRHI::OpenGLShader::Destroy()
 bool MirageRHI::OpenGLShader::CompileShader(const std::string& _path, unsigned int _type, unsigned int& _shaderOut)
 {
     std::ifstream file(_path);
-    if (!file.is_open()) {
+    if (!file.is_open())
+    {
         DEBUG_THROW("Cant open shader file : %s", _path.c_str());
         return false;
     }
@@ -37,7 +38,8 @@ bool MirageRHI::OpenGLShader::CompileShader(const std::string& _path, unsigned i
 
     int success;
     glGetShaderiv(_shaderOut, GL_COMPILE_STATUS, &success);
-    if (!success) {
+    if (!success)
+    {
         char infoLog[512];
         glGetShaderInfoLog(_shaderOut, 512, nullptr, infoLog);
         DEBUG_THROW("Shader compile error : [%s]", infoLog);

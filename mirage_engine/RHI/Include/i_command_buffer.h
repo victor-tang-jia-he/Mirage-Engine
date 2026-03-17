@@ -1,6 +1,17 @@
 #pragma once
 
-#include "general_include.h"
+#include <iostream>
+
+namespace MirageRHI
+{
+	class OpenGLCommandBuffer;
+	class OpenGLBuffer;
+	class IPipeline;
+	class IBuffer;
+	class IRenderPass;
+	class ISwapChain;
+	class ISurface;
+}
 
 namespace MirageRHI
 {

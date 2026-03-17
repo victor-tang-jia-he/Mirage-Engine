@@ -1,9 +1,40 @@
 #pragma once
 
+#include <glad/glad.h>
+#include <GLFW/glfw3.h>
+
+#include <matrix4.h>
+#include <debug.h>
+
 #include "i_pipeline.h"
+
+using namespace MirageEngine::Core::Maths;
+using namespace MirageRHI::Debug;
 
 namespace MirageRHI
 {
+	// Pipline Settings Struct
+	struct PipelineParamaters
+	{
+	private:
+		GLuint VAO;
+		GLenum CullMode = GL_BACK;
+	public:
+		static Log* GetGlobalLog();
+		void OpenFile();
+		void ResetFile();
+		std::string Print();
+		std::string Throw();
+	};
+
+	// Vertex Struct
+	struct Vertex
+	{
+		Vector3 Position;
+		Vector3 Normal;
+		Vector2 UV;
+	};
+
 	class OpenGLPipeline : public IPipeline
 	{
 	private:

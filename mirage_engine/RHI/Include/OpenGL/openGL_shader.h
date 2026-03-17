@@ -1,5 +1,13 @@
 #pragma once
 
+#include <glad/glad.h>
+#include <GLFW/glfw3.h>
+
+#include <debug.h>
+#include <string>
+#include <fstream>
+#include <sstream>
+
 #include "i_shader.h"
 
 namespace MirageRHI

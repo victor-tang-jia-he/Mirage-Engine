@@ -1,5 +1,10 @@
 #pragma once
 
+#include <glad/glad.h>
+#include <GLFW/glfw3.h>
+
+#include <debug.h>
+
 #include "i_buffer.h"
 
 namespace MirageRHI

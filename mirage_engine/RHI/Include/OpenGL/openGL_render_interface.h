@@ -1,5 +1,7 @@
 #pragma once
 
+#include <vector>
+
 #include "i_render_interface.h"
 
 #include "openGL_instance.h"

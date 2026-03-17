@@ -1,6 +1,11 @@
 #pragma once
 
-#include "general_include.h"
+#include <iostream>
+
+namespace MirageRHI
+{
+	class OpenGLShader;
+}
 
 namespace MirageRHI
 {

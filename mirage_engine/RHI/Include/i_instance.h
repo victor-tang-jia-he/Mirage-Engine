@@ -1,6 +1,12 @@
 #pragma once
 
-#include "general_include.h"
+#include <string>
+#include <iostream>
+
+namespace MirageRHI
+{
+	class OpenGLInstance;
+}
 
 namespace MirageRHI
 {

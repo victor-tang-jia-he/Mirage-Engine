@@ -58,8 +58,28 @@ void MirageRHI::OpenGLPipeline::SetMat4(const std::string& name, const Matrix4& 
 void MirageRHI::OpenGLPipeline::SetBool(const std::string& name, bool value) const
 {
     GLint location = glGetUniformLocation(m_Program, name.c_str());
-    if (location == -1) {
-        std::cerr << "Warning: uniform '" << name << "' doesn't exist or is not used.\n";
+    if (location == -1)
+    {
+		DEBUG_THROW("Warning: uniform '%s' doesn't exist or is not used.", name.c_str());
     }
     glUniform1i(location, static_cast<int>(value));
+}
+
+// Struct
+void MirageRHI::PipelineParamaters::OpenFile()
+{
+}
+
+void MirageRHI::PipelineParamaters::ResetFile()
+{
+}
+
+std::string MirageRHI::PipelineParamaters::Print()
+{
+    return "Print";
+}
+
+std::string MirageRHI::PipelineParamaters::Throw()
+{
+    return "Throw";
 }

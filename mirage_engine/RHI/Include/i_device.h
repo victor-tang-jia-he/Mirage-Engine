@@ -1,6 +1,11 @@
 #pragma once
 
-#include "general_include.h"
+#include <iostream>
+
+namespace MirageRHI
+{
+	class OpenGLDevice;
+}
 
 namespace MirageRHI
 {
@@ -12,7 +17,7 @@ namespace MirageRHI
 		virtual void Create() = 0;
 		virtual void Destroy() = 0;
 
-		virtual OpenGLDevice& API_OpenGl() { throw std::runtime_error("Bad API Call : object is not an OpenGlDevice"); }
+		virtual OpenGLDevice& API_OpenGL() { throw std::runtime_error("Bad API Call : object is not an OpenGLDevice"); }
 
 		virtual void WaitIdle() = 0;
 	};

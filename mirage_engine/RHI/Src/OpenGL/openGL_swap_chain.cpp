@@ -5,10 +5,11 @@ void MirageRHI::OpenGLSwapChain::IsScreenResized(ISurface* _surface)
 {
     int displayWidth, displayHeight;
     glfwGetFramebufferSize(_surface->API_OpenGL().GetContextGLHandle(), &displayWidth, &displayHeight);
-    if (_surface->API_OpenGL().GetWidth() != displayWidth || _surface->API_OpenGL().GetHeight() != displayHeight) {
+    if (_surface->API_OpenGL().GetWidth() != displayWidth || _surface->API_OpenGL().GetHeight() != displayHeight)
+    {
         RecreateSwapchain(_surface, displayWidth, displayHeight);
     }
-}
+} 
 
 void MirageRHI::OpenGLSwapChain::RecreateSwapchain(ISurface* _surface, int _newWidth, int _newHeight)
 {
@@ -20,4 +21,5 @@ void MirageRHI::OpenGLSwapChain::Present(OpenGLSurface _surface)
 {
     glfwSwapBuffers(_surface.GetContextGLHandle());
 }
+
 
