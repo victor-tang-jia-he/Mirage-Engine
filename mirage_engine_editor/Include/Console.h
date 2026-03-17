@@ -5,10 +5,26 @@
 
 namespace Mirage
 {
+	enum LogLevel
+	{
+		INFO,
+		WARNING,
+		ERROR
+	};
+
+	struct LogInfo
+	{
+		std::string Message;
+		LogLevel Level = LogLevel::INFO;
+	};
+
 	class Console : public IPanel
 	{
 	private:
-		std::vector<std::string> m_Logs;
+		std::vector<LogInfo> m_Logs;
+		bool m_bDisplayInfo;
+		bool m_bDisplayWarning;
+		bool m_bDisplayError;
 
 	public:
 		Console(const char* _name) : IPanel(_name) {};
@@ -16,6 +32,6 @@ namespace Mirage
 		void InitPanel() override;
 		void DrawPanel() override;
 		void ShutdownPanel() override;
-		void AddLog(const char* _log);
+		void AddLog(const char* _log, LogLevel _level);
 	};
 }

@@ -13,21 +13,25 @@ namespace Mirage
 {
 	void Console::InitPanel()
 	{
-		AddLog("I am a test");
-		AddLog("I am a second test");
-		AddLog("You know the drill");
+		AddLog("I am a test", LogLevel::INFO);
+		AddLog("I am a second test", LogLevel::ERROR);
+		AddLog("You know the drill", LogLevel::WARNING);
 	}
 
 	void Console::DrawPanel()
 	{
 		UIWrapper::BeginWindow("Console");
 
-		if (ImGui::Button("Clear"))
-		{
+		if(ImGui::Button("Clear"))
 			m_Logs.clear();
-		}
+		ImGui::SameLine();
+		ImGui::Checkbox("Info", &m_bDisplayInfo);
+		ImGui::SameLine();
+		ImGui::Checkbox("Warning", &m_bDisplayWarning);
+		ImGui::SameLine();
+		ImGui::Checkbox("Error", &m_bDisplayError);
 
-		AddLog("fire");
+		//AddLog("fire", LogLevel::INFO);
 
 		ImGui::BeginChild("Scrolling Region", ImVec2(0, 0), ImGuiChildFlags_Borders);
 
@@ -35,7 +39,12 @@ namespace Mirage
 
 		for (auto& log : m_Logs)
 		{
-			ImGui::TextColored(ImVec4(1, 1, 1, 1), log.c_str());
+			if(log.Level == LogLevel::ERROR && m_bDisplayError)
+				ImGui::TextColored(ImVec4(0.8f, 0, 0, 1), "[ERROR] %s", log.Message.c_str());
+			else if(log.Level == LogLevel::WARNING && m_bDisplayWarning)
+				ImGui::TextColored(ImVec4(0.8f, 0.8f, 0, 1), "[WARNING] %s", log.Message.c_str());
+			else if(log.Level == LogLevel::INFO && m_bDisplayInfo)
+				ImGui::TextColored(ImVec4(1, 1, 1, 1), log.Message.c_str());
 		}
 
 		if (isAtBottom)
@@ -57,18 +66,18 @@ namespace Mirage
 
 		for (auto& log : m_Logs)
 		{
-			File << log << "\n";
+			File << log.Message << "\n";
 		}
 
 		File.close();
 		m_Logs.clear();
 	}
 
-	void Console::AddLog(const char* _log)
+	void Console::AddLog(const char* _log, LogLevel _level)
 	{
 		if(m_Logs.size() < 500)
 		{
-			m_Logs.push_back(_log);
+			m_Logs.push_back(LogInfo(_log, _level));
 		}
 		else
 		{
