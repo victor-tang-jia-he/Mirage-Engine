@@ -29,12 +29,20 @@ namespace Mirage
 
 		AddLog("fire");
 
-		ImGui::BeginChild("Scrolling Region", ImVec2(0, 230), ImGuiChildFlags_Borders);
+		ImGui::BeginChild("Scrolling Region", ImVec2(0, 0), ImGuiChildFlags_Borders);
+
+		bool isAtBottom = (ImGui::GetScrollY() >= ImGui::GetScrollMaxY() - 5.0f);
+
 		for (auto& log : m_Logs)
 		{
 			ImGui::TextColored(ImVec4(1, 1, 1, 1), log.c_str());
 		}
-		ImGui::SetScrollHereY(1.0f);
+
+		if (isAtBottom)
+		{
+			ImGui::SetScrollHereY(1.0f);
+		}
+
 		ImGui::EndChild();
 
 		UIWrapper::EndWindow();
@@ -49,7 +57,7 @@ namespace Mirage
 
 		for (auto& log : m_Logs)
 		{
-			File << log;
+			File << log << "\n";
 		}
 
 		File.close();
