@@ -18,7 +18,6 @@ namespace MirageRHI
 		{
 			Vertices,
 			Indices,
-			VertexAttributes,
 			Texture
 		};
 

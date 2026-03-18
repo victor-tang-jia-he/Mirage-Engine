@@ -10,6 +10,7 @@
 #include "openGL_swap_chain.h"
 #include "openGL_render_pass.h"
 #include "openGL_pipeline.h"
+#include "openGL_pipeline_parameters.h"
 #include "openGL_shader.h"
 #include "openGL_framebuffer.h"
 #include "openGL_buffer.h"
@@ -26,6 +27,7 @@ namespace MirageRHI
 		ISwapChain* InstantiateSwapChain() override { return new OpenGLSwapChain(); }
 		IRenderPass* InstantiateRenderPass() override { return new OpenGLRenderPass(); }
 		IPipeline* InstantiatePipeline() override { return new OpenGLPipeline(); }
+		IPipelineParameters* InstantiatePipelineParameters() override { return new OpenGLPipelineParameters(); }
 		IShader* InstantiateShader() override { return new OpenGLShader(); }
 		IFramebuffer* InstantiateFramebuffer() override { return new OpenGLFramebuffer(); }
 		IBuffer* InstantiateBuffer() override { return new OpenGLBuffer(); }

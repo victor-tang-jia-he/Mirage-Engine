@@ -6,6 +6,7 @@
 #include "i_swap_chain.h"
 #include "i_render_pass.h"
 #include "i_pipeline.h"
+#include "i_pipeline_parameters.h"
 #include "i_shader.h"
 #include "i_framebuffer.h"
 #include "i_buffer.h"
@@ -25,14 +26,14 @@ int main(MirageRHI::IRenderInterface::API api)
 	MirageRHI::IRenderPass* renderPass = nullptr;
 	MirageRHI::IShader* vertexShader = nullptr;
 	MirageRHI::IShader* fragmentShader = nullptr;
+	MirageRHI::IPipelineParameters* pipelineParameters = nullptr;
 	MirageRHI::IPipeline* pipeline = nullptr;
-	MirageRHI::IBuffer* VAO = nullptr;
 	MirageRHI::IFramebuffer* framebuffer = nullptr;
 	MirageRHI::IBuffer* bufferTriangleVertices = nullptr;
 	MirageRHI::IBuffer* bufferTriangleIndices = nullptr;
 	MirageRHI::ICommandBuffer* commandBuffer = nullptr;
 
-	std::vector<MirageRHI::Vertex> verticesTriangle;
+	std::vector<MirageRHI::LitVertex> verticesTriangle;
 	std::vector<uint32_t> indicesTriangle;
 
 	if (!glfwInit()) {
@@ -77,8 +78,8 @@ int main(MirageRHI::IRenderInterface::API api)
 	renderPass = renderInterface->InstantiateRenderPass();
 	vertexShader = renderInterface->InstantiateShader();
 	fragmentShader = renderInterface->InstantiateShader();
+	pipelineParameters = renderInterface->InstantiatePipelineParameters();
 	pipeline = renderInterface->InstantiatePipeline();
-	VAO = renderInterface->InstantiateBuffer();
 	framebuffer = renderInterface->InstantiateFramebuffer();
 	bufferTriangleVertices = renderInterface->InstantiateBuffer();
 	bufferTriangleIndices = renderInterface->InstantiateBuffer();
@@ -109,14 +110,12 @@ int main(MirageRHI::IRenderInterface::API api)
 	renderPass->Create(Vector4(0.2f, 0, 0.1f, 1.0f), 1.0f);
 	vertexShader->Create("assets/shaders/vertex.glsl", MirageRHI::IShader::ShaderType::Vertex);
 	fragmentShader->Create("assets/shaders/fragment.glsl", MirageRHI::IShader::ShaderType::Fragment);
-	pipeline->Create(vertexShader, fragmentShader);
-	VAO->Create(NULL, 0, MirageRHI::IBuffer::BufferType::VertexAttributes);
-	bufferTriangleVertices->Create(verticesTriangle.data(), verticesTriangle.size() * sizeof(MirageRHI::Vertex), MirageRHI::IBuffer::BufferType::Vertices);
-	bufferTriangleIndices->Create(indicesTriangle.data(), indicesTriangle.size() * sizeof(MirageRHI::Vertex), MirageRHI::IBuffer::BufferType::Indices);
+	pipelineParameters->Create(MirageRHI::VertexType::PBR, MirageRHI::CullingType::Back);
+	pipeline->Create(vertexShader, fragmentShader, pipelineParameters);
+	bufferTriangleVertices->Create(verticesTriangle.data(), verticesTriangle.size() * sizeof(MirageRHI::LitVertex), MirageRHI::IBuffer::BufferType::Vertices);
+	bufferTriangleIndices->Create(indicesTriangle.data(), indicesTriangle.size() * sizeof(MirageRHI::LitVertex), MirageRHI::IBuffer::BufferType::Indices);
 	commandBuffer->Create();
 	DEBUG_LOG("All Classes Created");
-
-	glEnable(GL_DEPTH_TEST);
 
 	while (!glfwWindowShouldClose(window))
 	{
@@ -127,7 +126,8 @@ int main(MirageRHI::IRenderInterface::API api)
 		commandBuffer->BeginRenderPass(renderPass);
 		commandBuffer->BeginDraw();
 		commandBuffer->BindPipeline(pipeline);
-		commandBuffer->BindBuffers(bufferTriangleIndices, bufferTriangleVertices, VAO);
+		commandBuffer->BindBuffers(bufferTriangleIndices, bufferTriangleVertices);
+		commandBuffer->ApplyPipelineParameters(pipeline);
 		Matrix4 model = Matrix4::CreateTranslationMatrix(Vector3(0, 0, -10));
 		Matrix4 view = Matrix4::Identity();
 		Matrix4 projection = Matrix4::GetPerspectiveMatrix(width, height, 0.1f, 100.f, 45.0f);

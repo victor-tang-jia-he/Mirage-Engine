@@ -1,16 +1,17 @@
 #include "OpenGL/openGL_pipeline.h"
 #include "OpenGL/openGL_shader.h"
+#include "OpenGL/openGL_pipeline_parameters.h"
 
-void MirageRHI::OpenGLPipeline::Create(IShader* _vertShader, IShader* _fragShader)
+void MirageRHI::OpenGLPipeline::Create(IShader* _vertShader, IShader* _fragShader, IPipelineParameters* _pipelineParameters)
 {
+    m_Parameters = _pipelineParameters;
     m_VertexShader = _vertShader;
     m_FragmentShader = _fragShader;
 
     m_Program = glCreateProgram();
     glAttachShader(m_Program, m_VertexShader->API_OpenGL().GetGLHandle());
     glAttachShader(m_Program, m_FragmentShader->API_OpenGL().GetGLHandle());
-    glLinkProgram(m_Program);
-    glUseProgram(m_Program);
+    Link();
 }
 
 void MirageRHI::OpenGLPipeline::Destroy()
@@ -18,9 +19,40 @@ void MirageRHI::OpenGLPipeline::Destroy()
     glDeleteProgram(m_Program);
 }
 
-bool MirageRHI::OpenGLPipeline::Link()
+bool MirageRHI::OpenGLPipeline::Link() const
 {
-    return false;
+    glLinkProgram(m_Program);
+
+    GLint success;
+    glGetProgramiv(m_Program, GL_LINK_STATUS, &success);
+    if (!success) {
+        GLint logLength;
+        glGetProgramiv(m_Program, GL_INFO_LOG_LENGTH, &logLength);
+        char* log = new char[logLength];
+        glGetProgramInfoLog(m_Program, logLength, &logLength, log);
+        std::cerr << "Shader Program linking failed: " << log << "\n";
+        delete[] log;
+        return false;
+    }
+    if (m_VertexShader->API_OpenGL().GetGLHandle()) {
+        glDetachShader(m_Program, m_VertexShader->API_OpenGL().GetGLHandle());
+        glDeleteShader(m_VertexShader->API_OpenGL().GetGLHandle());
+    }
+    if (m_FragmentShader->API_OpenGL().GetGLHandle()) {
+        glDetachShader(m_Program, m_FragmentShader->API_OpenGL().GetGLHandle());
+        glDeleteShader(m_FragmentShader->API_OpenGL().GetGLHandle());
+    }
+    return true;
+}
+
+void MirageRHI::OpenGLPipeline::Bind() const
+{
+    glUseProgram(m_Program);
+}
+
+void MirageRHI::OpenGLPipeline::Unbind() const
+{
+    glUseProgram(0);
 }
 
 void MirageRHI::OpenGLPipeline::SetInt(const std::string& name, int value) const
@@ -65,21 +97,7 @@ void MirageRHI::OpenGLPipeline::SetBool(const std::string& name, bool value) con
     glUniform1i(location, static_cast<int>(value));
 }
 
-// Struct
-void MirageRHI::PipelineParamaters::OpenFile()
+void MirageRHI::OpenGLPipeline::ApplyParameters()
 {
-}
-
-void MirageRHI::PipelineParamaters::ResetFile()
-{
-}
-
-std::string MirageRHI::PipelineParamaters::Print()
-{
-    return "Print";
-}
-
-std::string MirageRHI::PipelineParamaters::Throw()
-{
-    return "Throw";
+    m_Parameters->API_OpenGL().ApplyParameters();
 }
