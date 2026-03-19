@@ -5,9 +5,12 @@ add_executable(MirageEngine)
 file(GLOB_RECURSE MIRAGE_ENGINE_SOURCES
 	"RHI/Src/*.cpp"
 	"RHI/Src/*.c"
+	"application.cpp"
+	"main.cpp"
 )
 
 file(GLOB_RECURSE MIRAGE_ENGINE_HEADERS
+	"application.h"
 	"RHI/Include/*.hpp"
 	"RHI/Include/*.h"
 )

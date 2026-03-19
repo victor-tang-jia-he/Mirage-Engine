@@ -12,7 +12,7 @@ namespace MirageRHI
 	class OpenGLBuffer : public IBuffer
 	{
     private:
-        GLuint m_Buffer;
+        GLuint m_Buffer = 0;
         BufferType m_Type;
 
     public:
