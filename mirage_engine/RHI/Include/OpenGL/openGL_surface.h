@@ -9,8 +9,8 @@ namespace MirageRHI
     {
     private:
         GLFWwindow* m_Context = nullptr;
-        int m_Width;
-        int m_Height;
+        int m_Width = 0;
+        int m_Height = 0;
 
     public:
         void Create(GLFWwindow* _context, int _width, int _height) override;

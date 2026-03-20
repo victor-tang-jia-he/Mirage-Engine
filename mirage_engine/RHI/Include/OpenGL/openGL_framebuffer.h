@@ -10,7 +10,7 @@ namespace MirageRHI
     class OpenGLFramebuffer : public IFramebuffer
     {
     private:
-        GLuint m_FBO;
+        GLuint m_FBO = 0;
 
     public:
         void Create() override;

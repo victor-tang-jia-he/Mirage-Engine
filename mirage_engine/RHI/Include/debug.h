@@ -4,9 +4,9 @@
 #include <string>
 
 #ifdef _DEBUG
-#define DEBUG_LOG(format, ...) { std::cout << "MirageLog : " << MirageRHI::Debug::Log::GetGlobalLog()->Print(format, ##__VA_ARGS__) << "\n" << std::endl; }
+#define DEBUG_LOG(format, ...) { std::cout << "MirageLog : " << MirageRHI::Debug::Logger::GetGlobalLog()->Print(format, ##__VA_ARGS__) << "\n" << std::endl; }
 
-#define DEBUG_THROW(format, ...) { std::string throwMessage = MirageRHI::Debug::Log::GetGlobalLog()->Throw(format, ##__VA_ARGS__); std::cout << "MirageThrow : " << throwMessage << "\n" << std::endl; throw std::runtime_error(throwMessage); }
+#define DEBUG_THROW(format, ...) { std::string throwMessage = MirageRHI::Debug::Logger::GetGlobalLog()->Throw(format, ##__VA_ARGS__); std::cout << "MirageThrow : " << throwMessage << "\n" << std::endl; throw std::runtime_error(throwMessage); }
 #else
 #define DEBUG_LOG(format, ...) { }
 
@@ -17,24 +17,26 @@ namespace MirageRHI
 {
     namespace Debug
     {
-        class Log
+        class Logger
         {
-            static Log* s_GlobalLog;
+            static Logger* s_GlobalLog;
             std::ofstream m_FileStream;
 			bool m_IsDestroying = false;
 
         public:
-            Log(std::string _fileName = "log.txt");
-            ~Log();
+            Logger(std::string _fileName = "log.txt");
+            ~Logger();
 
             void Destroy();
 
-            static Log* GetGlobalLog();
+            static Logger* GetGlobalLog();
 
-            void OpenFile(std::string const& _filename);
-            void ResetFile(std::string const& _filename);
             std::string Print(const char* _format, ...);
 			std::string Throw(const char* _format, ...);
+
+        private:
+            void OpenFile(std::string const& _filename);
+            void ResetFile(std::string const& _filename);
         };
     }
 }

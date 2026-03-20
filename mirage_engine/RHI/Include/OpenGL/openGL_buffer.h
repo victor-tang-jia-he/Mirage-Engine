@@ -13,7 +13,7 @@ namespace MirageRHI
 	{
     private:
         GLuint m_Buffer = 0;
-        BufferType m_Type;
+        BufferType m_Type = BufferType::None;
 
     public:
         // Creates and stores buffer data (vertexes, indices, textures, ...)

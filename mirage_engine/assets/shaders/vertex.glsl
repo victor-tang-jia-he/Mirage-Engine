@@ -6,16 +6,16 @@ layout(location = 2) in vec2 aTexCoord;
 
 uniform mat4 model;
 uniform mat4 view;
-uniform mat4 pvm;
+uniform mat4 proj;
 
 out vec3 FragPos;
 out vec3 Normal;
 out vec2 TexCoord;
 
 void main() {
-    vec4 worldPos = model * vec4(aPos, 1.0);
+    vec4 worldPos = vec4(aPos, 1.0) * model * view;
     FragPos = vec3(worldPos);
     Normal = mat3(transpose(inverse(model))) * aNormal;
     TexCoord = aTexCoord;
-    gl_Position = pvm * vec4(aPos, 1.0);
+    gl_Position = proj * vec4(FragPos, 1.0);
 }

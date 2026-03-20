@@ -16,7 +16,7 @@ namespace MirageRHI
 	{
 	private:
 		GLuint m_Shader = 0;
-		ShaderType m_Type;
+		ShaderType m_Type = ShaderType::None;
 
 	public:
 		void Create(const char* _shaderPath, ShaderType _type) override;

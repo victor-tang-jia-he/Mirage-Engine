@@ -19,9 +19,9 @@ namespace MirageRHI
 	{
 	private:
 		GLuint m_Program = 0;
-		IPipelineParameters* m_Parameters;
-		IShader* m_VertexShader;
-		IShader* m_FragmentShader;
+		IPipelineParameters* m_Parameters = nullptr;
+		IShader* m_VertexShader = nullptr;
+		IShader* m_FragmentShader = nullptr;
 
 	public:
 		void Create(IShader* _vertShader, IShader* _fragShader, IPipelineParameters* _pipelineParameters) override;

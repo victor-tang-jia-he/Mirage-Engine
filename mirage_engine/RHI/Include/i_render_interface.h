@@ -16,6 +16,7 @@ namespace MirageRHI
 	class IFramebuffer;
 	class IBuffer;
 	class ICommandBuffer;
+	class IUniformBuffer;
 }
 
 namespace MirageRHI
@@ -42,7 +43,7 @@ namespace MirageRHI
 		virtual IShader* InstantiateShader() = 0;
 		virtual IFramebuffer* InstantiateFramebuffer() = 0;
 		virtual IBuffer* InstantiateBuffer() = 0;
-		//virtual IUniformBuffer* InstantiateUniformBuffer() = 0;
+		virtual IUniformBuffer* InstantiateUniformBuffer() = 0;
 		virtual ICommandBuffer* InstantiateCommandBuffer() = 0;
 
 	};
