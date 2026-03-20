@@ -47,6 +47,7 @@ private:
 	// TODO : Change to a list or mapped list (Mesh)
 	std::vector<LitVertex> m_VerticesTriangle;
 	std::vector<uint32_t> m_IndicesTriangle;
+	uint32_t m_IndicesCount = 0;
 
 public:
 	Application(IRenderInterface::API _api = IRenderInterface::API::OPENGL) : m_API(_api) {}
@@ -54,6 +55,13 @@ public:
 	void InitApp();
 	void RunMainLoop();
 	void ShutDown();
+
+	bool IsRunning() const;
+	void BeginFrame();
+	void RenderScene();
+	void EndFrame();
+
+	void* GetWindowHandle() const { return static_cast<void*>(m_Window); }
 
 private:
 	void InitWindow();
