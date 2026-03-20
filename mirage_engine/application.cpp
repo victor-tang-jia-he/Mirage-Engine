@@ -95,6 +95,7 @@ void Application::InitRHI()
 	m_BufferTriangleVertices->Create(m_VerticesTriangle.data(), m_VerticesTriangle.size() * sizeof(MirageRHI::LitVertex), MirageRHI::IBuffer::BufferType::Vertices);
 	m_BufferTriangleIndices->Create(m_IndicesTriangle.data(), m_IndicesTriangle.size() * sizeof(MirageRHI::LitVertex), MirageRHI::IBuffer::BufferType::Indices);
 	m_CommandBuffer->Create();
+	m_IndicesCount = (uint32_t)(m_IndicesTriangle.size());
 	DEBUG_LOG("All Classes Created");
 }
 
@@ -102,37 +103,85 @@ void Application::InitScene()
 {
 }
 
-void Application::RunMainLoop()
-{
-	uint32_t indicesTriangleListSize = (uint32_t)(sizeof(m_IndicesTriangle[0]) * m_IndicesTriangle.size());
+//void Application::RunMainLoop()
+//{
+//	uint32_t indicesTriangleListSize = (uint32_t)(sizeof(m_IndicesTriangle[0]) * m_IndicesTriangle.size());
+//
+//	while (!glfwWindowShouldClose(m_Window))
+//	{
+//		if (glfwGetKey(m_Window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+//			glfwSetWindowShouldClose(m_Window, true);
+//
+//		// Setup to Draw
+//		m_CommandBuffer->BeginRenderPass(m_RenderPass);
+//		m_CommandBuffer->BeginDraw();
+//		m_CommandBuffer->BindPipeline(m_Pipeline);
+//		m_CommandBuffer->BindBuffers(m_BufferTriangleIndices, m_BufferTriangleVertices);
+//		m_CommandBuffer->ApplyPipelineParameters(m_Pipeline);
+//		Matrix4 model = Matrix4::CreateTranslationMatrix(Vector3(0, 0, -10));
+//		Matrix4 view = Matrix4::Identity();
+//		Matrix4 projection = Matrix4::GetPerspectiveMatrix(m_Width, m_Height, 0.1f, 100.f, 45.0f);
+//		projection = projection * view * model;
+//		m_Pipeline->API_OpenGL().SetVec3("viewPos", Vector3());
+//		m_Pipeline->API_OpenGL().SetMat4("pvm", projection);
+//		m_Pipeline->API_OpenGL().SetMat4("view", view);
+//		m_Pipeline->API_OpenGL().SetMat4("model", model);
+//		m_Pipeline->API_OpenGL().SetBool("debugNoLight", true);
+//		m_CommandBuffer->DrawIndexed(indicesTriangleListSize);
+//		m_CommandBuffer->EndDraw();
+//		m_CommandBuffer->EndRenderPass();
+//		m_CommandBuffer->SubmitAndPresent(m_SwapChain, m_Surface);
+//
+//		glfwPollEvents();
+//	}
+//}
 
-	while (!glfwWindowShouldClose(m_Window))
-	{
-		if (glfwGetKey(m_Window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-			glfwSetWindowShouldClose(m_Window, true);
-
-		// Setup to Draw
-		m_CommandBuffer->BeginRenderPass(m_RenderPass);
-		m_CommandBuffer->BeginDraw();
-		m_CommandBuffer->BindPipeline(m_Pipeline);
-		m_CommandBuffer->BindBuffers(m_BufferTriangleIndices, m_BufferTriangleVertices);
-		m_CommandBuffer->ApplyPipelineParameters(m_Pipeline);
-		Matrix4 model = Matrix4::CreateTranslationMatrix(Vector3(0, 0, -10));
-		Matrix4 view = Matrix4::Identity();
-		Matrix4 projection = Matrix4::GetPerspectiveMatrix(m_Width, m_Height, 0.1f, 100.f, 45.0f);
-		projection = projection * view * model;
-		m_Pipeline->API_OpenGL().SetVec3("viewPos", Vector3());
-		m_Pipeline->API_OpenGL().SetMat4("pvm", projection);
-		m_Pipeline->API_OpenGL().SetMat4("view", view);
-		m_Pipeline->API_OpenGL().SetMat4("model", model);
-		m_Pipeline->API_OpenGL().SetBool("debugNoLight", true);
-		m_CommandBuffer->DrawIndexed(indicesTriangleListSize);
-		m_CommandBuffer->EndDraw();
-		m_CommandBuffer->EndRenderPass();
-		m_CommandBuffer->SubmitAndPresent(m_SwapChain, m_Surface);
-
-		glfwPollEvents();
+void Application::RunMainLoop() {
+	while (IsRunning()) {
+		BeginFrame();
+		RenderScene();
+		EndFrame();
 	}
+}
+
+bool Application::IsRunning() const {
+	return !glfwWindowShouldClose(m_Window);
+}
+
+void Application::BeginFrame() {
+	glfwPollEvents();
+
+	if (glfwGetKey(m_Window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+		glfwSetWindowShouldClose(m_Window, true);
+
+	m_CommandBuffer->BeginRenderPass(m_RenderPass);
+	m_CommandBuffer->BeginDraw();
+}
+
+void Application::RenderScene() {
+	m_CommandBuffer->BindPipeline(m_Pipeline);
+	m_CommandBuffer->BindBuffers(m_BufferTriangleIndices, m_BufferTriangleVertices);
+	m_CommandBuffer->ApplyPipelineParameters(m_Pipeline);
+
+	Matrix4 model = Matrix4::CreateTranslationMatrix(Vector3(0, 0, -10));
+	Matrix4 view = Matrix4::Identity();
+	Matrix4 projection = Matrix4::GetPerspectiveMatrix(m_Width, m_Height, 0.1f, 100.f, 45.0f);
+	projection = projection * view * model;
+
+	m_Pipeline->API_OpenGL().SetVec3("viewPos", Vector3());
+	m_Pipeline->API_OpenGL().SetMat4("pvm", projection);
+	m_Pipeline->API_OpenGL().SetMat4("view", view);
+	m_Pipeline->API_OpenGL().SetMat4("model", model);
+	m_Pipeline->API_OpenGL().SetBool("debugNoLight", true);
+
+	m_CommandBuffer->DrawIndexed(m_IndicesCount);
+}
+
+void Application::EndFrame()
+{
+	m_CommandBuffer->EndDraw();
+	m_CommandBuffer->EndRenderPass();
+	m_CommandBuffer->SubmitAndPresent(m_SwapChain, m_Surface);
 }
 
 void Application::ShutDown()

@@ -93,7 +93,7 @@ if(NOT EXISTS ${CMAKE_SOURCE_DIR}/libraries/imgui OR RES_LEN EQUAL 0)
     FetchContent_Declare(
         imgui
         GIT_REPOSITORY https://github.com/ocornut/imgui.git
-        GIT_TAG v1.92.6
+        GIT_TAG docking
         SOURCE_DIR ${CMAKE_SOURCE_DIR}/libraries/imgui
     )
     FetchContent_MakeAvailable(imgui)
