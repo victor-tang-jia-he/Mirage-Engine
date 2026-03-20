@@ -1,12 +1,13 @@
 ﻿cmake_minimum_required(VERSION 3.16)
 project(Toolbox)
 
-option(TOOLBOX_BUILD_TESTS "Build tests" ON)
+option(TOOLBOX_BUILD_TESTS "Build tests" OFF)
+option(TOOLBOX_FETCH_GTEST "Download GoogleTest if missing" OFF)
 
 include(FetchContent)
 
 # GLM (header-only library)
-if(EXISTS "${CMAKE_SOURCE_DIR}/libraries/glm")
+if(EXISTS "${CMAKE_SOURCE_DIR}/libraries/glm" AND EXISTS "${CMAKE_SOURCE_DIR}/libraries/glm/CMakeLists.txt")
     message(STATUS "Using local GLM")
     add_subdirectory(${CMAKE_SOURCE_DIR}/libraries/glm ${CMAKE_BINARY_DIR}/glm)
 else()
@@ -50,20 +51,40 @@ target_compile_features(Toolbox INTERFACE cxx_std_17)
 # Tests
 if(TOOLBOX_BUILD_TESTS)
     message(STATUS "Building tests...")
-    
-    # GoogleTest
-    FetchContent_Declare(
-        googletest
-        GIT_REPOSITORY https://github.com/google/googletest.git
-        GIT_TAG v1.14.0
-    )
-    
-    # GoogleTest Options
-    set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
-    set(BUILD_GMOCK ON CACHE BOOL "" FORCE)
-    set(INSTALL_GTEST OFF CACHE BOOL "" FORCE)
-    
-    FetchContent_MakeAvailable(googletest)
-    
-    add_subdirectory(tests)
+
+    set(GTEST_PATH ${CMAKE_SOURCE_DIR}/libraries/googletest)
+
+    if(EXISTS ${GTEST_PATH}/CMakeLists.txt)
+        message(STATUS "Using local GoogleTest")
+
+        set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+        set(BUILD_GMOCK ON CACHE BOOL "" FORCE)
+        set(INSTALL_GTEST OFF CACHE BOOL "" FORCE)
+
+        add_subdirectory(${GTEST_PATH} ${CMAKE_BINARY_DIR}/googletest)
+
+        add_subdirectory(tests)
+    else()
+        message(WARNING "GoogleTest not found. .")
+        if(TOOLBOX_FETCH_GTEST)
+            message(STATUS "Fetching GoogleTest...")
+            include(FetchContent)
+
+            FetchContent_Declare(
+                googletest
+                GIT_REPOSITORY https://github.com/google/googletest.git
+                GIT_TAG v1.14.0
+            )
+
+            set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+            set(BUILD_GMOCK ON CACHE BOOL "" FORCE)
+            set(INSTALL_GTEST OFF CACHE BOOL "" FORCE)
+
+            FetchContent_MakeAvailable(googletest)
+
+            add_subdirectory(tests)
+        else()
+            message(WARNING "GoogleTest not found and TOOLBOX_FETCH_GTEST is OFF. Tests will not be built.")
+        endif()
+    endif()
 endif()

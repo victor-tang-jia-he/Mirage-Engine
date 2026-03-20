@@ -2,25 +2,30 @@
 add_executable(MirageEngineEditor)
 
 # Sources
-file(GLOB_RECURSE MIRAGE_ENGINE_SOURCES
-	"Source/*.cpp"
-	"Source/*.c"
+file(GLOB_RECURSE MIRAGE_ENGINE_EDITOR_SOURCES
+    "Source/*.cpp"
+    "Source/*.c"
 )
 
-file(GLOB_RECURSE MIRAGE_ENGINE_HEADERS
-	"Include/*.hpp"
-	"Include/*.h"
+# Sources
+file(GLOB_RECURSE MIRAGE_ENGINE_EDITOR_HEADERS
+    "Include/*.hpp"
+    "Include/*.h"
 )
 
-target_sources(MirageEngineEditor PRIVATE ${MIRAGE_ENGINE_SOURCES} ${MIRAGE_ENGINE_HEADERS})
+target_sources(MirageEngineEditor PRIVATE ${MIRAGE_ENGINE_EDITOR_SOURCES} ${MIRAGE_ENGINE_EDITOR_HEADERS})
 
 # Include directories
 target_include_directories(MirageEngineEditor PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/Include
+    ${CMAKE_SOURCE_DIR}/mirage_engine/include
 )
 
-# Link third-party libraries
-target_link_libraries(MirageEngineEditor PRIVATE third_party)
+# Link engine and third-party
+target_link_libraries(MirageEngineEditor PRIVATE
+    # MirageEngine  # Link the engine itself
+    third_party    # And third-party libs
+)
 
 # Set Warning level 4 and warnings as errors flags
 if(MSVC)

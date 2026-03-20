@@ -6,7 +6,7 @@
 #include "imgui_impl_opengl3.h"
 #include "GLFW/glfw3.h"
 
-namespace Math = MirageEngine::Core::Maths;
+namespace Math = MirageEngine::Core::Math;
 
 namespace Mirage
 {
@@ -76,7 +76,7 @@ namespace Mirage
 
 	void UIWrapper::CreateColorPicker(Math::Vector3* _color)
 	{
-		ImVec4 Color(_color->x / 255.0f, _color->y / 255.0f, _color->z / 255.0f, 1.0f);
+		ImVec4 Color(_color->X / 255.0f, _color->Y / 255.0f, _color->Z / 255.0f, 1.0f);
 		ImVec4 refVecColor(1.0f, 0.0f, 1.0f, 1.0f);
 		ImGuiColorEditFlags color_picker_flags = ImGuiColorEditFlags_NoAlpha;
 		ImGuiColorEditFlags base_flags = ImGuiColorEditFlags_None;
