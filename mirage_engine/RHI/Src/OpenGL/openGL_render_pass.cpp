@@ -1,11 +1,13 @@
 #include "OpenGL/openGL_render_pass.h"
 
+using namespace MirageEngine::Core::Math;
+
 void MirageRHI::OpenGLRenderPass::Create(Vector4 _color, float _depth)
 {
-    m_ClearColor[0] = _color.x;
-    m_ClearColor[1] = _color.y;
-    m_ClearColor[2] = _color.z;
-    m_ClearColor[3] = _color.w;
+    m_ClearColor[0] = _color.X;
+    m_ClearColor[1] = _color.Y;
+    m_ClearColor[2] = _color.Z;
+    m_ClearColor[3] = _color.W;
     m_ClearDepth = _depth;
 }
 

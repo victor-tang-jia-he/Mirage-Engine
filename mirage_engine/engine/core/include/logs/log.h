@@ -1,11 +1,13 @@
 #pragma once
 
 #include <array>
-#include <atomic>
 #include <chrono>
 #include <iostream>
 #include <mutex>
+#include <atomic>
+#include <sys/stat.h>
 #include <fstream> // For file output
+
 
 #define LOG(Level, Category, ...)                  \
 	do                                             \
@@ -64,8 +66,6 @@ namespace Logger
 	};
 
 	// Dedicated mutex used ONLY for Error/Fatal logs.
-	// Those logs bypass the buffering system and go directly to stderr,
-	// so we must ensure thread-safe writes to avoid interleaving messages.
 	inline std::mutex& GetErrorMutex()
 	{
 		static std::mutex errorMutex;
@@ -73,7 +73,7 @@ namespace Logger
 	}
 
 	// ===== GLOBAL BUFFER =====
-	// This buffer batches normal log messages before flushing to stdout.
+	// This buffer batches normal log messages before flushing to stdcout.
 	// Goal:
 	// - reduce the number of expensive std::clog calls
 	// - reduce the number of writes to the file by buffering log messages and writing them in batches
@@ -85,9 +85,22 @@ namespace Logger
 		std::ostringstream      m_buffer;                  // String stream used as the temporary message accumulator
 		std::mutex              m_mutex;                   // Protects the buffer against concurrent writes
 		const char* const		m_logFileName = "log.txt";
+		std::ofstream m_file; // File stream for log output , keep it open to avoid the overhead of opening/closing the file on every flush. We will manage the file size by checking it on every flush and truncating it if it exceeds a certain threshold.
 		//std::atomic<bool>		m_manageFileSize{ false }; // Flag to unable file size management when the log file is being checked to maintain file size.
 		std::atomic<bool>		m_writeInFile{ false }; // Flag to unable file writing when the log file is being checked to maintain file size.
 	public:
+		LogBuffer()
+		{
+			if (IsFileExist(m_logFileName))
+				m_file.open(m_logFileName, std::ios_base::app); // Open in append mode
+			else
+				m_file.open(m_logFileName);
+		}
+		~LogBuffer()
+		{
+			Flush();
+			m_file.close();
+		}
 		//void EnableFileSizeManagement(bool enable)
 		//{
 		//	m_manageFileSize.store(enable);
@@ -106,18 +119,19 @@ namespace Logger
 
 			// If the buffer grows too large we flush immediately.
 			// This prevents excessive memory growth.
-			if (static_cast<size_t>(m_buffer.tellp()) > BUFFER_SIZE)
+			if (m_buffer.str().size() > BUFFER_SIZE)
 				Flush();
 		}
 
 		void Flush()
 		{
-			// tellp() returns the current write position in the stream.
-			// If it is > 0 it means the buffer contains data.
-			if (m_buffer.tellp() > 0)
+			std::lock_guard<std::mutex> lock(m_mutex);
+			if (m_buffer.str().size() > 0)
 			{
-				// Write accumulated logs in a single console operation
-				std::clog << m_buffer.str(); // std::clog is typically line-buffered, so this will flush immediately.
+				// Output the buffered log message to the console only in debug mode. In release mode, we skip this step to improve performance.
+#ifndef NDEBUG
+				std::clog << m_buffer.str();
+#endif
 
 				// Write the log message to the file
 				if (m_writeInFile.load())
@@ -131,27 +145,15 @@ namespace Logger
 
 		void WriteInLogFile()
 		{
-			if (IsFileExist(m_logFileName))
+			if (m_file.is_open())
 			{
 				//if (m_manageFileSize.load())
 				//	CheckLogFileSize();
-				std::ofstream file(m_logFileName, std::ios_base::app); // Open in append mode
-				// Write to the file
-				file << StripAnsiCodes(m_buffer.str());
-				// Close the file
-				file.close();
-			}
-			else
-			{
-				std::ofstream file(m_logFileName);
-				// Write to the file
-				file << StripAnsiCodes(m_buffer.str());
-
-				// Close the file
-				file.close();
+				m_file << StripAnsiCodes(m_buffer.str());
 			}
 		}
 
+		// TODO : Implement a more robust file size management system that doesn't rely on checking the file size on every flush, as this is extremely expensive.
 		//void CheckLogFileSize()
 		//{
 		//	if (IsFileExist(m_logFileName))
@@ -176,7 +178,7 @@ namespace Logger
 
 			for (size_t i = 0; i < input.size(); ++i)
 			{
-				if (input[i] == '\033' && input[i + 1] == '[')
+				if (i + 1 < input.size() && input[i] == '\033' && input[i + 1] == '[')
 				{
 					i += 2;
 					while (i < input.size() && input[i] != 'm')
@@ -200,13 +202,6 @@ namespace Logger
 			struct stat buffer;
 			return (stat(name.c_str(), &buffer) == 0);
 		}
-
-		// Destructor ensures remaining logs are flushed at shutdown.
-		// Important when the application exits normally.
-		~LogBuffer()
-		{
-			Flush();
-		}
 	};
 
 	// Global logger buffer instance
@@ -220,15 +215,7 @@ namespace Logger
 		auto in_time_t = std::chrono::system_clock::to_time_t(now);
 
 		std::tm buf;
-
-#ifdef _WIN32
-		// Thread-safe Windows version
 		localtime_s(&buf, &in_time_t);
-#else
-		// Thread-safe POSIX version
-		localtime_r(&in_time_t, &buf);
-#endif
-
 		char timeStr[20];        // Buffer to hold the formatted time string
 
 		std::strftime(timeStr, sizeof(timeStr), "%F %T", &buf);
@@ -253,7 +240,7 @@ namespace Logger
 
 		// Build the formatted log message locally.
 		// Using a local stream avoids locking during formatting.
-		std::ostringstream oss;
+		std::ostringstream oss{};
 
 		oss << (type != LogLevel::Fatal ? GetColor(cat, type) : Color::RED)        // Fatal logs are always red, regardless of category color
 			<< "[" << GetTimeString() << "]"
@@ -299,9 +286,4 @@ namespace LogCat
 {
 	inline LogCategory Default{ "Default", true, nullptr };
 	inline LogCategory System{ "System", true, nullptr };
-
-	// Categories with explicit colors
-	inline LogCategory Render{ "Render", true, Logger::Color::CYAN };
-	inline LogCategory Resource{ "Resource", true, Logger::Color::YELLOW };
-	inline LogCategory Object{ "Object", true, Logger::Color::MAGENTA };
 }        // namespace LogCat

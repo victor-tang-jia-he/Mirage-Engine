@@ -2,6 +2,8 @@
 #include "OpenGL/openGL_shader.h"
 #include "OpenGL/openGL_pipeline_parameters.h"
 
+using namespace MirageEngine::Core::Math;
+
 void MirageRHI::OpenGLPipeline::Create(IShader* _vertShader, IShader* _fragShader, IPipelineParameters* _pipelineParameters)
 {
     m_Parameters = _pipelineParameters;
@@ -69,22 +71,22 @@ void MirageRHI::OpenGLPipeline::SetVec3(const std::string& name, const Vector3& 
 {
     int location = glGetUniformLocation(m_Program, name.c_str());
     float array[3];
-    array[0] = value.x;
-    array[1] = value.y;
-    array[2] = value.z;
+    array[0] = value.X;
+    array[1] = value.Y;
+    array[2] = value.Z;
     glUniform3fv(location, 1, array);
 }
 
 void MirageRHI::OpenGLPipeline::SetMat3(const std::string& name, const Matrix3& mat) const
 {
     int location = glGetUniformLocation(m_Program, name.c_str());
-    glUniformMatrix3fv(location, 1, GL_TRUE, mat.m[0]);
+    glUniformMatrix3fv(location, 1, GL_TRUE, &mat(0, 0));
 }
 
 void MirageRHI::OpenGLPipeline::SetMat4(const std::string& name, const Matrix4& mat) const
 {
     int location = glGetUniformLocation(m_Program, name.c_str());
-    glUniformMatrix4fv(location, 1, GL_FALSE, mat.m[0]);
+    glUniformMatrix4fv(location, 1, GL_FALSE, &mat(0, 0));
 }
 
 void MirageRHI::OpenGLPipeline::SetBool(const std::string& name, bool value) const

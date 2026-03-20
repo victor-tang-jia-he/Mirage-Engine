@@ -4,8 +4,6 @@
 #include <vector3.h>
 #include <vector2.h>
 
-using namespace MirageEngine::Core::Maths;
-
 namespace MirageRHI
 {
 	struct OpenGLPipelineParameters;
@@ -26,15 +24,15 @@ namespace MirageRHI
 
 	struct UnlitVertex
 	{
-		Vector3 Position;
-		Vector3 Color;
+		MirageEngine::Core::Math::Vector3 Position;
+		MirageEngine::Core::Math::Vector3 Color;
 	};
 
 	struct LitVertex
 	{
-		Vector3 Position;
-		Vector3 Normal;
-		Vector2 UV;
+		MirageEngine::Core::Math::Vector3 Position;
+		MirageEngine::Core::Math::Vector3 Normal;
+		MirageEngine::Core::Math::Vector2 UV;
 	};
 
 	struct IPipelineParameters

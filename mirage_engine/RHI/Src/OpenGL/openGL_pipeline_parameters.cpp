@@ -1,6 +1,8 @@
 #include "OpenGL/openGL_pipeline_parameters.h"
 #include "debug.h"
 
+using namespace MirageEngine::Core::Math;
+
 void MirageRHI::OpenGLPipelineParameters::Create(VertexType _vertexType, CullingType _cullingType, bool _depthTest)
 {
 	glGenVertexArrays(1, &m_VAO);

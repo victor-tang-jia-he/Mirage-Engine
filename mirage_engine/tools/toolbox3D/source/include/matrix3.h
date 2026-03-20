@@ -6,23 +6,17 @@ namespace MirageEngine
 {
 	namespace Core
 	{
-		namespace Maths
+		namespace Math
 		{
-			class Matrix3
+			struct Matrix3
 			{
-			public:
-				float m[3][3]; //3x3
+				float M[9]; //3x3
 
-				Matrix3(const Matrix3& copy);
-				inline Matrix3(
-					float m00 = 0.f, float m01 = 0.f, float m02 = 0.f,
-					float m10 = 0.f, float m11 = 0.f, float m12 = 0.f,
-					float m20 = 0.f, float m21 = 0.f, float m22 = 0.f)
-				{
-					m[0][0] = m00; m[0][1] = m01; m[0][2] = m02;
-					m[1][0] = m10; m[1][1] = m11; m[1][2] = m12;
-					m[2][0] = m20; m[2][1] = m21; m[2][2] = m22;
-				}
+				Matrix3(const Matrix3& _copy) noexcept;
+				Matrix3(
+					float _m00 = 0.f, float _m01 = 0.f, float _m02 = 0.f,
+					float _m10 = 0.f, float _m11 = 0.f, float _m12 = 0.f,
+					float _m20 = 0.f, float _m21 = 0.f, float _m22 = 0.f) noexcept;
 					
 
 
@@ -62,23 +56,23 @@ namespace MirageEngine
 				/// <summary>
 				/// Add another matrix to the current matrix.
 				/// </summary>
-				/// <param name="other">The matrix to add.</param>
+				/// <param name="_other">The matrix to add.</param>
 				/// <returns>The resulting matrix after addition.</returns>
-				Matrix3 AddMatrix3(const Matrix3& other) const;
+				Matrix3 AddMatrix3(const Matrix3& _other) const;
 
 				/// <summary>
-				/// Multiply the matrix by a scalar value.
+				/// Multiply the matrix by a _scalar value.
 				/// </summary>
-				/// <param name="n">The scalar value to multiply the matrix by.</param>
+				/// <param name="_n">The _scalar value to multiply the matrix by.</param>
 				/// <returns>The resulting matrix after multiplication.</returns>
-				Matrix3 ProductScalar(float n) const;
+				Matrix3 ProductScalar(float _n) const;
 
 				/// <summary>
 				/// Multiply the matrix by another matrix.
 				/// </summary>
-				/// <param name="other">The matrix to multiply with.</param>
+				/// <param name="_other">The matrix to multiply with.</param>
 				/// <returns>The resulting matrix after multiplication.</returns>
-				Matrix3 ProductMatrix3(const Matrix3& other) const;
+				Matrix3 ProductMatrix3(const Matrix3& _other) const;
 
 
 				// -------------------------------------------------------------------------------- //	
@@ -104,12 +98,12 @@ namespace MirageEngine
 				Matrix3 Inverse() const;
 
 				/// <summary>
-				/// Return a submatrix by excluding the specified row and column.
+				/// Return a submatrix by excluding the specified _row and column.
 				/// </summary>
-				/// <param name="excludeRow">Row to exclude (0-2).</param>
-				/// <param name="excludeCol">Column to exclude (0-2).</param>
-				/// <returns>The resulting submatrix after exclusion of the specified row and column.</returns>
-				Matrix2 GetSubMatrix(int excludeRow, int excludeCol) const;
+				/// <param name="_excludeRow">Row to exclude (0-2).</param>
+				/// <param name="_excludeCol">Column to exclude (0-2).</param>
+				/// <returns>The resulting submatrix after exclusion of the specified _row and column.</returns>
+				Matrix2 GetSubMatrix(int _excludeRow, int _excludeCol) const;
 
 
 				// -------------------------------------------------------------------------------- //		
@@ -138,24 +132,24 @@ namespace MirageEngine
 				/// Create an MatrixRotation axe X
 				/// Angle in rad.
 				/// </summary>
-				static Matrix3 CreateXRotationMatrix(float angle);
+				static Matrix3 CreateXRotationMatrix(float _rad);
 
 				/// <summary>
 				/// Create an MatrixRotation axe Y
 				/// Angle in rad.
 				/// </summary>
-				static Matrix3 CreateYRotationMatrix(float angle);
+				static Matrix3 CreateYRotationMatrix(float _rad);
 
 				/// <summary>
 				/// Create an MatrixRotation axe Z
 				/// Angle in rad.
 				/// </summary>
-				static Matrix3 CreateZRotationMatrix(float angle);
+				static Matrix3 CreateZRotationMatrix(float _rad);
 
 				/// <summary>
 				/// Create an MatrixRotation around a point
 				/// </summary>
-				static Matrix3 RotateMatrixVector(const Vector3& vec, float angle);
+				static Matrix3 RotateMatrixVector(const Vector3& _vec, float _rad);
 
 
 				// -------------------------------------------------------------------------------- //	
@@ -172,24 +166,28 @@ namespace MirageEngine
 				// Overload operators inline
 				// -------------------------------------------------------------------------------- //
 
-				Matrix3 operator*(const Matrix3& other) const;
-				Matrix3 operator/(const Matrix3& other)const;
-				Matrix3 operator+(const Matrix3& other) const;
-				Matrix3 operator-(const Matrix3& other) const;
+				Matrix3 operator*(const Matrix3& _other) const;
+				Matrix3 operator/(const Matrix3& _other)const;
+				Matrix3 operator+(const Matrix3& _other) const;
+				Matrix3 operator-(const Matrix3& _other) const;
 
-				Matrix3& operator*=(const Matrix3& other);
-				Matrix3& operator/=(const Matrix3& other);
-				Matrix3& operator+=(const Matrix3& other);
-				Matrix3& operator-=(const Matrix3& other);
+				Matrix3& operator*=(const Matrix3& _other);
+				Matrix3& operator/=(const Matrix3& _other);
+				Matrix3& operator+=(const Matrix3& _other);
+				Matrix3& operator-=(const Matrix3& _other);
 
-				Matrix3 operator*(float n);
-				Matrix3 operator*=(float n);
+				Matrix3 operator*(float _n);
+				Matrix3 operator*=(float _n);
 
-				bool operator==(const Matrix3& other) const;
+				bool operator==(const Matrix3& _other) const;
 
-				Vector3 operator*(const Vector3& m);
-				Vector3 operator[](int index) const;
-				Vector3& operator[](int index);
+				Vector3 operator*(const Vector3& _m);
+				Vector3 operator[](int _index) const;
+
+				// -------------------------------------------------------------------------------- //
+
+				float& operator()(size_t _row, size_t _col);
+				const float& operator()(size_t _row, size_t _col) const;
 			};
 		}
 	}

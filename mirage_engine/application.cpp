@@ -2,6 +2,8 @@
 #include "OpenGL/openGL_render_interface.h"
 #include "debug.h"
 
+using namespace MirageEngine::Core::Math;
+
 void Application::InitApp()
 {
 	InitWindow();

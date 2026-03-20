@@ -8,7 +8,6 @@
 
 #include "i_pipeline.h"
 
-using namespace MirageEngine::Core::Maths;
 using namespace MirageRHI::Debug;
 
 namespace MirageRHI
@@ -40,9 +39,9 @@ namespace MirageRHI
 		// Set Shader Parameters
 		void SetInt(const std::string& _name, int _value) const;
 		void SetFloat(const std::string& _name, float _value) const;
-		void SetVec3(const std::string& _name, const Vector3& _value) const;
-		void SetMat3(const std::string& _name, const Matrix3& _mat) const;
-		void SetMat4(const std::string& _name, const Matrix4& _mat) const;
+		void SetVec3(const std::string& _name, const MirageEngine::Core::Math::Vector3& _value) const;
+		void SetMat3(const std::string& _name, const MirageEngine::Core::Math::Matrix3& _mat) const;
+		void SetMat4(const std::string& _name, const MirageEngine::Core::Math::Matrix4& _mat) const;
 		void SetBool(const std::string& _name, bool _value)const;
 
 		// Apply Pipeline Parameters
