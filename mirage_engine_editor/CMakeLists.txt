@@ -3,21 +3,21 @@ add_executable(MirageEngineEditor)
 
 # Sources
 file(GLOB_RECURSE MIRAGE_ENGINE_EDITOR_SOURCES
-    "*.cpp"
-    "*.c"
+    "Source/*.cpp"
+    "Source/*.c"
 )
 
 # Sources
 file(GLOB_RECURSE MIRAGE_ENGINE_EDITOR_HEADERS
-    "*.hpp"
-    "*.h"
+    "Include/*.hpp"
+    "Include/*.h"
 )
 
 target_sources(MirageEngineEditor PRIVATE ${MIRAGE_ENGINE_EDITOR_SOURCES} ${MIRAGE_ENGINE_EDITOR_HEADERS})
 
 # Include directories
 target_include_directories(MirageEngineEditor PRIVATE
-    ${CMAKE_CURRENT_SOURCE_DIR}/src
+    ${CMAKE_CURRENT_SOURCE_DIR}/Include
     ${CMAKE_SOURCE_DIR}/mirage_engine/include
 )
 
