@@ -18,6 +18,10 @@
 #include "i_uniform_buffer.h"
 #include "i_command_buffer.h"
 
+// Input
+#include <input_system.h>
+
+
 using namespace MirageRHI;
 
 class Application
@@ -67,4 +71,6 @@ private:
 	void InitWindow();
 	void InitRHI();
 	void InitScene(); // TODO
+	void InitInput();
+	void PrintInput(MirageEngine::Core::Input::CallbackInputInfo info); // debug
 };

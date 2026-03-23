@@ -9,6 +9,7 @@ void Application::InitApp()
 	InitWindow();
 	InitRHI();
 	InitScene();
+	InitInput();
 }
 
 void Application::InitWindow()
@@ -103,6 +104,49 @@ void Application::InitScene()
 {
 }
 
+void Application::InitInput()
+{
+	using namespace MirageEngine::Core::Input;
+	using namespace MirageEngine::Core::Event;
+
+	// creating mapping
+	InputMapping* mapping = new InputMapping();
+	mapping->Map[GLFW_KEY_Z] = InputBind{};
+
+	// init with previous created map
+	InputSystem::Initialize(mapping);
+
+	// get and set callback
+	GLFWwindow* window = glfwGetCurrentContext();
+	glfwSetKeyCallback(window, InputSystem::KeyCallback);
+
+	// add random function test member of current class
+	InputSystem::Add(GLFW_KEY_Z,new Event<CallbackInputInfo>("InputSystem", 
+		[this](CallbackInputInfo info)
+		{
+			PrintInput(info);
+		}));
+
+
+	DEBUG_LOG("Input system bind");
+}
+
+void Application::PrintInput(MirageEngine::Core::Input::CallbackInputInfo info)
+{
+	if (info.Pressed)
+	{
+		printf("Pressed\n");
+	}
+	if (info.Released)
+	{
+		printf("Released\n");
+	}
+	if (info.Held)
+	{
+		printf("Held\n");
+	}
+}
+
 //void Application::RunMainLoop()
 //{
 //	uint32_t indicesTriangleListSize = (uint32_t)(sizeof(m_IndicesTriangle[0]) * m_IndicesTriangle.size());
@@ -139,6 +183,7 @@ void Application::InitScene()
 void Application::RunMainLoop() {
 	while (IsRunning()) {
 		BeginFrame();
+		MirageEngine::Core::Input::InputSystem::UpdateHeldInput();
 		RenderScene();
 		EndFrame();
 	}
