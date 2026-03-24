@@ -76,13 +76,18 @@ namespace Mirage
 
 	void UIWrapper::CreateColorPicker(Math::Vector3* _color)
 	{
-		ImVec4 Color(_color->X / 255.0f, _color->Y / 255.0f, _color->Z / 255.0f, 1.0f);
+		float tempColor[3] = { _color->X / 255.0f, _color->Y / 255.0f, _color->Z / 255.0f };
 		ImVec4 refVecColor(1.0f, 0.0f, 1.0f, 1.0f);
 		ImGuiColorEditFlags color_picker_flags = ImGuiColorEditFlags_NoAlpha;
 		ImGuiColorEditFlags base_flags = ImGuiColorEditFlags_None;
 
 		ImGuiColorEditFlags flags = base_flags | color_picker_flags;
-		ImGui::ColorPicker4("MyColor##4", (float*)&Color, flags, false ? &refVecColor.x : NULL);
+		if (ImGui::ColorPicker3("MyColor##4", tempColor, flags))
+		{
+			_color->X = tempColor[0] * 255.0f;
+			_color->Y = tempColor[1] * 255.0f;
+			_color->Z = tempColor[2] * 255.0f;
+		}
 	}
 
 	bool UIWrapper::CreateSliderInt(const char* _sliderName, int* _value, int _vMin, int _vMax)

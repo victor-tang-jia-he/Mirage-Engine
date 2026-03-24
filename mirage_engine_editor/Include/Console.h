@@ -1,5 +1,6 @@
 #pragma once
 #include "i_panel.h"
+#include "imgui.h"
 #include <vector>
 #include <string>
 
@@ -22,6 +23,7 @@ namespace Mirage
 	{
 	private:
 		std::vector<LogInfo> m_Logs;
+		ImGuiTextFilter m_SearchBar;
 		bool m_bDisplayInfo;
 		bool m_bDisplayWarning;
 		bool m_bDisplayError;
