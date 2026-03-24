@@ -1,7 +1,6 @@
 #include <vector>
 #include <functional>
 #include <map>
-#include <unordered_map>
 #include <string>
 
 namespace MirageEngine
@@ -42,7 +41,14 @@ namespace MirageEngine
 			{
 			public:
 				EventDispatcher() {}
-				~EventDispatcher() = default;
+				~EventDispatcher()
+				{
+					//for (auto& el : _eventList)
+					//{
+					//	for (auto* e : el.second) 
+					//		delete e;
+					//}
+				}
 
 				void Add(IEvent* event)
 				{

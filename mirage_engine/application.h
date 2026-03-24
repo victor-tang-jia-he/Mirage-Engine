@@ -53,6 +53,9 @@ private:
 	std::vector<uint32_t> m_IndicesTriangle;
 	uint32_t m_IndicesCount = 0;
 
+	MirageEngine::Core::Input::InputMapping* editorMapping;
+	MirageEngine::Core::Input::InputMapping* playMapping;
+
 public:
 	Application(IRenderInterface::API _api = IRenderInterface::API::OPENGL) : m_API(_api) {}
 
@@ -73,4 +76,7 @@ private:
 	void InitScene(); // TODO
 	void InitInput();
 	void PrintInput(MirageEngine::Core::Input::CallbackInputInfo info); // debug
+	void EditorPrintInput(MirageEngine::Core::Input::CallbackInputInfo info); // debug
+	void StartPlay(MirageEngine::Core::Input::CallbackInputInfo info);
+	void EndPlay(MirageEngine::Core::Input::CallbackInputInfo info);
 };

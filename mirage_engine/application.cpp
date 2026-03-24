@@ -109,23 +109,41 @@ void Application::InitInput()
 	using namespace MirageEngine::Core::Input;
 	using namespace MirageEngine::Core::Event;
 
-	// creating mapping
-	InputMapping* mapping = new InputMapping();
-	mapping->Map[GLFW_KEY_Z] = InputBind{};
+	// creating editorMapping
+	editorMapping = new InputMapping();
+	editorMapping->Map[GLFW_KEY_W] = InputBind{};
+	editorMapping->Map[GLFW_KEY_A] = InputBind{};
+	editorMapping->Map[GLFW_KEY_S] = InputBind{};
+	editorMapping->Map[GLFW_KEY_D] = InputBind{};
+	editorMapping->Map[GLFW_KEY_R] = InputBind{};
+
+	playMapping = new InputMapping();
+	playMapping->Map[GLFW_KEY_W] = InputBind{};
+	playMapping->Map[GLFW_KEY_A] = InputBind{};
+	playMapping->Map[GLFW_KEY_S] = InputBind{};
+	playMapping->Map[GLFW_KEY_D] = InputBind{};
+	playMapping->Map[GLFW_KEY_R] = InputBind{};
+
+	// add random function test member of current class
+	editorMapping->Map[GLFW_KEY_W].dispatcher.Add(new Event<CallbackInputInfo>("InputSystem", [this](CallbackInputInfo info) { EditorPrintInput(info); }));
+	editorMapping->Map[GLFW_KEY_A].dispatcher.Add(new Event<CallbackInputInfo>("InputSystem", [this](CallbackInputInfo info) { EditorPrintInput(info); }));
+	editorMapping->Map[GLFW_KEY_S].dispatcher.Add(new Event<CallbackInputInfo>("InputSystem", [this](CallbackInputInfo info) { EditorPrintInput(info); }));
+	editorMapping->Map[GLFW_KEY_D].dispatcher.Add(new Event<CallbackInputInfo>("InputSystem", [this](CallbackInputInfo info) { EditorPrintInput(info); }));
+	editorMapping->Map[GLFW_KEY_R].dispatcher.Add(new Event<CallbackInputInfo>("InputSystem", [this](CallbackInputInfo info) { StartPlay(info); }));
+
+	playMapping->Map[GLFW_KEY_W].dispatcher.Add(new Event<CallbackInputInfo>("InputSystem", [this](CallbackInputInfo info) { PrintInput(info); }));
+	playMapping->Map[GLFW_KEY_A].dispatcher.Add(new Event<CallbackInputInfo>("InputSystem", [this](CallbackInputInfo info) { PrintInput(info); }));
+	playMapping->Map[GLFW_KEY_S].dispatcher.Add(new Event<CallbackInputInfo>("InputSystem", [this](CallbackInputInfo info) { PrintInput(info); }));
+	playMapping->Map[GLFW_KEY_D].dispatcher.Add(new Event<CallbackInputInfo>("InputSystem", [this](CallbackInputInfo info) { PrintInput(info); }));
+	playMapping->Map[GLFW_KEY_R].dispatcher.Add(new Event<CallbackInputInfo>("InputSystem", [this](CallbackInputInfo info) { EndPlay(info); }));
 
 	// init with previous created map
-	InputSystem::Initialize(mapping);
+	InputSystem::Initialize(editorMapping);
 
 	// get and set callback
 	GLFWwindow* window = glfwGetCurrentContext();
 	glfwSetKeyCallback(window, InputSystem::KeyCallback);
 
-	// add random function test member of current class
-	InputSystem::Add(GLFW_KEY_Z,new Event<CallbackInputInfo>("InputSystem", 
-		[this](CallbackInputInfo info)
-		{
-			PrintInput(info);
-		}));
 
 
 	DEBUG_LOG("Input system bind");
@@ -141,9 +159,40 @@ void Application::PrintInput(MirageEngine::Core::Input::CallbackInputInfo info)
 	{
 		printf("Released\n");
 	}
-	if (info.Held)
+}
+
+void Application::EditorPrintInput(MirageEngine::Core::Input::CallbackInputInfo info)
+{
+	if (info.Pressed)
 	{
-		printf("Held\n");
+		printf("Editor Pressed\n");
+	}
+	if (info.Released)
+	{
+		printf("Editor Released\n");
+	}
+}
+
+void Application::StartPlay(MirageEngine::Core::Input::CallbackInputInfo info)
+{
+	using namespace MirageEngine::Core::Input;
+	using namespace MirageEngine::Core::Event;
+	if (info.Pressed)
+	{
+		printf("Editor -> Play\n");
+		InputSystem::SetCurrentMapping(playMapping);
+	}
+}
+
+void Application::EndPlay(MirageEngine::Core::Input::CallbackInputInfo info)
+{
+	using namespace MirageEngine::Core::Input;
+	using namespace MirageEngine::Core::Event;
+
+	if (info.Pressed)
+	{
+		printf("Play -> Editor\n");
+		InputSystem::SetCurrentMapping(editorMapping);
 	}
 }
 
@@ -233,4 +282,6 @@ void Application::ShutDown()
 {
 	glfwMakeContextCurrent(m_Window);
 	glfwTerminate();
+	delete editorMapping;
+	delete playMapping;
 }

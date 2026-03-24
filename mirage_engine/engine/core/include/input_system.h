@@ -112,10 +112,10 @@ namespace MirageEngine
 
 				static void SetCurrentMapping(InputMapping* map)
 				{
-					if (_currentMap != nullptr && _currentMap != map)
-					{
-						delete _currentMap;
-					}
+					//if (_currentMap != nullptr && _currentMap != map)
+					//{
+					//	delete _currentMap;
+					//}
 					_currentMap = map;
 				}
 
@@ -128,6 +128,10 @@ namespace MirageEngine
 					{
 						InputBind& inputBind = input->second;
 						inputBind.dispatcher.Add(_event);
+					}
+					else
+					{
+						// key missing, not bind in the map
 					}
 				}
 			};
