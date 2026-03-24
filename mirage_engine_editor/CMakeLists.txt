@@ -21,6 +21,10 @@ target_include_directories(MirageEngineEditor PRIVATE
     ${CMAKE_SOURCE_DIR}/mirage_engine/include
 )
 
+target_compile_definitions(MirageEngineEditor PRIVATE 
+    ASSETS_PATH="${CMAKE_SOURCE_DIR}/mirage_engine/assets"
+)
+
 # Link engine and third-party
 target_link_libraries(MirageEngineEditor PRIVATE
     # MirageEngine  # Link the engine itself

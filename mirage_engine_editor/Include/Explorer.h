@@ -9,6 +9,7 @@ namespace Mirage
 		Folder,
 		Texture,
 		Model,
+		Script,
 		Shader,
 		Scene,
 		Unknown
@@ -39,7 +40,7 @@ namespace Mirage
 
 	private:
 		//Navigation
-		void ScanProjectDirectory(std::filesystem::path);
+		void ScanProjectDirectory(std::filesystem::path _rootPath);
 		void DrawFolderTree();
 		void DrawBreadCrumbs(); //Shows the path of the seleccted object with every segment clickable
 		void ChangeDirectory();
