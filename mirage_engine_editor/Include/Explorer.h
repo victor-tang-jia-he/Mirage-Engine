@@ -24,6 +24,12 @@ namespace Mirage
 
 	class Explorer : public IPanel
 	{
+	private:
+		std::filesystem::path m_CurrentPath;
+		std::filesystem::path m_RootPath;
+		std::vector<AssetEntry> m_Entries;
+		void* m_SelectedEntry;
+
 	public:
 		Explorer(const char* _name) : IPanel(_name) {};
 		
@@ -33,7 +39,7 @@ namespace Mirage
 
 	private:
 		//Navigation
-		void ScanProjectDirectory();
+		void ScanProjectDirectory(std::filesystem::path);
 		void DrawFolderTree();
 		void DrawBreadCrumbs(); //Shows the path of the seleccted object with every segment clickable
 		void ChangeDirectory();
@@ -49,7 +55,7 @@ namespace Mirage
 		void ShowContextMenu();
 		void SyncWithOS(); //Watches if you add a file through Windows
 
-		void RenameItem();
+		void RenameItem(std::filesystem::path& _oldPath, std::filesystem::path& _newPath);
 		void MoveItem();
 	};
 }
