@@ -12,10 +12,10 @@ namespace MirageEngine
 		{
 			struct Quaternion
 			{
+				float W = 0.f;
 				float X = 0.f;
 				float Y = 0.f;
 				float Z = 0.f;
-				float W = 0.f;
 
 				// Constructor
 				Quaternion(float _num = 0.f) noexcept;
