@@ -7,36 +7,57 @@
 #include "GLFW/glfw3.h"
 #include "application.h"
 
+//int main()
+//{
+//	glfwInit();
+//	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+//	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+//	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);	
+//
+//	GLFWwindow* window = glfwCreateWindow(1920, 1080, "Mirage Enginexc", NULL, NULL);
+//	glfwMakeContextCurrent(window);
+//
+//	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
+//	{
+//		return -1;
+//	}
+//
+//	Mirage::EditorApp myEditor;
+//	myEditor.Init(window);
+//
+//	while (!glfwWindowShouldClose(window))
+//	{
+//		glfwPollEvents();
+//		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+//		glClear(GL_COLOR_BUFFER_BIT);
+//
+//		myEditor.Update();
+//
+//		glfwSwapBuffers(window);
+//	}
+//
+//	myEditor.Shutdown();
+//	glfwTerminate();
+//	return 0;
+//}
+
 int main()
 {
-	glfwInit();
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);	
+	Application application;
+	Mirage::EditorApp editor;
 
-	GLFWwindow* window = glfwCreateWindow(1920, 1080, "Mirage Enginexc", NULL, NULL);
-	glfwMakeContextCurrent(window);
+	application.InitApp();
+	editor.Init(application.GetWindowHandle());
 
-	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
+	while (application.IsRunning())
 	{
-		return -1;
+		application.BeginFrame();
+		editor.Update();
+		application.RenderScene();
+		application.EndFrame();
 	}
 
-	Mirage::EditorApp myEditor;
-	myEditor.Init(window);
-
-	while (!glfwWindowShouldClose(window))
-	{
-		glfwPollEvents();
-		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT);
-
-		myEditor.Update();
-
-		glfwSwapBuffers(window);
-	}
-
-	myEditor.Shutdown();
-	glfwTerminate();
+	editor.Shutdown();
+	application.ShutDown();
 	return 0;
 }
