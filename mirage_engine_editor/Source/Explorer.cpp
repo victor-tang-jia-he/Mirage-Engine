@@ -120,11 +120,17 @@ namespace Mirage
 
 	void Explorer::DrawDirectoryContent()
 	{
-		for (AssetEntry entry : m_Entries)
+		float windowSize = ImGui::GetContentRegionAvail().x;
+		if (UIWrapper::BeginAssetGrid(100, windowSize))
 		{
-			if (UIWrapper::IsItemClicked())
+			for (const AssetEntry& entry : m_Entries)
 			{
+				bool isSelected = false;
+				if (m_SelectedEntry == &entry) isSelected = true;
+				UIWrapper::DrawAssetTile(entry.Name.c_str(), isSelected);
 			}
+
+			UIWrapper::EndAssetGrid();
 		}
 	}
 
