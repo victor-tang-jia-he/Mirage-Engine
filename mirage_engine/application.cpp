@@ -96,7 +96,7 @@ void Application::InitRHI()
 	m_RenderPass->Create(Vector4(0.2f, 0, 0.1f, 1.0f), 1.0f);
 	m_VertexShader->Create("assets/shaders/vertex.glsl", MirageRHI::IShader::ShaderType::Vertex);
 	m_FragmentShader->Create("assets/shaders/fragment.glsl", MirageRHI::IShader::ShaderType::Fragment);
-	m_PipelineParameters->Create(MirageRHI::VertexType::PBR, MirageRHI::CullingType::Front, true);
+	m_PipelineParameters->Create(MirageRHI::VertexType::PBR, MirageRHI::CullingType::None, true);
 	m_Pipeline->Create(m_VertexShader, m_FragmentShader, m_PipelineParameters);
 	m_BufferTriangleVertices->Create(m_VerticesQuad.data(), m_VerticesQuad.size() * sizeof(MirageRHI::LitVertex), MirageRHI::IBuffer::BufferType::Vertices);
 	m_BufferTriangleIndices->Create(m_IndicesQuad.data(), m_IndicesQuad.size() * sizeof(MirageRHI::LitVertex), MirageRHI::IBuffer::BufferType::Indices);
@@ -121,6 +121,8 @@ void Application::InitInput()
 	editorMapping->Map[GLFW_KEY_S] = InputBind{};
 	editorMapping->Map[GLFW_KEY_D] = InputBind{};
 	editorMapping->Map[GLFW_KEY_R] = InputBind{};
+	editorMapping->Map[GLFW_KEY_Q] = InputBind{};
+	editorMapping->Map[GLFW_KEY_E] = InputBind{};
 
 	playMapping = new InputMapping();
 	playMapping->Map[GLFW_KEY_W] = InputBind{};
