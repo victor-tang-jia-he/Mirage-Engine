@@ -19,7 +19,7 @@ namespace MirageEngine
 
 			struct InputBind
 			{
-				MirageEngine::Core::Event::EventDispatcher dispatcher;
+				MirageEngine::Core::EventSystem::EventDispatcher dispatcher;
 				CallbackInputInfo inputInfo;
 			};
 
@@ -119,7 +119,7 @@ namespace MirageEngine
 					_currentMap = map;
 				}
 
-				static void Add(int _key, MirageEngine::Core::Event::IEvent* _event)
+				static void Add(int _key, MirageEngine::Core::EventSystem::IEvent* _event)
 				{
 					if (_currentMap == nullptr) return;
 

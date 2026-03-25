@@ -8,7 +8,8 @@ file(GLOB_RECURSE CORE_HEADERS
      "include/*.h"
      "include/*.hpp"
 )
-add_library(Core STATIC
+add_library(Core 
+
     ${CORE_SOURCES}
     ${CORE_HEADERS})
 target_include_directories(Core

@@ -5,12 +5,16 @@ add_executable(MirageEngine)
 file(GLOB_RECURSE MIRAGE_ENGINE_SOURCES
 	"RHI/Src/*.cpp"
 	"RHI/Src/*.c"
+	"Components/*.c"
+	"Components/*.cpp"
 	"application.cpp"
 	"main.cpp"
 )
 
 file(GLOB_RECURSE MIRAGE_ENGINE_HEADERS
 	"application.h"
+	"Components/*.h"
+	"Components/*.hpp"
 	"RHI/Include/*.hpp"
 	"RHI/Include/*.h"
 )
@@ -20,6 +24,7 @@ target_sources(MirageEngine PRIVATE ${MIRAGE_ENGINE_SOURCES} ${MIRAGE_ENGINE_HEA
 # Include directories
 target_include_directories(MirageEngine PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/RHI/Include
+    ${CMAKE_CURRENT_SOURCE_DIR}/Components
 )
 
 # Link third-party libraries

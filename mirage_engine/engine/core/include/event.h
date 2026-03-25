@@ -1,3 +1,4 @@
+#pragma once
 #include <vector>
 #include <functional>
 #include <map>
@@ -7,7 +8,7 @@ namespace MirageEngine
 {
 	namespace Core
 	{
-		namespace Event
+		namespace EventSystem
 		{
 			class IEvent
 			{
@@ -32,9 +33,9 @@ namespace MirageEngine
 				//Methods
 				void trigger(_args... a) { this->_cbFunc(a...); }
 			private:
-				//Event identifier
+				//EventSystem identifier
 				std::string _name;
-				//Event callback - can't be changed inside event.
+				//EventSystem callback - can't be changed inside event.
 				_callback const _cbFunc;
 			};
 			class EventDispatcher

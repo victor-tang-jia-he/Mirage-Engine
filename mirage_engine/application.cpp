@@ -1,9 +1,10 @@
 #include "application.h"
 #include "OpenGL/openGL_render_interface.h"
 #include "debug.h"
+#include <camera.h>
 
 using namespace MirageEngine::Core::Input;
-using namespace MirageEngine::Core::Event;
+using namespace MirageEngine::Core::EventSystem;
 using namespace MirageEngine::Core::Math;
 
 void Application::InitApp()
@@ -107,6 +108,7 @@ void Application::InitRHI()
 
 void Application::InitScene()
 {
+	Cam =new MirageEngine::Core::Components::Camera(1920, 1080, 90.f, 0.1f, 100.f, Vector3(0.f,0.f,0.f));
 }
 
 void Application::InitInput()
@@ -147,8 +149,8 @@ void Application::InitInput()
 	GLFWwindow* window = glfwGetCurrentContext();
 	glfwSetKeyCallback(window, InputSystem::KeyCallback);
 
-
-
+	// bind camera
+	Cam->BindInput(editorMapping);
 	DEBUG_LOG("Input system bind");
 }
 
@@ -197,10 +199,6 @@ void Application::EndPlay(MirageEngine::Core::Input::CallbackInputInfo info)
 void Application::RunMainLoop()
 {
 	uint32_t indicesTriangleListSize = (uint32_t)(m_IndicesQuad.size());
-	editorMapping->Map[GLFW_KEY_W].dispatcher.Add(new Event<CallbackInputInfo>("InputSystem", [this](CallbackInputInfo info) { EditorPrintInput(info); }));
-	editorMapping->Map[GLFW_KEY_A].dispatcher.Add(new Event<CallbackInputInfo>("InputSystem", [this](CallbackInputInfo info) { EditorPrintInput(info); }));
-	editorMapping->Map[GLFW_KEY_S].dispatcher.Add(new Event<CallbackInputInfo>("InputSystem", [this](CallbackInputInfo info) { EditorPrintInput(info); }));
-	editorMapping->Map[GLFW_KEY_D].dispatcher.Add(new Event<CallbackInputInfo>("InputSystem", [this](CallbackInputInfo info) { EditorPrintInput(info); }));
 	while (!glfwWindowShouldClose(m_Window))
 	{
 		if (glfwGetKey(m_Window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
@@ -213,7 +211,7 @@ void Application::RunMainLoop()
 		m_CommandBuffer->BindPipeline(m_Pipeline);
 		m_CommandBuffer->BindBuffers(m_BufferTriangleIndices, m_BufferTriangleVertices);
 		m_CommandBuffer->ApplyPipelineParameters(m_Pipeline);
-		m_UniformBuffer->UpdateUniformBuffer(m_Pipeline, Vector3(0, 1, 0), Vector3(2, 1, 1), Vector3(0, 0, 45.f));
+		m_UniformBuffer->UpdateUniformBuffer(m_Pipeline, Cam, Cam->Transform());
 		m_Pipeline->API_OpenGL().SetBool("debugNoLight", true);
 		m_CommandBuffer->DrawIndexed(indicesTriangleListSize);
 		m_CommandBuffer->EndDraw();
@@ -278,4 +276,5 @@ void Application::ShutDown()
 	glfwTerminate();
 	delete editorMapping;
 	delete playMapping;
+	delete Cam;
 }

@@ -2,24 +2,19 @@
 
 #include "i_uniform_buffer.h"
 #include "matrix4.h"
+#include "../../Components/camera.h"
 
 namespace MirageRHI
 {
-    class OpenGLUniformBuffer : public IUniformBuffer
-    {
-    private:
-        MirageEngine::Core::Math::Matrix4 m_Model;
-        MirageEngine::Core::Math::Matrix4 m_View;
-        MirageEngine::Core::Math::Matrix4 m_Proj;
+	class OpenGLUniformBuffer : public IUniformBuffer
+	{
+	public:
+		void Create() override;
+		void Destroy() override {}
 
-    public:
-        void Create() override;
-        void Destroy() override {}
-
-        void UpdateUniformBuffer(
-            IPipeline* _pipeline,
-            MirageEngine::Core::Math::Vector3 _position,
-            MirageEngine::Core::Math::Vector3 _scale,
-            MirageEngine::Core::Math::Vector3 _rotation) override;
-    };
+		void UpdateUniformBuffer(
+			IPipeline* _pipeline,
+			const MirageEngine::Core::Components::Camera* cam,
+			MirageEngine::Core::Components::Transform& transform) override;
+	};
 }

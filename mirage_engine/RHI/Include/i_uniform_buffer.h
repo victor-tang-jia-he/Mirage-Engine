@@ -3,6 +3,7 @@
 #include <iostream>
 #include "vector3.h"
 #include "i_pipeline.h"
+#include "../../Components/camera.h"
 
 namespace MirageRHI
 {
@@ -20,8 +21,7 @@ namespace MirageRHI
 
 		virtual void UpdateUniformBuffer(
 			IPipeline* _pipeline,
-			MirageEngine::Core::Math::Vector3 _position,
-			MirageEngine::Core::Math::Vector3 _scale,
-			MirageEngine::Core::Math::Vector3 _rotation) = 0;
+			const MirageEngine::Core::Components::Camera* cam,
+			MirageEngine::Core::Components::Transform& transform) = 0;
 	};
 }

@@ -2,7 +2,7 @@ namespace MirageEngine
 {
 	namespace Core
 	{
-		namespace Event
+		namespace EventSystem
 		{
 			template <typename... Args>
 			class ICallback

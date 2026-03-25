@@ -20,7 +20,13 @@
 
 // Input
 #include <input_system.h>
-
+namespace MirageEngine {
+    namespace Core {
+        namespace Components {
+            class Camera; 
+        }
+    }
+}
 
 using namespace MirageRHI;
 
@@ -54,9 +60,11 @@ private:
 	std::vector<uint32_t> m_IndicesQuad;
 	uint32_t m_IndicesCount = 0;
 
-	MirageEngine::Core::Input::InputMapping* editorMapping;
-	MirageEngine::Core::Input::InputMapping* playMapping;
+	// TODO : Edit in map
+	MirageEngine::Core::Input::InputMapping* editorMapping = nullptr;
+	MirageEngine::Core::Input::InputMapping* playMapping = nullptr;
 
+	MirageEngine::Core::Components::Camera* Cam = nullptr;
 public:
 	Application(IRenderInterface::API _api = IRenderInterface::API::OPENGL) : m_API(_api) {}
 
