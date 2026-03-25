@@ -6,6 +6,14 @@ namespace Math = MirageEngine::Core::Math;
 
 namespace Mirage
 {
+	enum class WidgetAction
+	{
+		None = 0,
+		Clicked,
+		DoubleClicked,
+		RightClicked
+	};
+
 	class UIWrapper
 	{
 	public:
@@ -18,6 +26,15 @@ namespace Mirage
 		// window
 		static bool BeginWindow(const char* _windowName, bool* _isOpen = nullptr);
 		static void EndWindow();
+
+		static bool BeginFolderNode(const char* _name, const char* _id, bool _isSelected, bool _isLeaf);
+		static void EndFolderNode();
+		static bool IsItemClicked();
+
+		static void BeginAssetGrid(float _cellSize, float _windowSize);
+		static WidgetAction DrawAssetTile(const char* _name, bool _isSelected, void* _icon = nullptr);
+		static void EndAssetGrid();
+
 
 		// Widgets
 		static void CreateSeparatorText(const char* _separatorName);

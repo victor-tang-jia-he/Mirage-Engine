@@ -375,7 +375,7 @@ bool Matrix4::operator==(const Matrix4& _other) const
 }
 Vector4 Matrix4::operator[](int _index) const
 {
-	assert(_index >= 0 && _index < 3 && "Index out of range");
+	assert(_index >= 0 && _index < 4 && "Index out of range");
 	return Vector4((*this)(_index, 0), (*this)(_index, 1), (*this)(_index, 2), (*this)(_index,3));
 }
 const float& Matrix4::operator()(size_t _row, size_t _col) const

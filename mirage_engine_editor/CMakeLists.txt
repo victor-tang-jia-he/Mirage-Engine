@@ -18,13 +18,17 @@ target_sources(MirageEngineEditor PRIVATE ${MIRAGE_ENGINE_EDITOR_SOURCES} ${MIRA
 # Include directories
 target_include_directories(MirageEngineEditor PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/Include
-    ${CMAKE_SOURCE_DIR}/mirage_engine/include
+    ${CMAKE_SOURCE_DIR}/mirage_engine/
+)
+
+target_compile_definitions(MirageEngineEditor PRIVATE 
+    ASSETS_PATH="${CMAKE_SOURCE_DIR}/mirage_engine/assets"
 )
 
 # Link engine and third-party
 target_link_libraries(MirageEngineEditor PRIVATE
-    # MirageEngine  # Link the engine itself
-    third_party    # And third-party libs
+    MirageEngine    # Link the engine itself
+    third_party     # And third-party libs
 )
 
 # Set Warning level 4 and warnings as errors flags
