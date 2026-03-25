@@ -6,19 +6,19 @@
 #include <ctime>
 #include <iomanip>
 
-MirageRHI::Debug::Log* MirageRHI::Debug::Log::s_GlobalLog = nullptr;
+MirageRHI::Debug::Logger* MirageRHI::Debug::Logger::s_GlobalLog = nullptr;
 
-MirageRHI::Debug::Log::Log(std::string _fileName)
+MirageRHI::Debug::Logger::Logger(std::string _fileName)
 {
     OpenFile(_fileName);
 }
 
-MirageRHI::Debug::Log::~Log()
+MirageRHI::Debug::Logger::~Logger()
 {
     Destroy();
 }
 
-void MirageRHI::Debug::Log::Destroy()
+void MirageRHI::Debug::Logger::Destroy()
 {
     if (m_FileStream.is_open())
     {
@@ -34,33 +34,16 @@ void MirageRHI::Debug::Log::Destroy()
     }
 }
 
-MirageRHI::Debug::Log* MirageRHI::Debug::Log::GetGlobalLog()
+MirageRHI::Debug::Logger* MirageRHI::Debug::Logger::GetGlobalLog()
 {
     if (s_GlobalLog == nullptr)
     {
-        s_GlobalLog = new Log();
+        s_GlobalLog = new Logger();
     }
     return s_GlobalLog;
 }
 
-void MirageRHI::Debug::Log::OpenFile(std::string const& filename)
-{
-    if (!m_FileStream.is_open())
-    {
-        m_FileStream.open(filename, std::ios::out | std::ios::app);
-        if (!m_FileStream.is_open())
-        {
-            throw std::runtime_error("Failed to open log file: " + filename);
-		}
-	}
-}
-
-void MirageRHI::Debug::Log::ResetFile(std::string const& filename)
-{
-    m_FileStream.open(filename, std::ios::out | std::ios::trunc);
-}
-
-std::string MirageRHI::Debug::Log::Print(const char* format, ...)
+std::string MirageRHI::Debug::Logger::Print(const char* format, ...)
 {
     constexpr size_t BufferSize = 1024;
     char buffer[BufferSize];
@@ -87,7 +70,7 @@ std::string MirageRHI::Debug::Log::Print(const char* format, ...)
 	return std::string(buffer);
 }
 
-std::string MirageRHI::Debug::Log::Throw(const char* format, ...)
+std::string MirageRHI::Debug::Logger::Throw(const char* format, ...)
 {
     constexpr size_t BufferSize = 1024;
     char buffer[BufferSize];
@@ -112,4 +95,21 @@ std::string MirageRHI::Debug::Log::Throw(const char* format, ...)
     }
 
     return std::string(buffer);
+}
+
+void MirageRHI::Debug::Logger::OpenFile(std::string const& filename)
+{
+    if (!m_FileStream.is_open())
+    {
+        m_FileStream.open(filename, std::ios::out | std::ios::app);
+        if (!m_FileStream.is_open())
+        {
+            throw std::runtime_error("Failed to open log file: " + filename);
+        }
+    }
+}
+
+void MirageRHI::Debug::Logger::ResetFile(std::string const& filename)
+{
+    m_FileStream.open(filename, std::ios::out | std::ios::trunc);
 }

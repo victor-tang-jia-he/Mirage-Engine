@@ -10,6 +10,7 @@ namespace MirageRHI
 
 	enum class VertexType
 	{
+		None,
 		Simple,
 		PBR
 	};
@@ -38,7 +39,7 @@ namespace MirageRHI
 	struct IPipelineParameters
 	{
 	public:
-		virtual void Create(VertexType _vertexType = VertexType::Simple, CullingType _cullingType = CullingType::Front, bool _depthTest = true) = 0;
+		virtual void Create(VertexType _vertexType, CullingType _cullingType, bool _depthTest) = 0;
 		virtual void Destroy() = 0;
 
 		virtual OpenGLPipelineParameters& API_OpenGL() { throw std::runtime_error("Bad API Call : object is not an OpenGLPipelineParameters"); }

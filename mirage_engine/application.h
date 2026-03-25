@@ -46,11 +46,12 @@ private:
 	IFramebuffer* m_Framebuffer = nullptr;
 	IBuffer* m_BufferTriangleVertices = nullptr;
 	IBuffer* m_BufferTriangleIndices = nullptr;
+	IUniformBuffer* m_UniformBuffer = nullptr;
 	ICommandBuffer* m_CommandBuffer = nullptr;
 
 	// TODO : Change to a list or mapped list (Mesh)
-	std::vector<LitVertex> m_VerticesTriangle;
-	std::vector<uint32_t> m_IndicesTriangle;
+	std::vector<LitVertex> m_VerticesQuad;
+	std::vector<uint32_t> m_IndicesQuad;
 	uint32_t m_IndicesCount = 0;
 
 	MirageEngine::Core::Input::InputMapping* editorMapping;

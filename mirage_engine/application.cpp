@@ -2,6 +2,8 @@
 #include "OpenGL/openGL_render_interface.h"
 #include "debug.h"
 
+using namespace MirageEngine::Core::Input;
+using namespace MirageEngine::Core::Event;
 using namespace MirageEngine::Core::Math;
 
 void Application::InitApp()
@@ -66,19 +68,21 @@ void Application::InitRHI()
 	m_Framebuffer = m_RenderInterface->InstantiateFramebuffer();
 	m_BufferTriangleVertices = m_RenderInterface->InstantiateBuffer();
 	m_BufferTriangleIndices = m_RenderInterface->InstantiateBuffer();
+	m_UniformBuffer = m_RenderInterface->InstantiateUniformBuffer();
 	m_CommandBuffer = m_RenderInterface->InstantiateCommandBuffer();
 	DEBUG_LOG("All Classes Instantiated");
 
-	m_VerticesTriangle = // Set Vertices to draw Triangle
+	m_VerticesQuad = // Set Vertices to draw Triangle
 	{
-		{{-0.5f, 0.5f, 0.0f}, {1.0f, 0.0f, 0.0f}, {1.0f, 0.0f}},
-		{{0.f, -0.5f, 0.0f}, {0.0f, 1.0f, 0.0f}, {0.0f, 0.0f}},
-		{{0.5f, 0.5f, 0.0f}, {0.0f, 0.0f, 1.0f}, {0.0f, 1.0f}}
+		{{-1.f, -1.f, 0.0f}, {1.0f, 0.0f, 0.0f}, {1.0f, 0.0f}},
+		{{-1.f, 1.f, 0.0f}, {0.0f, 1.0f, 0.0f}, {0.0f, 0.0f}},
+		{{1.f, 1.f, 0.0f}, {0.0f, 0.0f, 1.0f}, {0.0f, 1.0f}},
+		{{1.f, -1.f, 0.0f}, {0.0f, 0.0f, 1.0f}, {0.0f, 1.0f}}
 	};
 
-	m_IndicesTriangle = // Set Indexes to draw Triangle
+	m_IndicesQuad = // Set Indexes to draw Triangle
 	{
-		0, 1, 2
+		0, 1, 2, 2, 3, 0
 	};
 	DEBUG_LOG("Vertex and Index Data Created");
 
@@ -91,12 +95,13 @@ void Application::InitRHI()
 	m_RenderPass->Create(Vector4(0.2f, 0, 0.1f, 1.0f), 1.0f);
 	m_VertexShader->Create("assets/shaders/vertex.glsl", MirageRHI::IShader::ShaderType::Vertex);
 	m_FragmentShader->Create("assets/shaders/fragment.glsl", MirageRHI::IShader::ShaderType::Fragment);
-	m_PipelineParameters->Create(MirageRHI::VertexType::PBR, MirageRHI::CullingType::Back);
+	m_PipelineParameters->Create(MirageRHI::VertexType::PBR, MirageRHI::CullingType::Front, true);
 	m_Pipeline->Create(m_VertexShader, m_FragmentShader, m_PipelineParameters);
-	m_BufferTriangleVertices->Create(m_VerticesTriangle.data(), m_VerticesTriangle.size() * sizeof(MirageRHI::LitVertex), MirageRHI::IBuffer::BufferType::Vertices);
-	m_BufferTriangleIndices->Create(m_IndicesTriangle.data(), m_IndicesTriangle.size() * sizeof(MirageRHI::LitVertex), MirageRHI::IBuffer::BufferType::Indices);
+	m_BufferTriangleVertices->Create(m_VerticesQuad.data(), m_VerticesQuad.size() * sizeof(MirageRHI::LitVertex), MirageRHI::IBuffer::BufferType::Vertices);
+	m_BufferTriangleIndices->Create(m_IndicesQuad.data(), m_IndicesQuad.size() * sizeof(MirageRHI::LitVertex), MirageRHI::IBuffer::BufferType::Indices);
+	m_UniformBuffer->Create();
 	m_CommandBuffer->Create();
-	m_IndicesCount = (uint32_t)(m_IndicesTriangle.size());
+	m_IndicesCount = (uint32_t)(m_VerticesQuad.size());
 	DEBUG_LOG("All Classes Created");
 }
 
@@ -106,8 +111,6 @@ void Application::InitScene()
 
 void Application::InitInput()
 {
-	using namespace MirageEngine::Core::Input;
-	using namespace MirageEngine::Core::Event;
 
 	// creating editorMapping
 	editorMapping = new InputMapping();
@@ -175,8 +178,6 @@ void Application::EditorPrintInput(MirageEngine::Core::Input::CallbackInputInfo 
 
 void Application::StartPlay(MirageEngine::Core::Input::CallbackInputInfo info)
 {
-	using namespace MirageEngine::Core::Input;
-	using namespace MirageEngine::Core::Event;
 	if (info.Pressed)
 	{
 		printf("Editor -> Play\n");
@@ -186,9 +187,6 @@ void Application::StartPlay(MirageEngine::Core::Input::CallbackInputInfo info)
 
 void Application::EndPlay(MirageEngine::Core::Input::CallbackInputInfo info)
 {
-	using namespace MirageEngine::Core::Input;
-	using namespace MirageEngine::Core::Event;
-
 	if (info.Pressed)
 	{
 		printf("Play -> Editor\n");
@@ -196,47 +194,43 @@ void Application::EndPlay(MirageEngine::Core::Input::CallbackInputInfo info)
 	}
 }
 
-//void Application::RunMainLoop()
-//{
-//	uint32_t indicesTriangleListSize = (uint32_t)(sizeof(m_IndicesTriangle[0]) * m_IndicesTriangle.size());
-//
-//	while (!glfwWindowShouldClose(m_Window))
-//	{
-//		if (glfwGetKey(m_Window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-//			glfwSetWindowShouldClose(m_Window, true);
-//
-//		// Setup to Draw
-//		m_CommandBuffer->BeginRenderPass(m_RenderPass);
-//		m_CommandBuffer->BeginDraw();
-//		m_CommandBuffer->BindPipeline(m_Pipeline);
-//		m_CommandBuffer->BindBuffers(m_BufferTriangleIndices, m_BufferTriangleVertices);
-//		m_CommandBuffer->ApplyPipelineParameters(m_Pipeline);
-//		Matrix4 model = Matrix4::CreateTranslationMatrix(Vector3(0, 0, -10));
-//		Matrix4 view = Matrix4::Identity();
-//		Matrix4 projection = Matrix4::GetPerspectiveMatrix(m_Width, m_Height, 0.1f, 100.f, 45.0f);
-//		projection = projection * view * model;
-//		m_Pipeline->API_OpenGL().SetVec3("viewPos", Vector3());
-//		m_Pipeline->API_OpenGL().SetMat4("pvm", projection);
-//		m_Pipeline->API_OpenGL().SetMat4("view", view);
-//		m_Pipeline->API_OpenGL().SetMat4("model", model);
-//		m_Pipeline->API_OpenGL().SetBool("debugNoLight", true);
-//		m_CommandBuffer->DrawIndexed(indicesTriangleListSize);
-//		m_CommandBuffer->EndDraw();
-//		m_CommandBuffer->EndRenderPass();
-//		m_CommandBuffer->SubmitAndPresent(m_SwapChain, m_Surface);
-//
-//		glfwPollEvents();
-//	}
-//}
+void Application::RunMainLoop()
+{
+	uint32_t indicesTriangleListSize = (uint32_t)(m_IndicesQuad.size());
+	editorMapping->Map[GLFW_KEY_W].dispatcher.Add(new Event<CallbackInputInfo>("InputSystem", [this](CallbackInputInfo info) { EditorPrintInput(info); }));
+	editorMapping->Map[GLFW_KEY_A].dispatcher.Add(new Event<CallbackInputInfo>("InputSystem", [this](CallbackInputInfo info) { EditorPrintInput(info); }));
+	editorMapping->Map[GLFW_KEY_S].dispatcher.Add(new Event<CallbackInputInfo>("InputSystem", [this](CallbackInputInfo info) { EditorPrintInput(info); }));
+	editorMapping->Map[GLFW_KEY_D].dispatcher.Add(new Event<CallbackInputInfo>("InputSystem", [this](CallbackInputInfo info) { EditorPrintInput(info); }));
+	while (!glfwWindowShouldClose(m_Window))
+	{
+		if (glfwGetKey(m_Window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+			glfwSetWindowShouldClose(m_Window, true);
 
-void Application::RunMainLoop() {
-	while (IsRunning()) {
-		BeginFrame();
 		MirageEngine::Core::Input::InputSystem::UpdateHeldInput();
-		RenderScene();
-		EndFrame();
+		// Setup to Draw
+		m_CommandBuffer->BeginRenderPass(m_RenderPass);
+		m_CommandBuffer->BeginDraw();
+		m_CommandBuffer->BindPipeline(m_Pipeline);
+		m_CommandBuffer->BindBuffers(m_BufferTriangleIndices, m_BufferTriangleVertices);
+		m_CommandBuffer->ApplyPipelineParameters(m_Pipeline);
+		m_UniformBuffer->UpdateUniformBuffer(m_Pipeline, Vector3(0, 1, 0), Vector3(2, 1, 1), Vector3(0, 0, 45.f));
+		m_Pipeline->API_OpenGL().SetBool("debugNoLight", true);
+		m_CommandBuffer->DrawIndexed(indicesTriangleListSize);
+		m_CommandBuffer->EndDraw();
+		m_CommandBuffer->EndRenderPass();
+		m_CommandBuffer->SubmitAndPresent(m_SwapChain, m_Surface);
+
+		glfwPollEvents();
 	}
 }
+
+//void Application::RunMainLoop() {
+//	while (IsRunning()) {
+//		BeginFrame();
+//		RenderScene();
+//		EndFrame();
+//	}
+//}
 
 bool Application::IsRunning() const {
 	return !glfwWindowShouldClose(m_Window);

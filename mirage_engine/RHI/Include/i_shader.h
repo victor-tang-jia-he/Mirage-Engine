@@ -12,8 +12,9 @@ namespace MirageRHI
 	class IShader
 	{
 	public:
-		enum ShaderType
+		enum class ShaderType
 		{
+			None,
 			Vertex,
 			Fragment
 		};

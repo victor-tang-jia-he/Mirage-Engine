@@ -188,8 +188,8 @@ Matrix4 Matrix4::CreateTransformMatrix(const Vector3& _position, const Vector3& 
 	return CreateTranslationMatrix(_position) *
 		(CreateXRotationMatrix(_rotation.X) *
 			CreateYRotationMatrix(_rotation.Y) *
-			CreateZRotationMatrix(_rotation.Z) *
-			CreateScaleMatrix(_scale));
+			CreateZRotationMatrix(_rotation.Z)) *
+			CreateScaleMatrix(_scale);
 }
 Matrix4 Matrix4::GetPerspectiveMatrix(unsigned int _width, unsigned int _height, float _near, float _far, float _fov)
 {
@@ -203,6 +203,26 @@ Matrix4 Matrix4::GetPerspectiveMatrix(unsigned int _width, unsigned int _height,
 	perspective(3,2) = -(2.0f * _far * _near) / (_far - _near);
 	perspective(2,3) = -1.0f;
 	return perspective;
+}
+Matrix4 MirageEngine::Core::Math::Matrix4::LookAt(Vector3 eye, Vector3 center, Vector3 up)
+{
+	Vector3 f = (center - eye).Normalized();
+	Vector3 s = f.CrossProductVector3(up).Normalized();
+	Vector3 u = s.CrossProductVector3(f);
+	Matrix4 result = Matrix4::Identity();
+	result(0, 0) = s.X;
+	result(1, 0) = u.X;
+	result(2, 0) = -f.X;
+	result(0, 1) = s.Y;
+	result(1, 1) = u.Y;
+	result(2, 1) = -f.Y;
+	result(0, 2) = s.Z;
+	result(1, 2) = u.Z;
+	result(2, 2) = -f.Z;
+	result(0, 3) = -(s.DotProductVector3(eye));
+	result(1, 3) = -(u.DotProductVector3(eye));
+	result(2, 3) = (f.DotProductVector3(eye));
+	return result;
 }
 std::array<float, 16> Matrix4::ToArray() const
 {

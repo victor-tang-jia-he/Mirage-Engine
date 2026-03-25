@@ -16,6 +16,7 @@ namespace MirageRHI
 	public:
 		enum BufferType
 		{
+			None,
 			Vertices,
 			Indices,
 			Texture

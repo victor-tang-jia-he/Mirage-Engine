@@ -152,6 +152,8 @@ namespace MirageEngine
 
 				static Matrix4 GetPerspectiveMatrix(unsigned int _width, unsigned int _height, float _near, float _far, float _fov);
 
+				static Matrix4 LookAt(Vector3 eye, Vector3 center, Vector3 up);
+
 				// -------------------------------------------------------------------------------- //	
 				// Display inline
 				// -------------------------------------------------------------------------------- //
