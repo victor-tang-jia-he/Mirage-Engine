@@ -4,7 +4,7 @@
 namespace MirageEngine {
 	namespace Core {
 		namespace Input {
-			struct InputMapping; 
+			struct InputMapping;
 		}
 	}
 }
@@ -25,7 +25,7 @@ namespace MirageEngine
 				MirageEngine::Core::Components::Transform m_transform;
 			public:
 				inline Camera(unsigned int _width, unsigned int _height, float _fov, float _near, float _far, const MirageEngine::Core::Math::Vector3 _position)
-					:m_width(_width), m_height(_height), m_fov(_fov), m_near(_near),m_far(_far)
+					:m_width(_width), m_height(_height), m_fov(_fov), m_near(_near), m_far(_far)
 				{
 					m_transform.SetPosition(_position);
 				}

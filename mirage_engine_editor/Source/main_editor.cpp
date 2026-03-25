@@ -9,34 +9,41 @@
 
 int main()
 {
-	glfwInit();
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);	
+	Application application;
 
-	GLFWwindow* window = glfwCreateWindow(1920, 1080, "Mirage Enginexc", NULL, NULL);
-	glfwMakeContextCurrent(window);
+	application.InitApp();
 
-	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
-	{
-		return -1;
-	}
+	application.RunMainLoop();
 
-	Mirage::EditorApp myEditor;
-	myEditor.Init(window);
+	application.ShutDown();
+	//glfwInit();
+	//glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+	//glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+	//glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);	
 
-	while (!glfwWindowShouldClose(window))
-	{
-		glfwPollEvents();
-		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT);
+	//GLFWwindow* window = glfwCreateWindow(1920, 1080, "Mirage Enginexc", NULL, NULL);
+	//glfwMakeContextCurrent(window);
 
-		myEditor.Update();
+	//if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
+	//{
+	//	return -1;
+	//}
 
-		glfwSwapBuffers(window);
-	}
+	//Mirage::EditorApp myEditor;
+	//myEditor.Init(window);
 
-	myEditor.Shutdown();
-	glfwTerminate();
+	//while (!glfwWindowShouldClose(window))
+	//{
+	//	glfwPollEvents();
+	//	glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+	//	glClear(GL_COLOR_BUFFER_BIT);
+
+	//	myEditor.Update();
+
+	//	glfwSwapBuffers(window);
+	//}
+
+	//myEditor.Shutdown();
+	//glfwTerminate();
 	return 0;
 }

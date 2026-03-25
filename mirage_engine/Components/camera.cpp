@@ -14,14 +14,13 @@ void MirageEngine::Core::Components::Camera::BindInput(MirageEngine::Core::Input
 			if (info.Pressed)
 			{
 				this->Transform().SetPosition(this->Transform().GetPosition() + this->Transform().Forward());
-				std::cout << this->Transform().GetPosition() << std::endl;
 			}
 		}));
 	map->Map[GLFW_KEY_A].dispatcher.Add(new Event<CallbackInputInfo>("InputSystem", [this](CallbackInputInfo info) 
 		{
 			if (info.Pressed)
 			{
-				this->Transform().SetPosition(this->Transform().GetPosition() + this->Transform().Left());
+				this->Transform().SetPosition(this->Transform().GetPosition() + this->Transform().Right());
 			}
 		}));
 	map->Map[GLFW_KEY_S].dispatcher.Add(new Event<CallbackInputInfo>("InputSystem", [this](CallbackInputInfo info) 
@@ -35,7 +34,7 @@ void MirageEngine::Core::Components::Camera::BindInput(MirageEngine::Core::Input
 		{
 			if (info.Pressed)
 			{
-				this->Transform().SetPosition(this->Transform().GetPosition() - this->Transform().Left());
+				this->Transform().SetPosition(this->Transform().GetPosition() - this->Transform().Right());
 			}
 		}));
 }

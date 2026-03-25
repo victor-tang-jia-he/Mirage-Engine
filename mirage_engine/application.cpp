@@ -108,7 +108,7 @@ void Application::InitRHI()
 
 void Application::InitScene()
 {
-	Cam =new MirageEngine::Core::Components::Camera(1920, 1080, 90.f, 0.1f, 100.f, Vector3(0.f,0.f,0.f));
+	Cam = new MirageEngine::Core::Components::Camera(1920, 1080, 90.f, 0.1f, 100.f, Vector3(0.f, 0.f, -3.f));
 }
 
 void Application::InitInput()
