@@ -1,5 +1,5 @@
 ﻿# Project executable
-add_executable(MirageEngine)
+add_library(MirageEngine STATIC)
 
 # Sources
 file(GLOB_RECURSE MIRAGE_ENGINE_SOURCES
@@ -18,8 +18,13 @@ file(GLOB_RECURSE MIRAGE_ENGINE_HEADERS
 target_sources(MirageEngine PRIVATE ${MIRAGE_ENGINE_SOURCES} ${MIRAGE_ENGINE_HEADERS})
 
 # Include directories
+target_include_directories(MirageEngine PUBLIC
+    "${CMAKE_CURRENT_SOURCE_DIR}"
+    "${CMAKE_CURRENT_SOURCE_DIR}/RHI/Include"
+)
+
 target_include_directories(MirageEngine PRIVATE
-    ${CMAKE_CURRENT_SOURCE_DIR}/RHI/Include
+    "${CMAKE_CURRENT_SOURCE_DIR}/RHI/Src"
 )
 
 # Link third-party libraries
