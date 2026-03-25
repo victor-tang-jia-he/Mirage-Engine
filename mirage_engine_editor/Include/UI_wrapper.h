@@ -32,7 +32,7 @@ namespace Mirage
 		static bool IsItemClicked();
 
 		static void BeginAssetGrid(float _cellSize, float _windowSize);
-		static WidgetAction DrawAssetTile(const char* _name, void* _icon = nullptr, bool _isSelected);
+		static WidgetAction DrawAssetTile(const char* _name, bool _isSelected, void* _icon = nullptr);
 		static void EndAssetGrid();
 
 

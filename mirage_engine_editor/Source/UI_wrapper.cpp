@@ -119,11 +119,12 @@ namespace Mirage
 
 	void UIWrapper::BeginAssetGrid(float _cellSize, float _windowSize)
 	{
-		int colomnNbr = _windowSize / _cellSize;
+		int colomnNbr = static_cast<int>(_windowSize / _cellSize);
+		if (colomnNbr < 1) colomnNbr = 1;
 		ImGui::BeginTable("Content", colomnNbr);
 	}
 
-	WidgetAction UIWrapper::DrawAssetTile(const char* _name, void* _icon = nullptr, bool _isSelected)
+	WidgetAction UIWrapper::DrawAssetTile(const char* _name, bool _isSelected, [[maybe_unused]] void* _icon)
 	{
 		ImGui::TableNextColumn();
 		ImGui::PushID(_name);
