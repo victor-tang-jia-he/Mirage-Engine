@@ -25,11 +25,15 @@ namespace Mirage
 		if(ImGui::Button("Clear"))
 			m_Logs.clear();
 		ImGui::SameLine();
-		ImGui::Checkbox("Info", &m_bDisplayInfo);
-		ImGui::SameLine();
-		ImGui::Checkbox("Warning", &m_bDisplayWarning);
-		ImGui::SameLine();
-		ImGui::Checkbox("Error", &m_bDisplayError);
+		m_SearchBar.Draw("Search", 150.0f);
+		if (ImGui::TreeNode("Filters"))
+		{
+			ImGui::Checkbox("Info", &m_bDisplayInfo);
+			ImGui::Checkbox("Warning", &m_bDisplayWarning);
+			ImGui::Checkbox("Error", &m_bDisplayError);
+
+			ImGui::TreePop();
+		}
 
 		//AddLog("fire", LogLevel::INFO);
 
@@ -39,6 +43,8 @@ namespace Mirage
 
 		for (auto& log : m_Logs)
 		{
+			if (!m_SearchBar.PassFilter(log.Message.c_str()))
+				continue;
 			if(log.Level == LogLevel::ERROR && m_bDisplayError)
 				ImGui::TextColored(ImVec4(0.8f, 0, 0, 1), "[ERROR] %s", log.Message.c_str());
 			else if(log.Level == LogLevel::WARNING && m_bDisplayWarning)

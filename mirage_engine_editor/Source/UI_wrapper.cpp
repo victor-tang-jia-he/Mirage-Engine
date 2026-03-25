@@ -69,6 +69,33 @@ namespace Mirage
 		ImGui::End();
 	}
 
+	bool UIWrapper::BeginFolderNode(const char* _name, const char* _id, bool _isSelected, bool _isLeaf)
+	{
+		ImGuiTreeNodeFlags tree_node_flags = ImGuiTreeNodeFlags_SpanAvailWidth | 
+											 ImGuiTreeNodeFlags_OpenOnArrow |
+											 ImGuiTreeNodeFlags_OpenOnDoubleClick | 
+											 ImGuiTreeNodeFlags_NavLeftJumpsBackHere;
+		if (_isSelected)
+			tree_node_flags |= ImGuiTreeNodeFlags_Selected;
+		if (_isLeaf)
+			tree_node_flags |= ImGuiTreeNodeFlags_Leaf;
+
+		std::string id = std::string(_name) + "##" + _id;
+
+		bool isOpen = ImGui::TreeNodeEx(id.c_str(), tree_node_flags);
+		return isOpen;
+	}
+
+	void UIWrapper::EndFolderNode()
+	{
+		ImGui::TreePop();
+	}
+
+	bool UIWrapper::IsItemClicked()
+	{
+		return ImGui::IsItemClicked() && !ImGui::IsItemToggledOpen();
+	}
+
 	void UIWrapper::CreateSeparatorText(const char* _separatorName)
 	{
 		ImGui::SeparatorText(_separatorName);
@@ -76,13 +103,59 @@ namespace Mirage
 
 	void UIWrapper::CreateColorPicker(Math::Vector3* _color)
 	{
-		ImVec4 Color(_color->X / 255.0f, _color->Y / 255.0f, _color->Z / 255.0f, 1.0f);
+		float tempColor[3] = { _color->X / 255.0f, _color->Y / 255.0f, _color->Z / 255.0f };
 		ImVec4 refVecColor(1.0f, 0.0f, 1.0f, 1.0f);
 		ImGuiColorEditFlags color_picker_flags = ImGuiColorEditFlags_NoAlpha;
 		ImGuiColorEditFlags base_flags = ImGuiColorEditFlags_None;
 
 		ImGuiColorEditFlags flags = base_flags | color_picker_flags;
-		ImGui::ColorPicker4("MyColor##4", (float*)&Color, flags, false ? &refVecColor.x : NULL);
+		if (ImGui::ColorPicker3("MyColor##4", tempColor, flags))
+		{
+			_color->X = tempColor[0] * 255.0f;
+			_color->Y = tempColor[1] * 255.0f;
+			_color->Z = tempColor[2] * 255.0f;
+		}
+	}
+
+	void UIWrapper::BeginAssetGrid(float _cellSize, float _windowSize)
+	{
+		int colomnNbr = static_cast<int>(_windowSize / _cellSize);
+		if (colomnNbr < 1) colomnNbr = 1;
+		ImGui::BeginTable("Content", colomnNbr);
+	}
+
+	WidgetAction UIWrapper::DrawAssetTile(const char* _name, bool _isSelected, [[maybe_unused]] void* _icon)
+	{
+		ImGui::TableNextColumn();
+		ImGui::PushID(_name);
+
+		WidgetAction action = WidgetAction::None;
+
+		ImGui::BeginGroup();
+		if (_isSelected)
+		{
+			ImGui::Button("");
+			ImGui::TextWrapped(_name);
+			ImGui::EndGroup();
+		}
+
+		if (ImGui::IsItemHovered())
+		{
+			if (ImGui::IsMouseDoubleClicked(0))
+				action = WidgetAction::DoubleClicked;
+			else if (ImGui::IsItemClicked(0))
+				action = WidgetAction::Clicked;
+			else if (ImGui::IsItemClicked(1))
+				action = WidgetAction::RightClicked;
+		}
+
+		ImGui::PopID();
+		return action;
+	}
+
+	void UIWrapper::EndAssetGrid()
+	{
+		ImGui::EndTable();
 	}
 
 	bool UIWrapper::CreateSliderInt(const char* _sliderName, int* _value, int _vMin, int _vMax)
