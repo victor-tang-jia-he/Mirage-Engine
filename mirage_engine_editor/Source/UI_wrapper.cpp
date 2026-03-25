@@ -69,6 +69,33 @@ namespace Mirage
 		ImGui::End();
 	}
 
+	bool UIWrapper::BeginFolderNode(const char* _name, const char* _id, bool _isSelected, bool _isLeaf)
+	{
+		ImGuiTreeNodeFlags tree_node_flags = ImGuiTreeNodeFlags_SpanAvailWidth | 
+											 ImGuiTreeNodeFlags_OpenOnArrow |
+											 ImGuiTreeNodeFlags_OpenOnDoubleClick | 
+											 ImGuiTreeNodeFlags_NavLeftJumpsBackHere;
+		if (_isSelected)
+			tree_node_flags |= ImGuiTreeNodeFlags_Selected;
+		if (_isLeaf)
+			tree_node_flags |= ImGuiTreeNodeFlags_Leaf;
+
+		std::string id = std::string(_name) + "##" + _id;
+
+		bool isOpen = ImGui::TreeNodeEx(id.c_str(), tree_node_flags);
+		return isOpen;
+	}
+
+	void UIWrapper::EndFolderNode()
+	{
+		ImGui::TreePop();
+	}
+
+	bool UIWrapper::IsItemClicked()
+	{
+		return ImGui::IsItemClicked() && !ImGui::IsItemToggledOpen();
+	}
+
 	void UIWrapper::CreateSeparatorText(const char* _separatorName)
 	{
 		ImGui::SeparatorText(_separatorName);

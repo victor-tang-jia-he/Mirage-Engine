@@ -19,6 +19,11 @@ namespace Mirage
 		static bool BeginWindow(const char* _windowName, bool* _isOpen = nullptr);
 		static void EndWindow();
 
+		static bool BeginFolderNode(const char* _name, const char* _id, bool _isSelected, bool _isLeaf);
+		static void EndFolderNode();
+		static bool IsItemClicked();
+
+
 		// Widgets
 		static void CreateSeparatorText(const char* _separatorName);
 		static void CreateColorPicker(Math::Vector3* _color);

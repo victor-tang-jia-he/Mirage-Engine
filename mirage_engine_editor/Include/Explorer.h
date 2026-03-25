@@ -40,10 +40,11 @@ namespace Mirage
 
 	private:
 		//Navigation
-		void ScanProjectDirectory(std::filesystem::path _rootPath);
+		void ScanProjectDirectory(const std::filesystem::path _rootPath);
 		void DrawFolderTree();
+		void RenderRecursiveFolder(const std::filesystem::path& _path);
 		void DrawBreadCrumbs(); //Shows the path of the seleccted object with every segment clickable
-		void ChangeDirectory();
+		void ChangeDirectory(const std::filesystem::path& _newPath);
 		void SearchFilter();
 
 		//Display
