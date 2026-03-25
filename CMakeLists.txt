@@ -5,7 +5,7 @@ cmake_minimum_required(VERSION 3.16)
 project(CustomEngine)
 
 # Create global variable (project-level) to store output directory
-set(MY_BIN_OUTPUT_DIR "${CMAKE_SOURCE_DIR}/build/${CMAKE_CXX_COMPILER_ID}_$<CONFIG>")
+set(MY_BIN_OUTPUT_DIR "${CMAKE_SOURCE_DIR}/Build/${CMAKE_CXX_COMPILER_ID}_$<CONFIG>")
 # Log directory at configuration-time
 message("[${CMAKE_PROJECT_NAME}]: Output directory: ${MY_BIN_OUTPUT_DIR}")
 
@@ -22,28 +22,29 @@ set(CMAKE_C_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-message(STATUS "Adding external libraries...")
+message(STATUS "Adding external Libraries...")
 
 # Include Fetch system
 include(FetchContent)
+
 # ============================================================================
 # GLFW
 # ============================================================================
 
-if(EXISTS "${CMAKE_SOURCE_DIR}/libraries/GLFW" AND EXISTS "${CMAKE_SOURCE_DIR}/libraries/GLFW/CMakeLists.txt")
+if(EXISTS "${CMAKE_SOURCE_DIR}/Libraries/GLFW" AND EXISTS "${CMAKE_SOURCE_DIR}/Libraries/GLFW/CMakeLists.txt")
     message(STATUS "Using local GLFW")
     set(GLFW_BUILD_DOCS OFF CACHE BOOL "Build documentation" FORCE)
     set(GLFW_BUILD_TESTS OFF CACHE BOOL "Build tests" FORCE)
     set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "Build examples" FORCE)
     set(GLFW_INSTALL OFF CACHE BOOL "Generate installation target" FORCE)
-    add_subdirectory(${CMAKE_SOURCE_DIR}/libraries/GLFW ${CMAKE_BINARY_DIR}/GLFW)
+    add_subdirectory(${CMAKE_SOURCE_DIR}/Libraries/GLFW ${CMAKE_BINARY_DIR}/GLFW)
 else()
     message(STATUS "Fetching GLFW...")
     FetchContent_Declare(
         glfw
         GIT_REPOSITORY https://github.com/glfw/glfw.git
         GIT_TAG 3.4
-        SOURCE_DIR ${CMAKE_SOURCE_DIR}/libraries/GLFW
+        SOURCE_DIR ${CMAKE_SOURCE_DIR}/Libraries/GLFW
     )
     set(GLFW_BUILD_DOCS OFF CACHE BOOL "Build documentation" FORCE)
     set(GLFW_BUILD_TESTS OFF CACHE BOOL "Build tests" FORCE)
@@ -69,13 +70,13 @@ endif()
 # GLAD (OpenGL loader) - needed for ImGui OpenGL backend
 # ============================================================================
 # Check if glad has its own CMakeLists
-if(EXISTS ${CMAKE_SOURCE_DIR}/libraries/glad/CMakeLists.txt)
-    add_subdirectory(libraries/glad glad)
+if(EXISTS ${CMAKE_SOURCE_DIR}/Libraries/glad/CMakeLists.txt)
+    add_subdirectory(Libraries/glad glad)
 else()
     # Create simple glad target
-    if(EXISTS ${CMAKE_SOURCE_DIR}/libraries/glad/src/glad.c)
-        add_library(glad STATIC libraries/glad/src/glad.c)
-        target_include_directories(glad PUBLIC libraries/glad/include)
+    if(EXISTS ${CMAKE_SOURCE_DIR}/Libraries/glad/src/glad.c)
+        add_library(glad STATIC Libraries/glad/src/glad.c)
+        target_include_directories(glad PUBLIC Libraries/glad/include)
     else()
         message(WARNING "glad.c not found! Please generate glad files first.")
     endif()
@@ -85,16 +86,16 @@ endif()
 # ImGUI - Manual configuration (since it lacks CMakeLists.txt)
 # ============================================================================
 
-file(GLOB RESULT ${CMAKE_SOURCE_DIR}/libraries/imgui/*)
+file(GLOB RESULT ${CMAKE_SOURCE_DIR}/Libraries/imgui/*)
 list(LENGTH RESULT RES_LEN)
 
-if(NOT EXISTS ${CMAKE_SOURCE_DIR}/libraries/imgui OR RES_LEN EQUAL 0)
+if(NOT EXISTS ${CMAKE_SOURCE_DIR}/Libraries/imgui OR RES_LEN EQUAL 0)
     message(STATUS "Fetching ImGui...")
     FetchContent_Declare(
         imgui
         GIT_REPOSITORY https://github.com/ocornut/imgui.git
         GIT_TAG docking
-        SOURCE_DIR ${CMAKE_SOURCE_DIR}/libraries/imgui
+        SOURCE_DIR ${CMAKE_SOURCE_DIR}/Libraries/imgui
     )
     FetchContent_MakeAvailable(imgui)
 
@@ -106,7 +107,7 @@ else()
 endif()
 
 message(STATUS "ImGui fetched successfully")
-set(imgui_SOURCE_DIR ${CMAKE_SOURCE_DIR}/libraries/imgui)
+set(imgui_SOURCE_DIR ${CMAKE_SOURCE_DIR}/Libraries/imgui)
 
 
 # Explicit list of ImGui core files (more reliable than GLOB)
@@ -177,10 +178,11 @@ add_subdirectory(${CMAKE_SOURCE_DIR}/mirage_engine/tools/toolbox3D)
 add_library(third_party INTERFACE)
 
 target_include_directories(third_party INTERFACE
-    ${CMAKE_SOURCE_DIR}/libraries/glad/include
-    ${CMAKE_SOURCE_DIR}/libraries/GLFW/include
-    ${CMAKE_SOURCE_DIR}/libraries/imgui
-    ${CMAKE_SOURCE_DIR}/libraries/imgui/backends
+    ${CMAKE_SOURCE_DIR}/Libraries/glad/include
+    ${CMAKE_SOURCE_DIR}/Libraries/GLFW/include
+    ${CMAKE_SOURCE_DIR}/Libraries/imgui
+    ${CMAKE_SOURCE_DIR}/Libraries/imgui/backends
+    ${CMAKE_SOURCE_DIR}/Libraries
 )
 
 target_link_libraries(third_party INTERFACE
