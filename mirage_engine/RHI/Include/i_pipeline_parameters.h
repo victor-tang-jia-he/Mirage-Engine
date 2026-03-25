@@ -19,8 +19,7 @@ namespace MirageRHI
 	{
 		None,
 		Front,
-		Back,
-		Front_And_Back
+		Back
 	};
 
 	struct UnlitVertex
