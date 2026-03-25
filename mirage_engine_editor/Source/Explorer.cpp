@@ -52,7 +52,7 @@ namespace Mirage
 					auto ext = entry.path().extension();
 					if (ext == ".png" || ext == ".jpg") newEntry.Type = AssetType::Texture;
 					else if (ext == ".obj") newEntry.Type = AssetType::Model;
-					else if (ext == ".cs" || ext == ".cpp" || ext == ".h" || ext == ".py") newEntry.Type = AssetType::Script;
+					else if (ext == ".cs" || ext == ".py") newEntry.Type = AssetType::Script;
 					else if (ext == ".glsl" || ext == ".frag" || ext == ".vert") newEntry.Type = AssetType::Shader;
 					else newEntry.Type = AssetType::Unknown;
 				}
@@ -120,7 +120,12 @@ namespace Mirage
 
 	void Explorer::DrawDirectoryContent()
 	{
-
+		for (AssetEntry entry : m_Entries)
+		{
+			if (UIWrapper::IsItemClicked())
+			{
+			}
+		}
 	}
 
 	void Explorer::RenameItem(std::filesystem::path& _oldPath, std::filesystem::path& _newPath)

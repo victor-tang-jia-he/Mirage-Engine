@@ -117,6 +117,46 @@ namespace Mirage
 		}
 	}
 
+	void UIWrapper::BeginAssetGrid(float _cellSize, float _windowSize)
+	{
+		int colomnNbr = _windowSize / _cellSize;
+		ImGui::BeginTable("Content", colomnNbr);
+	}
+
+	WidgetAction UIWrapper::DrawAssetTile(const char* _name, void* _icon = nullptr, bool _isSelected)
+	{
+		ImGui::TableNextColumn();
+		ImGui::PushID(_name);
+
+		WidgetAction action = WidgetAction::None;
+
+		ImGui::BeginGroup();
+		if (_isSelected)
+		{
+			ImGui::Button("");
+			ImGui::TextWrapped(_name);
+			ImGui::EndGroup();
+		}
+
+		if (ImGui::IsItemHovered())
+		{
+			if (ImGui::IsMouseDoubleClicked(0))
+				action = WidgetAction::DoubleClicked;
+			else if (ImGui::IsItemClicked(0))
+				action = WidgetAction::Clicked;
+			else if (ImGui::IsItemClicked(1))
+				action = WidgetAction::RightClicked;
+		}
+
+		ImGui::PopID();
+		return action;
+	}
+
+	void UIWrapper::EndAssetGrid()
+	{
+		ImGui::EndTable();
+	}
+
 	bool UIWrapper::CreateSliderInt(const char* _sliderName, int* _value, int _vMin, int _vMax)
 	{
 		return ImGui::SliderInt(_sliderName, _value, _vMin, _vMax);
