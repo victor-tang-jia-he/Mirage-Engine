@@ -181,6 +181,7 @@ target_include_directories(third_party INTERFACE
     ${CMAKE_SOURCE_DIR}/libraries/GLFW/include
     ${CMAKE_SOURCE_DIR}/libraries/imgui
     ${CMAKE_SOURCE_DIR}/libraries/imgui/backends
+    ${CMAKE_SOURCE_DIR}/libraries/stb_image
 )
 
 target_link_libraries(third_party INTERFACE
