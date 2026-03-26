@@ -182,6 +182,7 @@ target_include_directories(third_party INTERFACE
     ${CMAKE_SOURCE_DIR}/Libraries/GLFW/include
     ${CMAKE_SOURCE_DIR}/Libraries/imgui
     ${CMAKE_SOURCE_DIR}/Libraries/imgui/backends
+    ${CMAKE_SOURCE_DIR}/Libraries/stb_image
     ${CMAKE_SOURCE_DIR}/Libraries
 )
 

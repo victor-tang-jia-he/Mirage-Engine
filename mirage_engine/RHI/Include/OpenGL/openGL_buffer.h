@@ -18,6 +18,7 @@ namespace MirageRHI
     public:
         // Creates and stores buffer data (vertexes, indices, textures, ...)
         void Create(const void* _data, size_t _size, BufferType _type) override;
+        void Create(std::filesystem::path const& _filename, BufferType _type) override;
         void Destroy() override;
 
         OpenGLBuffer& API_OpenGL() override { return *this; }
@@ -26,5 +27,10 @@ namespace MirageRHI
 
         // Getters
         GLuint GetGLHandle() const { return m_Buffer; }
+
+    private:
+        void CreateTexture(const void* _data, size_t _size);
+
+        void LoadTexture(std::filesystem::path const& _filename);
 	};
 }

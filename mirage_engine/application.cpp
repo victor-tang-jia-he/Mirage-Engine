@@ -69,16 +69,17 @@ void Application::InitRHI()
 	m_Framebuffer = m_RenderInterface->InstantiateFramebuffer();
 	m_BufferTriangleVertices = m_RenderInterface->InstantiateBuffer();
 	m_BufferTriangleIndices = m_RenderInterface->InstantiateBuffer();
+	m_TextureBuffer = m_RenderInterface->InstantiateBuffer();
 	m_UniformBuffer = m_RenderInterface->InstantiateUniformBuffer();
 	m_CommandBuffer = m_RenderInterface->InstantiateCommandBuffer();
 	DEBUG_LOG("All Classes Instantiated");
 
 	m_VerticesQuad = // Set Vertices to draw Triangle
 	{
-		{{-1.f, -1.f, 0.0f}, {1.0f, 0.0f, 0.0f}, {1.0f, 0.0f}},
-		{{-1.f, 1.f, 0.0f}, {0.0f, 1.0f, 0.0f}, {0.0f, 0.0f}},
-		{{1.f, 1.f, 0.0f}, {0.0f, 0.0f, 1.0f}, {0.0f, 1.0f}},
-		{{1.f, -1.f, 0.0f}, {0.0f, 0.0f, 1.0f}, {0.0f, 1.0f}}
+		{{1.f, 1.f, 0.0f}, {1.0f, 0.0f, 0.0f}, {1.0f, 1.0f}},
+		{{1.f, -1.f, 0.0f}, {0.0f, 1.0f, 0.0f}, {1.0f, 0.0f}},
+		{{-1.f, -1.f, 0.0f}, {0.0f, 0.0f, 1.0f}, {0.0f, 0.0f}},
+		{{-1.f, 1.f, 0.0f}, {0.0f, 0.0f, 1.0f}, {0.0f, 1.0f}}
 	};
 
 	m_IndicesQuad = // Set Indexes to draw Triangle
@@ -100,6 +101,7 @@ void Application::InitRHI()
 	m_Pipeline->Create(m_VertexShader, m_FragmentShader, m_PipelineParameters);
 	m_BufferTriangleVertices->Create(m_VerticesQuad.data(), m_VerticesQuad.size() * sizeof(MirageRHI::LitVertex), MirageRHI::IBuffer::BufferType::Vertices);
 	m_BufferTriangleIndices->Create(m_IndicesQuad.data(), m_IndicesQuad.size() * sizeof(MirageRHI::LitVertex), MirageRHI::IBuffer::BufferType::Indices);
+	m_TextureBuffer->Create("assets/textures/cat.png", MirageRHI::IBuffer::BufferType::Texture);
 	m_UniformBuffer->Create();
 	m_CommandBuffer->Create();
 	m_IndicesCount = (uint32_t)(m_VerticesQuad.size());
@@ -211,15 +213,15 @@ void Application::RunMainLoop()
 		m_CommandBuffer->BeginRenderPass(m_RenderPass);
 		m_CommandBuffer->BeginDraw();
 		m_CommandBuffer->BindPipeline(m_Pipeline);
-		m_CommandBuffer->BindBuffers(m_BufferTriangleIndices, m_BufferTriangleVertices);
+		m_CommandBuffer->BindBuffer(m_BufferTriangleIndices);
+		m_CommandBuffer->BindBuffer(m_BufferTriangleVertices);
+		m_CommandBuffer->BindBuffer(m_TextureBuffer);
 		m_CommandBuffer->ApplyPipelineParameters(m_Pipeline);
 		m_UniformBuffer->UpdateUniformBuffer(m_Pipeline, Cam, Cam->Transform());
-		m_Pipeline->API_OpenGL().SetBool("debugNoLight", true);
 		m_CommandBuffer->DrawIndexed(indicesTriangleListSize);
 		m_CommandBuffer->EndDraw();
 		m_CommandBuffer->EndRenderPass();
 		m_CommandBuffer->SubmitAndPresent(m_SwapChain, m_Surface);
-
 		glfwPollEvents();
 	}
 }
@@ -248,7 +250,8 @@ void Application::BeginFrame() {
 
 void Application::RenderScene() {
 	m_CommandBuffer->BindPipeline(m_Pipeline);
-	m_CommandBuffer->BindBuffers(m_BufferTriangleIndices, m_BufferTriangleVertices);
+	m_CommandBuffer->BindBuffer(m_BufferTriangleVertices);
+	m_CommandBuffer->BindBuffer(m_BufferTriangleIndices);
 	m_CommandBuffer->ApplyPipelineParameters(m_Pipeline);
 
 	Matrix4 model = Matrix4::CreateTranslationMatrix(Vector3(0, 0, -10));

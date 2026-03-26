@@ -31,9 +31,6 @@ void MirageRHI::OpenGLPipelineParameters::ApplyParameters()
 		case CullingType::Back:
 			glCullFace(GL_BACK);
 			break;
-		case CullingType::Front_And_Back:
-			glCullFace(GL_FRONT_AND_BACK);
-			break;
 		}
 	}
 

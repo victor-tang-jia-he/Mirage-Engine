@@ -52,6 +52,7 @@ private:
 	IFramebuffer* m_Framebuffer = nullptr;
 	IBuffer* m_BufferTriangleVertices = nullptr;
 	IBuffer* m_BufferTriangleIndices = nullptr;
+	IBuffer* m_TextureBuffer = nullptr;
 	IUniformBuffer* m_UniformBuffer = nullptr;
 	ICommandBuffer* m_CommandBuffer = nullptr;
 

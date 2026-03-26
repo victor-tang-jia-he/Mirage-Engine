@@ -28,7 +28,7 @@ namespace MirageRHI
 		virtual void BeginDraw() = 0;
 		virtual void EndDraw() = 0;
 		virtual void BindPipeline(IPipeline* _pipeline) = 0;
-		virtual void BindBuffers(IBuffer* _indexBuffer, IBuffer* _vertexBuffer) = 0;
+		virtual void BindBuffer(IBuffer* _buffer) = 0;
 		virtual void ApplyPipelineParameters(IPipeline* _pipeline) = 0;
 		virtual void BeginRenderPass(IRenderPass* _renderPass) = 0;
 		virtual void EndRenderPass() = 0;
