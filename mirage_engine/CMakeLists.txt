@@ -3,6 +3,7 @@ add_library(MirageEngine STATIC)
 
 # Sources
 file(GLOB_RECURSE MIRAGE_ENGINE_SOURCES
+	"Source/Src/*.cpp"
 	"RHI/Src/*.cpp"
 	"RHI/Src/*.c"
 	"Components/*.c"
@@ -12,6 +13,7 @@ file(GLOB_RECURSE MIRAGE_ENGINE_SOURCES
 )
 
 file(GLOB_RECURSE MIRAGE_ENGINE_HEADERS
+	"Source/Include/*.h"
 	"application.h"
 	"Components/*.h"
 	"Components/*.hpp"
@@ -24,6 +26,7 @@ target_sources(MirageEngine PRIVATE ${MIRAGE_ENGINE_SOURCES} ${MIRAGE_ENGINE_HEA
 # Include directories
 target_include_directories(MirageEngine PUBLIC
     "${CMAKE_CURRENT_SOURCE_DIR}"
+    "${CMAKE_CURRENT_SOURCE_DIR}/Source/Include"
     "${CMAKE_CURRENT_SOURCE_DIR}/RHI/Include"
 )
 
