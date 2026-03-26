@@ -13,9 +13,9 @@ out vec3 Normal;
 out vec2 TexCoord;
 
 void main() {
-    vec4 worldPos = vec4(aPos, 1.0) * model * view;
+    vec4 worldPos = vec4(aPos, 1.0) * model;
     FragPos = vec3(worldPos);
     Normal = mat3(transpose(inverse(model))) * aNormal;
     TexCoord = aTexCoord;
-    gl_Position = proj * vec4(FragPos, 1.0);
+    gl_Position = vec4(FragPos, 1.0) * view * proj;
 }

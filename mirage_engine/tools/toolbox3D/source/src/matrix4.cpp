@@ -202,7 +202,7 @@ Matrix4 Matrix4::GetPerspectiveMatrix(unsigned int _width, unsigned int _height,
 	perspective(2,2) = -(_far + _near) / (_far - _near);
 	perspective(3,2) = -(2.0f * _far * _near) / (_far - _near);
 	perspective(2,3) = -1.0f;
-	return perspective;
+	return perspective.Transpose();
 }
 Matrix4 MirageEngine::Core::Math::Matrix4::LookAt(Vector3 eye, Vector3 center, Vector3 up)
 {

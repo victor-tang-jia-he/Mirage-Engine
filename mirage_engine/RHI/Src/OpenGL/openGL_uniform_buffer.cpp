@@ -14,7 +14,7 @@ void MirageRHI::OpenGLUniformBuffer::UpdateUniformBuffer(
 	const MirageEngine::Core::Components::Camera* _cam,
 	MirageEngine::Core::Components::Transform& _transform)
 {
-	Matrix4 m_Model = Matrix4::CreateTransformMatrix(Vector3(0, 1, 0), Vector3(2, 1, 1), Vector3(1, 1, 45.f));
+	Matrix4 m_Model = Matrix4::CreateTransformMatrix(Vector3(2, 0, 0), Vector3(0, 0, 0), Vector3(1, 1, 1));
 
 	//Matrix4 model = _transform.GetMatrix();
 	_pipeline->API_OpenGL().SetMat4("model", m_Model);
