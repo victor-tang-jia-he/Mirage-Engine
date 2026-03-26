@@ -42,5 +42,6 @@ if(EXISTS ${PROJECT_SOURCE_DIR}/mirage_engine/assets)
 	add_custom_command(TARGET MirageEngine POST_BUILD
 		COMMAND ${CMAKE_COMMAND} -E copy_directory
 			"${CMAKE_SOURCE_DIR}/mirage_engine/assets"
-			"$<TARGET_FILE_DIR:MirageEngine>/assets")
+			"${CMAKE_SOURCE_DIR}/Build/${CMAKE_CXX_COMPILER_ID}_$<CONFIG>/assets")
+	message(STATUS "Assets copied successfully")
 endif()

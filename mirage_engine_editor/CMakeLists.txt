@@ -18,7 +18,6 @@ target_sources(MirageEngineEditor PRIVATE ${MIRAGE_ENGINE_EDITOR_SOURCES} ${MIRA
 # Include directories
 target_include_directories(MirageEngineEditor PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/Include
-    ${CMAKE_SOURCE_DIR}/mirage_engine/
 )
 
 # Link engine and third-party
