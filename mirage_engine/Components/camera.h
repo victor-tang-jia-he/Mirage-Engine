@@ -36,8 +36,9 @@ namespace MirageEngine
 					m_transform.LookAt(target);
 				}
 
-				MirageEngine::Core::Math::Matrix4 GetPerspective() const { return MirageEngine::Core::Math::Matrix4::GetPerspectiveMatrix(m_width, m_height, m_near, m_far, m_fov); }
 				MirageEngine::Core::Components::Transform& Transform() { return m_transform; }
+				MirageEngine::Core::Math::Matrix4 GetPerspective() const { return MirageEngine::Core::Math::Matrix4::GetPerspectiveMatrix(m_width, m_height, m_near, m_far, m_fov); }
+				MirageEngine::Core::Math::Matrix4 GetView() const { return MirageEngine::Core::Math::Matrix4::LookAt(m_transform.GetPosition(), m_transform.GetPosition() + m_transform.Forward(), m_transform.Up()); }
 
 				// SetParameter
 				inline void SetNear(float _near) { m_near = _near; }

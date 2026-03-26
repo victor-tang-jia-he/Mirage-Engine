@@ -7,17 +7,13 @@ using namespace MirageEngine::Core::Math;
 
 void MirageRHI::OpenGLUniformBuffer::Create()
 {
+	m_View = Matrix4::Identity();
+	m_Proj = Matrix4::Identity();
 }
 
-void MirageRHI::OpenGLUniformBuffer::UpdateUniformBuffer(
-	IPipeline* _pipeline,
-	const MirageEngine::Core::Components::Camera* _cam,
-	MirageEngine::Core::Components::Transform& _transform)
+void MirageRHI::OpenGLUniformBuffer::UpdateUniformBuffer(IPipeline* _pipeline, MirageEngine::Core::Math::Matrix4 _model)
 {
-	Matrix4 m_Model = Matrix4::CreateTransformMatrix(Vector3(2, 0, 0), Vector3(0, 0, 0), Vector3(1, 1, 1));
-
-	//Matrix4 model = _transform.GetMatrix();
-	_pipeline->API_OpenGL().SetMat4("model", m_Model);
-	_pipeline->API_OpenGL().SetMat4("view", Matrix4::LookAt(_transform.GetPosition(), _transform.GetPosition() + _transform.Forward(), _transform.Up()));
-	_pipeline->API_OpenGL().SetMat4("proj", _cam->GetPerspective());
+	_pipeline->API_OpenGL().SetMat4("model", _model);
+	_pipeline->API_OpenGL().SetMat4("view", m_View);
+	_pipeline->API_OpenGL().SetMat4("proj", m_Proj);
 }

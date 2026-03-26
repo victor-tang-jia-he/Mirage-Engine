@@ -110,7 +110,7 @@ void Application::InitRHI()
 
 void Application::InitScene()
 {
-	Cam = new MirageEngine::Core::Components::Camera(1920, 1080, 90.f, 0.1f, 100.f, Vector3(0.f, 0.f, -3.f));
+	m_EngineCamera = new MirageEngine::Core::Components::Camera(1920, 1080, 90.f, 0.1f, 100.f, Vector3(0.f, 0.f, -3.f));
 }
 
 void Application::InitInput()
@@ -154,7 +154,7 @@ void Application::InitInput()
 	glfwSetKeyCallback(window, InputSystem::KeyCallback);
 
 	// bind camera
-	Cam->BindInput(editorMapping);
+	m_EngineCamera->BindInput(editorMapping);
 	DEBUG_LOG("Input system bind");
 }
 
@@ -202,6 +202,7 @@ void Application::EndPlay(MirageEngine::Core::Input::CallbackInputInfo info)
 
 void Application::RunMainLoop()
 {
+	Matrix4 tempModel = Matrix4::CreateTransformMatrix(Vector3(0, 0, 0), Vector3(0, 0, 0), Vector3(1, 1, 1));
 	uint32_t indicesTriangleListSize = (uint32_t)(m_IndicesQuad.size());
 	while (!glfwWindowShouldClose(m_Window))
 	{
@@ -217,7 +218,9 @@ void Application::RunMainLoop()
 		m_CommandBuffer->BindBuffer(m_BufferTriangleVertices);
 		m_CommandBuffer->BindBuffer(m_TextureBuffer);
 		m_CommandBuffer->ApplyPipelineParameters(m_Pipeline);
-		m_UniformBuffer->UpdateUniformBuffer(m_Pipeline, Cam, Cam->Transform());
+		m_UniformBuffer->SetView(m_EngineCamera->GetView());
+		m_UniformBuffer->SetProjection(m_EngineCamera->GetPerspective());
+		m_UniformBuffer->UpdateUniformBuffer(m_Pipeline, tempModel);
 		m_CommandBuffer->DrawIndexed(indicesTriangleListSize);
 		m_CommandBuffer->EndDraw();
 		m_CommandBuffer->EndRenderPass();
@@ -225,14 +228,6 @@ void Application::RunMainLoop()
 		glfwPollEvents();
 	}
 }
-
-//void Application::RunMainLoop() {
-//	while (IsRunning()) {
-//		BeginFrame();
-//		RenderScene();
-//		EndFrame();
-//	}
-//}
 
 bool Application::IsRunning() const {
 	return !glfwWindowShouldClose(m_Window);
@@ -281,5 +276,5 @@ void Application::ShutDown()
 	glfwTerminate();
 	delete editorMapping;
 	delete playMapping;
-	delete Cam;
+	delete m_EngineCamera;
 }

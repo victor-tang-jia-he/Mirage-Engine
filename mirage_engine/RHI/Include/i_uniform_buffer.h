@@ -19,9 +19,8 @@ namespace MirageRHI
 
 		virtual OpenGLUniformBuffer& API_OpenGL() { throw std::runtime_error("Bad API Call : object is not an OpenGLUniformBuffer"); }
 
-		virtual void UpdateUniformBuffer(
-			IPipeline* _pipeline,
-			const MirageEngine::Core::Components::Camera* cam,
-			MirageEngine::Core::Components::Transform& transform) = 0;
+		virtual void SetView(MirageEngine::Core::Math::Matrix4 _view) = 0;
+		virtual void SetProjection(MirageEngine::Core::Math::Matrix4 _proj) = 0;
+		virtual void UpdateUniformBuffer(IPipeline* _pipeline, MirageEngine::Core::Math::Matrix4 _model) = 0;
 	};
 }

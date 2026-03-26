@@ -65,7 +65,7 @@ private:
 	MirageEngine::Core::Input::InputMapping* editorMapping = nullptr;
 	MirageEngine::Core::Input::InputMapping* playMapping = nullptr;
 
-	MirageEngine::Core::Components::Camera* Cam = nullptr;
+	MirageEngine::Core::Components::Camera* m_EngineCamera = nullptr;
 public:
 	Application(IRenderInterface::API _api = IRenderInterface::API::OPENGL) : m_API(_api) {}
 
