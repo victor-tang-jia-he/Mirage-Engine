@@ -65,6 +65,7 @@ namespace Mirage
 		void RenderAssetContextMenu();
 		void RenderEmptySpaceContextMenu();
 		void RenderRenameModal();
+		void RenderDeleteModal();
 		void RenameItem(std::filesystem::path& _oldPath, std::filesystem::path& _newPath);
 		void MoveItem();
 	};

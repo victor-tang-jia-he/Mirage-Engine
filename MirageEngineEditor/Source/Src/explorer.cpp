@@ -129,6 +129,7 @@ namespace Mirage
 		RenderAssetContextMenu();
 		RenderEmptySpaceContextMenu();
 		RenderRenameModal();
+		RenderDeleteModal();
 	}
 
 	void Explorer::HandleFileClick()
@@ -194,10 +195,7 @@ namespace Mirage
 
 				if (ImGui::MenuItem("Delete"))
 				{
-					std::error_code ec;
-					std::filesystem::remove_all(m_EntryToProcess->Path, ec);
-					ScanProjectDirectory(m_CurrentPath);
-					m_EntryToProcess = nullptr;
+					UIWrapper::RequestModal("DeleteModal");
 				}
 			}
 			ImGui::EndPopup();
@@ -241,6 +239,37 @@ namespace Mirage
 					std::filesystem::path newPath = m_EntryToProcess->Path.parent_path() / m_RenameBuffer;
 					RenameItem(m_EntryToProcess->Path, newPath);
 					ScanProjectDirectory(m_CurrentPath);
+				}
+				ImGui::CloseCurrentPopup();
+			}
+
+			ImGui::SameLine();
+
+			if (ImGui::Button("Cancel", ImVec2(120, 0)))
+			{
+				ImGui::CloseCurrentPopup();
+			}
+
+			ImGui::EndPopup();
+		}
+	}
+
+	void Explorer::RenderDeleteModal()
+	{
+		std::error_code ec;
+		if (ImGui::BeginPopupModal("DeleteModal", nullptr, ImGuiWindowFlags_AlwaysAutoResize))
+		{
+			ImGui::Text("Are you sure you want to delete?");
+
+			ImGui::Separator();
+
+			if (ImGui::Button("OK", ImVec2(120, 0)))
+			{
+				if (m_EntryToProcess)
+				{
+					std::filesystem::remove_all(m_EntryToProcess->Path, ec);
+					ScanProjectDirectory(m_CurrentPath);
+					m_EntryToProcess = nullptr;
 				}
 				ImGui::CloseCurrentPopup();
 			}
