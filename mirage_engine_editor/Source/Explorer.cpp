@@ -121,8 +121,11 @@ namespace Mirage
 
 	void Explorer::DrawDirectoryContent()
 	{
-		UIWrapper::UpdateModalRequests();
+		m_AnItemWasRightClicked = false;
 		RenderAssetGrid();
+		if(ImGui::IsWindowHovered() && !m_AnItemWasRightClicked && ImGui::IsMouseClicked(1))
+			UIWrapper::RequestModal("EmptySpaceMenu");
+		UIWrapper::UpdateModalRequests();
 		RenderAssetContextMenu();
 		RenderEmptySpaceContextMenu();
 		RenderRenameModal();
@@ -165,9 +168,12 @@ namespace Mirage
 				{
 					m_EntryToProcess = const_cast<AssetEntry*>(&entry);
 					UIWrapper::RequestModal("AssetContextMenu");
+					m_AnItemWasRightClicked = true;
+					
 				}
 			}
 			UIWrapper::EndAssetGrid();
+			ImGui::Dummy(ImGui::GetContentRegionAvail());
 		}
 	}
 
@@ -184,7 +190,6 @@ namespace Mirage
 				{
 					strncpy_s(m_RenameBuffer, m_EntryToProcess->Name.c_str(), sizeof(m_RenameBuffer));
 					UIWrapper::RequestModal("RenameModal");
-					std::cout << "was in Rename" << std::endl;
 				}
 
 				if (ImGui::MenuItem("Delete"))
@@ -201,19 +206,22 @@ namespace Mirage
 
 	void Explorer::RenderEmptySpaceContextMenu()
 	{
-		if (ImGui::BeginPopupContextWindow("EmptySpaceMenu", ImGuiPopupFlags_MouseButtonRight | ImGuiPopupFlags_NoOpenOverItems))
+		if (!m_AnItemWasRightClicked)
 		{
-			if (ImGui::MenuItem("New Folder"))
+			if (ImGui::BeginPopup("EmptySpaceMenu"))
 			{
-				std::error_code ec;
-				std::filesystem::create_directory(m_CurrentPath / "NewFolder", ec);
-				ScanProjectDirectory(m_CurrentPath);
+				if (ImGui::MenuItem("New Folder"))
+				{
+					std::error_code ec;
+					std::filesystem::create_directory(m_CurrentPath / "NewFolder", ec);
+					ScanProjectDirectory(m_CurrentPath);
+				}
+				if (ImGui::MenuItem("Cancel"))
+				{
+					ImGui::CloseCurrentPopup();
+				}
+				ImGui::EndPopup();
 			}
-			if (ImGui::MenuItem("Cancel"))
-			{
-				ImGui::CloseCurrentPopup();
-			}
-			ImGui::EndPopup();
 		}
 	}
 
@@ -221,7 +229,6 @@ namespace Mirage
 	{
 		if (ImGui::BeginPopupModal("RenameModal", nullptr, ImGuiWindowFlags_AlwaysAutoResize))
 		{
-			std::cout << "was in renamemodal" << std::endl;
 			ImGui::Text("Enter new name:");
 			ImGui::InputText("##newName", m_RenameBuffer, sizeof(m_RenameBuffer));
 

@@ -33,6 +33,7 @@ namespace Mirage
 		AssetEntry* m_EntryToProcess = nullptr;
 		char m_RenameBuffer[256] = "";
 		bool m_ShouldOpenAssetPopup = false;
+		bool m_AnItemWasRightClicked = false;
 
 	public:
 		Explorer(const char* _name) : IPanel(_name) {};
