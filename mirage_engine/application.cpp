@@ -95,16 +95,16 @@ void Application::InitRHI()
 	m_Device->Create();
 	m_SwapChain->Create();
 	m_RenderPass->Create(Vector4(0.2f, 0, 0.1f, 1.0f), 1.0f);
-	m_VertexShader->Create("assets/shaders/vertex.glsl", MirageRHI::IShader::ShaderType::Vertex);
-	m_FragmentShader->Create("assets/shaders/fragment.glsl", MirageRHI::IShader::ShaderType::Fragment);
+	m_VertexShader->Create("Assets/Shaders/vertex.glsl", MirageRHI::IShader::ShaderType::Vertex);
+	m_FragmentShader->Create("Assets/Shaders/fragment.glsl", MirageRHI::IShader::ShaderType::Fragment);
 	m_PipelineParameters->Create(MirageRHI::VertexType::PBR, MirageRHI::CullingType::None, true);
 	m_Pipeline->Create(m_VertexShader, m_FragmentShader, m_PipelineParameters);
 	m_BufferTriangleVertices->Create(m_VerticesQuad.data(), m_VerticesQuad.size() * sizeof(MirageRHI::LitVertex), MirageRHI::IBuffer::BufferType::Vertices);
 	m_BufferTriangleIndices->Create(m_IndicesQuad.data(), m_IndicesQuad.size() * sizeof(MirageRHI::LitVertex), MirageRHI::IBuffer::BufferType::Indices);
-	m_TextureBuffer->Create("assets/textures/cat.png", MirageRHI::IBuffer::BufferType::Texture);
+	m_TextureBuffer->Create("Assets/Textures/cat.png", MirageRHI::IBuffer::BufferType::Texture);
 	m_UniformBuffer->Create();
 	m_CommandBuffer->Create();
-	m_IndicesCount = (uint32_t)(m_VerticesQuad.size());
+	m_IndicesCount = (uint32_t)(m_IndicesQuad.size());
 	DEBUG_LOG("All Classes Created");
 }
 
@@ -209,7 +209,7 @@ void Application::RunMainLoop()
 		if (glfwGetKey(m_Window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 			glfwSetWindowShouldClose(m_Window, true);
 
-		MirageEngine::Core::Input::InputSystem::UpdateHeldInput();
+		InputSystem::UpdateHeldInput();
 		// Setup to Draw
 		m_CommandBuffer->BeginRenderPass(m_RenderPass);
 		m_CommandBuffer->BeginDraw();
@@ -239,27 +239,21 @@ void Application::BeginFrame() {
 	if (glfwGetKey(m_Window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 		glfwSetWindowShouldClose(m_Window, true);
 
+	InputSystem::UpdateHeldInput();
 	m_CommandBuffer->BeginRenderPass(m_RenderPass);
 	m_CommandBuffer->BeginDraw();
 }
 
-void Application::RenderScene() {
+void Application::RenderScene()
+{
 	m_CommandBuffer->BindPipeline(m_Pipeline);
-	m_CommandBuffer->BindBuffer(m_BufferTriangleVertices);
 	m_CommandBuffer->BindBuffer(m_BufferTriangleIndices);
+	m_CommandBuffer->BindBuffer(m_BufferTriangleVertices);
+	m_CommandBuffer->BindBuffer(m_TextureBuffer);
 	m_CommandBuffer->ApplyPipelineParameters(m_Pipeline);
-
-	Matrix4 model = Matrix4::CreateTranslationMatrix(Vector3(0, 0, -10));
-	Matrix4 view = Matrix4::Identity();
-	Matrix4 projection = Matrix4::GetPerspectiveMatrix(m_Width, m_Height, 0.1f, 100.f, 45.0f);
-	projection = projection * view * model;
-
-	m_Pipeline->API_OpenGL().SetVec3("viewPos", Vector3());
-	m_Pipeline->API_OpenGL().SetMat4("pvm", projection);
-	m_Pipeline->API_OpenGL().SetMat4("view", view);
-	m_Pipeline->API_OpenGL().SetMat4("model", model);
-	m_Pipeline->API_OpenGL().SetBool("debugNoLight", true);
-
+	m_UniformBuffer->SetView(m_EngineCamera->GetView());
+	m_UniformBuffer->SetProjection(m_EngineCamera->GetPerspective());
+	m_UniformBuffer->UpdateUniformBuffer(m_Pipeline, Matrix4::CreateTransformMatrix(Vector3(0, 0, 0), Vector3(0, 0, 0), Vector3(1, 1, 1)));
 	m_CommandBuffer->DrawIndexed(m_IndicesCount);
 }
 

@@ -31,18 +31,19 @@ namespace Mirage
 		static void EndFolderNode();
 		static bool IsItemClicked();
 
-		static void BeginAssetGrid(float _cellSize, float _windowSize);
+		static void RequestModal(const char* _modalName);
+		static void UpdateModalRequests();
+
+		static bool BeginAssetGrid(float _cellSize, float _windowSize);
 		static WidgetAction DrawAssetTile(const char* _name, bool _isSelected, void* _icon = nullptr);
 		static void EndAssetGrid();
+
+		static bool AssetContextMenu(const char* _id);
+		static bool DrawContextMenuItem(const char* _label);
 
 
 		// Widgets
 		static void CreateSeparatorText(const char* _separatorName);
 		static void CreateColorPicker(Math::Vector3* _color);
-
-		static bool CreateSliderInt(const char* _sliderName, int* _value, int _vMin, int _vMax);
-		static bool CreateSliderFloat(const char* _sliderName, float* _value, float _vMin, float _vMax);
-		static bool CreateButton(const char* _buttonName);
-		static bool CreateCheckbox(const char* _checkBoxName, bool* _check);
 	};
 }

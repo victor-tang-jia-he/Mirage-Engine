@@ -114,17 +114,138 @@ namespace Mirage
 
 	void Explorer::ChangeDirectory(const std::filesystem::path& _newPath)
 	{
+		m_SelectedEntry = nullptr;
 		m_CurrentPath = _newPath;
 		ScanProjectDirectory(m_CurrentPath);
 	}
 
 	void Explorer::DrawDirectoryContent()
 	{
-		for (AssetEntry entry : m_Entries)
+		UIWrapper::UpdateModalRequests();
+		RenderAssetGrid();
+		RenderAssetContextMenu();
+		RenderEmptySpaceContextMenu();
+		RenderRenameModal();
+	}
+
+	void Explorer::HandleFileClick()
+	{
+		if (ImGui::BeginPopupContextItem())
 		{
-			if (UIWrapper::IsItemClicked())
+			if (ImGui::Button("Close"))
+				ImGui::CloseCurrentPopup();
+			ImGui::EndPopup();
+		}
+		
+	}
+
+	void Explorer::RenderAssetGrid()
+	{
+		float windowSize = ImGui::GetContentRegionAvail().x;
+
+		if (UIWrapper::BeginAssetGrid(100.0f, windowSize))
+		{
+			for (const AssetEntry& entry : m_Entries)
 			{
+				bool isSelected = (m_SelectedEntry == &entry);
+				WidgetAction action = UIWrapper::DrawAssetTile(entry.Name.c_str(), isSelected);
+
+				if (action == WidgetAction::Clicked)
+				{
+					m_SelectedEntry = (void*)&entry;
+				}
+
+				if (action == WidgetAction::DoubleClicked && entry.Type == AssetType::Folder)
+				{
+					this->ChangeDirectory(entry.Path);
+					break;
+				}
+
+				if (action == WidgetAction::RightClicked)
+				{
+					m_EntryToProcess = const_cast<AssetEntry*>(&entry);
+					UIWrapper::RequestModal("AssetContextMenu");
+				}
 			}
+			UIWrapper::EndAssetGrid();
+		}
+	}
+
+	void Explorer::RenderAssetContextMenu()
+	{
+		if (ImGui::BeginPopup("AssetContextMenu"))
+		{
+			if (m_EntryToProcess)
+			{
+				ImGui::TextDisabled("Options: %s", m_EntryToProcess->Name.c_str());
+				ImGui::Separator();
+
+				if (ImGui::MenuItem("Rename"))
+				{
+					strncpy_s(m_RenameBuffer, m_EntryToProcess->Name.c_str(), sizeof(m_RenameBuffer));
+					UIWrapper::RequestModal("RenameModal");
+					std::cout << "was in Rename" << std::endl;
+				}
+
+				if (ImGui::MenuItem("Delete"))
+				{
+					std::error_code ec;
+					std::filesystem::remove_all(m_EntryToProcess->Path, ec);
+					ScanProjectDirectory(m_CurrentPath);
+					m_EntryToProcess = nullptr;
+				}
+			}
+			ImGui::EndPopup();
+		}
+	}
+
+	void Explorer::RenderEmptySpaceContextMenu()
+	{
+		if (ImGui::BeginPopupContextWindow("EmptySpaceMenu", ImGuiPopupFlags_MouseButtonRight | ImGuiPopupFlags_NoOpenOverItems))
+		{
+			if (ImGui::MenuItem("New Folder"))
+			{
+				std::error_code ec;
+				std::filesystem::create_directory(m_CurrentPath / "NewFolder", ec);
+				ScanProjectDirectory(m_CurrentPath);
+			}
+			if (ImGui::MenuItem("Cancel"))
+			{
+				ImGui::CloseCurrentPopup();
+			}
+			ImGui::EndPopup();
+		}
+	}
+
+	void Explorer::RenderRenameModal()
+	{
+		if (ImGui::BeginPopupModal("RenameModal", nullptr, ImGuiWindowFlags_AlwaysAutoResize))
+		{
+			std::cout << "was in renamemodal" << std::endl;
+			ImGui::Text("Enter new name:");
+			ImGui::InputText("##newName", m_RenameBuffer, sizeof(m_RenameBuffer));
+
+			ImGui::Separator();
+
+			if (ImGui::Button("OK", ImVec2(120, 0)))
+			{
+				if (m_EntryToProcess)
+				{
+					std::filesystem::path newPath = m_EntryToProcess->Path.parent_path() / m_RenameBuffer;
+					RenameItem(m_EntryToProcess->Path, newPath);
+					ScanProjectDirectory(m_CurrentPath);
+				}
+				ImGui::CloseCurrentPopup();
+			}
+
+			ImGui::SameLine();
+
+			if (ImGui::Button("Cancel", ImVec2(120, 0)))
+			{
+				ImGui::CloseCurrentPopup();
+			}
+
+			ImGui::EndPopup();
 		}
 	}
 

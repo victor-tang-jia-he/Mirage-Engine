@@ -30,6 +30,9 @@ namespace Mirage
 		std::filesystem::path m_RootPath;
 		std::vector<AssetEntry> m_Entries;
 		void* m_SelectedEntry;
+		AssetEntry* m_EntryToProcess = nullptr;
+		char m_RenameBuffer[256] = "";
+		bool m_ShouldOpenAssetPopup = false;
 
 	public:
 		Explorer(const char* _name) : IPanel(_name) {};
@@ -54,10 +57,15 @@ namespace Mirage
 
 		//Interaction
 		void HandleFileClick();
+		bool AssetContextMenu(const char* _id);
 		void BeginFileDrag();
 		void ShowContextMenu();
 		void SyncWithOS(); //Watches if you add a file through Windows
 
+		void RenderAssetGrid();
+		void RenderAssetContextMenu();
+		void RenderEmptySpaceContextMenu();
+		void RenderRenameModal();
 		void RenameItem(std::filesystem::path& _oldPath, std::filesystem::path& _newPath);
 		void MoveItem();
 	};

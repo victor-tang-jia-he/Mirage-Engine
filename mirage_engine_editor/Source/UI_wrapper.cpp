@@ -1,6 +1,8 @@
 #include "UI_wrapper.h"
 #include "vector3.h"
 
+#include <string>
+
 #include "imgui.h"
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_opengl3.h"
@@ -96,6 +98,19 @@ namespace Mirage
 		return ImGui::IsItemClicked() && !ImGui::IsItemToggledOpen();
 	}
 
+	static std::string s_NextModalToOpen = "";
+
+	void UIWrapper::RequestModal(const char* _modalName) {
+		s_NextModalToOpen = _modalName;
+	}
+
+	void UIWrapper::UpdateModalRequests() {
+		if (!s_NextModalToOpen.empty()) {
+			ImGui::OpenPopup(s_NextModalToOpen.c_str());
+			s_NextModalToOpen = "";
+		}
+	}
+
 	void UIWrapper::CreateSeparatorText(const char* _separatorName)
 	{
 		ImGui::SeparatorText(_separatorName);
@@ -117,27 +132,33 @@ namespace Mirage
 		}
 	}
 
-	void UIWrapper::BeginAssetGrid(float _cellSize, float _windowSize)
+	bool UIWrapper::BeginAssetGrid(float _cellSize, float _windowSize)
 	{
 		int colomnNbr = static_cast<int>(_windowSize / _cellSize);
 		if (colomnNbr < 1) colomnNbr = 1;
-		ImGui::BeginTable("Content", colomnNbr);
+		return ImGui::BeginTable("Content", colomnNbr);
 	}
 
-	WidgetAction UIWrapper::DrawAssetTile(const char* _name, bool _isSelected, [[maybe_unused]] void* _icon)
+	WidgetAction UIWrapper::DrawAssetTile(const char* _name, bool _isSelected, void* _icon)
 	{
 		ImGui::TableNextColumn();
 		ImGui::PushID(_name);
 
 		WidgetAction action = WidgetAction::None;
 
+		if (_icon == nullptr)
+		{
+
+		}
+
 		ImGui::BeginGroup();
 		if (_isSelected)
 		{
-			ImGui::Button("");
-			ImGui::TextWrapped(_name);
-			ImGui::EndGroup();
+
 		}
+		ImGui::Button("##icon", ImVec2(64, 64));
+		ImGui::TextWrapped(_name);
+		ImGui::EndGroup();
 
 		if (ImGui::IsItemHovered())
 		{
@@ -156,25 +177,5 @@ namespace Mirage
 	void UIWrapper::EndAssetGrid()
 	{
 		ImGui::EndTable();
-	}
-
-	bool UIWrapper::CreateSliderInt(const char* _sliderName, int* _value, int _vMin, int _vMax)
-	{
-		return ImGui::SliderInt(_sliderName, _value, _vMin, _vMax);
-	}
-
-	bool UIWrapper::CreateSliderFloat(const char* _sliderName, float* _value, float _vMin, float _vMax)
-	{
-		return ImGui::SliderFloat(_sliderName, _value, _vMin, _vMax, "%.3f");
-	}
-
-	bool UIWrapper::CreateButton(const char* _buttonName)
-	{ 
-		return ImGui::Button(_buttonName);
-	}
-
-	bool UIWrapper::CreateCheckbox(const char* _checkboxName, bool* _check)
-	{
-		return ImGui::Checkbox(_checkboxName, _check);
 	}
 }
