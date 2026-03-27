@@ -10,8 +10,8 @@ set(MY_BIN_OUTPUT_DIR "${CMAKE_SOURCE_DIR}/Build/${CMAKE_CXX_COMPILER_ID}_$<CONF
 message("[${CMAKE_PROJECT_NAME}]: Output directory: ${MY_BIN_OUTPUT_DIR}")
 
 # Set output directory for compiled libs and exe (project-level)
-set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${MY_BIN_OUTPUT_DIR}/libs")
-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${MY_BIN_OUTPUT_DIR}/libs")
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${MY_BIN_OUTPUT_DIR}/Libs")
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${MY_BIN_OUTPUT_DIR}/Libs")
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${MY_BIN_OUTPUT_DIR}")
 
 # Set C standard version
@@ -171,8 +171,7 @@ add_library(ImGui::imgui ALIAS imgui)
 # ============================================================================
 # System Engine Library (Core)
 # ============================================================================
-add_subdirectory(${CMAKE_SOURCE_DIR}/mirage_engine/engine/core)
-add_subdirectory(${CMAKE_SOURCE_DIR}/mirage_engine/tools/toolbox3D)
+add_subdirectory(${CMAKE_SOURCE_DIR}/MirageEngine/Tools/Toolbox)
 
 # Create Convenience Interface for All Dependencies
 add_library(third_party INTERFACE)
@@ -193,16 +192,15 @@ target_link_libraries(third_party INTERFACE
     imgui
     OpenGL::GL
     Toolbox
-    Core
 ) 
 
 # Engine project
 message(STATUS "Adding mirage_engine project...")
-add_subdirectory(mirage_engine)
+add_subdirectory(MirageEngine)
 
 # Editor project
 message(STATUS "Adding mirage_engine_editor project...")
-add_subdirectory(mirage_engine_editor)
+add_subdirectory(MirageEngineEditor)
 
 # Final Log
 message(STATUS "")
