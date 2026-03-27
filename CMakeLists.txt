@@ -169,6 +169,45 @@ target_compile_definitions(imgui
 add_library(ImGui::imgui ALIAS imgui)
 
 # ============================================================================
+# Tiny Object Loader
+# ============================================================================
+
+if(EXISTS "${CMAKE_SOURCE_DIR}/Libraries/TinyObjLoader" AND EXISTS "${CMAKE_SOURCE_DIR}/Libraries/TinyObjLoader/CMakeLists.txt")
+    message(STATUS "Using local TinyObjLoader")
+    set(TINYOBJLOADER_BUILD_DOCS OFF CACHE BOOL "Build documentation" FORCE)
+    set(TINYOBJLOADER_BUILD_TESTS OFF CACHE BOOL "Build tests" FORCE)
+    set(TINYOBJLOADER_BUILD_EXAMPLES OFF CACHE BOOL "Build examples" FORCE)
+    set(TINYOBJLOADER_INSTALL OFF CACHE BOOL "Generate installation target" FORCE)
+    add_subdirectory(${CMAKE_SOURCE_DIR}/Libraries/TinyObjLoader ${CMAKE_BINARY_DIR}/TinyObjLoader)
+else()
+    message(STATUS "Fetching TinyObjLoader...")
+    FetchContent_Declare(
+        tinyobjloader
+        GIT_REPOSITORY https://github.com/tinyobjloader/tinyobjloader.git
+        GIT_TAG v1.0.6
+        SOURCE_DIR ${CMAKE_SOURCE_DIR}/Libraries/TinyObjLoader
+    )
+    set(TINYOBJLOADER_BUILD_DOCS OFF CACHE BOOL "Build documentation" FORCE)
+    set(TINYOBJLOADER_BUILD_TESTS OFF CACHE BOOL "Build tests" FORCE)
+    set(TINYOBJLOADER_BUILD_EXAMPLES OFF CACHE BOOL "Build examples" FORCE)
+    set(TINYOBJLOADER_INSTALL OFF CACHE BOOL "Generate installation target" FORCE)
+    FetchContent_MakeAvailable(tinyobjloader)
+endif()
+
+if(TARGET tinyobjloader)
+    message(STATUS "TinyObjLoader target created successfully")
+    get_target_property(TINYOBJLOADER_TYPE tinyobjloader TYPE)
+    message(STATUS "TinyObjLoader target type: ${TINYOBJLOADER_TYPE}")
+else()
+    message(WARNING "TinyObjLoader target not found, checking for tinyobjloader::tinyobjloader...")
+    if(TARGET tinyobjloader::tinyobjloader)
+        message(STATUS "Found tinyobjloader::tinyobjloader target")
+    else()
+        message(FATAL_ERROR "No TinyObjLoader target found")
+    endif()
+endif()
+
+# ============================================================================
 # System Engine Library (Core)
 # ============================================================================
 add_subdirectory(${CMAKE_SOURCE_DIR}/MirageEngine/Tools/Toolbox)
