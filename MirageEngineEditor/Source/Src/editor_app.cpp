@@ -10,9 +10,8 @@ namespace Mirage
 {
 	void Mirage::EditorApp::Init(void* _windowHandle)
 	{
-		m_WindowHandle = _windowHandle;
+		m_WindowHandle = _windowHandle;;
 		UIWrapper::Init(m_WindowHandle);
-
 		m_PanelList.push_back(std::make_unique<Viewport>("Viewport"));
 		m_PanelList.push_back(std::make_unique<Hierarchy>("Hierarchy"));
 		m_PanelList.push_back(std::make_unique<Inspector>("Inspector"));
@@ -28,6 +27,7 @@ namespace Mirage
 	void Mirage::EditorApp::Update()
 	{
 		UIWrapper::BeginFrame();
+		m_MainMenuBar.DrawBar();
 
 		for (auto& panel : m_PanelList)
 		{

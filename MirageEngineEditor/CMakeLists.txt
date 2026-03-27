@@ -13,7 +13,7 @@ file(GLOB_RECURSE MIRAGE_ENGINE_EDITOR_HEADERS
     "Source/Include/*.h"
 )
 
-target_sources(MirageEngineEditor PRIVATE ${MIRAGE_ENGINE_EDITOR_SOURCES} ${MIRAGE_ENGINE_EDITOR_HEADERS})
+target_sources(MirageEngineEditor PRIVATE ${MIRAGE_ENGINE_EDITOR_SOURCES} ${MIRAGE_ENGINE_EDITOR_HEADERS} "Source/Include/main_menu_bar.h" "Source/Src/main_menu_bar.cpp")
 
 # Include directories
 target_include_directories(MirageEngineEditor PRIVATE
