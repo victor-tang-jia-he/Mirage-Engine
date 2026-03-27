@@ -2,13 +2,14 @@
 
 #include <iostream>
 #include "i_pipeline_parameters.h"
+#include <Resources/resource_interface.h>
 
 namespace MirageRHI
 {
 	class OpenGLPipeline;
 	class IShader;
 	
-	class IPipeline
+	class IPipeline : public MirageEngine::Core::Resources::IResource 
 	{
 	public:
 		virtual ~IPipeline() = default;

@@ -1,5 +1,5 @@
 #pragma once
-#include "../../../../Libraries/GLFW/include/GLFW/glfw3.h"
+#include <GLFW/glfw3.h>
 #include "event.h"
 #include <utility>
 #include <unordered_map>
