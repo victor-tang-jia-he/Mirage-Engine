@@ -1,6 +1,8 @@
 #include "UI_wrapper.h"
 #include "vector3.h"
 
+#include <string>
+
 #include "imgui.h"
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_opengl3.h"
@@ -96,6 +98,19 @@ namespace Mirage
 		return ImGui::IsItemClicked() && !ImGui::IsItemToggledOpen();
 	}
 
+	static std::string s_NextModalToOpen = "";
+
+	void UIWrapper::RequestModal(const char* _modalName) {
+		s_NextModalToOpen = _modalName;
+	}
+
+	void UIWrapper::UpdateModalRequests() {
+		if (!s_NextModalToOpen.empty()) {
+			ImGui::OpenPopup(s_NextModalToOpen.c_str());
+			s_NextModalToOpen = "";
+		}
+	}
+
 	void UIWrapper::CreateSeparatorText(const char* _separatorName)
 	{
 		ImGui::SeparatorText(_separatorName);
@@ -139,6 +154,7 @@ namespace Mirage
 		ImGui::BeginGroup();
 		if (_isSelected)
 		{
+
 		}
 		ImGui::Button("##icon", ImVec2(64, 64));
 		ImGui::TextWrapped(_name);
@@ -161,25 +177,5 @@ namespace Mirage
 	void UIWrapper::EndAssetGrid()
 	{
 		ImGui::EndTable();
-	}
-
-	bool UIWrapper::CreateSliderInt(const char* _sliderName, int* _value, int _vMin, int _vMax)
-	{
-		return ImGui::SliderInt(_sliderName, _value, _vMin, _vMax);
-	}
-
-	bool UIWrapper::CreateSliderFloat(const char* _sliderName, float* _value, float _vMin, float _vMax)
-	{
-		return ImGui::SliderFloat(_sliderName, _value, _vMin, _vMax, "%.3f");
-	}
-
-	bool UIWrapper::CreateButton(const char* _buttonName)
-	{ 
-		return ImGui::Button(_buttonName);
-	}
-
-	bool UIWrapper::CreateCheckbox(const char* _checkboxName, bool* _check)
-	{
-		return ImGui::Checkbox(_checkboxName, _check);
 	}
 }
