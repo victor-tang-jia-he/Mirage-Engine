@@ -46,6 +46,8 @@ namespace MirageEngine
 				static ResourceManager* m_instance;
 
 				MirageRHI::IRenderInterface* m_rhi = nullptr;
+
+				void LoadMeshUtility(std::string _path);
 			public:
 				static ResourceManager* Instance();
 
@@ -65,9 +67,9 @@ namespace MirageEngine
 				/// <param name="name">Name given</param>
 				/// <param name="path">File Path</param>
 				/// <returns>Texture pointer</returns>
-				static MirageRHI::ITexture* CreateTexture(const std::string& name, const std::string& path);
+				static MirageRHI::ITexture* CreateTexture(const std::string& _name, const std::string& _path);
 
-				static MirageRHI::IShader* CreateShader(const std::string& name, const std::string& path, const MirageRHI::IShader::ShaderType type);
+				static MirageRHI::IShader* CreateShader(const std::string& _name, const std::string& _path, const MirageRHI::IShader::ShaderType _type);
 
 				/// <summary>
 				/// Create a Shader
@@ -76,7 +78,7 @@ namespace MirageEngine
 				/// <param name="pathFrag">Fragment file path</param>
 				/// <param name="pathVertex">Vertex file path</param>
 				/// <returns>Shader pointer</returns>
-				static MirageRHI::IPipeline* CreatePipeline(const std::string& name,  const char* pathFrag,  const char* pathVertex, MirageRHI::IPipelineParameters* pipelineParamter);
+				static MirageRHI::IPipeline* CreatePipeline(const std::string& _name,  const char* _pathFrag,  const char* _pathVertex, MirageRHI::IPipelineParameters* _pipelineParamter);
 
 				/// <summary>
 				/// Create a Mesh
@@ -84,7 +86,7 @@ namespace MirageEngine
 				/// <param name="name">Name given</param>
 				/// <param name="path">File path</param>
 				/// <returns>Mesh pointer</returns>
-				static IMesh* CreateMesh(const std::string& name, const std::string& path);
+				static IMesh* CreateMesh(const std::string& _name, const std::string& _path);
 
 				/// <summary>
 				/// Get a resource from the the list by the name.
@@ -92,15 +94,15 @@ namespace MirageEngine
 				/// <param name="name"> : Name of the resource in string.</param>
 				/// <returns> Return an reference of the instance if it exist , otherwise it return nullptr </returns>
 				template <typename T>
-				static T* Get(const std::string& name)
+				static T* Get(const std::string& _name)
 				{
-					if (!std::is_base_of_v<IResource, T>) return nullptr;// T must inherit from IResource
+					if (!std::is_base_of_v<MirageEngine::Core::Resources::IResource, T>) return nullptr;// T must inherit from IResource
 					ResourceManager* resourceManager = ResourceManager::Instance();
 
-					auto it = resourceManager->m_resources.find(name);
+					auto it = resourceManager->m_resources.find(_name);
 					if (it != resourceManager->m_resources.end())
 					{
-						T* resource = static_cast<T*>(it->second);
+						T* resource = dynamic_cast<T*>(it->second.get());
 						return resource;
 					}
 					return nullptr;
@@ -111,9 +113,9 @@ namespace MirageEngine
 				/// </summary>
 				/// <param name="name"> : Name of the resource in string.</param>
 				/// <returns> Return true if find and deleted, return false if resources doesn't exist. </returns>
-				inline bool Delete(const std::string& name)
+				inline bool Delete(const std::string& _name)
 				{
-					return m_resources.erase(name) > 0;
+					return m_resources.erase(_name) > 0;
 				}
 
 			private:
@@ -122,7 +124,7 @@ namespace MirageEngine
 				/// </summary>
 				/// <param name="baseName">Original name</param>
 				/// <returns>New name exemple : (enter)resourceName -> (OutPut) resourceName_1 </returns>
-				std::string GenerateUniqueAssetName(const std::string& baseName);
+				std::string GenerateUniqueAssetName(const std::string& _baseName);
 
 				// Source - https://stackoverflow.com/a
 				// Posted by Max, modified by community. See post 'Timeline' for change history
@@ -131,15 +133,15 @@ namespace MirageEngine
 				/// <summary>
 				/// Remove an element from a vector list
 				/// </summary>
-				/// <param name="vec">the vector </param>
-				/// <param name="pos">the index of the element need to be removed</param>
+				/// <param name="_vec">the vector </param>
+				/// <param name="_pos">the index of the element need to be removed</param>
 				template <typename T>
-				static void remove(std::vector<T>& vec, std::size_t pos)
+				static void remove(std::vector<T>& _vec, std::size_t _pos)
 				{
-					if (pos < vec.size()) {
-						typename std::vector<T>::iterator it = vec.begin();
-						std::advance(it, pos);
-						vec.erase(it);
+					if (_pos < _vec.size()) {
+						typename std::vector<T>::iterator it = _vec.begin();
+						std::advance(it, _pos);
+						_vec.erase(it);
 					}
 				}
 			};
