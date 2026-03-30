@@ -6,6 +6,9 @@
 #include <RHI/i_texture.h>
 #include <RHI/i_render_interface.h>
 
+#include <Resources/mesh.h>
+#include <Resources/texture.h>
+
 #define TINYOBJLOADER_IMPLEMENTATION
 #include <TinyObjLoader/tiny_obj_loader.h>
 
@@ -183,11 +186,6 @@ std::string ResourceManager::GenerateUniqueAssetName(const std::string& _baseNam
 
 	return uniqueName;
 
-}
-
-IMesh::IMesh(MirageRHI::IBuffer* _vert, MirageRHI::IBuffer* _indiceBuffer, size_t _indicesCount)
-	: m_vertexBuffer(_vert), m_indicesBuffer(_indiceBuffer), m_indicesCount(_indicesCount)
-{
 }
 
 void ResourceManager::LoadMeshUtility(std::string _path,

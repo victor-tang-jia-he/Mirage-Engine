@@ -3,6 +3,8 @@
 #include <debug.h>
 #include <Components/camera.h>
 #include <Resources/resource_manager.h>
+#include <Resources/mesh.h>
+#include <Resources/texture.h>
 
 using namespace MirageEngine::Core::Input;
 using namespace MirageEngine::Core::EventSystem;
@@ -85,7 +87,7 @@ void Application::InitRHI()
 	//{
 	//	0, 1, 2, 2, 3, 0
 	//};
-	IMesh* mesh = ResourceManager::Instance()->CreateMesh("Untitled", "Assets/Obj/Untitled.obj");
+	IMesh* mesh = ResourceManager::Instance()->CreateMesh("cube", "Assets/Obj/cube.obj");
 	DEBUG_LOG("Vertex and Index Data Created");
 
 
@@ -212,7 +214,7 @@ void Application::EndPlay(MirageEngine::Core::Input::CallbackInputInfo info)
 void Application::RunMainLoop()
 {
 	using namespace MirageEngine::Core::Resources;
-	IMesh* mesh = ResourceManager::Instance()->Get<IMesh>("Untitled");
+	IMesh* mesh = ResourceManager::Instance()->Get<IMesh>("cube");
 	Matrix4 tempModel = Matrix4::CreateTransformMatrix(Vector3(0, 0, 0), Vector3(0, 0, 0), Vector3(1, 1, 1));
 	while (!glfwWindowShouldClose(m_Window))
 	{

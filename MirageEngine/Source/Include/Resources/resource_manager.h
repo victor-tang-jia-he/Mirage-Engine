@@ -27,35 +27,9 @@ namespace MirageEngine
 	namespace Core
 	{
 		namespace Resources
-		{
-			class IMesh : public IResource
-			{
-				MirageRHI::IBuffer* m_vertexBuffer = nullptr;
-				MirageRHI::IBuffer* m_indicesBuffer = nullptr;
-				size_t m_indicesCount = 0;
-
-			public:
-				IMesh(MirageRHI::IBuffer* _vert, MirageRHI::IBuffer* _frag, size_t _indicesCount);
-				~IMesh() = default;
-
-				MirageRHI::IBuffer* GetVertexBuffer() const { return m_vertexBuffer; }
-				MirageRHI::IBuffer* GetIndices() const { return m_indicesBuffer; }
-				size_t GetIndicesCount() const { return m_indicesCount; }
-
-			};
-
-			class Texture : public IResource
-			{
-				MirageRHI::IBuffer* m_textureBuffer = nullptr;
-
-			public:
-				Texture(MirageRHI::IBuffer* _textureBuffer)
-					: m_textureBuffer(_textureBuffer) {
-				};
-				~Texture() = default;
-
-				MirageRHI::IBuffer* GetTextureBuffer() const { return m_textureBuffer; }
-			};
+		{	
+			class Texture;
+			class IMesh;
 
 			class ResourceManager
 			{
