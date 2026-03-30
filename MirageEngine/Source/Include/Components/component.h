@@ -4,28 +4,32 @@
 #include <string>
 #include <stdexcept>
 
-#include <GameObject/game_object.h>
-
 namespace MirageEngine
 {
-	class Component
+	class GameObject;
+	namespace Core
 	{
-		friend class GameObject;
+		namespace Components
+		{
+			class Component
+			{
+				friend class MirageEngine::GameObject;
 
-	private:
-		std::string m_ComponentName;
-		GameObject* m_Parent;
+			protected:
+				std::string m_ComponentName;
+				GameObject* m_Parent;
 
-	public:
-		Component() = default;
-		virtual ~Component() = default;
+			public:
+				Component() = default;
+				virtual ~Component() = default;
 
-		virtual void Init();
-		virtual void Update();
+				virtual void Init() = 0;
+				virtual void Update() = 0;
 
-		// Getters
-		std::string GetName() const { return m_ComponentName; }
-		GameObject* GetParent() const { return m_Parent; }
-	};
-
+				// Getters
+				std::string GetName() const { return m_ComponentName; }
+				GameObject* GetParent() const { return m_Parent; }
+			};
+		}
+	}
 }

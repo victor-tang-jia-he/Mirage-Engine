@@ -34,7 +34,7 @@ namespace MirageEngine
 				}
 
 				MirageEngine::Core::Components::Transform& Transform() { return m_transform; }
-				MirageEngine::Core::Math::Matrix4 GetPerspective() const { return MirageEngine::Core::Math::Matrix4::GetPerspectiveMatrix(m_width, m_height, m_near, m_far, m_fov); }
+				MirageEngine::Core::Math::Matrix4 GetPerspective() const { return MirageEngine::Core::Math::Matrix4::GetPerspectiveMatrix(m_Width, m_Height, m_Near, m_Far, m_Fov); }
 				MirageEngine::Core::Math::Matrix4 GetView() const { return MirageEngine::Core::Math::Matrix4::LookAt(m_transform.GetPosition(), m_transform.GetPosition() + m_transform.Forward(), m_transform.Up()); }
 
 				// SetParameter

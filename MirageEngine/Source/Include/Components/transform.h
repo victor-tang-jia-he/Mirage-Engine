@@ -8,7 +8,7 @@ namespace MirageEngine
 	{
 		namespace Components
 		{
-			class Transform : public Component
+			class Transform : public MirageEngine::Core::Components::Component
 			{
 			private:
 				MirageEngine::Core::Math::Vector3 m_LocalPosition{ 0.f,0.f,0.f };

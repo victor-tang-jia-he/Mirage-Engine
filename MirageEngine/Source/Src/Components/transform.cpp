@@ -1,5 +1,8 @@
 #include <Components/transform.h>
 #include <matrix4.h>
+
+#include <GameObject/game_object.h>
+
 using namespace MirageEngine::Core::Components;
 using namespace MirageEngine::Core::Math;
 
@@ -11,7 +14,7 @@ Transform::Transform(Vector3 _position, Quaternion _rotation, Vector3 _scale)
 
 void Transform::Init()
 {
-	GetParent()->GetComponent("Transform");
+	//GetParent()->GetComponent("Transform");
 }
 
 void Transform::Update()
