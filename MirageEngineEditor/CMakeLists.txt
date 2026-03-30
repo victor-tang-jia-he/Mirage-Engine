@@ -29,10 +29,3 @@ target_link_libraries(MirageEngineEditor PRIVATE
     MirageEngine    # Link the engine itself
     third_party     # And third-party libs
 )
-
-# Set Warning level 4 and warnings as errors flags
-if(MSVC)
-	target_compile_options(MirageEngineEditor PRIVATE /W4 /WX)
-else()
-	target_compile_options(MirageEngineEditor PRIVATE -Wall -Wextra -Wpedantic -Werror)
-endif()

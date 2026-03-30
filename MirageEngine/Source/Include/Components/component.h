@@ -17,7 +17,7 @@ namespace MirageEngine
 
 			protected:
 				std::string m_ComponentName;
-				GameObject* m_Parent;
+				GameObject* m_Owner;
 
 			public:
 				Component() = default;
@@ -28,7 +28,7 @@ namespace MirageEngine
 
 				// Getters
 				std::string GetName() const { return m_ComponentName; }
-				GameObject* GetParent() const { return m_Parent; }
+				GameObject* GetOwner() const { return m_Owner; }
 			};
 		}
 	}

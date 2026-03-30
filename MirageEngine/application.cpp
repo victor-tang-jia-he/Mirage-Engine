@@ -2,6 +2,7 @@
 #include <OpenGL/openGL_render_interface.h>
 #include <debug.h>
 #include <Components/camera.h>
+#include <GameObject/game_object.h>
 
 using namespace MirageEngine::Core::Input;
 using namespace MirageEngine::Core::EventSystem;
@@ -13,6 +14,7 @@ void Application::InitApp()
 	InitRHI();
 	InitScene();
 	InitInput();
+	InitGameObject();
 }
 
 void Application::InitWindow()
@@ -156,6 +158,14 @@ void Application::InitInput()
 	// bind camera
 	m_EngineCamera->BindInput(editorMapping);
 	DEBUG_LOG("Input system bind");
+}
+
+void Application::InitGameObject()
+{
+	MirageEngine::GameObject* obj = new MirageEngine::GameObject(nullptr, "Commelin");
+	MirageEngine::GameObject* obj2 = new MirageEngine::GameObject(obj, "Diego");
+
+	obj->AddChild("Diego");
 }
 
 void Application::PrintInput(MirageEngine::Core::Input::CallbackInputInfo info)

@@ -29,6 +29,21 @@ MirageEngine::GameObject::GameObject(GameObject* _parent, std::string _name, boo
 	AddComponent<Transform>();
 }
 
+void MirageEngine::GameObject::AddChild(std::string _name)
+{
+	m_Childrens.push_back(new GameObject(this, _name));
+}
+
+void MirageEngine::GameObject::AddChild(std::string _name, bool _isStatic)
+{
+	m_Childrens.push_back(new GameObject(this, _name, _isStatic));
+}
+
+void MirageEngine::GameObject::AddChild(std::string _name, bool _isStatic, bool _isActive)
+{
+	m_Childrens.push_back(new GameObject(this, _name, _isStatic, _isActive));
+}
+
 MirageEngine::GameObject::~GameObject()
 {
 }

@@ -35,6 +35,10 @@ namespace MirageEngine
 		GameObject(GameObject* _parent, std::string _name, bool _isStatic);
 		GameObject(GameObject* _parent, std::string _name, bool _isStatic, bool _isActive);
 
+		void AddChild(std::string _name);
+		void AddChild(std::string _name, bool _isStatic);
+		void AddChild(std::string _name, bool _isStatic, bool _isActive);
+
 		~GameObject();
 
 		void SetActive(bool _isActive);
@@ -44,13 +48,13 @@ namespace MirageEngine
 		T* AddComponent()
 		{
 			T* component = new T();
-			component->m_Parent = this;
+			component->m_Owner = this;
 			// Name of the type ID
 			component->m_ComponentName = typeid(T).name();
 			m_Components.push_back(component);
 			return component;
 		}
-
+		
 		void RemoveComponent(MirageEngine::Core::Components::Component* _component);
 		MirageEngine::Core::Components::Component* GetComponent(std::string _name);
 

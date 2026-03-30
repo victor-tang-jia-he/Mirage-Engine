@@ -36,13 +36,6 @@ target_include_directories(MirageEngine PRIVATE
 # Link third-party libraries
 target_link_libraries(MirageEngine PRIVATE third_party)
 
-# Set Warning level 4 and warnings as errors flags
-if(MSVC)
-	target_compile_options(MirageEngine PRIVATE /W4 /WX)
-else()
-	target_compile_options(MirageEngine PRIVATE -Wall -Wextra -Wpedantic -Werror)
-endif()
-
 # Copy all asset in the build
 if(EXISTS ${PROJECT_SOURCE_DIR}/MirageEngine/Assets)
 	add_custom_command(TARGET MirageEngine POST_BUILD

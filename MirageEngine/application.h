@@ -85,6 +85,7 @@ private:
 	void InitRHI();
 	void InitScene(); // TODO
 	void InitInput();
+	void InitGameObject();
 	void PrintInput(MirageEngine::Core::Input::CallbackInputInfo info); // debug
 	void EditorPrintInput(MirageEngine::Core::Input::CallbackInputInfo info); // debug
 	void StartPlay(MirageEngine::Core::Input::CallbackInputInfo info);
