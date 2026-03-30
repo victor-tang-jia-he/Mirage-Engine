@@ -45,20 +45,15 @@ private:
 	IDevice* m_Device = nullptr;
 	ISwapChain* m_SwapChain = nullptr;
 	IRenderPass* m_RenderPass = nullptr;
-	IShader* m_VertexShader = nullptr;
-	IShader* m_FragmentShader = nullptr;
 	IPipelineParameters* m_PipelineParameters = nullptr;
-	IPipeline* m_Pipeline = nullptr;
 	IFramebuffer* m_Framebuffer = nullptr;
-	IBuffer* m_BufferTriangleVertices = nullptr;
-	IBuffer* m_BufferTriangleIndices = nullptr;
 	IBuffer* m_TextureBuffer = nullptr;
 	IUniformBuffer* m_UniformBuffer = nullptr;
 	ICommandBuffer* m_CommandBuffer = nullptr;
 
 	// TODO : Change to a list or mapped list (Mesh)
-	std::vector<LitVertex> m_VerticesQuad;
-	std::vector<uint32_t> m_IndicesQuad;
+	//std::vector<LitVertex> m_VerticesQuad;
+	//std::vector<uint32_t> m_IndicesQuad;
 	uint32_t m_IndicesCount = 0;
 
 	// TODO : Edit in map
@@ -67,6 +62,7 @@ private:
 
 	MirageEngine::Core::Components::Camera* m_EngineCamera = nullptr;
 public:
+	IPipeline* m_Pipeline = nullptr;
 	Application(IRenderInterface::API _api = IRenderInterface::API::OPENGL) : m_API(_api) {}
 
 	void InitApp();
