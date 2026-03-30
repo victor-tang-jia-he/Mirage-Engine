@@ -2,26 +2,45 @@
 
 #include <iostream>
 #include <string>
-
-class Components;
+#include <vector>
 
 namespace MirageEngine
 {
+	class Component;
+	class Transform;
+
 	// Static : Transform matrix doesn't update every frame
 	// Dynamic : Transform matrix updates every frame
 
 	class GameObject
 	{
 	private:
+		// Game Object variables
 		std::string m_Name = "";
+		std::vector<Component*> m_Components;
+		std::vector<GameObject*> m_Childrens;
+		GameObject* m_Parent;
+
+		// Editor parameters
 		bool m_bIsActive = true;
 		bool m_bIsStatic = false;
 
 	public:
-		GameObject(std::string _name);
+		Transform* m_Transform = nullptr;
+
+	public:
+		// Game Object Constructor for create default Game Object or with name and other parameters.
+		GameObject(GameObject* _parent, std::string _name);
+		GameObject(GameObject* _parent, std::string _name, bool _isStatic);
+		GameObject(GameObject* _parent, std::string _name, bool _isStatic, bool _isActive);
+
 		~GameObject();
 
 		void SetActive(bool _isActive);
+
+		// Components Methods
+		Component* AddComponent(Component* _component);
+		void RemoveComponent(Component* _component);
 
 		// Getters
 		std::string GetName() const { return m_Name; }

@@ -1,25 +1,36 @@
 #pragma once
 #include <quaternion.h>
 
+#include "component.h"
+
 namespace MirageEngine
 {
 	namespace Core
 	{
 		namespace Components
 		{
-			class Transform
+			class Transform : public Component
 			{
-				MirageEngine::Core::Math::Vector3 position{ 0,0,0 };
-				MirageEngine::Core::Math::Vector3 scale{ 1,1,1 };
-				MirageEngine::Core::Math::Quaternion rotation{ 0,0,0 };
+			private:
+				MirageEngine::Core::Math::Vector3 m_LocalPosition{ 0.f,0.f,0.f };
+				MirageEngine::Core::Math::Vector3 m_LocalScale{ 1.f,1.f,1.f };
+				MirageEngine::Core::Math::Quaternion m_LocalRotation{ 0.f,0.f,0.f };
 
-				MirageEngine::Core::Math::Matrix4 localMatrix;
-				bool dirty = true;
+				MirageEngine::Core::Math::Matrix4 m_LocalMatrix;
+				MirageEngine::Core::Math::Matrix4 m_WorldMatrix;
+
+				bool m_bDirty = true;
 
 				// utility
 				MirageEngine::Core::Math::Vector3 Rotate(const MirageEngine::Core::Math::Quaternion& q, const MirageEngine::Core::Math::Vector3& v) const;
 
 			public:
+				Transform() = default;
+				Transform(MirageEngine::Core::Math::Vector3 _position, MirageEngine::Core::Math::Quaternion _rotation, MirageEngine::Core::Math::Vector3 _scale);
+
+				void Init() override;
+				void Update() override;
+
 				void LookAt(const MirageEngine::Core::Math::Vector3& target);
 
 				MirageEngine::Core::Math::Vector3 Forward() const;
@@ -32,10 +43,10 @@ namespace MirageEngine
 				void SetRotation(MirageEngine::Core::Math::Quaternion _rotation);
 
 				MirageEngine::Core::Math::Matrix4 GetMatrix();
-				MirageEngine::Core::Math::Vector3 GetPosition() const { return position; }
-				MirageEngine::Core::Math::Vector3 GetScale() const { return scale; }
-				MirageEngine::Core::Math::Quaternion GetRotation()  const { return rotation; }
-				MirageEngine::Core::Math::Vector3 GetRotationEuler() const { return rotation.ToEulerAngle() ; }
+				MirageEngine::Core::Math::Vector3 GetPosition() const { return m_LocalPosition; }
+				MirageEngine::Core::Math::Vector3 GetScale() const { return m_LocalScale; }
+				MirageEngine::Core::Math::Quaternion GetRotation()  const { return m_LocalRotation; }
+				MirageEngine::Core::Math::Vector3 GetRotationEuler() const { return m_LocalRotation.ToEulerAngle() ; }
 
 			};
 		}
