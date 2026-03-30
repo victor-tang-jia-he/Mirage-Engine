@@ -212,7 +212,7 @@ void Application::RunMainLoop()
 
 		InputSystem::UpdateHeldInput();
 		// Setup to Draw
-		m_CommandBuffer->BeginRenderPass(m_RenderPass, m_SwapChain);
+		m_CommandBuffer->BeginRenderPass(m_RenderPass);
 		m_CommandBuffer->BeginDraw();
 		m_CommandBuffer->BindPipeline(m_Pipeline);
 		m_CommandBuffer->BindBuffer(m_BufferTriangleIndices);
@@ -240,7 +240,7 @@ void Application::BeginFrame() {
 		glfwSetWindowShouldClose(m_Window, true);
 
 	InputSystem::UpdateHeldInput();
-	m_CommandBuffer->BeginRenderPass(m_RenderPass, m_SwapChain);
+	m_CommandBuffer->BeginRenderPass(m_RenderPass);
 	m_CommandBuffer->BeginDraw();
 }
 

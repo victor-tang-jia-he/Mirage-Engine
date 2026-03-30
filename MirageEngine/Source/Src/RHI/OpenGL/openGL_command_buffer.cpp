@@ -20,9 +20,9 @@ void MirageRHI::OpenGLCommandBuffer::ApplyPipelineParameters(IPipeline* _pipelin
 	_pipeline->API_OpenGL().ApplyParameters();
 }
 
-void MirageRHI::OpenGLCommandBuffer::BeginRenderPass(IRenderPass* _renderPass, ISwapChain* _swapchain)
+void MirageRHI::OpenGLCommandBuffer::BeginRenderPass(IRenderPass* _renderPass)
 {
-	_renderPass->API_OpenGL().Begin(_swapchain);
+	_renderPass->API_OpenGL().Begin();
 }
 
 void MirageRHI::OpenGLCommandBuffer::DrawIndexed(uint32_t _indexCount)
