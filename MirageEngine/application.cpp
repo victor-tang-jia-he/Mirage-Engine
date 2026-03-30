@@ -93,12 +93,13 @@ void Application::InitRHI()
 	m_Instance->Create("Mirage");
 	m_Surface->Create(m_Window, m_Width, m_Height);
 	m_Device->Create();
-	m_SwapChain->Create();
+	m_SwapChain->Create(2, m_Width, m_Height);
 	m_RenderPass->Create(Vector4(0.f, 0.5f, 0.5f, 1.0f), 1.0f);
 	m_VertexShader->Create("Assets/Shaders/vertex.glsl", MirageRHI::IShader::ShaderType::Vertex);
 	m_FragmentShader->Create("Assets/Shaders/fragment.glsl", MirageRHI::IShader::ShaderType::Fragment);
 	m_PipelineParameters->Create(MirageRHI::VertexType::PBR, MirageRHI::CullingType::None, true);
 	m_Pipeline->Create(m_VertexShader, m_FragmentShader, m_PipelineParameters);
+	m_Framebuffer->Create(m_Width, m_Height);
 	m_BufferTriangleVertices->Create(m_VerticesQuad.data(), m_VerticesQuad.size() * sizeof(MirageRHI::LitVertex), MirageRHI::IBuffer::BufferType::Vertices);
 	m_BufferTriangleIndices->Create(m_IndicesQuad.data(), m_IndicesQuad.size() * sizeof(MirageRHI::LitVertex), MirageRHI::IBuffer::BufferType::Indices);
 	m_TextureBuffer->Create("Assets/Textures/Mirage.png", MirageRHI::IBuffer::BufferType::Texture);
@@ -211,7 +212,7 @@ void Application::RunMainLoop()
 
 		InputSystem::UpdateHeldInput();
 		// Setup to Draw
-		m_CommandBuffer->BeginRenderPass(m_RenderPass);
+		m_CommandBuffer->BeginRenderPass(m_RenderPass, m_SwapChain);
 		m_CommandBuffer->BeginDraw();
 		m_CommandBuffer->BindPipeline(m_Pipeline);
 		m_CommandBuffer->BindBuffer(m_BufferTriangleIndices);
@@ -235,12 +236,11 @@ bool Application::IsRunning() const {
 
 void Application::BeginFrame() {
 	glfwPollEvents();
-
 	if (glfwGetKey(m_Window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 		glfwSetWindowShouldClose(m_Window, true);
 
 	InputSystem::UpdateHeldInput();
-	m_CommandBuffer->BeginRenderPass(m_RenderPass);
+	m_CommandBuffer->BeginRenderPass(m_RenderPass, m_SwapChain);
 	m_CommandBuffer->BeginDraw();
 }
 

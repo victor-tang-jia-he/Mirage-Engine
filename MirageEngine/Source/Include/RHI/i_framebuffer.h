@@ -16,9 +16,5 @@ namespace MirageRHI
 
 		virtual OpenGLFramebuffer& API_OpenGL() { throw std::runtime_error("Bad API Call : object is not an OpenGLFramebuffer"); }
 		virtual uint32_t GetFrameTexture() const = 0;
-
-		void RescaleFrameBuffer(uint32_t _width, uint32_t _height);
-		void Bind() const;
-		void Unbind() const;
 	};
 }

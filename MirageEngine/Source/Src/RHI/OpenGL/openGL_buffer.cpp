@@ -29,7 +29,7 @@ void OpenGLBuffer::Create(const void* _data, size_t _size, BufferType _type)
     }
 }
 
-void MirageRHI::OpenGLBuffer::Create(std::filesystem::path const& _filename, BufferType _type)
+void MirageRHI::OpenGLBuffer::Create(const std::filesystem::path& _filename, BufferType _type)
 {
     m_Type = _type;
 
@@ -110,7 +110,7 @@ void MirageRHI::OpenGLBuffer::CreateTexture(const void* _data, size_t _size)
     stbi_image_free(data);
 }
 
-void MirageRHI::OpenGLBuffer::LoadTexture(std::filesystem::path const& _filename)
+void MirageRHI::OpenGLBuffer::LoadTexture(const std::filesystem::path& _filename)
 {
     stbi_set_flip_vertically_on_load(true);
 

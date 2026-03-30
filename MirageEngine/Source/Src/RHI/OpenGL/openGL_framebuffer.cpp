@@ -46,7 +46,7 @@ void MirageRHI::OpenGLFramebuffer::Destroy()
 	glDeleteRenderbuffers(1, &m_RBO);
 }
 
-void MirageRHI::OpenGLFramebuffer::RescaleFrameBuffer(uint32_t _width, uint32_t _height)
+void MirageRHI::OpenGLFramebuffer::RescaleFrameBuffer(uint32_t _width, uint32_t _height) const
 {
 	glBindTexture(GL_TEXTURE_2D, m_Texture);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, _width, _height, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
