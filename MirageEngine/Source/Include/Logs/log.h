@@ -112,10 +112,9 @@ namespace Logger
 
 		void Append(const std::string& msg)
 		{
-			std::lock_guard<std::mutex> lock(m_mutex);
-
+			m_mutex.lock();
 			m_buffer << msg;
-
+			m_mutex.unlock();
 			// If the buffer grows too large we flush immediately.
 			// This prevents excessive memory growth.
 			if (m_buffer.str().size() > BUFFER_SIZE)
@@ -124,6 +123,7 @@ namespace Logger
 
 		void Flush()
 		{
+			std::lock_guard<std::mutex> lock(m_mutex);
 			if (m_buffer.str().size() > 0)
 			{
 				// Output the buffered log message to the console only in debug mode. In release mode, we skip this step to improve performance.
@@ -256,7 +256,6 @@ namespace Logger
 		// - buffering could delay critical diagnostics
 		if (type == LogLevel::Error || type == LogLevel::Fatal)
 		{
-			std::lock_guard<std::mutex> lock(m_mutex);
 			GLogBuffer.Flush();        // Flush buffer before writing to stderr to maintain log order
 
 			std::lock_guard<std::mutex> lock(GetErrorMutex());

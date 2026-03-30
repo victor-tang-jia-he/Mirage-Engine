@@ -2,6 +2,7 @@
 #include <OpenGL/openGL_render_interface.h>
 #include <debug.h>
 #include <Components/camera.h>
+#include <Resources/resource_manager.h>
 
 using namespace MirageEngine::Core::Input;
 using namespace MirageEngine::Core::EventSystem;
@@ -45,6 +46,7 @@ void Application::InitWindow()
 
 void Application::InitRHI()
 {
+	using namespace MirageEngine::Core::Resources;
 	// Select RHI API
 	switch (m_API)
 	{
@@ -55,6 +57,7 @@ void Application::InitRHI()
 		DEBUG_THROW("Unsupported RHI API");
 	}
 	DEBUG_LOG("Render Interface Created");
+	ResourceManager::Instance()->Init(m_RenderInterface);
 
 	// Instantiate All Classes
 	m_Instance = m_RenderInterface->InstantiateInstance();
@@ -62,30 +65,27 @@ void Application::InitRHI()
 	m_Device = m_RenderInterface->InstantiateDevice();
 	m_SwapChain = m_RenderInterface->InstantiateSwapChain();
 	m_RenderPass = m_RenderInterface->InstantiateRenderPass();
-	m_VertexShader = m_RenderInterface->InstantiateShader();
-	m_FragmentShader = m_RenderInterface->InstantiateShader();
 	m_PipelineParameters = m_RenderInterface->InstantiatePipelineParameters();
 	m_Pipeline = m_RenderInterface->InstantiatePipeline();
 	m_Framebuffer = m_RenderInterface->InstantiateFramebuffer();
-	m_BufferTriangleVertices = m_RenderInterface->InstantiateBuffer();
-	m_BufferTriangleIndices = m_RenderInterface->InstantiateBuffer();
 	m_TextureBuffer = m_RenderInterface->InstantiateBuffer();
 	m_UniformBuffer = m_RenderInterface->InstantiateUniformBuffer();
 	m_CommandBuffer = m_RenderInterface->InstantiateCommandBuffer();
 	DEBUG_LOG("All Classes Instantiated");
 
-	m_VerticesQuad = // Set Vertices to draw Triangle
-	{
-		{{1.f, 1.f, 0.0f}, {1.0f, 0.0f, 0.0f}, {1.0f, 1.0f}},
-		{{1.f, -1.f, 0.0f}, {0.0f, 1.0f, 0.0f}, {1.0f, 0.0f}},
-		{{-1.f, -1.f, 0.0f}, {0.0f, 0.0f, 1.0f}, {0.0f, 0.0f}},
-		{{-1.f, 1.f, 0.0f}, {0.0f, 0.0f, 1.0f}, {0.0f, 1.0f}}
-	};
+	//m_VerticesQuad = // Set Vertices to draw Triangle
+	//{
+	//	{{1.f, 1.f, 0.0f}, {1.0f, 0.0f, 0.0f}, {1.0f, 1.0f}},
+	//	{{1.f, -1.f, 0.0f}, {0.0f, 1.0f, 0.0f}, {1.0f, 0.0f}},
+	//	{{-1.f, -1.f, 0.0f}, {0.0f, 0.0f, 1.0f}, {0.0f, 0.0f}},
+	//	{{-1.f, 1.f, 0.0f}, {0.0f, 0.0f, 1.0f}, {0.0f, 1.0f}}
+	//};
 
-	m_IndicesQuad = // Set Indexes to draw Triangle
-	{
-		0, 1, 2, 2, 3, 0
-	};
+	//m_IndicesQuad = // Set Indexes to draw Triangle
+	//{
+	//	0, 1, 2, 2, 3, 0
+	//};
+	IMesh* mesh = ResourceManager::Instance()->CreateMesh("Untitled", "Assets/Obj/Untitled.obj");
 	DEBUG_LOG("Vertex and Index Data Created");
 
 
@@ -95,16 +95,25 @@ void Application::InitRHI()
 	m_Device->Create();
 	m_SwapChain->Create();
 	m_RenderPass->Create(Vector4(0.2f, 0, 0.1f, 1.0f), 1.0f);
-	m_VertexShader->Create("Assets/Shaders/vertex.glsl", MirageRHI::IShader::ShaderType::Vertex);
-	m_FragmentShader->Create("Assets/Shaders/fragment.glsl", MirageRHI::IShader::ShaderType::Fragment);
+	
+	
+	ResourceManager::Instance()->CreateShader("vertex", "Assets/Shaders/vertex.glsl", MirageRHI::IShader::ShaderType::Vertex);
+	ResourceManager::Instance()->CreateShader("fragment", "Assets/Shaders/fragment.glsl", MirageRHI::IShader::ShaderType::Fragment);
+	//m_VertexShader = ResourceManager::Instance()->Get<MirageRHI::IShader>("vertex");
+	//m_VertexShader->Create("Assets/Shaders/vertex.glsl", MirageRHI::IShader::ShaderType::Vertex);
+	//m_FragmentShader->Create("Assets/Shaders/fragment.glsl", MirageRHI::IShader::ShaderType::Fragment);
 	m_PipelineParameters->Create(MirageRHI::VertexType::PBR, MirageRHI::CullingType::None, true);
-	m_Pipeline->Create(m_VertexShader, m_FragmentShader, m_PipelineParameters);
-	m_BufferTriangleVertices->Create(m_VerticesQuad.data(), m_VerticesQuad.size() * sizeof(MirageRHI::LitVertex), MirageRHI::IBuffer::BufferType::Vertices);
-	m_BufferTriangleIndices->Create(m_IndicesQuad.data(), m_IndicesQuad.size() * sizeof(MirageRHI::LitVertex), MirageRHI::IBuffer::BufferType::Indices);
-	m_TextureBuffer->Create("Assets/Textures/cat.png", MirageRHI::IBuffer::BufferType::Texture);
+	m_Pipeline = ResourceManager::Instance()->CreatePipeline("pipeline",  "Assets/Shaders/fragment.glsl", "Assets/Shaders/vertex.glsl", m_PipelineParameters);
+	//m_Pipeline->Create(m_VertexShader, m_FragmentShader, m_PipelineParameters);
+
+
+	//m_BufferTriangleVertices->Create(m_VerticesQuad.data(), m_VerticesQuad.size() * sizeof(MirageRHI::LitVertex), MirageRHI::IBuffer::BufferType::Vertices);
+	//m_BufferTriangleIndices->Create(m_IndicesQuad.data(), m_IndicesQuad.size() * sizeof(MirageRHI::LitVertex), MirageRHI::IBuffer::BufferType::Indices);
+	//m_TextureBuffer->Create("Assets/Textures/cat.png", MirageRHI::IBuffer::BufferType::Texture);
+	m_TextureBuffer = ResourceManager::Instance()->CreateTexture("Cat" ,"Assets/Textures/cat.png")->GetTextureBuffer();
 	m_UniformBuffer->Create();
 	m_CommandBuffer->Create();
-	m_IndicesCount = (uint32_t)(m_IndicesQuad.size());
+	m_IndicesCount = (uint32_t)mesh->GetIndicesCount();
 	DEBUG_LOG("All Classes Created");
 }
 
@@ -202,8 +211,9 @@ void Application::EndPlay(MirageEngine::Core::Input::CallbackInputInfo info)
 
 void Application::RunMainLoop()
 {
+	using namespace MirageEngine::Core::Resources;
+	IMesh* mesh = ResourceManager::Instance()->Get<IMesh>("Untitled");
 	Matrix4 tempModel = Matrix4::CreateTransformMatrix(Vector3(0, 0, 0), Vector3(0, 0, 0), Vector3(1, 1, 1));
-	uint32_t indicesTriangleListSize = (uint32_t)(m_IndicesQuad.size());
 	while (!glfwWindowShouldClose(m_Window))
 	{
 		if (glfwGetKey(m_Window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
@@ -214,14 +224,14 @@ void Application::RunMainLoop()
 		m_CommandBuffer->BeginRenderPass(m_RenderPass);
 		m_CommandBuffer->BeginDraw();
 		m_CommandBuffer->BindPipeline(m_Pipeline);
-		m_CommandBuffer->BindBuffer(m_BufferTriangleIndices);
-		m_CommandBuffer->BindBuffer(m_BufferTriangleVertices);
+		m_CommandBuffer->BindBuffer(mesh->GetIndices());
+		m_CommandBuffer->BindBuffer(mesh->GetVertexBuffer());
 		m_CommandBuffer->BindBuffer(m_TextureBuffer);
 		m_CommandBuffer->ApplyPipelineParameters(m_Pipeline);
 		m_UniformBuffer->SetView(m_EngineCamera->GetView());
 		m_UniformBuffer->SetProjection(m_EngineCamera->GetPerspective());
 		m_UniformBuffer->UpdateUniformBuffer(m_Pipeline, tempModel);
-		m_CommandBuffer->DrawIndexed(indicesTriangleListSize);
+		m_CommandBuffer->DrawIndexed((uint32_t)(mesh->GetIndicesCount()));
 		m_CommandBuffer->EndDraw();
 		m_CommandBuffer->EndRenderPass();
 		m_CommandBuffer->SubmitAndPresent(m_SwapChain, m_Surface);
@@ -246,9 +256,12 @@ void Application::BeginFrame() {
 
 void Application::RenderScene()
 {
+	using namespace MirageEngine::Core::Resources;
+
+	IMesh* mesh = ResourceManager::Instance()->Get<IMesh>("Untitled");
 	m_CommandBuffer->BindPipeline(m_Pipeline);
-	m_CommandBuffer->BindBuffer(m_BufferTriangleIndices);
-	m_CommandBuffer->BindBuffer(m_BufferTriangleVertices);
+	m_CommandBuffer->BindBuffer(mesh->GetIndices());
+	m_CommandBuffer->BindBuffer(mesh->GetVertexBuffer());
 	m_CommandBuffer->BindBuffer(m_TextureBuffer);
 	m_CommandBuffer->ApplyPipelineParameters(m_Pipeline);
 	m_UniformBuffer->SetView(m_EngineCamera->GetView());

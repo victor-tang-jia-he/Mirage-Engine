@@ -35,7 +35,7 @@ namespace MirageEngine
 				size_t m_indicesCount = 0;
 
 			public:
-				IMesh(MirageRHI::IBuffer* vert, MirageRHI::IBuffer* frag, size_t _indicesCount);
+				IMesh(MirageRHI::IBuffer* _vert, MirageRHI::IBuffer* _frag, size_t _indicesCount);
 				~IMesh() = default;
 
 				MirageRHI::IBuffer* GetVertexBuffer() const { return m_vertexBuffer; }
@@ -44,19 +44,32 @@ namespace MirageEngine
 
 			};
 
+			class Texture : public IResource
+			{
+				MirageRHI::IBuffer* m_textureBuffer = nullptr;
+
+			public:
+				Texture(MirageRHI::IBuffer* _textureBuffer)
+					: m_textureBuffer(_textureBuffer) {
+				};
+				~Texture() = default;
+
+				MirageRHI::IBuffer* GetTextureBuffer() const { return m_textureBuffer; }
+			};
+
 			class ResourceManager
 			{
 				friend class IResource;
 
 				std::unordered_map<std::string, std::unique_ptr<IResource>> m_resources;
-				
+
 				std::unordered_map<std::string, std::shared_ptr<MirageRHI::IShader>> m_shaderCache;
 
 				static ResourceManager* m_instance;
 
 				MirageRHI::IRenderInterface* m_rhi = nullptr;
 
-				void LoadMeshUtility(std::string _path, std::vector<MirageRHI::LitVertex>& _vertices, std::vector<uint32_t>& indices);
+				void LoadMeshUtility(std::string _path, std::vector<MirageRHI::LitVertex>& _vertices, std::vector<uint32_t>& _indices);
 			public:
 				static ResourceManager* Instance();
 
@@ -65,7 +78,7 @@ namespace MirageEngine
 				void Init(MirageRHI::IRenderInterface* _rhi);
 
 				ResourceManager() = default;
-				~ResourceManager() = default;
+				~ResourceManager();
 				// -------------------------------------------------------------------------------- //    
 				// Basic Constructor 
 				// -------------------------------------------------------------------------------- //
@@ -76,7 +89,7 @@ namespace MirageEngine
 				/// <param name="name">Name given</param>
 				/// <param name="path">File Path</param>
 				/// <returns>Texture pointer</returns>
-				static MirageRHI::ITexture* CreateTexture(const std::string& _name, const std::string& _path);
+				static Texture* CreateTexture(const std::string& _name, const std::string& _path);
 
 				static MirageRHI::IShader* CreateShader(const std::string& _name, const std::string& _path, const MirageRHI::IShader::ShaderType _type);
 
@@ -87,7 +100,7 @@ namespace MirageEngine
 				/// <param name="pathFrag">Fragment file path</param>
 				/// <param name="pathVertex">Vertex file path</param>
 				/// <returns>Shader pointer</returns>
-				static MirageRHI::IPipeline* CreatePipeline(const std::string& _name,  const char* _pathFrag,  const char* _pathVertex, MirageRHI::IPipelineParameters* _pipelineParamter);
+				static MirageRHI::IPipeline* CreatePipeline(const std::string& _name, const char* _pathFrag, const char* _pathVertex, MirageRHI::IPipelineParameters* _pipelineParamter);
 
 				/// <summary>
 				/// Create a Mesh
@@ -148,7 +161,7 @@ namespace MirageEngine
 				template <typename T>
 				static void remove(std::vector<T>& _vec, std::size_t _pos)
 				{
-					if (_pos < _vec.size()) 
+					if (_pos < _vec.size())
 					{
 						typename std::vector<T>::iterator it = _vec.begin();
 						std::advance(it, _pos);
