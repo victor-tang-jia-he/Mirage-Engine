@@ -6,6 +6,7 @@
 #include <Resources/resource_interface.h>
 #include <RHI/i_shader.h>
 #include <memory>
+#include <vector3.h>
 //#include <Logs/log_macro.h>
 
 //DECLARE_LOG_CATEGORY_EXTERN(LogResourceManager)
@@ -18,6 +19,7 @@ namespace MirageRHI
 	class IBuffer;
 	class IRenderInterface;
 	struct IPipelineParameters;
+	struct LitVertex;
 }
 
 namespace MirageEngine
@@ -26,13 +28,20 @@ namespace MirageEngine
 	{
 		namespace Resources
 		{
-			class IMesh
+			class IMesh : public IResource
 			{
-				MirageRHI::IBuffer* m_vertexBuffer;
-				MirageRHI::IBuffer* m_fragmentBuffer;
+				MirageRHI::IBuffer* m_vertexBuffer = nullptr;
+				MirageRHI::IBuffer* m_indicesBuffer = nullptr;
+				size_t m_indicesCount = 0;
 
 			public:
-				IMesh(MirageRHI::IBuffer* vert, MirageRHI::IBuffer* frag);
+				IMesh(MirageRHI::IBuffer* vert, MirageRHI::IBuffer* frag, size_t _indicesCount);
+				~IMesh() = default;
+
+				MirageRHI::IBuffer* GetVertexBuffer() const { return m_vertexBuffer; }
+				MirageRHI::IBuffer* GetIndices() const { return m_indicesBuffer; }
+				size_t GetIndicesCount() const { return m_indicesCount; }
+
 			};
 
 			class ResourceManager
@@ -47,7 +56,7 @@ namespace MirageEngine
 
 				MirageRHI::IRenderInterface* m_rhi = nullptr;
 
-				void LoadMeshUtility(std::string _path);
+				void LoadMeshUtility(std::string _path, std::vector<MirageRHI::LitVertex>& _vertices, std::vector<uint32_t>& indices);
 			public:
 				static ResourceManager* Instance();
 
@@ -105,6 +114,7 @@ namespace MirageEngine
 						T* resource = dynamic_cast<T*>(it->second.get());
 						return resource;
 					}
+					//LOG(logWarning, LogResourceManager,"Resource Manager", "Resource with name '%s' not found.", _name.c_str());
 					return nullptr;
 				}
 
@@ -138,7 +148,8 @@ namespace MirageEngine
 				template <typename T>
 				static void remove(std::vector<T>& _vec, std::size_t _pos)
 				{
-					if (_pos < _vec.size()) {
+					if (_pos < _vec.size()) 
+					{
 						typename std::vector<T>::iterator it = _vec.begin();
 						std::advance(it, _pos);
 						_vec.erase(it);

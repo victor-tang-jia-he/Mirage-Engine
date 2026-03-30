@@ -5,9 +5,9 @@
 #include <RHI/OpenGL/openGL_shader.h>
 #include <RHI/i_texture.h>
 #include <RHI/i_render_interface.h>
-#include <TinyObjLoader/tiny_obj_loader.h>
 
 #define TINYOBJLOADER_IMPLEMENTATION
+#include <TinyObjLoader/tiny_obj_loader.h>
 
 //DEFINE_LOG_CATEGORY(LogResourceManager)
 
@@ -27,7 +27,7 @@ void ResourceManager::Init(MirageRHI::IRenderInterface* _rhi)
 	m_rhi = _rhi; // set for later creating resource
 }
 
-MirageRHI::ITexture* ResourceManager::CreateTexture(const std::string& , const std::string& )
+MirageRHI::ITexture* ResourceManager::CreateTexture(const std::string&, const std::string&)
 {
 	ResourceManager* rm = ResourceManager::Instance();
 	if (!rm)
@@ -84,14 +84,14 @@ MirageRHI::IPipeline* ResourceManager::CreatePipeline(const std::string& _name, 
 	{
 		newAssetName = rm->GenerateUniqueAssetName(_name);
 	}
-	
+
 	// pre define ptr
 	MirageRHI::IShader* frag;
 	MirageRHI::IShader* vert;
 
 	// search in cache
 	auto shaderFragIt = rm->m_shaderCache.find(_pathFrag);
-	auto shaderVertIt = rm->m_shaderCache.find(_pathFrag);
+	auto shaderVertIt = rm->m_shaderCache.find(_pathVertex);
 
 	// If find get, else, load
 	if (shaderFragIt != rm->m_shaderCache.end())
@@ -106,12 +106,12 @@ MirageRHI::IPipeline* ResourceManager::CreatePipeline(const std::string& _name, 
 
 	MirageRHI::IPipeline* pipeline = rm->m_rhi->InstantiatePipeline();
 
-	pipeline->Create(frag,vert,_pipelineParamter);
+	pipeline->Create(frag, vert, _pipelineParamter);
 	rm->m_resources.emplace(newAssetName, pipeline);
 	return pipeline;
 }
 
-IMesh* ResourceManager::CreateMesh(const std::string& , const std::string& )
+IMesh* ResourceManager::CreateMesh(const std::string& _name, const std::string& _path)
 {
 	ResourceManager* rm = ResourceManager::Instance();
 	if (!rm)
@@ -124,10 +124,25 @@ IMesh* ResourceManager::CreateMesh(const std::string& , const std::string& )
 		//LOG(logError, LogResourceManager, "Resource Manager RHI isn't init");
 		return nullptr;
 	}
+	std::string    newAssetName = _name;
+	auto resourceIt = rm->m_resources.find(_name);
+	if (resourceIt != rm->m_resources.end())
+	{
+		newAssetName = rm->GenerateUniqueAssetName(_name);
+	}
 
-	//MirageRHI::IBuffer* m_BufferVertices = rm->m_rhi->InstantiateBuffer();
-	//MirageRHI::IBuffer* m_BufferIndices = rm->m_rhi->InstantiateBuffer();
-	return nullptr;
+	MirageRHI::IBuffer* m_BufferVertices = rm->m_rhi->InstantiateBuffer();
+	MirageRHI::IBuffer* m_BufferIndices = rm->m_rhi->InstantiateBuffer();
+
+	std::vector<uint32_t> indices;
+	std::vector<MirageRHI::LitVertex> vertices;
+
+	rm->LoadMeshUtility(_path, vertices, indices);
+	m_BufferVertices->Create(vertices.data(), vertices.size() * sizeof(MirageRHI::LitVertex), MirageRHI::IBuffer::BufferType::Vertices);
+	m_BufferIndices->Create(indices.data(), indices.size() * sizeof(MirageRHI::LitVertex), MirageRHI::IBuffer::BufferType::Indices);
+	IMesh* mesh = new IMesh(m_BufferVertices, m_BufferIndices, indices.size());
+	rm->m_resources.emplace(newAssetName, mesh);
+	return mesh;
 }
 
 std::string ResourceManager::GenerateUniqueAssetName(const std::string& _baseName)
@@ -147,66 +162,131 @@ std::string ResourceManager::GenerateUniqueAssetName(const std::string& _baseNam
 
 }
 
-IMesh::IMesh(MirageRHI::IBuffer* _vert, MirageRHI::IBuffer* _frag)
-	: m_vertexBuffer(_vert), m_fragmentBuffer(_frag)
+IMesh::IMesh(MirageRHI::IBuffer* _vert, MirageRHI::IBuffer* _indiceBuffer, size_t _indicesCount)
+	: m_vertexBuffer(_vert), m_indicesBuffer(_indiceBuffer), m_indicesCount(_indicesCount)
 {
 }
 
-void ResourceManager::LoadMeshUtility(std::string)
+void ResourceManager::LoadMeshUtility(std::string _path,
+	std::vector<MirageRHI::LitVertex>& _vertices,
+	std::vector<uint32_t>& indices)
 {
-	//tinyobj::attrib_t attrib;
-	//std::vector<tinyobj::shape_t> shapes;
-	//std::vector<tinyobj::material_t> materials;
+	tinyobj::attrib_t attrib;
+	std::vector<tinyobj::shape_t> shapes;
+	std::vector<tinyobj::material_t> materials;
 
-	//std::string err;
+	std::string err;
 
-	//bool ret = tinyobj::LoadObj(&attrib, &shapes, &materials, &err, _path.c_str());
+	bool ret = tinyobj::LoadObj(&attrib, &shapes, &materials, &err, _path.c_str());
 
-	//if (!err.empty()) {
-	//	std::cerr << err << std::endl;
-	//}
+	if (!err.empty()) {
+		std::cerr << "ERROR: " << err << std::endl;
+	}
+	if (!ret) {
+		std::cerr << "Failed to load OBJ: " << _path << std::endl;
+		return;
+	}
 
-	//if (!ret) {
-	//	exit(1);
-	//}
+	// Pour suivre les vertices d¨¦j¨¤ ajout¨¦s (optionnel, pour d¨¦duplication)
+	std::unordered_map<size_t, uint32_t> vertexMap;
 
-	//// Loop over shapes
-	//for (size_t s = 0; s < shapes.size(); s++) {
-	//	// Loop over faces(polygon)
-	//	size_t index_offset = 0;
-	//	for (size_t f = 0; f < shapes[s].mesh.num_face_vertices.size(); f++) {
-	//		size_t fv = size_t(shapes[s].mesh.num_face_vertices[f]);
+	// Loop over shapes
+	for (const auto& shape : shapes) {
+		size_t index_offset = 0;
+		for (size_t f = 0; f < shape.mesh.num_face_vertices.size(); f++) {
+			size_t fv = shape.mesh.num_face_vertices[f];
 
-	//		// Loop over vertices in the face.
-	//		for (size_t v = 0; v < fv; v++) {
-	//			// access to vertex
-	//			tinyobj::index_t idx = shapes[s].mesh.indices[index_offset + v];
+			// Pour les triangles, on doit cr¨¦er des indices corrects
+			std::vector<uint32_t> faceIndices;
 
-	//			tinyobj::real_t vx = attrib.vertices[3 * size_t(idx.vertex_index) + 0];
-	//			tinyobj::real_t vy = attrib.vertices[3 * size_t(idx.vertex_index) + 1];
-	//			tinyobj::real_t vz = attrib.vertices[3 * size_t(idx.vertex_index) + 2];
+			// Loop over vertices in the face
+			for (size_t v = 0; v < fv; v++) {
+				tinyobj::index_t idx = shape.mesh.indices[index_offset + v];
 
-	//			// Check if `normal_index` is zero or positive. negative = no normal data
-	//			if (idx.normal_index >= 0) {
-	//				tinyobj::real_t nx = attrib.normals[3 * size_t(idx.normal_index) + 0];
-	//				tinyobj::real_t ny = attrib.normals[3 * size_t(idx.normal_index) + 1];
-	//				tinyobj::real_t nz = attrib.normals[3 * size_t(idx.normal_index) + 2];
-	//			}
+				// Calculer une cl¨¦ unique pour ce vertex (position+normal+uv)
+				size_t vertexKey = idx.vertex_index;
+				if (idx.normal_index >= 0) vertexKey = vertexKey * 1000000 + idx.normal_index;
+				if (idx.texcoord_index >= 0) vertexKey = vertexKey * 1000000 + idx.texcoord_index;
 
-	//			// Check if `texcoord_index` is zero or positive. negative = no texcoord data
-	//			if (idx.texcoord_index >= 0) {
-	//				tinyobj::real_t tx = attrib.texcoords[2 * size_t(idx.texcoord_index) + 0];
-	//				tinyobj::real_t ty = attrib.texcoords[2 * size_t(idx.texcoord_index) + 1];
-	//			}
-	//			// Optional: vertex colors
-	//			// tinyobj::real_t red   = attrib.colors[3*size_t(idx.vertex_index)+0];
-	//			// tinyobj::real_t green = attrib.colors[3*size_t(idx.vertex_index)+1];
-	//			// tinyobj::real_t blue  = attrib.colors[3*size_t(idx.vertex_index)+2];
-	//		}
-	//		index_offset += fv;
+				uint32_t vertexIndex;
+				auto it = vertexMap.find(vertexKey);
 
-	//		// per-face material
-	//		shapes[s].mesh.material_ids[f];
-	//	}
-	//}
+				if (it != vertexMap.end()) {
+					// Vertex d¨¦j¨¤ existant
+					vertexIndex = it->second;
+				}
+				else {
+					// Cr¨¦er un nouveau vertex
+					MirageRHI::LitVertex vertex;
+
+					// Position
+					vertex.Position = MirageEngine::Core::Math::Vector3(
+						attrib.vertices[3 * idx.vertex_index + 0],
+						attrib.vertices[3 * idx.vertex_index + 1],
+						attrib.vertices[3 * idx.vertex_index + 2]
+					);
+
+					// Normal (si disponible)
+					if (idx.normal_index >= 0) {
+						vertex.Normal = MirageEngine::Core::Math::Vector3(
+							attrib.normals[3 * idx.normal_index + 0],
+							attrib.normals[3 * idx.normal_index + 1],
+							attrib.normals[3 * idx.normal_index + 2]
+						);
+					}
+					else {
+						vertex.Normal = MirageEngine::Core::Math::Vector3(0, 0, 0);
+					}
+
+					// UV (si disponible)
+					if (idx.texcoord_index >= 0) {
+						vertex.UV = MirageEngine::Core::Math::Vector2(
+							attrib.texcoords[2 * idx.texcoord_index + 0],
+							attrib.texcoords[2 * idx.texcoord_index + 1]
+						);
+					}
+					else {
+						vertex.UV = MirageEngine::Core::Math::Vector2(0, 0);
+					}
+
+					vertexIndex = static_cast<uint32_t>(_vertices.size());
+					_vertices.push_back(vertex);
+					vertexMap[vertexKey] = vertexIndex;
+				}
+
+				faceIndices.push_back(vertexIndex);
+			}
+
+			// Convertir les faces en triangles (si la face a plus de 3 vertices)
+			if (fv == 3) {
+				// Face triangulaire
+				indices.push_back(faceIndices[0]);
+				indices.push_back(faceIndices[1]);
+				indices.push_back(faceIndices[2]);
+			}
+			else if (fv == 4) {
+				// Face quad -> deux triangles
+				indices.push_back(faceIndices[0]);
+				indices.push_back(faceIndices[1]);
+				indices.push_back(faceIndices[2]);
+
+				indices.push_back(faceIndices[0]);
+				indices.push_back(faceIndices[2]);
+				indices.push_back(faceIndices[3]);
+			}
+			else {
+				// Fan triangulation pour les polygones avec plus de 4 vertices
+				for (size_t v = 1; v < fv - 1; v++) {
+					indices.push_back(faceIndices[0]);
+					indices.push_back(faceIndices[v]);
+					indices.push_back(faceIndices[v + 1]);
+				}
+			}
+
+			index_offset += fv;
+		}
+	}
+
+	std::cout << "Loaded " << _vertices.size() << " vertices, "
+		<< indices.size() << " indices from " << _path << std::endl;
 }
