@@ -94,14 +94,14 @@ void Application::InitRHI()
 	m_Surface->Create(m_Window, m_Width, m_Height);
 	m_Device->Create();
 	m_SwapChain->Create();
-	m_RenderPass->Create(Vector4(0.2f, 0, 0.1f, 1.0f), 1.0f);
+	m_RenderPass->Create(Vector4(0.f, 0.5f, 0.5f, 1.0f), 1.0f);
 	m_VertexShader->Create("Assets/Shaders/vertex.glsl", MirageRHI::IShader::ShaderType::Vertex);
 	m_FragmentShader->Create("Assets/Shaders/fragment.glsl", MirageRHI::IShader::ShaderType::Fragment);
 	m_PipelineParameters->Create(MirageRHI::VertexType::PBR, MirageRHI::CullingType::None, true);
 	m_Pipeline->Create(m_VertexShader, m_FragmentShader, m_PipelineParameters);
 	m_BufferTriangleVertices->Create(m_VerticesQuad.data(), m_VerticesQuad.size() * sizeof(MirageRHI::LitVertex), MirageRHI::IBuffer::BufferType::Vertices);
 	m_BufferTriangleIndices->Create(m_IndicesQuad.data(), m_IndicesQuad.size() * sizeof(MirageRHI::LitVertex), MirageRHI::IBuffer::BufferType::Indices);
-	m_TextureBuffer->Create("Assets/Textures/cat.png", MirageRHI::IBuffer::BufferType::Texture);
+	m_TextureBuffer->Create("Assets/Textures/Mirage.png", MirageRHI::IBuffer::BufferType::Texture);
 	m_UniformBuffer->Create();
 	m_CommandBuffer->Create();
 	m_IndicesCount = (uint32_t)(m_IndicesQuad.size());

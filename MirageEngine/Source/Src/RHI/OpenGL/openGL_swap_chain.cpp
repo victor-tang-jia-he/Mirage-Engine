@@ -9,7 +9,7 @@ void MirageRHI::OpenGLSwapChain::IsScreenResized(ISurface* _surface)
     {
         RecreateSwapchain(_surface, displayWidth, displayHeight);
     }
-} 
+}
 
 void MirageRHI::OpenGLSwapChain::RecreateSwapchain(ISurface* _surface, int _newWidth, int _newHeight)
 {
