@@ -23,11 +23,9 @@ namespace MirageEngine
 
 				MirageEngine::Core::Components::Transform m_transform;
 			public:
-				inline Camera(unsigned int _width, unsigned int _height, float _fov, float _near, float _far, const MirageEngine::Core::Math::Vector3 _position)
-					:m_Width(_width), m_Height(_height), m_Fov(_fov), m_Near(_near), m_Far(_far)
-				{
-					m_transform.SetPosition(_position);
-				}
+				Camera(unsigned int _width, unsigned int _height,
+					float _fov, float _near, float _far,
+					const MirageEngine::Core::Math::Vector3 _position);
 				~Camera() = default;
 
 				void LookAt(const MirageEngine::Core::Math::Vector3& target)

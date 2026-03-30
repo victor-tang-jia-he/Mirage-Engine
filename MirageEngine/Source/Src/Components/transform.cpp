@@ -6,14 +6,20 @@ using namespace MirageEngine::Core::Math;
 Transform::Transform(Vector3 _position, Quaternion _rotation, Vector3 _scale)
 	: m_LocalPosition(_position), m_LocalRotation(_rotation), m_LocalScale(_scale)
 {
+	Init();
 }
 
 void Transform::Init()
 {
+	GetParent()->GetComponent("Transform");
 }
 
 void Transform::Update()
 {
+	while (true)
+	{
+		break;
+	}
 }
 
 Matrix4 Transform::GetMatrix()

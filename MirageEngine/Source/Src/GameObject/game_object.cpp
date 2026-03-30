@@ -11,8 +11,7 @@ GameObject::GameObject(GameObject* _parent, std::string _name)
 	: m_Parent(_parent),
 	m_Name(_name)
 {
-	auto mfzransform = AddComponent(new MirageEngine::Core::Components::Transform());
-
+	AddComponent<Transform>();
 }
 
 GameObject::GameObject(GameObject* _parent, std::string _name, bool _isStatic)
@@ -20,7 +19,7 @@ GameObject::GameObject(GameObject* _parent, std::string _name, bool _isStatic)
 	m_Name(_name),
 	m_bIsStatic(_isStatic)
 {
-	AddComponent(new MirageEngine::Core::Components::Transform());
+	AddComponent<Transform>();
 }
 
 GameObject::GameObject(GameObject* _parent, std::string _name, bool _isStatic, bool _isActive)
@@ -29,11 +28,11 @@ GameObject::GameObject(GameObject* _parent, std::string _name, bool _isStatic, b
 	m_bIsStatic(_isStatic),
 	m_bIsActive(_isActive)
 {
+	AddComponent<Transform>();
 }
 
 GameObject::~GameObject()
 {
-	AddComponent(new MirageEngine::Core::Components::Transform(Vector3{ 0,0,0 }, Quaternion{ 0,0,0 }, Vector3{ 1,1,1 }));
 }
 
 void GameObject::SetActive(bool _isActive)
@@ -50,22 +49,20 @@ void GameObject::SetActive(bool _isActive)
 	}
 }
 
-Component* GameObject::AddComponent(Component* _component)
-{
-	for (Component* composent : m_Components)
-	{
-		if (composent->GetName() == _component->GetName())
-		{
-			return;
-			// throw(std::runtime_error("Component with the same name already exists."));
-		}
-	}
-
-	m_Components.push_back(_component);
-	return _component;
-}
-
 void GameObject::RemoveComponent(Component* _component)
 {
 	m_Components.erase(std::remove(m_Components.begin(), m_Components.end(), _component), m_Components.end());
+}
+
+Component* GameObject::GetComponent(std::string _name)
+{
+	for (Component* composent : m_Components)
+	{
+		// Transform Name by ID
+		if (composent->GetName() == _name)
+		{
+			return composent;
+		}
+	}
+	return nullptr;
 }

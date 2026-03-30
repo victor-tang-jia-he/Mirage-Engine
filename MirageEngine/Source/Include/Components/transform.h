@@ -1,7 +1,6 @@
 #pragma once
 #include <quaternion.h>
-
-#include "component.h"
+#include <Components/component.h>
 
 namespace MirageEngine
 {

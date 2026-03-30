@@ -39,12 +39,24 @@ namespace MirageEngine
 		void SetActive(bool _isActive);
 
 		// Components Methods
-		Component* AddComponent(Component* _component);
+		template <typename T>
+		T* AddComponent()
+		{
+			T* component = new T();
+			component->m_Parent = this;
+			// Name of the type ID
+			component->m_ComponentName = typeid(T).name();
+			m_Components.push_back(component);
+			return component;
+		}
+
 		void RemoveComponent(Component* _component);
+		Component* GetComponent(std::string _name);
 
 		// Getters
 		std::string GetName() const { return m_Name; }
 		bool GetIsActive() const { return m_bIsActive; }
+		GameObject* GetParent() const { return m_Parent; }
 
 	
 	};

@@ -10,10 +10,10 @@ namespace MirageEngine
 {
 	class Component
 	{
+		friend class GameObject;
+
 	private:
 		std::string m_ComponentName;
-		
-		friend class GameObject;
 		GameObject* m_Parent;
 
 	public:
@@ -25,6 +25,7 @@ namespace MirageEngine
 
 		// Getters
 		std::string GetName() const { return m_ComponentName; }
+		GameObject* GetParent() const { return m_Parent; }
 	};
 
 }
