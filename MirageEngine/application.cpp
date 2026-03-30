@@ -87,7 +87,7 @@ void Application::InitRHI()
 	//{
 	//	0, 1, 2, 2, 3, 0
 	//};
-	IMesh* mesh = ResourceManager::Instance()->CreateMesh("cube", "Assets/Obj/cube.obj");
+	IMesh* mesh = ResourceManager::Instance()->CreateMesh("cube", "Assets/Obj/Cube.obj");
 	DEBUG_LOG("Vertex and Index Data Created");
 
 
@@ -126,7 +126,6 @@ void Application::InitScene()
 
 void Application::InitInput()
 {
-
 	// creating editorMapping
 	editorMapping = new InputMapping();
 	editorMapping->Map[GLFW_KEY_W] = InputBind{};
@@ -260,7 +259,7 @@ void Application::RenderScene()
 {
 	using namespace MirageEngine::Core::Resources;
 
-	IMesh* mesh = ResourceManager::Instance()->Get<IMesh>("Untitled");
+	IMesh* mesh = ResourceManager::Instance()->Get<IMesh>("cube");
 	m_CommandBuffer->BindPipeline(m_Pipeline);
 	m_CommandBuffer->BindBuffer(mesh->GetIndices());
 	m_CommandBuffer->BindBuffer(mesh->GetVertexBuffer());

@@ -35,84 +35,97 @@ namespace MirageEngine
 			{
 				friend class IResource;
 
-				std::unordered_map<std::string, std::unique_ptr<IResource>> m_resources;
+			private:
+				std::unordered_map<std::string, std::unique_ptr<IResource>> m_Resources;
 
-				std::unordered_map<std::string, std::shared_ptr<MirageRHI::IShader>> m_shaderCache;
+				std::unordered_map<std::string, std::shared_ptr<MirageRHI::IShader>> m_ShaderCache;
 
-				static ResourceManager* m_instance;
+				static ResourceManager* m_Instance;
 
-				MirageRHI::IRenderInterface* m_rhi = nullptr;
+				MirageRHI::IRenderInterface* m_Rhi = nullptr;
 
-				void LoadMeshUtility(std::string _path, std::vector<MirageRHI::LitVertex>& _vertices, std::vector<uint32_t>& _indices);
 			public:
 				static ResourceManager* Instance();
-
-				static void Clear();
 
 				void Init(MirageRHI::IRenderInterface* _rhi);
 
 				ResourceManager() = default;
 				~ResourceManager();
-				// -------------------------------------------------------------------------------- //    
-				// Basic Constructor 
-				// -------------------------------------------------------------------------------- //
 
 				/// <summary>
-				/// Create a Texture
+				/// Creates a texture resource and registers it in the ResourceManager.
 				/// </summary>
-				/// <param name="name">Name given</param>
-				/// <param name="path">File Path</param>
-				/// <returns>Texture pointer</returns>
+				/// <param name="_name">Unique identifier of the texture.</param>
+				/// <param name="_path">File path to the texture on disk.</param>
+				/// <returns>Pointer to the created Texture, or nullptr on failure.</returns>
 				static Texture* CreateTexture(const std::string& _name, const std::string& _path);
 
+
+				/// <summary>
+				/// Creates a shader resource from a file and registers it.
+				/// </summary>
+				/// <param name="_name">Unique identifier of the shader.</param>
+				/// <param name="_path">File path to the shader source.</param>
+				/// <param name="_type">Type of shader (e.g., vertex, fragment).</param>
+				/// <returns>Pointer to the created shader, or nullptr on failure.</returns>
 				static MirageRHI::IShader* CreateShader(const std::string& _name, const std::string& _path, const MirageRHI::IShader::ShaderType _type);
 
+
 				/// <summary>
-				/// Create a Shader
+				/// Creates a rendering pipeline using vertex and fragment shaders.
 				/// </summary>
-				/// <param name="name">Name given</param>
-				/// <param name="pathFrag">Fragment file path</param>
-				/// <param name="pathVertex">Vertex file path</param>
-				/// <returns>Shader pointer</returns>
+				/// <param name="_name">Unique identifier of the pipeline.</param>
+				/// <param name="_pathFrag">File path to the fragment shader.</param>
+				/// <param name="_pathVertex">File path to the vertex shader.</param>
+				/// <param name="_pipelineParamter">Pipeline configuration parameters.</param>
+				/// <returns>Pointer to the created pipeline, or nullptr on failure.</returns>
 				static MirageRHI::IPipeline* CreatePipeline(const std::string& _name, const char* _pathFrag, const char* _pathVertex, MirageRHI::IPipelineParameters* _pipelineParamter);
 
-				/// <summary>
-				/// Create a Mesh
-				/// </summary>
-				/// <param name="name">Name given</param>
-				/// <param name="path">File path</param>
-				/// <returns>Mesh pointer</returns>
-				static IMesh* CreateMesh(const std::string& _name, const std::string& _path);
 
 				/// <summary>
-				/// Get a resource from the the list by the name.
+				/// Loads a mesh from file, creates GPU buffers, and registers it.
 				/// </summary>
-				/// <param name="name"> : Name of the resource in string.</param>
-				/// <returns> Return an reference of the instance if it exist , otherwise it return nullptr </returns>
+				/// <param name="_name">Unique identifier of the mesh.</param>
+				/// <param name="_path">File path to the mesh (e.g., OBJ).</param>
+				/// <returns>Pointer to the created mesh, or nullptr on failure.</returns>
+				static IMesh* CreateMesh(const std::string& _name, const std::string& _path);
+
+
+				/// <summary>
+				/// Retrieves a resource by name and casts it to the requested type.
+				/// </summary>
+				/// <typeparam name="T">Expected resource type (must inherit from IResource).</typeparam>
+				/// <param name="_name">Name of the resource.</param>
+				/// <returns>
+				/// Pointer to the resource casted to T if found and valid,
+				/// otherwise nullptr.
+				/// </returns>
 				template <typename T>
 				static T* Get(const std::string& _name)
 				{
-					if (!std::is_base_of_v<MirageEngine::Core::Resources::IResource, T>) return nullptr;// T must inherit from IResource
+					if (!std::is_base_of_v<MirageEngine::Core::Resources::IResource, T>) return nullptr;
+
 					ResourceManager* resourceManager = ResourceManager::Instance();
 
-					auto it = resourceManager->m_resources.find(_name);
-					if (it != resourceManager->m_resources.end())
+					auto it = resourceManager->m_Resources.find(_name);
+					if (it != resourceManager->m_Resources.end())
 					{
 						T* resource = dynamic_cast<T*>(it->second.get());
 						return resource;
 					}
-					//LOG(logWarning, LogResourceManager,"Resource Manager", "Resource with name '%s' not found.", _name.c_str());
+
 					return nullptr;
 				}
 
+
 				/// <summary>
-				/// Delete an resources if it exist by the name
+				/// Removes a resource from the manager by name.
 				/// </summary>
-				/// <param name="name"> : Name of the resource in string.</param>
-				/// <returns> Return true if find and deleted, return false if resources doesn't exist. </returns>
+				/// <param name="_name">Name of the resource to delete.</param>
+				/// <returns>True if the resource was found and removed, false otherwise.</returns>
 				inline bool Delete(const std::string& _name)
 				{
-					return m_resources.erase(_name) > 0;
+					return m_Resources.erase(_name) > 0;
 				}
 
 			private:
@@ -142,6 +155,8 @@ namespace MirageEngine
 						_vec.erase(it);
 					}
 				}
+
+				void LoadMeshUtility(std::string _path, std::vector<MirageRHI::LitVertex>& _vertices, std::vector<uint32_t>& _indices);
 			};
 		}
 	}

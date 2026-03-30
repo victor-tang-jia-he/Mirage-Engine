@@ -16,18 +16,19 @@
 
 using namespace MirageEngine::Core::Resources;
 
-ResourceManager* ResourceManager::m_instance = nullptr;
+ResourceManager* ResourceManager::m_Instance = nullptr;
 
 ResourceManager* ResourceManager::Instance()
 {
-	if (m_instance == nullptr)
-		m_instance = new ResourceManager();
-	return m_instance;
+	if (m_Instance == nullptr)
+		m_Instance = new ResourceManager();
+	return m_Instance;
 }
+
 
 void ResourceManager::Init(MirageRHI::IRenderInterface* _rhi)
 {
-	m_rhi = _rhi; // set for later creating resource
+	m_Rhi = _rhi; // set for later creating resource
 }
 
 Texture* ResourceManager::CreateTexture(const std::string& _name, const std::string& _path)
@@ -38,24 +39,24 @@ Texture* ResourceManager::CreateTexture(const std::string& _name, const std::str
 		//LOG(logWarning, LogResourceManager, "Resource Manager isn't instanciate or doesn't exist in this context");
 		return nullptr;
 	}
-	if (!rm->m_rhi)
+	if (!rm->m_Rhi)
 	{
 		//LOG(logError, LogResourceManager, "Resource Manager RHI isn't init");
 		return nullptr;
 	}
 	std::string    newAssetName = _name;
-	auto it = rm->m_resources.find(_name);
-	if (it != rm->m_resources.end())
+	auto it = rm->m_Resources.find(_name);
+	if (it != rm->m_Resources.end())
 	{
 		newAssetName = rm->GenerateUniqueAssetName(_name);
 	}
-	MirageRHI::IBuffer* textureBuffer = rm->m_rhi->InstantiateBuffer();
+	MirageRHI::IBuffer* textureBuffer = rm->m_Rhi->InstantiateBuffer();
 
 	textureBuffer->Create(_path, MirageRHI::IBuffer::BufferType::Texture);
 
 	Texture* texture = new Texture(textureBuffer);
-	texture->m_name = newAssetName;
-	rm->m_resources.emplace(newAssetName, texture); 
+	texture->m_Name = newAssetName;
+	rm->m_Resources.emplace(newAssetName, texture); 
 	return texture;
 }
 
@@ -67,22 +68,22 @@ MirageRHI::IShader* ResourceManager::CreateShader(const std::string& _name, cons
 		//LOG(logWarning, LogResourceManager, "Resource Manager isn't instanciate or doesn't exist in this context");
 		return nullptr;
 	}
-	if (!rm->m_rhi)
+	if (!rm->m_Rhi)
 	{
 		//LOG(logError, LogResourceManager, "Resource Manager RHI isn't init");
 		return nullptr;
 	}
 	std::string    newAssetName = _name;
-	auto it = rm->m_resources.find(_name);
-	if (it != rm->m_resources.end())
+	auto it = rm->m_Resources.find(_name);
+	if (it != rm->m_Resources.end())
 	{
 		newAssetName = rm->GenerateUniqueAssetName(_name);
 	}
-	MirageRHI::IShader* shader = rm->m_rhi->InstantiateShader();
-	shader->m_name = newAssetName;
+	MirageRHI::IShader* shader = rm->m_Rhi->InstantiateShader();
+	shader->m_Name = newAssetName;
 	shader->Create(_path.c_str(), _type);
-	rm->m_resources.emplace(newAssetName, shader); // global resource
-	rm->m_shaderCache.emplace(_path, shader); // local cache
+	rm->m_Resources.emplace(newAssetName, shader); // global resource
+	rm->m_ShaderCache.emplace(_path, shader); // local cache
 	return shader;
 }
 
@@ -94,14 +95,14 @@ MirageRHI::IPipeline* ResourceManager::CreatePipeline(const std::string& _name, 
 		//LOG(logWarning, LogResourceManager, "Resource Manager isn't instanciate or doesn't exist in this context");
 		return nullptr;
 	}
-	if (!rm->m_rhi)
+	if (!rm->m_Rhi)
 	{
 		//LOG(logError, LogResourceManager, "Resource Manager RHI isn't init");
 		return nullptr;
 	}
 	std::string    newAssetName = _name;
-	auto resourceIt = rm->m_resources.find(_name);
-	if (resourceIt != rm->m_resources.end())
+	auto resourceIt = rm->m_Resources.find(_name);
+	if (resourceIt != rm->m_Resources.end())
 	{
 		newAssetName = rm->GenerateUniqueAssetName(_name);
 	}
@@ -111,24 +112,24 @@ MirageRHI::IPipeline* ResourceManager::CreatePipeline(const std::string& _name, 
 	MirageRHI::IShader* vert;
 
 	// search in cache
-	auto shaderFragIt = rm->m_shaderCache.find(_pathFrag);
-	auto shaderVertIt = rm->m_shaderCache.find(_pathVertex);
+	auto shaderFragIt = rm->m_ShaderCache.find(_pathFrag);
+	auto shaderVertIt = rm->m_ShaderCache.find(_pathVertex);
 
 	// If find get, else, load
-	if (shaderFragIt != rm->m_shaderCache.end())
+	if (shaderFragIt != rm->m_ShaderCache.end())
 		frag = shaderFragIt->second.get();
 	else
 		frag = ResourceManager::CreateShader("ShaderFragment", _pathFrag, MirageRHI::IShader::ShaderType::Fragment);
-	if (shaderVertIt != rm->m_shaderCache.end())
+	if (shaderVertIt != rm->m_ShaderCache.end())
 		vert = shaderVertIt->second.get();
 	else
 		vert = ResourceManager::CreateShader("ShaderVertex", _pathVertex, MirageRHI::IShader::ShaderType::Vertex);
 
 
-	MirageRHI::IPipeline* pipeline = rm->m_rhi->InstantiatePipeline();
-
+	MirageRHI::IPipeline* pipeline = rm->m_Rhi->InstantiatePipeline();
 	pipeline->Create(frag, vert, _pipelineParamter);
-	rm->m_resources.emplace(newAssetName, pipeline);
+	pipeline->m_Name = newAssetName;
+	rm->m_Resources.emplace(newAssetName, pipeline);
 	return pipeline;
 }
 
@@ -140,20 +141,20 @@ IMesh* ResourceManager::CreateMesh(const std::string& _name, const std::string& 
 		//LOG(logWarning, LogResourceManager, "Resource Manager isn't instanciate or doesn't exist in this context");
 		return nullptr;
 	}
-	if (!rm->m_rhi)
+	if (!rm->m_Rhi)
 	{
 		//LOG(logError, LogResourceManager, "Resource Manager RHI isn't init");
 		return nullptr;
 	}
 	std::string    newAssetName = _name;
-	auto resourceIt = rm->m_resources.find(_name);
-	if (resourceIt != rm->m_resources.end())
+	auto resourceIt = rm->m_Resources.find(_name);
+	if (resourceIt != rm->m_Resources.end())
 	{
 		newAssetName = rm->GenerateUniqueAssetName(_name);
 	}
 
-	MirageRHI::IBuffer* m_BufferVertices = rm->m_rhi->InstantiateBuffer();
-	MirageRHI::IBuffer* m_BufferIndices = rm->m_rhi->InstantiateBuffer();
+	MirageRHI::IBuffer* m_BufferVertices = rm->m_Rhi->InstantiateBuffer();
+	MirageRHI::IBuffer* m_BufferIndices = rm->m_Rhi->InstantiateBuffer();
 
 	std::vector<uint32_t> indices;
 	std::vector<MirageRHI::LitVertex> vertices;
@@ -166,8 +167,8 @@ IMesh* ResourceManager::CreateMesh(const std::string& _name, const std::string& 
 	m_BufferIndices->Create(indices.data(), indices.size() * sizeof(uint32_t), MirageRHI::IBuffer::BufferType::Indices);
 	IMesh* mesh = new IMesh(m_BufferVertices, m_BufferIndices, indices.size());
 	
-	mesh->m_name = newAssetName;
-	rm->m_resources.emplace(newAssetName, mesh);
+	mesh->m_Name = newAssetName;
+	rm->m_Resources.emplace(newAssetName, mesh);
 	return mesh;
 }
 
@@ -175,7 +176,7 @@ std::string ResourceManager::GenerateUniqueAssetName(const std::string& _baseNam
 {
 	std::string uniqueName = _baseName;
 	int         counter = 1;
-	while (m_resources.find(uniqueName) != m_resources.end())
+	while (m_Resources.find(uniqueName) != m_Resources.end())
 	{
 		std::stringstream ss;
 		ss << _baseName << "_" << counter;
@@ -299,11 +300,10 @@ void ResourceManager::LoadMeshUtility(std::string _path,
 
 MirageEngine::Core::Resources::ResourceManager::~ResourceManager()
 {
-	for (auto& resource : m_resources) 
+	for (auto& resource : m_Resources) 
 		delete resource.second.release();
-	for (auto& shader : m_shaderCache) 
+	for (auto& shader : m_ShaderCache) 
 		shader.second.reset();
-	m_resources.clear();
-	m_shaderCache.clear();
-
+	m_Resources.clear();
+	m_ShaderCache.clear();
 }

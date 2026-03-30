@@ -14,15 +14,16 @@ namespace MirageEngine
 		{
 			class Texture : public IResource
 			{
-				MirageRHI::IBuffer* m_textureBuffer = nullptr;
+			private:
+				MirageRHI::IBuffer* m_TextureBuffer = nullptr;
 
 			public:
 				Texture(MirageRHI::IBuffer* _textureBuffer)
-					: m_textureBuffer(_textureBuffer) {
+					: m_TextureBuffer(_textureBuffer) {
 				};
 				~Texture() = default;
 
-				MirageRHI::IBuffer* GetTextureBuffer() const { return m_textureBuffer; }
+				MirageRHI::IBuffer* GetTextureBuffer() const { return m_TextureBuffer; }
 			};
 		}
 	}
