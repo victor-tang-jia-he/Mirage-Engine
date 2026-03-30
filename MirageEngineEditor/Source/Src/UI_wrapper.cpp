@@ -178,4 +178,16 @@ namespace Mirage
 	{
 		ImGui::EndTable();
 	}
+
+	bool UIWrapper::DrawBreadcrumbSegment(const char* _label, bool _bIsLast)
+	{
+		bool clicked = ImGui::SmallButton(_label);
+		ImGui::SameLine();
+		if (!_bIsLast)
+		{
+			ImGui::Text(" > ");
+			ImGui::SameLine();
+		}
+		return clicked;
+	}
 }

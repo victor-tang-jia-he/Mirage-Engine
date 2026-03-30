@@ -53,7 +53,7 @@ namespace Mirage
 
 		//Display
 		void DrawDirectoryContent();
-		void DrawAssetEntry();
+		void DrawBreadcrumb();
 		void DrawFileIcon();
 
 		//Interaction

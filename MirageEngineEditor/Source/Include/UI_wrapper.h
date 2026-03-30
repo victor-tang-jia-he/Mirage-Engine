@@ -38,6 +38,8 @@ namespace Mirage
 		static WidgetAction DrawAssetTile(const char* _name, bool _isSelected, void* _icon = nullptr);
 		static void EndAssetGrid();
 
+		static bool DrawBreadcrumbSegment(const char* _label, bool _bIsLast);
+
 		static bool AssetContextMenu(const char* _id);
 		static bool DrawContextMenuItem(const char* _label);
 

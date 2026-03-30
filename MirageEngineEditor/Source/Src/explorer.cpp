@@ -122,14 +122,50 @@ namespace Mirage
 	void Explorer::DrawDirectoryContent()
 	{
 		m_AnItemWasRightClicked = false;
-		RenderAssetGrid();
-		if(ImGui::IsWindowHovered() && !m_AnItemWasRightClicked && ImGui::IsMouseClicked(1))
-			UIWrapper::RequestModal("EmptySpaceMenu");
+
+		ImGui::BeginGroup();
+		DrawBreadcrumb();
+		ImGui::Separator();
+		ImGui::Spacing();
+		ImGui::EndGroup();
+
+		if (ImGui::BeginChild("AssetGridArea", ImVec2(0, 0), false))
+		{
+			RenderAssetGrid();
+			if (ImGui::IsWindowHovered() && !m_AnItemWasRightClicked && ImGui::IsMouseClicked(1))
+				UIWrapper::RequestModal("EmptySpaceMenu");
+		}
+		ImGui::EndChild();
+
 		UIWrapper::UpdateModalRequests();
 		RenderAssetContextMenu();
 		RenderEmptySpaceContextMenu();
 		RenderRenameModal();
 		RenderDeleteModal();
+	}
+
+	void Explorer::DrawBreadcrumb()
+	{
+		if (UIWrapper::DrawBreadcrumbSegment("Assets", m_CurrentPath == m_CurrentPath))
+		{
+			this->ChangeDirectory(m_RootPath);
+		}
+
+		std::filesystem::path relativePath = std::filesystem::relative(m_CurrentPath, m_RootPath);
+		std::filesystem::path currentStep = m_RootPath;
+
+		for (const auto& segment : relativePath)
+		{
+			if (segment == ".") continue;
+
+			currentStep /= segment;
+			bool bisLast = (currentStep == m_CurrentPath);
+			if (UIWrapper::DrawBreadcrumbSegment(segment.string().c_str(), bisLast))
+			{
+				this->ChangeDirectory(currentStep);
+				break;
+			}
+		}
 	}
 
 	void Explorer::HandleFileClick()
