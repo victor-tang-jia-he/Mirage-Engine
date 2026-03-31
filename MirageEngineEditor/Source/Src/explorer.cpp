@@ -146,7 +146,7 @@ namespace Mirage
 
 	void Explorer::DrawBreadcrumb()
 	{
-		if (UIWrapper::DrawBreadcrumbSegment("Assets", m_CurrentPath == m_CurrentPath))
+		if (UIWrapper::DrawBreadcrumbSegment("Assets", m_CurrentPath == m_RootPath))
 		{
 			this->ChangeDirectory(m_RootPath);
 		}
