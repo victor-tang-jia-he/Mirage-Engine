@@ -59,8 +59,8 @@ private:
 	uint32_t m_IndicesCount = 0;
 
 	// TODO : Edit in map
-	MirageEngine::Core::Input::InputMapping* editorMapping = nullptr;
-	MirageEngine::Core::Input::InputMapping* playMapping = nullptr;
+	MirageEngine::Core::Input::InputMapping* m_EditorMapping = nullptr;
+	MirageEngine::Core::Input::InputMapping* m_PlayMapping = nullptr;
 
 	MirageEngine::Core::Components::Camera* m_EngineCamera = nullptr;
 	std::vector < std::shared_ptr < MirageEngine::Core::Components::MeshRenderer>> m_meshRenderer;
@@ -84,6 +84,7 @@ private:
 	void InitRHI();
 	void InitScene(); // TODO
 	void InitInput();
+	void InitGameObject();
 	void PrintInput(MirageEngine::Core::Input::CallbackInputInfo info); // debug
 	void EditorPrintInput(MirageEngine::Core::Input::CallbackInputInfo info); // debug
 	void StartPlay(MirageEngine::Core::Input::CallbackInputInfo info);

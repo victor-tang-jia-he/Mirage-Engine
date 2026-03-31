@@ -6,6 +6,8 @@
 
 #include <Events/event.h>
 
+#include "component.h"
+
 namespace MirageEngine
 {
 	namespace Core
@@ -30,7 +32,7 @@ namespace MirageEngine
 				std::unordered_map<int, InputBind> Map;
 			};
 
-			class InputSystem
+			class InputSystem// : public Component
 			{
 			private:
 				static InputMapping* _currentMap;

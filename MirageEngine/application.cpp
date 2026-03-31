@@ -7,6 +7,7 @@
 #include <Resources/material.h>
 #include <Resources/texture.h>
 #include <Components/mesh_renderer.h>
+#include <GameObject/game_object.h>
 
 using namespace MirageEngine::Core::Input;
 using namespace MirageEngine::Core::EventSystem;
@@ -18,6 +19,7 @@ void Application::InitApp()
 	InitRHI();
 	InitScene();
 	InitInput();
+	InitGameObject();
 }
 
 void Application::InitWindow()
@@ -142,45 +144,56 @@ void Application::InitScene()
 void Application::InitInput()
 {
 	// creating editorMapping
-	editorMapping = new InputMapping();
-	editorMapping->Map[GLFW_KEY_W] = InputBind{};
-	editorMapping->Map[GLFW_KEY_A] = InputBind{};
-	editorMapping->Map[GLFW_KEY_S] = InputBind{};
-	editorMapping->Map[GLFW_KEY_D] = InputBind{};
-	editorMapping->Map[GLFW_KEY_R] = InputBind{};
-	editorMapping->Map[GLFW_KEY_Q] = InputBind{};
-	editorMapping->Map[GLFW_KEY_E] = InputBind{};
+	m_EditorMapping = new InputMapping();
+	m_EditorMapping->Map[GLFW_KEY_W] = InputBind{};
+	m_EditorMapping->Map[GLFW_KEY_A] = InputBind{};
+	m_EditorMapping->Map[GLFW_KEY_S] = InputBind{};
+	m_EditorMapping->Map[GLFW_KEY_D] = InputBind{};
+	m_EditorMapping->Map[GLFW_KEY_R] = InputBind{};
+	m_EditorMapping->Map[GLFW_KEY_Q] = InputBind{};
+	m_EditorMapping->Map[GLFW_KEY_E] = InputBind{};
 
-	playMapping = new InputMapping();
-	playMapping->Map[GLFW_KEY_W] = InputBind{};
-	playMapping->Map[GLFW_KEY_A] = InputBind{};
-	playMapping->Map[GLFW_KEY_S] = InputBind{};
-	playMapping->Map[GLFW_KEY_D] = InputBind{};
-	playMapping->Map[GLFW_KEY_R] = InputBind{};
+	m_PlayMapping = new InputMapping();
+	m_PlayMapping->Map[GLFW_KEY_W] = InputBind{};
+	m_PlayMapping->Map[GLFW_KEY_A] = InputBind{};
+	m_PlayMapping->Map[GLFW_KEY_S] = InputBind{};
+	m_PlayMapping->Map[GLFW_KEY_D] = InputBind{};
+	m_PlayMapping->Map[GLFW_KEY_R] = InputBind{};
 
 	// add random function test member of current class
-	editorMapping->Map[GLFW_KEY_W].dispatcher.Add(new Event<CallbackInputInfo>("InputSystem", [this](CallbackInputInfo info) { EditorPrintInput(info); }));
-	editorMapping->Map[GLFW_KEY_A].dispatcher.Add(new Event<CallbackInputInfo>("InputSystem", [this](CallbackInputInfo info) { EditorPrintInput(info); }));
-	editorMapping->Map[GLFW_KEY_S].dispatcher.Add(new Event<CallbackInputInfo>("InputSystem", [this](CallbackInputInfo info) { EditorPrintInput(info); }));
-	editorMapping->Map[GLFW_KEY_D].dispatcher.Add(new Event<CallbackInputInfo>("InputSystem", [this](CallbackInputInfo info) { EditorPrintInput(info); }));
-	editorMapping->Map[GLFW_KEY_R].dispatcher.Add(new Event<CallbackInputInfo>("InputSystem", [this](CallbackInputInfo info) { StartPlay(info); }));
+	m_EditorMapping->Map[GLFW_KEY_W].dispatcher.Add(new Event<CallbackInputInfo>("InputSystem", [this](CallbackInputInfo info) { EditorPrintInput(info); }));
+	m_EditorMapping->Map[GLFW_KEY_A].dispatcher.Add(new Event<CallbackInputInfo>("InputSystem", [this](CallbackInputInfo info) { EditorPrintInput(info); }));
+	m_EditorMapping->Map[GLFW_KEY_S].dispatcher.Add(new Event<CallbackInputInfo>("InputSystem", [this](CallbackInputInfo info) { EditorPrintInput(info); }));
+	m_EditorMapping->Map[GLFW_KEY_D].dispatcher.Add(new Event<CallbackInputInfo>("InputSystem", [this](CallbackInputInfo info) { EditorPrintInput(info); }));
+	m_EditorMapping->Map[GLFW_KEY_R].dispatcher.Add(new Event<CallbackInputInfo>("InputSystem", [this](CallbackInputInfo info) { StartPlay(info); }));
 
-	playMapping->Map[GLFW_KEY_W].dispatcher.Add(new Event<CallbackInputInfo>("InputSystem", [this](CallbackInputInfo info) { PrintInput(info); }));
-	playMapping->Map[GLFW_KEY_A].dispatcher.Add(new Event<CallbackInputInfo>("InputSystem", [this](CallbackInputInfo info) { PrintInput(info); }));
-	playMapping->Map[GLFW_KEY_S].dispatcher.Add(new Event<CallbackInputInfo>("InputSystem", [this](CallbackInputInfo info) { PrintInput(info); }));
-	playMapping->Map[GLFW_KEY_D].dispatcher.Add(new Event<CallbackInputInfo>("InputSystem", [this](CallbackInputInfo info) { PrintInput(info); }));
-	playMapping->Map[GLFW_KEY_R].dispatcher.Add(new Event<CallbackInputInfo>("InputSystem", [this](CallbackInputInfo info) { EndPlay(info); }));
+	m_PlayMapping->Map[GLFW_KEY_W].dispatcher.Add(new Event<CallbackInputInfo>("InputSystem", [this](CallbackInputInfo info) { PrintInput(info); }));
+	m_PlayMapping->Map[GLFW_KEY_A].dispatcher.Add(new Event<CallbackInputInfo>("InputSystem", [this](CallbackInputInfo info) { PrintInput(info); }));
+	m_PlayMapping->Map[GLFW_KEY_S].dispatcher.Add(new Event<CallbackInputInfo>("InputSystem", [this](CallbackInputInfo info) { PrintInput(info); }));
+	m_PlayMapping->Map[GLFW_KEY_D].dispatcher.Add(new Event<CallbackInputInfo>("InputSystem", [this](CallbackInputInfo info) { PrintInput(info); }));
+	m_PlayMapping->Map[GLFW_KEY_R].dispatcher.Add(new Event<CallbackInputInfo>("InputSystem", [this](CallbackInputInfo info) { EndPlay(info); }));
 
 	// init with previous created map
-	InputSystem::Initialize(editorMapping);
-
+	InputSystem::Initialize(m_EditorMapping);
 	// get and set callback
 	GLFWwindow* window = glfwGetCurrentContext();
 	glfwSetKeyCallback(window, InputSystem::KeyCallback);
 
 	// bind camera
-	m_EngineCamera->BindInput(editorMapping);
+	m_EngineCamera->BindInput(m_EditorMapping);
 	DEBUG_LOG("Input system bind");
+}
+
+void Application::InitGameObject()
+{
+	MirageEngine::GameObject* root = new MirageEngine::GameObject(nullptr, "Root");
+	MirageEngine::GameObject* obj = new MirageEngine::GameObject(root, "Commelin");
+	MirageEngine::GameObject* obj2 = new MirageEngine::GameObject(obj, "Diego");
+	root->AddChild(obj);
+	obj->AddChild(obj2);
+
+	obj->GetParent() ? obj->GetParent()->Transform.SetPosition(Vector3(0, 67, 0)) : void();
+	obj2->GetParent() ? obj2->GetParent()->Transform.SetPosition(Vector3(0, 67, 0)) : void();
 }
 
 void Application::PrintInput(MirageEngine::Core::Input::CallbackInputInfo info)
@@ -212,7 +225,7 @@ void Application::StartPlay(MirageEngine::Core::Input::CallbackInputInfo info)
 	if (info.Pressed)
 	{
 		printf("Editor -> Play\n");
-		InputSystem::SetCurrentMapping(playMapping);
+		InputSystem::SetCurrentMapping(m_PlayMapping);
 	}
 }
 
@@ -221,7 +234,7 @@ void Application::EndPlay(MirageEngine::Core::Input::CallbackInputInfo info)
 	if (info.Pressed)
 	{
 		printf("Play -> Editor\n");
-		InputSystem::SetCurrentMapping(editorMapping);
+		InputSystem::SetCurrentMapping(m_EditorMapping);
 	}
 }
 
@@ -313,7 +326,7 @@ void Application::ShutDown()
 {
 	glfwMakeContextCurrent(m_Window);
 	glfwTerminate();
-	delete editorMapping;
-	delete playMapping;
+	delete m_EditorMapping;
+	delete m_PlayMapping;
 	delete m_EngineCamera;
 }
