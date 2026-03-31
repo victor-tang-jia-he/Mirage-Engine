@@ -36,6 +36,7 @@ namespace Mirage
 
 		static bool BeginAssetGrid(float _cellSize, float _windowSize);
 		static WidgetAction DrawAssetTile(const char* _name, bool _isSelected, void* _icon = nullptr);
+		static void EndAssetTile();
 		static void EndAssetGrid();
 
 		static bool DrawBreadcrumbSegment(const char* _label, bool _bIsLast);

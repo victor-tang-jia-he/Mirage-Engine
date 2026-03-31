@@ -1,6 +1,7 @@
 #include "explorer.h"
 #include "UI_wrapper.h"
 #include "console.h"
+#include "dragdrop.h"
 #include <fstream>
 #include <iostream>
 
@@ -182,6 +183,8 @@ namespace Mirage
 	void Explorer::RenderAssetGrid()
 	{
 		float windowSize = ImGui::GetContentRegionAvail().x;
+		std::filesystem::path directoryToChange = "";
+		bool needsRefresh = false;
 
 		if (UIWrapper::BeginAssetGrid(100.0f, windowSize))
 		{
@@ -197,8 +200,7 @@ namespace Mirage
 
 				if (action == WidgetAction::DoubleClicked && entry.Type == AssetType::Folder)
 				{
-					this->ChangeDirectory(entry.Path);
-					break;
+					directoryToChange = entry.Path;
 				}
 
 				if (action == WidgetAction::RightClicked)
@@ -208,10 +210,39 @@ namespace Mirage
 					m_AnItemWasRightClicked = true;
 					
 				}
+
+				if (ImGui::BeginDragDropSource())
+				{
+					DragDrop::SetPathPayload(DragDropTag::CONTENT_BROWSER_ITEM, entry.Path);
+					ImGui::Text("Moving: %s", entry.Name.c_str());
+					ImGui::EndDragDropSource();
+				}
+
+				if (entry.Type == AssetType::Folder && ImGui::BeginDragDropTarget()) {
+					auto droppedPath = DragDrop::GetPathPayload(DragDropTag::CONTENT_BROWSER_ITEM);
+					if (!droppedPath.empty()) {
+						this->MoveItem(droppedPath, entry.Path);
+						needsRefresh = true;
+					}
+					ImGui::EndDragDropTarget();
+				}
+
+				UIWrapper::EndAssetTile();
+
+				if (!directoryToChange.empty() || needsRefresh)
+					break;
 			}
 			UIWrapper::EndAssetGrid();
-			ImGui::Dummy(ImGui::GetContentRegionAvail());
 		}
+		if (!directoryToChange.empty())
+		{
+			this->ChangeDirectory(directoryToChange);
+		}
+		else if (needsRefresh)
+		{
+			ScanProjectDirectory(m_CurrentPath);
+		}
+		ImGui::Dummy(ImGui::GetContentRegionAvail());
 	}
 
 	void Explorer::RenderAssetContextMenu()
@@ -329,6 +360,23 @@ namespace Mirage
 		if (ec)
 		{
 			std::cout << "Error during renaming" << ec.message() << std::endl;
+		}
+	}
+
+	void Explorer::MoveItem(const std::filesystem::path& _source, const std::filesystem::path& _target)
+	{
+		std::filesystem::path newPath = _target / _source.filename();
+		if (newPath == _source) return;
+		std::error_code ec;
+		std::filesystem::rename(_source, newPath, ec);
+
+		if (ec) 
+		{
+			std::cerr << "Move Error: " << ec.message() << std::endl;
+		}
+		else
+		{
+			ScanProjectDirectory(m_CurrentPath);
 		}
 	}
 }

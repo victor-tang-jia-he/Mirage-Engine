@@ -139,39 +139,99 @@ namespace Mirage
 		return ImGui::BeginTable("Content", colomnNbr);
 	}
 
+	//WidgetAction UIWrapper::DrawAssetTile(const char* _name, bool _isSelected, void* _icon)
+	//{
+	//	ImGui::TableNextColumn();
+	//	ImGui::PushID(_name);
+
+	//	WidgetAction action = WidgetAction::None;
+
+	//	if (_icon == nullptr)
+	//	{
+
+	//	}
+
+	//	ImGui::BeginGroup();
+	//	if (_isSelected)
+	//	{
+
+	//	}
+	//	ImGui::Button("##icon", ImVec2(64, 64));
+	//	ImGui::TextWrapped(_name);
+	//	ImGui::EndGroup();
+
+	//	if (ImGui::IsItemHovered())
+	//	{
+	//		if (ImGui::IsMouseDoubleClicked(0))
+	//			action = WidgetAction::DoubleClicked;
+	//		else if (ImGui::IsItemClicked(0))
+	//			action = WidgetAction::Clicked;
+	//		else if (ImGui::IsItemClicked(1))
+	//			action = WidgetAction::RightClicked;
+	//	}
+
+	//	//ImGui::PopID();
+	//	return action;
+	//}
+
 	WidgetAction UIWrapper::DrawAssetTile(const char* _name, bool _isSelected, void* _icon)
 	{
 		ImGui::TableNextColumn();
 		ImGui::PushID(_name);
-
-		WidgetAction action = WidgetAction::None;
 
 		if (_icon == nullptr)
 		{
 
 		}
 
-		ImGui::BeginGroup();
-		if (_isSelected)
-		{
+		WidgetAction action = WidgetAction::None;
+		ImVec2 startPos = ImGui::GetCursorPos();
+		float columnWidth = ImGui::GetContentRegionAvail().x;
+		ImVec2 tileSize = ImVec2(columnWidth, 110.0f);
 
-		}
-		ImGui::Button("##icon", ImVec2(64, 64));
+		ImGui::BeginGroup();
+
+		float iconSize = 64.0f;
+		float iconPadding = (columnWidth - iconSize) * 0.5f;
+		ImVec2 screenPos = ImGui::GetCursorScreenPos();
+
+		ImGui::GetWindowDrawList()->AddRectFilled(
+			ImVec2(screenPos.x + iconPadding, screenPos.y),
+			ImVec2(screenPos.x + iconPadding + iconSize, screenPos.y + iconSize),
+			ImColor(60, 60, 70),
+			4.0f 
+		);
+
+		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + iconSize + 8.0f);
+
+		float textWidth = ImGui::CalcTextSize(_name).x;
+		if (textWidth < columnWidth)
+			ImGui::SetCursorPosX(ImGui::GetCursorPosX() + (columnWidth - textWidth) * 0.5f);
+
 		ImGui::TextWrapped(_name);
 		ImGui::EndGroup();
 
-		if (ImGui::IsItemHovered())
+		ImGui::SetCursorPos(startPos);
+		if (ImGui::Selectable("##selectable", _isSelected, ImGuiSelectableFlags_AllowDoubleClick, tileSize))
 		{
-			if (ImGui::IsMouseDoubleClicked(0))
-				action = WidgetAction::DoubleClicked;
-			else if (ImGui::IsItemClicked(0))
-				action = WidgetAction::Clicked;
-			else if (ImGui::IsItemClicked(1))
-				action = WidgetAction::RightClicked;
+			// Clic
 		}
 
-		ImGui::PopID();
+		if (ImGui::IsItemHovered())
+		{
+			if (ImGui::IsMouseDoubleClicked(0)) action = WidgetAction::DoubleClicked;
+			else if (ImGui::IsItemClicked(0)) action = WidgetAction::Clicked;
+			else if (ImGui::IsItemClicked(1)) action = WidgetAction::RightClicked;
+		}
+
+		ImGui::SetCursorPos(ImVec2(startPos.x, startPos.y + tileSize.y));
+
 		return action;
+	}
+
+	void UIWrapper::EndAssetTile()
+	{
+		ImGui::PopID();
 	}
 
 	void UIWrapper::EndAssetGrid()
