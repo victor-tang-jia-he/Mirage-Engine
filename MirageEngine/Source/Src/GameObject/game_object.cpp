@@ -9,7 +9,6 @@ MirageEngine::GameObject::GameObject(GameObject* _parent, std::string _name)
 	: m_Parent(_parent),
 	m_Name(_name)
 {
-	AddComponent<Transform>();
 }
 
 MirageEngine::GameObject::GameObject(GameObject* _parent, std::string _name, bool _isStatic)
@@ -17,7 +16,6 @@ MirageEngine::GameObject::GameObject(GameObject* _parent, std::string _name, boo
 	m_Name(_name),
 	m_bIsStatic(_isStatic)
 {
-	AddComponent<Transform>();
 }
 
 MirageEngine::GameObject::GameObject(GameObject* _parent, std::string _name, bool _isStatic, bool _isActive)
@@ -26,22 +24,21 @@ MirageEngine::GameObject::GameObject(GameObject* _parent, std::string _name, boo
 	m_bIsStatic(_isStatic),
 	m_bIsActive(_isActive)
 {
-	AddComponent<Transform>();
 }
 
-void MirageEngine::GameObject::AddChild(std::string _name)
+void MirageEngine::GameObject::AddChild(GameObject* _child)
 {
-	m_Childrens.push_back(new GameObject(this, _name));
+	m_Childrens.push_back(_child);
 }
 
-void MirageEngine::GameObject::AddChild(std::string _name, bool _isStatic)
+void MirageEngine::GameObject::AddChild(GameObject* _child, bool _isStatic)
 {
-	m_Childrens.push_back(new GameObject(this, _name, _isStatic));
+	m_Childrens.push_back(_child);
 }
 
-void MirageEngine::GameObject::AddChild(std::string _name, bool _isStatic, bool _isActive)
+void MirageEngine::GameObject::AddChild(GameObject* _child, bool _isStatic, bool _isActive)
 {
-	m_Childrens.push_back(new GameObject(this, _name, _isStatic, _isActive));
+	m_Childrens.push_back(_child);
 }
 
 MirageEngine::GameObject::~GameObject()

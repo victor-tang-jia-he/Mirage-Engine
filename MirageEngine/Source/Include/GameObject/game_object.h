@@ -21,13 +21,14 @@ namespace MirageEngine
 		std::vector<MirageEngine::Core::Components::Component*> m_Components;
 		std::vector<GameObject*> m_Childrens;
 		GameObject* m_Parent;
+		GameObject* m_Root = this;
 
 		// Editor parameters
 		bool m_bIsActive = true;
 		bool m_bIsStatic = false;
 
 	public:
-		MirageEngine::Core::Components::Transform* m_Transform = nullptr;
+		MirageEngine::Core::Components::Transform Transform;
 
 	public:
 		// Game Object Constructor for create default Game Object or with name and other parameters.
@@ -35,9 +36,9 @@ namespace MirageEngine
 		GameObject(GameObject* _parent, std::string _name, bool _isStatic);
 		GameObject(GameObject* _parent, std::string _name, bool _isStatic, bool _isActive);
 
-		void AddChild(std::string _name);
-		void AddChild(std::string _name, bool _isStatic);
-		void AddChild(std::string _name, bool _isStatic, bool _isActive);
+		void AddChild(GameObject* _child);
+		void AddChild(GameObject* _child, bool _isStatic);
+		void AddChild(GameObject* _child, bool _isStatic, bool _isActive);
 
 		~GameObject();
 
@@ -47,6 +48,7 @@ namespace MirageEngine
 		template <typename T>
 		T* AddComponent()
 		{
+			// std::unique_ptr<T> component = std::make_unique<T>();
 			T* component = new T();
 			component->m_Owner = this;
 			// Name of the type ID

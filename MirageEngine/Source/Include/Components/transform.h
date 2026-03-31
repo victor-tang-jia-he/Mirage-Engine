@@ -8,7 +8,7 @@ namespace MirageEngine
 	{
 		namespace Components
 		{
-			class Transform : public MirageEngine::Core::Components::Component
+			class Transform
 			{
 			private:
 				MirageEngine::Core::Math::Vector3 m_LocalPosition{ 0.f,0.f,0.f };
@@ -27,8 +27,8 @@ namespace MirageEngine
 				Transform() = default;
 				Transform(MirageEngine::Core::Math::Vector3 _position, MirageEngine::Core::Math::Quaternion _rotation, MirageEngine::Core::Math::Vector3 _scale);
 
-				void Init() override;
-				void Update() override;
+				void Init();
+				void Update();
 
 				void LookAt(const MirageEngine::Core::Math::Vector3& target);
 
