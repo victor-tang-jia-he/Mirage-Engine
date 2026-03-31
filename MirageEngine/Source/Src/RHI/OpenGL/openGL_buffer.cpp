@@ -72,7 +72,7 @@ void OpenGLBuffer::Bind() const
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_Buffer);
         break;
     case BufferType::Texture:
-        glActiveTexture(m_Buffer);
+       
         glBindTexture(GL_TEXTURE_2D, m_Buffer);
         break;
     default:
@@ -107,6 +107,9 @@ void MirageRHI::OpenGLBuffer::CreateTexture(const void* _data, size_t _size)
     glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
     glGenerateMipmap(GL_TEXTURE_2D);
 
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, 0);
+
     stbi_image_free(data);
 }
 
@@ -136,6 +139,9 @@ void MirageRHI::OpenGLBuffer::LoadTexture(const std::filesystem::path& _filename
 
     glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
     glGenerateMipmap(GL_TEXTURE_2D);
+
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, 0);
 
     stbi_image_free(data);
 }

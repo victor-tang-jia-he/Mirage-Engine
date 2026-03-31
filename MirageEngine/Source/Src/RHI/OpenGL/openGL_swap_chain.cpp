@@ -43,7 +43,7 @@ uint32_t MirageRHI::OpenGLSwapChain::AcquireCurrentFBO()
 
 uint32_t MirageRHI::OpenGLSwapChain::AcquireCurrentImage()
 {
-    return m_FrameBuffers.at((currentFrame + 1) % m_FrameBuffers.size())->GetFrameTextureID();
+    return m_FrameBuffers.at(currentFrame)->GetFrameTextureID();
 }
 
 void MirageRHI::OpenGLSwapChain::Present(OpenGLSurface _surface)
