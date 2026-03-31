@@ -2,6 +2,7 @@
 #include <Components/input_system.h>
 #include <Events/event.h>
 #include <iostream>
+#include <time_manager.h>
 
 using namespace MirageEngine::Core::EventSystem;
 using namespace MirageEngine::Core::Input;
@@ -15,28 +16,28 @@ void MirageEngine::Core::Components::Camera::BindInput(MirageEngine::Core::Input
 		{
 			if (info.Held)
 			{
-				this->Transform().SetPosition(this->Transform().GetPosition() + this->Transform().Forward() * 0.1f);
+				this->Transform().SetPosition(this->Transform().GetPosition() + this->Transform().Forward() * 1.f * TimeManager::GetDeltaTime());
 			}
 		}));
 	map->Map[GLFW_KEY_A].dispatcher.Add(new Event<CallbackInputInfo>("InputSystem", [this](CallbackInputInfo info) 
 		{
 			if (info.Held)
 			{
-				this->Transform().SetPosition(this->Transform().GetPosition() + this->Transform().Right() * 0.1f);
+				this->Transform().SetPosition(this->Transform().GetPosition() + this->Transform().Right() * 1.f * TimeManager::GetDeltaTime());
 			}
 		}));
 	map->Map[GLFW_KEY_S].dispatcher.Add(new Event<CallbackInputInfo>("InputSystem", [this](CallbackInputInfo info) 
 		{
 			if (info.Held)
 			{
-				this->Transform().SetPosition(this->Transform().GetPosition() - this->Transform().Forward() * 0.1f);
+				this->Transform().SetPosition(this->Transform().GetPosition() - this->Transform().Forward() * 1.f * TimeManager::GetDeltaTime());
 			}
 		}));
 	map->Map[GLFW_KEY_D].dispatcher.Add(new Event<CallbackInputInfo>("InputSystem", [this](CallbackInputInfo info) 
 		{
 			if (info.Held)
 			{
-				this->Transform().SetPosition(this->Transform().GetPosition() - this->Transform().Right() * 0.1f);
+				this->Transform().SetPosition(this->Transform().GetPosition() - this->Transform().Right() * 1.f * TimeManager::GetDeltaTime());
 			}
 		}));
 	map->Map[GLFW_KEY_Q].dispatcher.Add(new Event<CallbackInputInfo>("InputSystem", [this](CallbackInputInfo info) 
@@ -44,7 +45,7 @@ void MirageEngine::Core::Components::Camera::BindInput(MirageEngine::Core::Input
 			if (info.Held)
 			{
 				Vector3 vec = this->Transform().Up();
-				this->Transform().SetRotation(this->Transform().GetRotation() * Quaternion(vec,0.05f));
+				this->Transform().SetRotation(this->Transform().GetRotation() * Quaternion(vec,1.f * TimeManager::GetDeltaTime()));
 			}
 		}));
 	map->Map[GLFW_KEY_E].dispatcher.Add(new Event<CallbackInputInfo>("InputSystem", [this](CallbackInputInfo info) 
@@ -52,7 +53,7 @@ void MirageEngine::Core::Components::Camera::BindInput(MirageEngine::Core::Input
 			if (info.Held)
 			{
 				Vector3 vec = this->Transform().Up();
-				this->Transform().SetRotation(this->Transform().GetRotation() * Quaternion(vec, -0.05f));
+				this->Transform().SetRotation(this->Transform().GetRotation() * Quaternion(vec, -1.f * TimeManager::GetDeltaTime()));
 			}
 		}));
 }

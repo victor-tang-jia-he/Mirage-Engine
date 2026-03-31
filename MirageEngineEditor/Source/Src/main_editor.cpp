@@ -6,6 +6,7 @@
 #include "glad/glad.h"
 #include "GLFW/glfw3.h"
 #include "application.h"
+#include "time_manager.h"
 
 //int main()
 //{
@@ -48,9 +49,10 @@ int main()
 
 	application.InitApp();
 	editor.Init(application.GetWindowHandle());
-
+	MirageEngine::TimeManager::Init();
 	while (application.IsRunning())
 	{
+		MirageEngine::TimeManager::Update();
 		application.BeginFrame();
 		application.RenderScene();
 		editor.Update();

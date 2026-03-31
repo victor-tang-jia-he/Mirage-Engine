@@ -90,7 +90,7 @@ void Application::InitRHI()
 	//{
 	//	0, 1, 2, 2, 3, 0
 	//};
-	IMesh* mesh = ResourceManager::Instance()->CreateMesh("cube", "Assets/Obj/Cube.obj");
+	IMesh* mesh = ResourceManager::Instance()->CreateMesh("cube", "Assets/Mesh/Cube.obj");
 	DEBUG_LOG("Vertex and Index Data Created");
 
 
