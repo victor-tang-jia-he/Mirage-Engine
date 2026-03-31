@@ -64,8 +64,12 @@ void Application::InitRHI()
 	m_RenderPass = m_RenderInterface->InstantiateRenderPass();
 	m_VertexShader = m_RenderInterface->InstantiateShader();
 	m_FragmentShader = m_RenderInterface->InstantiateShader();
+	m_ScreenVertexShader = m_RenderInterface->InstantiateShader();
+	m_ScreenFragmentShader = m_RenderInterface->InstantiateShader();
 	m_PipelineParameters = m_RenderInterface->InstantiatePipelineParameters();
+	m_ScreenPipelineParameters = m_RenderInterface->InstantiatePipelineParameters();
 	m_Pipeline = m_RenderInterface->InstantiatePipeline();
+	m_ScreenPipeline = m_RenderInterface->InstantiatePipeline();
 	m_Framebuffer = m_RenderInterface->InstantiateFramebuffer();
 	m_BufferTriangleVertices = m_RenderInterface->InstantiateBuffer();
 	m_BufferTriangleIndices = m_RenderInterface->InstantiateBuffer();
@@ -97,8 +101,12 @@ void Application::InitRHI()
 	m_RenderPass->Create(Vector4(0.f, 0.5f, 0.5f, 1.0f), 1.0f);
 	m_VertexShader->Create("Assets/Shaders/vertex.glsl", MirageRHI::IShader::ShaderType::Vertex);
 	m_FragmentShader->Create("Assets/Shaders/fragment.glsl", MirageRHI::IShader::ShaderType::Fragment);
+	m_ScreenVertexShader->Create("Assets/Shaders/screen.vert", MirageRHI::IShader::ShaderType::Vertex);
+	m_ScreenFragmentShader->Create("Assets/Shaders/screen.frag", MirageRHI::IShader::ShaderType::Fragment);
 	m_PipelineParameters->Create(MirageRHI::VertexType::PBR, MirageRHI::CullingType::None, true);
+	m_ScreenPipelineParameters->Create(MirageRHI::VertexType::None, MirageRHI::CullingType::None, false);
 	m_Pipeline->Create(m_VertexShader, m_FragmentShader, m_PipelineParameters);
+	m_ScreenPipeline->Create(m_ScreenVertexShader, m_ScreenFragmentShader, m_ScreenPipelineParameters);
 	m_Framebuffer->Create(m_Width, m_Height);
 	m_BufferTriangleVertices->Create(m_VerticesQuad.data(), m_VerticesQuad.size() * sizeof(MirageRHI::LitVertex), MirageRHI::IBuffer::BufferType::Vertices);
 	m_BufferTriangleIndices->Create(m_IndicesQuad.data(), m_IndicesQuad.size() * sizeof(MirageRHI::LitVertex), MirageRHI::IBuffer::BufferType::Indices);
@@ -212,7 +220,7 @@ void Application::RunMainLoop()
 
 		InputSystem::UpdateHeldInput();
 		// Setup to Draw
-		m_CommandBuffer->BeginRenderPass(m_RenderPass);
+		m_CommandBuffer->BeginRenderPass(m_RenderPass, 0);
 		m_CommandBuffer->BeginDraw();
 		m_CommandBuffer->BindPipeline(m_Pipeline);
 		m_CommandBuffer->BindBuffer(m_BufferTriangleIndices);
@@ -222,7 +230,7 @@ void Application::RunMainLoop()
 		m_UniformBuffer->SetView(m_EngineCamera->GetView());
 		m_UniformBuffer->SetProjection(m_EngineCamera->GetPerspective());
 		m_UniformBuffer->UpdateUniformBuffer(m_Pipeline, tempModel);
-		m_CommandBuffer->DrawIndexed(indicesTriangleListSize);
+		m_CommandBuffer->Draw(indicesTriangleListSize);
 		m_CommandBuffer->EndDraw();
 		m_CommandBuffer->EndRenderPass();
 		m_CommandBuffer->SubmitAndPresent(m_SwapChain, m_Surface);
@@ -240,21 +248,29 @@ void Application::BeginFrame() {
 		glfwSetWindowShouldClose(m_Window, true);
 
 	InputSystem::UpdateHeldInput();
-	m_CommandBuffer->BeginRenderPass(m_RenderPass);
+	uint32_t currentFBO = m_SwapChain->AcquireCurrentFBO();
+	m_CommandBuffer->BeginRenderPass(m_RenderPass, currentFBO);
 	m_CommandBuffer->BeginDraw();
 }
 
 void Application::RenderScene()
 {
 	m_CommandBuffer->BindPipeline(m_Pipeline);
+	m_CommandBuffer->ApplyPipelineParameters(m_Pipeline);
 	m_CommandBuffer->BindBuffer(m_BufferTriangleIndices);
 	m_CommandBuffer->BindBuffer(m_BufferTriangleVertices);
 	m_CommandBuffer->BindBuffer(m_TextureBuffer);
-	m_CommandBuffer->ApplyPipelineParameters(m_Pipeline);
 	m_UniformBuffer->SetView(m_EngineCamera->GetView());
 	m_UniformBuffer->SetProjection(m_EngineCamera->GetPerspective());
 	m_UniformBuffer->UpdateUniformBuffer(m_Pipeline, Matrix4::CreateTransformMatrix(Vector3(0, 0, 0), Vector3(0, 0, 0), Vector3(1, 1, 1)));
-	m_CommandBuffer->DrawIndexed(m_IndicesCount);
+	m_CommandBuffer->Draw(m_IndicesCount);
+	m_CommandBuffer->EndRenderPass();
+
+	m_CommandBuffer->BeginRenderPass(m_RenderPass, 0);
+	m_CommandBuffer->BindPipeline(m_ScreenPipeline);
+	m_CommandBuffer->ApplyPipelineParameters(m_ScreenPipeline);
+	m_CommandBuffer->BindTextureFromID(m_SwapChain->AcquireCurrentImage());
+	m_CommandBuffer->Draw(3);
 }
 
 void Application::EndFrame()

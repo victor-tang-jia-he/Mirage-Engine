@@ -23,6 +23,7 @@ namespace MirageRHI
 		virtual void IsScreenResized(ISurface* _surface) = 0;
 		virtual void RecreateSwapchain(ISurface* _surface, int _newWidth, int _newHeight) = 0;
 
-		virtual uint32_t AcquireNextImage() = 0;
+		virtual uint32_t AcquireCurrentFBO() = 0;
+		virtual uint32_t AcquireCurrentImage() = 0;
 	};
 }

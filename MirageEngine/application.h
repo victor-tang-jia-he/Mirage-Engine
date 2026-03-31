@@ -47,8 +47,12 @@ private:
 	IRenderPass* m_RenderPass = nullptr;
 	IShader* m_VertexShader = nullptr;
 	IShader* m_FragmentShader = nullptr;
+	IShader* m_ScreenVertexShader = nullptr;
+	IShader* m_ScreenFragmentShader = nullptr;
 	IPipelineParameters* m_PipelineParameters = nullptr;
+	IPipelineParameters* m_ScreenPipelineParameters = nullptr;
 	IPipeline* m_Pipeline = nullptr;
+	IPipeline* m_ScreenPipeline = nullptr;
 	IFramebuffer* m_Framebuffer = nullptr;
 	IBuffer* m_BufferTriangleVertices = nullptr;
 	IBuffer* m_BufferTriangleIndices = nullptr;

@@ -20,15 +20,16 @@ namespace MirageRHI
         // Binding Functions
         void BindPipeline(IPipeline* _pipeline) override;
         void BindBuffer(IBuffer* _buffer) override;
+        void BindTextureFromID(uint32_t _ID) override;
 
         void ApplyPipelineParameters(IPipeline* _pipeline) override;
 
         // Clear Framebuffers
-        void BeginRenderPass(IRenderPass* _renderPass) override;
+        void BeginRenderPass(IRenderPass* _renderPass, uint32_t _FBO) override;
 		void EndRenderPass() override {} // Nothing to do in OpenGL, as render pass is just a clear command.
 
         // Draw Binded Buffers
-        void DrawIndexed(uint32_t _indexCount) override;
+        void Draw(uint32_t _indexCount) override;
 
         // Swap Buffers
         void SubmitAndPresent(ISwapChain* _swapchain, ISurface* _surface) override;

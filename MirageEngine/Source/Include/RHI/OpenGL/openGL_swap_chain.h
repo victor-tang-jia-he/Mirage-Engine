@@ -24,7 +24,8 @@ namespace MirageRHI
         void IsScreenResized(ISurface* _surface) override;
         void RecreateSwapchain(ISurface* _surface, int _newWidth, int _newHeight) override;
 
-        uint32_t AcquireNextImage() override;
+        uint32_t AcquireCurrentFBO() override;
+        uint32_t AcquireCurrentImage() override;
         void Present(OpenGLSurface _surface);
     };
 }

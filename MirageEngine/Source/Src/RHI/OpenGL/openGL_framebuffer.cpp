@@ -10,6 +10,7 @@ void MirageRHI::OpenGLFramebuffer::Create(uint32_t _width, uint32_t _height)
 
 	// FrameBuffer
 	glGenFramebuffers(1, &m_FBO);
+	glBindFramebuffer(GL_FRAMEBUFFER, m_FBO);
 
 	// Texture
 	glGenTextures(1, &m_Texture);
@@ -67,4 +68,10 @@ void MirageRHI::OpenGLFramebuffer::Bind() const
 void MirageRHI::OpenGLFramebuffer::Unbind() const
 {
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
+
+void MirageRHI::OpenGLFramebuffer::BindFrameTexture() const
+{
+	glActiveTexture(m_Texture);
+	glBindTexture(GL_TEXTURE_2D, m_Texture);
 }

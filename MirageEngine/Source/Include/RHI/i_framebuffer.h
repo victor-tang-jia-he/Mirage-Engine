@@ -15,6 +15,5 @@ namespace MirageRHI
 		virtual void Destroy() = 0;
 
 		virtual OpenGLFramebuffer& API_OpenGL() { throw std::runtime_error("Bad API Call : object is not an OpenGLFramebuffer"); }
-		virtual uint32_t GetFrameTexture() const = 0;
 	};
 }

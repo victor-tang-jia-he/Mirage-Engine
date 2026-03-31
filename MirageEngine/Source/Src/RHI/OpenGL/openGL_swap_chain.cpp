@@ -36,27 +36,21 @@ void MirageRHI::OpenGLSwapChain::RecreateSwapchain(ISurface* _surface, int _newW
     glViewport(0, 0, _newWidth, _newHeight);
 }
 
-uint32_t MirageRHI::OpenGLSwapChain::AcquireNextImage()
+uint32_t MirageRHI::OpenGLSwapChain::AcquireCurrentFBO()
 {
-    return m_FrameBuffers.at((currentFrame + 1) % m_FrameBuffers.size())->GetFrameTexture();
+    return m_FrameBuffers.at(currentFrame)->GetOpenGLHandle();
+}
+
+uint32_t MirageRHI::OpenGLSwapChain::AcquireCurrentImage()
+{
+    return m_FrameBuffers.at((currentFrame + 1) % m_FrameBuffers.size())->GetFrameTextureID();
 }
 
 void MirageRHI::OpenGLSwapChain::Present(OpenGLSurface _surface)
 {
-    glBindFramebuffer(GL_READ_FRAMEBUFFER, m_FrameBuffers.at(currentFrame)->GetOpenGLHandle());
-    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
-
-    glBlitFramebuffer(
-        0, 0, _surface.GetWidth(), _surface.GetHeight(),
-        0, 0, _surface.GetWidth(), _surface.GetHeight(),
-        GL_COLOR_BUFFER_BIT,
-        GL_NEAREST
-    );
-
     glfwSwapBuffers(_surface.GetContextGLHandle());
 
     currentFrame = (currentFrame + 1) % m_FrameBuffers.size();
-    //m_FrameBuffers.at(currentFrame)->Bind();
 }
 
 
