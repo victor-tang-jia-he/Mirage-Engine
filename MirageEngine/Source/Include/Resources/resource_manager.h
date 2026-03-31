@@ -30,13 +30,14 @@ namespace MirageEngine
 		{	
 			class Texture;
 			class IMesh;
+			class Material;
 
 			class ResourceManager
 			{
 				friend class IResource;
 
 			private:
-				std::unordered_map<std::string, std::unique_ptr<IResource>> m_Resources;
+				std::unordered_map<std::string, std::shared_ptr<IResource>> m_Resources;
 
 				std::unordered_map<std::string, std::shared_ptr<MirageRHI::IShader>> m_ShaderCache;
 
@@ -90,6 +91,7 @@ namespace MirageEngine
 				/// <returns>Pointer to the created mesh, or nullptr on failure.</returns>
 				static IMesh* CreateMesh(const std::string& _name, const std::string& _path);
 
+				static Material* CreateMaterial(const std::string& _name);
 
 				/// <summary>
 				/// Retrieves a resource by name and casts it to the requested type.
@@ -115,6 +117,33 @@ namespace MirageEngine
 					}
 
 					return nullptr;
+				}
+
+				/// <summary>
+				/// Retrieves a resource by name and casts it to the requested type.
+				/// </summary>
+				/// <typeparam name="T">Expected resource type (must inherit from IResource).</typeparam>
+				/// <typeparam name="T">Output parameter to store the retrieved resource.</typeparam>
+				/// <param name="_name">Name of the resource.</param>
+				/// <returns>
+				/// True if found and valid,
+				/// otherwise False.
+				/// </returns>
+				template <typename T>
+				static bool TryGet(const std::string& _name, T*& out)
+				{
+					if (!std::is_base_of_v<MirageEngine::Core::Resources::IResource, T>) return false;
+					ResourceManager* resourceManager = ResourceManager::Instance();
+
+					auto it = resourceManager->m_Resources.find(_name);
+					if (it != resourceManager->m_Resources.end())
+					{
+						out = dynamic_cast<T*>(it->second.get());
+						return out != nullptr;
+					}
+
+					out = nullptr;
+					return false;
 				}
 
 

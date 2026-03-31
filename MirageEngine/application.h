@@ -21,11 +21,12 @@
 // Input
 #include <Components/input_system.h>
 namespace MirageEngine {
-    namespace Core {
-        namespace Components {
-            class Camera; 
-        }
-    }
+	namespace Core {
+		namespace Components {
+			class Camera;
+			class MeshRenderer;
+		}
+	}
 }
 
 using namespace MirageRHI;
@@ -51,6 +52,7 @@ private:
 	IUniformBuffer* m_UniformBuffer = nullptr;
 	ICommandBuffer* m_CommandBuffer = nullptr;
 
+
 	// TODO : Change to a list or mapped list (Mesh)
 	//std::vector<LitVertex> m_VerticesQuad;
 	//std::vector<uint32_t> m_IndicesQuad;
@@ -61,6 +63,7 @@ private:
 	MirageEngine::Core::Input::InputMapping* playMapping = nullptr;
 
 	MirageEngine::Core::Components::Camera* m_EngineCamera = nullptr;
+	std::vector < std::shared_ptr < MirageEngine::Core::Components::MeshRenderer>> m_meshRenderer;
 public:
 	IPipeline* m_Pipeline = nullptr;
 	Application(IRenderInterface::API _api = IRenderInterface::API::OPENGL) : m_API(_api) {}

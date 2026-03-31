@@ -23,7 +23,7 @@ namespace MirageRHI
 
         OpenGLBuffer& API_OpenGL() override { return *this; }
 
-        void Bind() const;
+        void Bind() const override;
 
         // Getters
         GLuint GetGLHandle() const { return m_Buffer; }

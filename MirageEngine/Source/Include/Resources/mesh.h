@@ -26,8 +26,10 @@ namespace MirageEngine
 				}
 				~IMesh() = default;
 
+				void Bind() const;
+
 				MirageRHI::IBuffer* GetVertexBuffer() const { return m_VertexBuffer; }
-				MirageRHI::IBuffer* GetIndices() const { return m_IndicesBuffer; }
+				MirageRHI::IBuffer* GetIndexBuffer() const { return m_IndicesBuffer; }
 				size_t GetIndicesCount() const { return m_IndicesCount; }
 
 			};

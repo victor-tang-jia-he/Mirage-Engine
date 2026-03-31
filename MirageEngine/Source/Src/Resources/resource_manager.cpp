@@ -8,7 +8,7 @@
 
 #include <Resources/mesh.h>
 #include <Resources/texture.h>
-
+#include <Resources/material.h>
 #define TINYOBJLOADER_IMPLEMENTATION
 #include <TinyObjLoader/tiny_obj_loader.h>
 
@@ -56,7 +56,7 @@ Texture* ResourceManager::CreateTexture(const std::string& _name, const std::str
 
 	Texture* texture = new Texture(textureBuffer);
 	texture->m_Name = newAssetName;
-	rm->m_Resources.emplace(newAssetName, texture); 
+	rm->m_Resources.emplace(newAssetName, texture);
 	return texture;
 }
 
@@ -160,16 +160,33 @@ IMesh* ResourceManager::CreateMesh(const std::string& _name, const std::string& 
 	std::vector<MirageRHI::LitVertex> vertices;
 
 	rm->LoadMeshUtility(_path, vertices, indices);
-	std::cout << "indices.size(): " << indices.size() << std::endl;
-	std::cout << "expected bytes: " << indices.size() * sizeof(uint32_t) << std::endl;
-	std::cout << "_size: " << indices.size() << std::endl;
 	m_BufferVertices->Create(vertices.data(), vertices.size() * sizeof(MirageRHI::LitVertex), MirageRHI::IBuffer::BufferType::Vertices);
 	m_BufferIndices->Create(indices.data(), indices.size() * sizeof(uint32_t), MirageRHI::IBuffer::BufferType::Indices);
 	IMesh* mesh = new IMesh(m_BufferVertices, m_BufferIndices, indices.size());
-	
+
 	mesh->m_Name = newAssetName;
 	rm->m_Resources.emplace(newAssetName, mesh);
 	return mesh;
+}
+
+Material* MirageEngine::Core::Resources::ResourceManager::CreateMaterial(const std::string& _name)
+{
+	ResourceManager* rm = ResourceManager::Instance();
+	if (!rm)
+	{
+		//LOG(logWarning, LogResourceManager, "Resource Manager isn't instanciate or doesn't exist in this context");
+		return nullptr;
+	}
+	std::string newAssetName = _name;
+	auto resourceIt = rm->m_Resources.find(_name);
+	if (resourceIt != rm->m_Resources.end())
+	{
+		newAssetName = rm->GenerateUniqueAssetName(_name);
+	}
+	Material* material = new Material();
+	material->m_Name = newAssetName;
+	rm->m_Resources.emplace(newAssetName, material);
+	return material;
 }
 
 std::string ResourceManager::GenerateUniqueAssetName(const std::string& _baseName)
@@ -215,7 +232,7 @@ void ResourceManager::LoadMeshUtility(std::string _path,
 	}
 
 	_vertices.reserve(totalIndices);
-	indices.reserve(totalIndices);  
+	indices.reserve(totalIndices);
 
 	for (const auto& shape : shapes)
 	{
@@ -300,9 +317,9 @@ void ResourceManager::LoadMeshUtility(std::string _path,
 
 MirageEngine::Core::Resources::ResourceManager::~ResourceManager()
 {
-	for (auto& resource : m_Resources) 
-		delete resource.second.release();
-	for (auto& shader : m_ShaderCache) 
+	for (auto& resource : m_Resources)
+		resource.second.reset();
+	for (auto& shader : m_ShaderCache)
 		shader.second.reset();
 	m_Resources.clear();
 	m_ShaderCache.clear();

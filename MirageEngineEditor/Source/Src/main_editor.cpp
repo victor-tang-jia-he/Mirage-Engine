@@ -1,6 +1,6 @@
-﻿// MirageEngine.cpp : Defines the entry point for the application.
+// MirageEngine.cpp : Defines the entry point for the application.
 //
-  
+
 #include "UI_wrapper.h"
 #include "editor_app.h"
 #include "glad/glad.h"
@@ -52,8 +52,8 @@ int main()
 	while (application.IsRunning())
 	{
 		application.BeginFrame();
-		editor.Update();
 		application.RenderScene();
+		editor.Update();
 		application.EndFrame();
 	}
 

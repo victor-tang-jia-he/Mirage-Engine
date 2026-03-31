@@ -22,6 +22,9 @@ namespace MirageRHI
 
 		virtual ~IBuffer() = default;
 
+
+		virtual void Bind() const = 0;
+
 		virtual void Create(const void* _data, size_t _size, BufferType _type) = 0;
 		virtual void Create(std::filesystem::path const& _filename, BufferType _type) = 0;
 		virtual void Destroy() = 0;
