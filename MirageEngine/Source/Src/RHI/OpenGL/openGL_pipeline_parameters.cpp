@@ -42,16 +42,20 @@ void MirageRHI::OpenGLPipelineParameters::ApplyParameters()
 
 void MirageRHI::OpenGLPipelineParameters::SetLayout() const
 {
-	if (m_VertexType == VertexType::Simple)
+	glBindVertexArray(m_VAO);
+
+	switch (m_VertexType)
 	{
+	case MirageRHI::VertexType::None:
+		break;
+	case MirageRHI::VertexType::Simple:
 		glEnableVertexAttribArray(0);
 		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(UnlitVertex), (void*)offsetof(UnlitVertex, Position));
 
 		glEnableVertexAttribArray(1);
 		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(VertexType), (void*)offsetof(UnlitVertex, Color));
-	}
-	else if (m_VertexType == VertexType::PBR)
-	{
+		break;
+	case MirageRHI::VertexType::PBR:
 		glEnableVertexAttribArray(0);
 		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(LitVertex), (void*)offsetof(LitVertex, Position));
 
@@ -60,9 +64,8 @@ void MirageRHI::OpenGLPipelineParameters::SetLayout() const
 
 		glEnableVertexAttribArray(2);
 		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(LitVertex), (void*)offsetof(LitVertex, UV));
-	}
-	else
-	{
-		DEBUG_THROW("Unknown Vertex Type!")
+		break;
+	default:
+		break;
 	}
 }

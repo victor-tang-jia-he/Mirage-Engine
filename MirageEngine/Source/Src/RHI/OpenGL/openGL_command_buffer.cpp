@@ -15,17 +15,24 @@ void MirageRHI::OpenGLCommandBuffer::BindBuffer(IBuffer* _buffer)
 	_buffer->API_OpenGL().Bind();
 }
 
+void MirageRHI::OpenGLCommandBuffer::BindTextureFromID(uint32_t _ID)
+{
+	glActiveTexture(_ID);
+	glBindTexture(GL_TEXTURE_2D, _ID);
+}
+
 void MirageRHI::OpenGLCommandBuffer::ApplyPipelineParameters(IPipeline* _pipeline)
 {
 	_pipeline->API_OpenGL().ApplyParameters();
 }
 
-void MirageRHI::OpenGLCommandBuffer::BeginRenderPass(IRenderPass* _renderPass)
+void MirageRHI::OpenGLCommandBuffer::BeginRenderPass(IRenderPass* _renderPass, uint32_t _FBO)
 {
+	glBindFramebuffer(GL_FRAMEBUFFER, _FBO);
 	_renderPass->API_OpenGL().Begin();
 }
 
-void MirageRHI::OpenGLCommandBuffer::DrawIndexed(uint32_t _indexCount)
+void MirageRHI::OpenGLCommandBuffer::Draw(uint32_t _indexCount)
 {
 	glDrawElements(GL_TRIANGLES, _indexCount, GL_UNSIGNED_INT, 0);
 }

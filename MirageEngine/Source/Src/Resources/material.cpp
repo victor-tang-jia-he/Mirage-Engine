@@ -67,6 +67,8 @@ void Material::Bind()
 	{
 		if (_texture) 
 		{
+			// Activate the correct texture unit, then bind the texture object.
+			glActiveTexture(GL_TEXTURE0 + textureUnit);
 			_texture->GetTextureBuffer()->Bind();
 			m_Shader->SetInt(_name, textureUnit);
 			textureUnit++;

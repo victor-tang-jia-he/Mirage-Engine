@@ -7,7 +7,5 @@ int main()
 
 	application.InitApp();
 
-	application.RunMainLoop();
-
 	application.ShutDown();
 }

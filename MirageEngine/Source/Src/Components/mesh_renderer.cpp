@@ -9,5 +9,5 @@ void MirageEngine::Core::Components::MeshRenderer::Render(MirageRHI::ICommandBuf
     _uniformBuffer->UpdateUniformBuffer(_pipeline,Transform.GetMatrix());
     _commandBuffer->BindBuffer(Mesh->GetVertexBuffer());
     _commandBuffer->BindBuffer(Mesh->GetIndexBuffer());
-    _commandBuffer->DrawIndexed((uint32_t)Mesh->GetIndicesCount());
+    _commandBuffer->Draw((uint32_t)Mesh->GetIndicesCount());
 }
