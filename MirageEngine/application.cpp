@@ -6,6 +6,7 @@
 #include <Resources/mesh.h>
 #include <Resources/material.h>
 #include <Resources/texture.h>
+#include <Resources/shader.h>
 #include <Components/mesh_renderer.h>
 
 using namespace MirageEngine::Core::Input;
@@ -90,7 +91,7 @@ void Application::InitRHI()
 	//{
 	//	0, 1, 2, 2, 3, 0
 	//};
-	IMesh* mesh = ResourceManager::Instance()->CreateMesh("cube", "Assets/Obj/Cube.obj");
+	Mesh* mesh = ResourceManager::Instance()->CreateMesh("cube", "Assets/Obj/Cube.obj");
 	DEBUG_LOG("Vertex and Index Data Created");
 
 
@@ -108,8 +109,7 @@ void Application::InitRHI()
 	//m_VertexShader->Create("Assets/Shaders/vertex.glsl", MirageRHI::IShader::ShaderType::Vertex);
 	//m_FragmentShader->Create("Assets/Shaders/fragment.glsl", MirageRHI::IShader::ShaderType::Fragment);
 	m_PipelineParameters->Create(MirageRHI::VertexType::PBR, MirageRHI::CullingType::None, true);
-	m_Pipeline = ResourceManager::Instance()->CreatePipeline("pipeline", "Assets/Shaders/fragment.glsl", "Assets/Shaders/vertex.glsl", m_PipelineParameters);
-	//m_Pipeline->Create(m_VertexShader, m_FragmentShader, m_PipelineParameters);
+	m_Pipeline->Create(ResourceManager::Instance()->Get<Shader>("vertex")->ShaderBind, ResourceManager::Instance()->Get<Shader>("fragment")->ShaderBind, m_PipelineParameters);
 	//m_BufferTriangleVertices->Create(m_VerticesQuad.data(), m_VerticesQuad.size() * sizeof(MirageRHI::LitVertex), MirageRHI::IBuffer::BufferType::Vertices);
 	//m_BufferTriangleIndices->Create(m_IndicesQuad.data(), m_IndicesQuad.size() * sizeof(MirageRHI::LitVertex), MirageRHI::IBuffer::BufferType::Indices);
 	//m_TextureBuffer->Create("Assets/Textures/cat.png", MirageRHI::IBuffer::BufferType::Texture);
@@ -228,7 +228,7 @@ void Application::EndPlay(MirageEngine::Core::Input::CallbackInputInfo info)
 void Application::RunMainLoop()
 {
 	using namespace MirageEngine::Core::Resources;
-	IMesh* mesh = ResourceManager::Instance()->Get<IMesh>("cube");
+	Mesh* mesh = ResourceManager::Instance()->Get<Mesh>("cube");
 	Matrix4 tempModel = Matrix4::CreateTransformMatrix(Vector3(0, 0, 0), Vector3(0, 0, 0), Vector3(1, 1, 1));
 	while (!glfwWindowShouldClose(m_Window))
 	{
@@ -276,7 +276,7 @@ void Application::RenderScene()
 {
 	using namespace MirageEngine::Core::Resources;
 
-	//IMesh* Mesh = ResourceManager::Instance()->Get<IMesh>("cube");
+	//Mesh* Mesh = ResourceManager::Instance()->Get<Mesh>("cube");
 	//m_CommandBuffer->BindPipeline(m_Pipeline);
 	//m_CommandBuffer->BindBuffer(Mesh->GetIndexBuffer());
 	//m_CommandBuffer->BindBuffer(Mesh->GetVertexBuffer());

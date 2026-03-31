@@ -16,7 +16,7 @@ namespace MirageEngine
 		{
             class Texture;
             class IShader;
-            class IMesh;
+            class Mesh;
 
             class Material : public IResource
             {

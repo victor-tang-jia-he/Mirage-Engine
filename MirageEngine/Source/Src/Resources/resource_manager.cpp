@@ -9,6 +9,7 @@
 #include <Resources/mesh.h>
 #include <Resources/texture.h>
 #include <Resources/material.h>
+#include <Resources/shader.h>
 #define TINYOBJLOADER_IMPLEMENTATION
 #include <TinyObjLoader/tiny_obj_loader.h>
 
@@ -60,7 +61,7 @@ Texture* ResourceManager::CreateTexture(const std::string& _name, const std::str
 	return texture;
 }
 
-MirageRHI::IShader* ResourceManager::CreateShader(const std::string& _name, const std::string& _path, const MirageRHI::IShader::ShaderType _type)
+Shader* ResourceManager::CreateShader(const std::string& _name, const std::string& _path, const MirageRHI::IShader::ShaderType _type)
 {
 	ResourceManager* rm = ResourceManager::Instance();
 	if (!rm)
@@ -73,67 +74,25 @@ MirageRHI::IShader* ResourceManager::CreateShader(const std::string& _name, cons
 		//LOG(logError, LogResourceManager, "Resource Manager RHI isn't init");
 		return nullptr;
 	}
-	std::string    newAssetName = _name;
+	std::string newAssetName = _name;
 	auto it = rm->m_Resources.find(_name);
 	if (it != rm->m_Resources.end())
 	{
 		newAssetName = rm->GenerateUniqueAssetName(_name);
 	}
-	MirageRHI::IShader* shader = rm->m_Rhi->InstantiateShader();
+	MirageRHI::IShader* rhiShader = rm->m_Rhi->InstantiateShader();
+	rhiShader->Create(_path.c_str(), _type);
+
+	Shader* shader = new Shader();
 	shader->m_Name = newAssetName;
-	shader->Create(_path.c_str(), _type);
+	shader->ShaderBind = rhiShader;
+
 	rm->m_Resources.emplace(newAssetName, shader); // global resource
-	rm->m_ShaderCache.emplace(_path, shader); // local cache
+	rm->m_ShaderCache.emplace(_path, rhiShader); // local cache
 	return shader;
 }
 
-MirageRHI::IPipeline* ResourceManager::CreatePipeline(const std::string& _name, const char* _pathFrag, const char* _pathVertex, MirageRHI::IPipelineParameters* _pipelineParamter)
-{
-	ResourceManager* rm = ResourceManager::Instance();
-	if (!rm)
-	{
-		//LOG(logWarning, LogResourceManager, "Resource Manager isn't instanciate or doesn't exist in this context");
-		return nullptr;
-	}
-	if (!rm->m_Rhi)
-	{
-		//LOG(logError, LogResourceManager, "Resource Manager RHI isn't init");
-		return nullptr;
-	}
-	std::string    newAssetName = _name;
-	auto resourceIt = rm->m_Resources.find(_name);
-	if (resourceIt != rm->m_Resources.end())
-	{
-		newAssetName = rm->GenerateUniqueAssetName(_name);
-	}
-
-	// pre define ptr
-	MirageRHI::IShader* frag;
-	MirageRHI::IShader* vert;
-
-	// search in cache
-	auto shaderFragIt = rm->m_ShaderCache.find(_pathFrag);
-	auto shaderVertIt = rm->m_ShaderCache.find(_pathVertex);
-
-	// If find get, else, load
-	if (shaderFragIt != rm->m_ShaderCache.end())
-		frag = shaderFragIt->second.get();
-	else
-		frag = ResourceManager::CreateShader("ShaderFragment", _pathFrag, MirageRHI::IShader::ShaderType::Fragment);
-	if (shaderVertIt != rm->m_ShaderCache.end())
-		vert = shaderVertIt->second.get();
-	else
-		vert = ResourceManager::CreateShader("ShaderVertex", _pathVertex, MirageRHI::IShader::ShaderType::Vertex);
-
-
-	MirageRHI::IPipeline* pipeline = rm->m_Rhi->InstantiatePipeline();
-	pipeline->Create(frag, vert, _pipelineParamter);
-	pipeline->m_Name = newAssetName;
-	rm->m_Resources.emplace(newAssetName, pipeline);
-	return pipeline;
-}
-
-IMesh* ResourceManager::CreateMesh(const std::string& _name, const std::string& _path)
+Mesh* ResourceManager::CreateMesh(const std::string& _name, const std::string& _path)
 {
 	ResourceManager* rm = ResourceManager::Instance();
 	if (!rm)
@@ -162,7 +121,7 @@ IMesh* ResourceManager::CreateMesh(const std::string& _name, const std::string& 
 	rm->LoadMeshUtility(_path, vertices, indices);
 	m_BufferVertices->Create(vertices.data(), vertices.size() * sizeof(MirageRHI::LitVertex), MirageRHI::IBuffer::BufferType::Vertices);
 	m_BufferIndices->Create(indices.data(), indices.size() * sizeof(uint32_t), MirageRHI::IBuffer::BufferType::Indices);
-	IMesh* mesh = new IMesh(m_BufferVertices, m_BufferIndices, indices.size());
+	Mesh* mesh = new Mesh(m_BufferVertices, m_BufferIndices, indices.size());
 
 	mesh->m_Name = newAssetName;
 	rm->m_Resources.emplace(newAssetName, mesh);

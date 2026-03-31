@@ -19,13 +19,13 @@ namespace MirageEngine
 		{
 			class MeshRenderer {
 			public:
-				MirageEngine::Core::Resources::IMesh* Mesh = nullptr;
+				MirageEngine::Core::Resources::Mesh* Mesh = nullptr;
 				MirageEngine::Core::Resources::Material* Material = nullptr;
 				MirageEngine::Core::Components::Transform Transform;
 
 
 				MeshRenderer() = default;
-				MeshRenderer(MirageEngine::Core::Resources::IMesh* _mesh, MirageEngine::Core::Resources::Material* _material)
+				MeshRenderer(MirageEngine::Core::Resources::Mesh* _mesh, MirageEngine::Core::Resources::Material* _material)
 					: Mesh(_mesh), Material(_material) {
 				}
 

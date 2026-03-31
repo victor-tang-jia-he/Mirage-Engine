@@ -1,7 +1,6 @@
 #pragma once
 
 #include <iostream>
-#include <Resources/resource_interface.h>
 
 namespace MirageRHI
 {
@@ -10,7 +9,7 @@ namespace MirageRHI
 
 namespace MirageRHI
 {
-	class IShader : public MirageEngine::Core::Resources::IResource
+	class IShader
 	{
 	public:
 		enum class ShaderType
