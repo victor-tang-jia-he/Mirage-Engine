@@ -10,7 +10,7 @@ namespace MirageRHI
 	class OpenGLPipeline;
 	class IShader;
 	
-	class IPipeline : public MirageEngine::Core::Resources::IResource 
+	class IPipeline 
 	{
 	public:
 		virtual ~IPipeline() = default;

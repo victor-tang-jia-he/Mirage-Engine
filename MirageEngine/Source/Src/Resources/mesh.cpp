@@ -4,7 +4,7 @@
 
 using namespace MirageEngine::Core::Resources;
 
-void IMesh::Bind() const
+void Mesh::Bind() const
 {
 	m_VertexBuffer->Bind();
 	m_IndicesBuffer->Bind();

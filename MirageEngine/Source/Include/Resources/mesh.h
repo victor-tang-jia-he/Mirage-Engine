@@ -12,7 +12,7 @@ namespace MirageEngine
 	{
 		namespace Resources
 		{
-			class IMesh : public IResource
+			class Mesh : public IResource
 			{
 			private:
 				MirageRHI::IBuffer* m_VertexBuffer = nullptr;
@@ -20,11 +20,11 @@ namespace MirageEngine
 				size_t m_IndicesCount = 0;
 
 			public:
-				IMesh(MirageRHI::IBuffer* _vertexBuffer, MirageRHI::IBuffer* _indiceBuffer, size_t _indicesCount)
+				Mesh(MirageRHI::IBuffer* _vertexBuffer, MirageRHI::IBuffer* _indiceBuffer, size_t _indicesCount)
 					: m_VertexBuffer(_vertexBuffer), m_IndicesBuffer(_indiceBuffer), m_IndicesCount(_indicesCount)
 				{
 				}
-				~IMesh() = default;
+				~Mesh() = default;
 
 				void Bind() const;
 

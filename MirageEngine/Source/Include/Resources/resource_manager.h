@@ -13,7 +13,6 @@
 
 namespace MirageRHI
 {
-	class IPipeline;
 	class IShader;
 	class ITexture;
 	class IBuffer;
@@ -29,8 +28,9 @@ namespace MirageEngine
 		namespace Resources
 		{	
 			class Texture;
-			class IMesh;
+			class Mesh;
 			class Material;
+			struct Shader;
 
 			class ResourceManager
 			{
@@ -69,19 +69,7 @@ namespace MirageEngine
 				/// <param name="_path">File path to the shader source.</param>
 				/// <param name="_type">Type of shader (e.g., vertex, fragment).</param>
 				/// <returns>Pointer to the created shader, or nullptr on failure.</returns>
-				static MirageRHI::IShader* CreateShader(const std::string& _name, const std::string& _path, const MirageRHI::IShader::ShaderType _type);
-
-
-				/// <summary>
-				/// Creates a rendering pipeline using vertex and fragment shaders.
-				/// </summary>
-				/// <param name="_name">Unique identifier of the pipeline.</param>
-				/// <param name="_pathFrag">File path to the fragment shader.</param>
-				/// <param name="_pathVertex">File path to the vertex shader.</param>
-				/// <param name="_pipelineParamter">Pipeline configuration parameters.</param>
-				/// <returns>Pointer to the created pipeline, or nullptr on failure.</returns>
-				static MirageRHI::IPipeline* CreatePipeline(const std::string& _name, const char* _pathFrag, const char* _pathVertex, MirageRHI::IPipelineParameters* _pipelineParamter);
-
+				static Shader* CreateShader(const std::string& _name, const std::string& _path, const MirageRHI::IShader::ShaderType _type);
 
 				/// <summary>
 				/// Loads a mesh from file, creates GPU buffers, and registers it.
@@ -89,7 +77,7 @@ namespace MirageEngine
 				/// <param name="_name">Unique identifier of the mesh.</param>
 				/// <param name="_path">File path to the mesh (e.g., OBJ).</param>
 				/// <returns>Pointer to the created mesh, or nullptr on failure.</returns>
-				static IMesh* CreateMesh(const std::string& _name, const std::string& _path);
+				static Mesh* CreateMesh(const std::string& _name, const std::string& _path);
 
 				static Material* CreateMaterial(const std::string& _name);
 
