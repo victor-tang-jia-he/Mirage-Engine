@@ -13,7 +13,7 @@ namespace MirageEngine
 
 		namespace Components
 		{
-			class Camera// : public Component
+			class Camera : public Component
 			{
 			private:
 				// Clipping Planes
@@ -23,15 +23,14 @@ namespace MirageEngine
 
 				MirageEngine::Core::Components::Transform m_transform;
 			public:
+				Camera() = default;
 				Camera(unsigned int _width, unsigned int _height,
 					float _fov, float _near, float _far,
 					const MirageEngine::Core::Math::Vector3 _position);
 				~Camera() = default;
 
-				void LookAt(const MirageEngine::Core::Math::Vector3& target)
-				{
-					m_transform.LookAt(target);
-				}
+				void Init() override {};
+				void Update() override {};
 
 				MirageEngine::Core::Components::Transform& Transform() { return m_transform; }
 				MirageEngine::Core::Math::Matrix4 GetPerspective() const { return MirageEngine::Core::Math::Matrix4::GetPerspectiveMatrix(m_Width, m_Height, m_Near, m_Far, m_Fov); }
