@@ -1,45 +1,11 @@
-﻿// MirageEngine.cpp : Defines the entry point for the application.
-//
-  
+// MirageEngine.cpp : Defines the entry point for the application.
+
 #include "UI_wrapper.h"
 #include "editor_app.h"
 #include "glad/glad.h"
 #include "GLFW/glfw3.h"
 #include "application.h"
-
-//int main()
-//{
-//	glfwInit();
-//	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-//	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-//	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);	
-//
-//	GLFWwindow* window = glfwCreateWindow(1920, 1080, "Mirage Enginexc", NULL, NULL);
-//	glfwMakeContextCurrent(window);
-//
-//	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
-//	{
-//		return -1;
-//	}
-//
-//	Mirage::EditorApp myEditor;
-//	myEditor.Init(window);
-//
-//	while (!glfwWindowShouldClose(window))
-//	{
-//		glfwPollEvents();
-//		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
-//		glClear(GL_COLOR_BUFFER_BIT);
-//
-//		myEditor.Update();
-//
-//		glfwSwapBuffers(window);
-//	}
-//
-//	myEditor.Shutdown();
-//	glfwTerminate();
-//	return 0;
-//}
+#include "time_manager.h"
 
 int main()
 {
@@ -48,12 +14,13 @@ int main()
 
 	application.InitApp();
 	editor.Init(application.GetWindowHandle());
-
+	MirageEngine::TimeManager::Init();
 	while (application.IsRunning())
 	{
+		MirageEngine::TimeManager::Update();
 		application.BeginFrame();
-		editor.Update();
 		application.RenderScene();
+		editor.Update();
 		application.EndFrame();
 	}
 

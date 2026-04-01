@@ -2,6 +2,7 @@
 
 void MirageRHI::OpenGLShader::Create(const char* _shaderPath, ShaderType _type)
 {
+	m_Type = _type;
     unsigned int glType = 0;
     if (_type == ShaderType::Vertex)
         glType = GL_VERTEX_SHADER;
@@ -9,7 +10,6 @@ void MirageRHI::OpenGLShader::Create(const char* _shaderPath, ShaderType _type)
         glType = GL_FRAGMENT_SHADER;
     else
         DEBUG_THROW("Unknown Shader Type Used!");
-
     CompileShader(_shaderPath, glType, m_Shader);
 }
 

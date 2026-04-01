@@ -11,17 +11,17 @@ void OpenGLBuffer::Create(const void* _data, size_t _size, BufferType _type)
 
     switch (m_Type)
     {
-    case IBuffer::Vertices:
+    case BufferType::Vertices:
         glGenBuffers(1, &m_Buffer);
         glBindBuffer(GL_ARRAY_BUFFER, m_Buffer);
         glBufferData(GL_ARRAY_BUFFER, _size, _data, GL_STATIC_DRAW);
         break;
-    case IBuffer::Indices:
+    case BufferType::Indices:
         glGenBuffers(1, &m_Buffer);
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_Buffer);
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, _size, _data, GL_STATIC_DRAW);
         break;
-    case IBuffer::Texture:
+    case BufferType::Texture:
         CreateTexture(_data, _size);
         break;
     default:
@@ -29,23 +29,23 @@ void OpenGLBuffer::Create(const void* _data, size_t _size, BufferType _type)
     }
 }
 
-void MirageRHI::OpenGLBuffer::Create(std::filesystem::path const& _filename, BufferType _type)
+void MirageRHI::OpenGLBuffer::Create(const std::filesystem::path& _filename, BufferType _type)
 {
     m_Type = _type;
 
     switch (m_Type)
     {
-    case IBuffer::Vertices:
+    case BufferType::Vertices:
         glGenBuffers(1, &m_Buffer);
         glBindBuffer(GL_ARRAY_BUFFER, m_Buffer);
         // Todo
         break;
-    case IBuffer::Indices:
+    case BufferType::Indices:
         glGenBuffers(1, &m_Buffer);
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_Buffer);
         // Todo
         break;
-    case IBuffer::Texture:
+    case BufferType::Texture:
         LoadTexture(_filename);
         break;
     default:
@@ -55,9 +55,9 @@ void MirageRHI::OpenGLBuffer::Create(std::filesystem::path const& _filename, Buf
 
 void OpenGLBuffer::Destroy()
 {
-    if (m_Type == IBuffer::Vertices || m_Type == IBuffer::Indices)
+    if (m_Type == BufferType::Vertices || m_Type == BufferType::Indices)
         glDeleteBuffers(1, &m_Buffer);
-    else if (m_Type == IBuffer::Texture)
+    else if (m_Type == BufferType::Texture)
         glDeleteTextures(1, &m_Buffer);
 }
 
@@ -65,14 +65,14 @@ void OpenGLBuffer::Bind() const
 {
     switch (m_Type)
     {
-    case IBuffer::Vertices:
+    case BufferType::Vertices:
         glBindBuffer(GL_ARRAY_BUFFER, m_Buffer);
         break;
-    case IBuffer::Indices:
+    case BufferType::Indices:
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_Buffer);
         break;
-    case IBuffer::Texture:
-        glActiveTexture(GL_TEXTURE0);
+    case BufferType::Texture:
+       
         glBindTexture(GL_TEXTURE_2D, m_Buffer);
         break;
     default:
@@ -107,10 +107,13 @@ void MirageRHI::OpenGLBuffer::CreateTexture(const void* _data, size_t _size)
     glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
     glGenerateMipmap(GL_TEXTURE_2D);
 
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, 0);
+
     stbi_image_free(data);
 }
 
-void MirageRHI::OpenGLBuffer::LoadTexture(std::filesystem::path const& _filename)
+void MirageRHI::OpenGLBuffer::LoadTexture(const std::filesystem::path& _filename)
 {
     stbi_set_flip_vertically_on_load(true);
 
@@ -136,6 +139,9 @@ void MirageRHI::OpenGLBuffer::LoadTexture(std::filesystem::path const& _filename
 
     glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
     glGenerateMipmap(GL_TEXTURE_2D);
+
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, 0);
 
     stbi_image_free(data);
 }

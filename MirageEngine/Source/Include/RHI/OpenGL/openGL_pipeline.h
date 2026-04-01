@@ -3,7 +3,6 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
-#include <matrix4.h>
 #include <debug.h>
 
 #include <i_pipeline.h>
@@ -37,12 +36,12 @@ namespace MirageRHI
 		void Unbind() const;
 
 		// Set Shader Parameters
-		void SetInt(const std::string& _name, int _value) const;
-		void SetFloat(const std::string& _name, float _value) const;
-		void SetVec3(const std::string& _name, const MirageEngine::Core::Math::Vector3& _value) const;
-		void SetMat3(const std::string& _name, const MirageEngine::Core::Math::Matrix3& _mat) const;
-		void SetMat4(const std::string& _name, const MirageEngine::Core::Math::Matrix4& _mat) const;
-		void SetBool(const std::string& _name, bool _value)const;
+		void SetInt(const std::string& _name, int _value) const override;
+		void SetFloat(const std::string& _name, float _value) const override;
+		void SetVec3(const std::string& _name, const MirageEngine::Core::Math::Vector3& _value) const override;
+		void SetMat3(const std::string& _name, const MirageEngine::Core::Math::Matrix3& _mat) const override;
+		void SetMat4(const std::string& _name, const MirageEngine::Core::Math::Matrix4& _mat) const override;
+		void SetBool(const std::string& _name, bool _value)const override;
 
 		// Apply Pipeline Parameters
 		void ApplyParameters();

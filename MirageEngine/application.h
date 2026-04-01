@@ -21,11 +21,12 @@
 // Input
 #include <Components/input_system.h>
 namespace MirageEngine {
-    namespace Core {
-        namespace Components {
-            class Camera; 
-        }
-    }
+	namespace Core {
+		namespace Components {
+			class Camera;
+			class MeshRenderer;
+		}
+	}
 }
 
 using namespace MirageRHI;
@@ -45,32 +46,24 @@ private:
 	IDevice* m_Device = nullptr;
 	ISwapChain* m_SwapChain = nullptr;
 	IRenderPass* m_RenderPass = nullptr;
-	IShader* m_VertexShader = nullptr;
-	IShader* m_FragmentShader = nullptr;
 	IPipelineParameters* m_PipelineParameters = nullptr;
+	IPipelineParameters* m_ScreenPipelineParameters = nullptr;
 	IPipeline* m_Pipeline = nullptr;
+	IPipeline* m_ScreenPipeline = nullptr;
 	IFramebuffer* m_Framebuffer = nullptr;
-	IBuffer* m_BufferTriangleVertices = nullptr;
-	IBuffer* m_BufferTriangleIndices = nullptr;
-	IBuffer* m_TextureBuffer = nullptr;
 	IUniformBuffer* m_UniformBuffer = nullptr;
 	ICommandBuffer* m_CommandBuffer = nullptr;
 
-	// TODO : Change to a list or mapped list (Mesh)
-	std::vector<LitVertex> m_VerticesQuad;
-	std::vector<uint32_t> m_IndicesQuad;
-	uint32_t m_IndicesCount = 0;
-
 	// TODO : Edit in map
-	MirageEngine::Core::Input::InputMapping* editorMapping = nullptr;
-	MirageEngine::Core::Input::InputMapping* playMapping = nullptr;
+	MirageEngine::Core::Input::InputMapping* m_EditorMapping = nullptr;
+	MirageEngine::Core::Input::InputMapping* m_PlayMapping = nullptr;
 
 	MirageEngine::Core::Components::Camera* m_EngineCamera = nullptr;
+	std::vector < std::shared_ptr < MirageEngine::Core::Components::MeshRenderer>> m_meshRenderer;
 public:
 	Application(IRenderInterface::API _api = IRenderInterface::API::OPENGL) : m_API(_api) {}
 
 	void InitApp();
-	void RunMainLoop();
 	void ShutDown();
 
 	bool IsRunning() const;
@@ -85,6 +78,7 @@ private:
 	void InitRHI();
 	void InitScene(); // TODO
 	void InitInput();
+	void InitGameObject();
 	void PrintInput(MirageEngine::Core::Input::CallbackInputInfo info); // debug
 	void EditorPrintInput(MirageEngine::Core::Input::CallbackInputInfo info); // debug
 	void StartPlay(MirageEngine::Core::Input::CallbackInputInfo info);

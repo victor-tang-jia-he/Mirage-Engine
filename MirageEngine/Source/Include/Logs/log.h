@@ -112,10 +112,9 @@ namespace Logger
 
 		void Append(const std::string& msg)
 		{
-			std::lock_guard<std::mutex> lock(m_mutex);
-
+			m_mutex.lock();
 			m_buffer << msg;
-
+			m_mutex.unlock();
 			// If the buffer grows too large we flush immediately.
 			// This prevents excessive memory growth.
 			if (m_buffer.str().size() > BUFFER_SIZE)

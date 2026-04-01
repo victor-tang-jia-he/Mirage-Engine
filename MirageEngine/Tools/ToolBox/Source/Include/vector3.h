@@ -1,4 +1,4 @@
-﻿	#pragma once
+	#pragma once
 
 #include "vector2.h"
 
@@ -19,6 +19,9 @@ namespace MirageEngine
 				float Z{ 0 };
 
 				Vector3() = default;
+				inline Vector3(float _value) noexcept
+					: X(_value), Y(_value), Z(_value) {
+				}
 				inline Vector3(float _x, float _y) noexcept
 					: X(_x), Y(_y), Z(0) {
 				}
@@ -117,7 +120,7 @@ namespace MirageEngine
 				Vector3 Normalized() const;
 
 				/// <summary>
-				/// Returns the perspective-transformed value of the vector using the formula: (x² + y² + z²) / _t.
+				/// Returns the perspective-transformed value of the vector using the formula: (x? + y? + z?) / _t.
 				/// </summary>
 				/// <param name="_t">The perspective parameter. Must be greater than 0.</param>
 				/// <returns>The result of the perspective function, or 0 if _t is less than or equal to 0.</returns>
