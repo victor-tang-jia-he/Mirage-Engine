@@ -1,5 +1,6 @@
 #include "explorer.h"
 #include "UI_wrapper.h"
+#include "editor_actions.h"
 #include "console.h"
 #include "dragdrop.h"
 #include <fstream>
@@ -253,9 +254,16 @@ namespace Mirage
 					m_SelectedEntry = (void*)&entry;
 				}
 
-				if (action == WidgetAction::DoubleClicked && entry.Type == AssetType::Folder)
+				if (action == WidgetAction::DoubleClicked)
 				{
-					directoryToChange = entry.Path;
+					if(entry.Type == AssetType::Folder)
+					{
+						directoryToChange = entry.Path;
+					}
+					else
+					{
+						EditorActions::OpenExternalEditor(entry.Path);
+					}
 				}
 
 				if (action == WidgetAction::RightClicked)
