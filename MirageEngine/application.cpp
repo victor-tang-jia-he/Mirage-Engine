@@ -285,9 +285,9 @@ void Application::EndFrame()
 
 uint32_t Application::GetFramebufferTextureID() const
 {
-	if (m_Framebuffer)
+	if (m_SwapChain)
 	{
-		return m_Framebuffer->GetFrameTextureID();
+		return m_SwapChain->AcquireCurrentImage();
 	}
 	return 0;
 }

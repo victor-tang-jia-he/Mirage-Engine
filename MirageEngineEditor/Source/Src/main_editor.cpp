@@ -18,9 +18,9 @@ int main()
 	while (application.IsRunning())
 	{
 		MirageEngine::TimeManager::Update();
+		application.BeginFrame();
 		application.RenderScene();
 		uint32_t textureID = application.GetFramebufferTextureID();
-		application.BeginFrame();
 		editor.Update(textureID);
 		application.EndFrame();
 	}
