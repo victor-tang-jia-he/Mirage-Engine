@@ -89,11 +89,27 @@ namespace Mirage
 					}
 				}
 
-				bool isSelected = false;
-				if (m_CurrentPath == entry.path()) isSelected = true;
+				bool isSelected = (m_CurrentPath == entry.path());
 
 				if (UIWrapper::BeginFolderNode(name.c_str(), id.c_str(), isSelected, isLeaf))
 				{
+					if (ImGui::BeginDragDropTarget())
+					{
+						auto droppedPath = DragDrop::GetPathPayload(DragDropTag::CONTENT_BROWSER_ITEM);
+						if (!droppedPath.empty())
+						{
+							this->MoveItem(droppedPath, entry.path());
+						}
+						ImGui::EndDragDropTarget();
+					}
+
+					if (ImGui::BeginDragDropSource())
+					{
+						DragDrop::SetPathPayload(DragDropTag::CONTENT_BROWSER_ITEM, entry.path());
+						ImGui::Text("Moving folder: %s", name.c_str());
+						ImGui::EndDragDropSource();
+					}
+
 					if (UIWrapper::IsItemClicked())
 					{
 						this->ChangeDirectory(entry.path());
