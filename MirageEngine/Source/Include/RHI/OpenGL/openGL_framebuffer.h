@@ -23,7 +23,7 @@ namespace MirageRHI
 
         OpenGLFramebuffer& API_OpenGL() override { return *this; }
         uint32_t GetOpenGLHandle() const { return m_FBO; }
-        uint32_t GetFrameTextureID() const { return m_Texture; }
+        uint32_t GetFrameTextureID() override { return m_Texture; }
 
         void RescaleFrameBuffer(uint32_t _width, uint32_t _height) const;
         void Bind() const;

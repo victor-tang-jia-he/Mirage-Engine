@@ -14,7 +14,7 @@ namespace Mirage
 		ScanProjectDirectory(m_CurrentPath);
 	}
 
-	void Explorer::DrawPanel()
+	void Explorer::DrawPanel(uint32_t _textureID)
 	{
 		UIWrapper::BeginWindow("Explorer");
 

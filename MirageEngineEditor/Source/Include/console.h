@@ -32,7 +32,7 @@ namespace Mirage
 		Console(const char* _name) : IPanel(_name) {};
 		
 		void InitPanel() override;
-		void DrawPanel() override;
+		void DrawPanel(uint32_t _textureID) override;
 		void ShutdownPanel() override;
 		void AddLog(const char* _log, LogLevel _level);
 	};

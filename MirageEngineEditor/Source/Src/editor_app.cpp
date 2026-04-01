@@ -24,7 +24,7 @@ namespace Mirage
 		}
 	}
 
-	void Mirage::EditorApp::Update()
+	void Mirage::EditorApp::Update(uint32_t _textureID)
 	{
 		UIWrapper::BeginFrame();
 		m_MainMenuBar.DrawBar();
@@ -33,7 +33,7 @@ namespace Mirage
 		{
 			if (panel->IsPanelActive())
 			{
-				panel->DrawPanel();
+				panel->DrawPanel(_textureID);
 			}
 		}
 

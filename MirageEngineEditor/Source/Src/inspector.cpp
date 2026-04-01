@@ -8,7 +8,7 @@ namespace Mirage
 
 	}
 
-	void Inspector::DrawPanel()
+	void Inspector::DrawPanel(uint32_t _textureID)
 	{
 		UIWrapper::BeginWindow("Inspector");
 		UIWrapper::EndWindow();

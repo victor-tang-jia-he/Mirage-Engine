@@ -19,7 +19,7 @@ namespace Mirage
 
 	public:
 		void Init(void* _windowHandle);
-		void Update();
+		void Update(uint32_t _textureID);
 		void Shutdown();
 
 		void SetSelectedObject(GameObject* _object) { m_SelectedObject = _object; };
