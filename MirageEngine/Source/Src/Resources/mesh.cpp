@@ -3,13 +3,15 @@
 #include <RHI/i_buffer.h>
 #include <i_pipeline_parameters.h>
 
+DEFINE_LOG_CATEGORY(LogMesh)
+
 using namespace MirageEngine::Core::Resources;
 
 void Mesh::Bind()
 {
     if (!m_VertexBuffer || !m_IndexBuffer)
     {
-        // LOG(logError, LogResourceManager, "Mesh ", m_Name, " has invalid buffers !");
+        LOG(logError, LogMesh, "Mesh ", m_Name, " has invalid buffers !");
         return;
     }
     if (!m_bIsUpload)

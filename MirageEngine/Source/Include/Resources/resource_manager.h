@@ -8,9 +8,9 @@
 #include <memory>
 #include <vector3.h>
 
-// #include <Logs/log_macro.h>
+ #include <Logs/log_macro.h>
 
-// DECLARE_LOG_CATEGORY_EXTERN(LogResourceManager)
+ DECLARE_LOG_CATEGORY_EXTERN(LogResourceManager)
 
 namespace MirageRHI
 {

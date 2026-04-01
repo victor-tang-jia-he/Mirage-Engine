@@ -13,7 +13,7 @@
 #define TINYOBJLOADER_IMPLEMENTATION
 #include <TinyObjLoader/tiny_obj_loader.h>
 
-// DEFINE_LOG_CATEGORY(LogResourceManager)
+ DEFINE_LOG_CATEGORY(LogResourceManager)
 
 using namespace MirageEngine::Core::Resources;
 
@@ -35,12 +35,12 @@ Texture* ResourceManager::CreateTexture(const std::string& _name, const std::str
     ResourceManager* rm = ResourceManager::Instance();
     if (!rm)
     {
-        // LOG(logWarning, LogResourceManager, "Resource Manager isn't instanciate or doesn't exist in this context");
+         LOG(logWarning, LogResourceManager, "Resource Manager isn't instanciate or doesn't exist in this context");
         return nullptr;
     }
     if (!rm->m_Rhi)
     {
-        // LOG(logError, LogResourceManager, "Resource Manager RHI isn't init");
+         LOG(logError, LogResourceManager, "Resource Manager RHI isn't init");
         return nullptr;
     }
     std::string newAssetName = _name;
@@ -59,12 +59,12 @@ Shader* ResourceManager::CreateShader(const std::string& _name, const std::strin
     ResourceManager* rm = ResourceManager::Instance();
     if (!rm)
     {
-        // LOG(logWarning, LogResourceManager, "Resource Manager isn't instanciate or doesn't exist in this context");
+         LOG(logWarning, LogResourceManager, "Resource Manager isn't instanciate or doesn't exist in this context");
         return nullptr;
     }
     if (!rm->m_Rhi)
     {
-        // LOG(logError, LogResourceManager, "Resource Manager RHI isn't init");
+         LOG(logError, LogResourceManager, "Resource Manager RHI isn't init");
         return nullptr;
     }
     std::string newAssetName = _name;
@@ -87,12 +87,12 @@ Mesh* ResourceManager::CreateMesh(const std::string& _name, const std::string& _
     ResourceManager* rm = ResourceManager::Instance();
     if (!rm)
     {
-        // LOG(logWarning, LogResourceManager, "Resource Manager isn't instanciate or doesn't exist in this context");
+         LOG(logWarning, LogResourceManager, "Resource Manager isn't instanciate or doesn't exist in this context");
         return nullptr;
     }
     if (!rm->m_Rhi)
     {
-        // LOG(logError, LogResourceManager, "Resource Manager RHI isn't init");
+         LOG(logError, LogResourceManager, "Resource Manager RHI isn't init");
         return nullptr;
     }
     std::string newAssetName = _name;
@@ -116,7 +116,7 @@ Material* ResourceManager::CreateMaterial(const std::string& _name)
     ResourceManager* rm = ResourceManager::Instance();
     if (!rm)
     {
-        // LOG(logWarning, LogResourceManager, "Resource Manager isn't instanciate or doesn't exist in this context");
+         LOG(logWarning, LogResourceManager, "Resource Manager isn't instanciate or doesn't exist in this context");
         return nullptr;
     }
     std::string newAssetName = _name;
@@ -139,7 +139,7 @@ std::string ResourceManager::GenerateUniqueAssetName(const std::string& _baseNam
         uniqueName = ss.str();
         ++counter;
     }
-    // LOG(logWarning, LogResourceManager, _baseName, " already taken, replaced by ", uniqueName);
+     LOG(logWarning, LogResourceManager, _baseName, " already taken, replaced by ", uniqueName);
 
     return uniqueName;
 }

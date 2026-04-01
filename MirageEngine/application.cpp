@@ -58,8 +58,9 @@ void Application::InitRHI()
         case MirageRHI::IRenderInterface::API::OPENGL: m_RenderInterface = new MirageRHI::OpenGLRenderInterface(); break;
         default                                      : DEBUG_THROW("Unsupported RHI API");
     }
+    ResourceManager* resManager = ResourceManager::Instance();
+    resManager->Init(m_RenderInterface);
     DEBUG_LOG("Render Interface Created");
-    ResourceManager::Instance()->Init(m_RenderInterface);
 
     // Instantiate All Classes
     m_Instance                 = m_RenderInterface->InstantiateInstance();
@@ -76,7 +77,7 @@ void Application::InitRHI()
     m_CommandBuffer            = m_RenderInterface->InstantiateCommandBuffer();
     DEBUG_LOG("All Classes Instantiated");
 
-    Mesh* mesh = ResourceManager::Instance()->CreateMesh("cube", "Assets/Mesh/Cube.obj");
+    Mesh* mesh = resManager->CreateMesh("cube", "Assets/Mesh/Cube.obj");
     DEBUG_LOG("Vertex and Index Data Created");
 
     // Create All Classes
@@ -86,13 +87,13 @@ void Application::InitRHI()
     m_SwapChain->Create(2, m_Width, m_Height);
     m_RenderPass->Create(Vector4(0.f, 0.5f, 0.5f, 1.0f), 1.0f);
 
-    ResourceManager::Instance()->CreateShader("defaultVert", "Assets/Shaders/default.vert", MirageRHI::IShader::ShaderType::Vertex);
-    ResourceManager::Instance()->CreateShader("defaultFrag", "Assets/Shaders/default.frag", MirageRHI::IShader::ShaderType::Fragment);
-    ResourceManager::Instance()->CreateShader("screenVert", "Assets/Shaders/screen.vert", MirageRHI::IShader::ShaderType::Vertex);
-    ResourceManager::Instance()->CreateShader("screenFrag", "Assets/Shaders/screen.frag", MirageRHI::IShader::ShaderType::Fragment);
+    resManager->CreateShader("defaultVert", "Assets/Shaders/default.vert", MirageRHI::IShader::ShaderType::Vertex);
+    resManager->CreateShader("defaultFrag", "Assets/Shaders/default.frag", MirageRHI::IShader::ShaderType::Fragment);
+    resManager->CreateShader("screenVert", "Assets/Shaders/screen.vert", MirageRHI::IShader::ShaderType::Vertex);
+    resManager->CreateShader("screenFrag", "Assets/Shaders/screen.frag", MirageRHI::IShader::ShaderType::Fragment);
     m_PipelineParameters->Create(MirageRHI::VertexType::PBR, MirageRHI::CullingType::None, true);
     m_ScreenPipelineParameters->Create(MirageRHI::VertexType::None, MirageRHI::CullingType::None, false);
-    m_Pipeline->Create(ResourceManager::Instance()->Get<Shader>("defaultVert")->ShaderBind, ResourceManager::Instance()->Get<Shader>("defaultFrag")->ShaderBind, m_PipelineParameters);
+    m_Pipeline->Create(resManager->Get<Shader>("defaultVert")->ShaderBind, resManager->Get<Shader>("defaultFrag")->ShaderBind, m_PipelineParameters);
 
     MirageRHI::IShader* Vert = new OpenGLShader();
     Vert->Create("Assets/Shaders/screen.vert", MirageRHI::IShader::ShaderType::Vertex);
@@ -101,14 +102,14 @@ void Application::InitRHI()
 
     m_ScreenPipeline->Create(Vert, Frag, m_ScreenPipelineParameters);
 
-    // m_ScreenPipeline->Create(ResourceManager::Instance()->Get<Shader>("screenVert")->ShaderBind, ResourceManager::Instance()->Get<Shader>("screenFrag")->ShaderBind, m_ScreenPipelineParameters);
-    ResourceManager::Instance()->CreateTexture("Cat", "Assets/Textures/cat.png")->Bind();
-    ResourceManager::Instance() -> CreateTexture("Mirage", "Assets/Textures/Mirage.png")->Bind();
+    // m_ScreenPipeline->Create(resManager->Get<Shader>("screenVert")->ShaderBind, resManager->Get<Shader>("screenFrag")->ShaderBind, m_ScreenPipelineParameters);
+    resManager->CreateTexture("Cat", "Assets/Textures/cat.png")->Bind();
+    resManager->CreateTexture("Mirage", "Assets/Textures/Mirage.png")->Bind();
     mesh->Bind(); // upload vertex and index data to GPU, then clear CPU-side data to save memory
-    MeshRenderer one = MeshRenderer(mesh, ResourceManager::Instance()->CreateMaterial("DefaultMaterial"));
-    MeshRenderer two = MeshRenderer(mesh, ResourceManager::Instance()->Get<Material>("DefaultMaterial"));
-    one.Material->SetTexture("Cat", ResourceManager::Instance()->Get<Texture>("Cat"));
-    two.Material->SetTexture("Mirage", ResourceManager::Instance()->Get<Texture>("Mirage"));
+    MeshRenderer one = MeshRenderer(mesh, resManager->CreateMaterial("DefaultMaterial"));
+    MeshRenderer two = MeshRenderer(mesh, resManager->Get<Material>("DefaultMaterial"));
+    one.Material->SetTexture("Cat", resManager->Get<Texture>("Cat"));
+    two.Material->SetTexture("Mirage", resManager->Get<Texture>("Mirage"));
     two.SetPos(Vector3(2.f, 2.f, 0.f));
 
     Vector3 rotation = Vector3(0.f, 180.f, 0.f);
@@ -116,7 +117,7 @@ void Application::InitRHI()
     m_meshRenderer.push_back(std::make_shared<MeshRenderer>(one));
     m_meshRenderer.push_back(std::make_shared<MeshRenderer>(two));
     Material* material = nullptr;
-    if (ResourceManager::Instance()->TryGet<Material>("DefaultMaterial", material)) { material->SetShader(m_Pipeline); }
+    if (resManager->TryGet<Material>("DefaultMaterial", material)) { material->SetShader(m_Pipeline); }
     m_UniformBuffer->Create();
     m_CommandBuffer->Create();
     DEBUG_LOG("All Classes Created");

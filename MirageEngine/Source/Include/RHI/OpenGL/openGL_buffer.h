@@ -29,7 +29,5 @@ namespace MirageRHI
 
     private:
         void CreateTexture(const void* _data, size_t _size);
-
-        void LoadTexture(const std::filesystem::path& _filename);
 	};
 }

@@ -11,7 +11,7 @@
 #define LOG(Level, Category, ...)                  \
 	do                                             \
 	{                                              \
-		Logger::Log(Level, Category, __VA_ARGS__); \
+		Loggers::Log(Level, Category, __VA_ARGS__); \
 	} while (0)
 
 #define logTemp LogLevel::Temp
@@ -38,7 +38,7 @@ struct LogCategory
 	const char* ColorCode = nullptr;
 };
 
-namespace Logger
+namespace Loggers
 {
 	namespace Color
 	{

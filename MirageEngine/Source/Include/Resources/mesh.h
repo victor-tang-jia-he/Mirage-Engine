@@ -1,6 +1,9 @@
 #pragma once
 #include <Resources/resource_interface.h>
 #include <vector>
+#include <Logs/log_macro.h>
+
+DECLARE_LOG_CATEGORY_EXTERN(LogMesh)
 
 namespace MirageRHI
 {
