@@ -64,7 +64,46 @@ namespace Mirage
 
 	void Explorer::DrawFolderTree()
 	{
-		RenderRecursiveFolder(m_RootPath);
+		std::string name = "Assets";
+		std::string id = m_RootPath.string();
+
+		bool isLeaf = true;
+		for (const auto& sub : std::filesystem::directory_iterator(m_RootPath)) {
+			if (sub.is_directory()) {
+				isLeaf = false;
+				break;
+			}
+		}
+
+		bool isSelected = (m_CurrentPath == m_RootPath);
+
+		if (UIWrapper::BeginFolderNode(name.c_str(), id.c_str(), isSelected, isLeaf))
+		{
+			if (ImGui::BeginDragDropTarget())
+			{
+				auto droppedPath = DragDrop::GetPathPayload(DragDropTag::CONTENT_BROWSER_ITEM);
+				if (!droppedPath.empty())
+				{
+					this->MoveItem(droppedPath, m_RootPath);
+				}
+				ImGui::EndDragDropTarget();
+			}
+
+			if (UIWrapper::IsItemClicked())
+			{
+				this->ChangeDirectory(m_RootPath);
+			}
+
+			RenderRecursiveFolder(m_RootPath);
+
+			UIWrapper::EndFolderNode();
+		}
+		else
+		{
+			if (UIWrapper::IsItemClicked()) {
+				this->ChangeDirectory(m_RootPath);
+			}
+		}
 	}
 
 	void Explorer::RenderRecursiveFolder(const std::filesystem::path& _path)
