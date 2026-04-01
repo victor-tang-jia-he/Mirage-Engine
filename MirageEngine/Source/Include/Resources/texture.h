@@ -3,28 +3,44 @@
 
 namespace MirageRHI
 {
-	class IBuffer;
+    class IBuffer;
 }
 
 namespace MirageEngine
 {
-	namespace Core
-	{
-		namespace Resources
-		{
-			class Texture : public IResource
-			{
-			private:
-				MirageRHI::IBuffer* m_TextureBuffer = nullptr;
+    namespace Core
+    {
+        namespace Resources
+        {
+            class Texture : public IResource
+            {
+                private:
 
-			public:
-				Texture(MirageRHI::IBuffer* _textureBuffer)
-					: m_TextureBuffer(_textureBuffer) {
-				};
-				~Texture() = default;
+                    MirageRHI::IBuffer* m_TextureBuffer = nullptr;
 
-				MirageRHI::IBuffer* GetTextureBuffer() const { return m_TextureBuffer; }
-			};
-		}
-	}
-}
+                    int            width   = 0;
+                    int            height  = 0;
+                    int            channel = 0;
+                    int            format  = NAN;
+                    unsigned char* data    = nullptr;
+                    bool           m_bIsUploaded = false;
+
+                public:
+
+                    Texture(MirageRHI::IBuffer* _textureBuffer)
+                        : m_TextureBuffer(_textureBuffer) {};
+
+                    ~Texture()
+                    {
+                        if (data != nullptr) free(data);
+                    }
+
+                    void Load(const std::string& _path);
+
+                    void Bind();
+
+                    MirageRHI::IBuffer* GetTextureBuffer() const { return m_TextureBuffer; }
+            };
+        } // namespace Resources
+    } // namespace Core
+} // namespace MirageEngine

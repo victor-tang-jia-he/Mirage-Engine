@@ -1,6 +1,5 @@
 #include "OpenGL/openGL_buffer.h"
 #include "OpenGL/openGL_pipeline.h"
-#define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
 
 using namespace MirageRHI;
