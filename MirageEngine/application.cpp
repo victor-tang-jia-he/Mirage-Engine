@@ -1,18 +1,26 @@
 #include <application.h>
+
+// RHI
 #include <OpenGL/openGL_render_interface.h>
 #include <debug.h>
-#include <Components/camera.h>
+
+// Resources
 #include <Resources/resource_manager.h>
 #include <Resources/mesh.h>
 #include <Resources/material.h>
 #include <Resources/texture.h>
 #include <Resources/shader.h>
-#include <Components/mesh_renderer.h>
+
+// GameObject & Components
 #include <GameObject/game_object.h>
+#include <Components/input_system.h>
+#include <Components/camera.h>
+#include <Components/mesh_renderer.h>
 
 using namespace MirageEngine::Core::Input;
 using namespace MirageEngine::Core::EventSystem;
 using namespace MirageEngine::Core::Math;
+using namespace MirageEngine::Core::Components;
 
 void Application::InitApp()
 {
@@ -54,7 +62,7 @@ void Application::InitWindow()
 void Application::InitRHI()
 {
 	using namespace MirageEngine::Core::Resources;
-	using namespace MirageEngine::Core::Components;
+
 	// Select RHI API
 	switch (m_API)
 	{
@@ -135,7 +143,7 @@ void Application::InitRHI()
 
 void Application::InitScene()
 {
-	m_EngineCamera = new MirageEngine::Core::Components::Camera(1920, 1080, 90.f, 0.1f, 100.f, Vector3(0.f, 0.f, -3.f));
+	m_EngineCamera = new Camera(1920, 1080, 90.f, 0.1f, 100.f, Vector3(0.f, 0.f, -3.f));
 }
 
 void Application::InitInput()
@@ -158,17 +166,17 @@ void Application::InitInput()
 	m_PlayMapping->Map[GLFW_KEY_R] = InputBind{};
 
 	// add random function test member of current class
-	m_EditorMapping->Map[GLFW_KEY_W].dispatcher.Add(new Event<CallbackInputInfo>("InputSystem", [this](CallbackInputInfo info) { EditorPrintInput(info); }));
-	m_EditorMapping->Map[GLFW_KEY_A].dispatcher.Add(new Event<CallbackInputInfo>("InputSystem", [this](CallbackInputInfo info) { EditorPrintInput(info); }));
-	m_EditorMapping->Map[GLFW_KEY_S].dispatcher.Add(new Event<CallbackInputInfo>("InputSystem", [this](CallbackInputInfo info) { EditorPrintInput(info); }));
-	m_EditorMapping->Map[GLFW_KEY_D].dispatcher.Add(new Event<CallbackInputInfo>("InputSystem", [this](CallbackInputInfo info) { EditorPrintInput(info); }));
-	m_EditorMapping->Map[GLFW_KEY_R].dispatcher.Add(new Event<CallbackInputInfo>("InputSystem", [this](CallbackInputInfo info) { StartPlay(info); }));
+	m_EditorMapping->Map[GLFW_KEY_W].Dispatcher.Add(new Event<CallbackInputInfo>("InputSystem", [this](CallbackInputInfo info) { EditorPrintInput(info); }));
+	m_EditorMapping->Map[GLFW_KEY_A].Dispatcher.Add(new Event<CallbackInputInfo>("InputSystem", [this](CallbackInputInfo info) { EditorPrintInput(info); }));
+	m_EditorMapping->Map[GLFW_KEY_S].Dispatcher.Add(new Event<CallbackInputInfo>("InputSystem", [this](CallbackInputInfo info) { EditorPrintInput(info); }));
+	m_EditorMapping->Map[GLFW_KEY_D].Dispatcher.Add(new Event<CallbackInputInfo>("InputSystem", [this](CallbackInputInfo info) { EditorPrintInput(info); }));
+	m_EditorMapping->Map[GLFW_KEY_R].Dispatcher.Add(new Event<CallbackInputInfo>("InputSystem", [this](CallbackInputInfo info) { StartPlay(info); }));
 
-	m_PlayMapping->Map[GLFW_KEY_W].dispatcher.Add(new Event<CallbackInputInfo>("InputSystem", [this](CallbackInputInfo info) { PrintInput(info); }));
-	m_PlayMapping->Map[GLFW_KEY_A].dispatcher.Add(new Event<CallbackInputInfo>("InputSystem", [this](CallbackInputInfo info) { PrintInput(info); }));
-	m_PlayMapping->Map[GLFW_KEY_S].dispatcher.Add(new Event<CallbackInputInfo>("InputSystem", [this](CallbackInputInfo info) { PrintInput(info); }));
-	m_PlayMapping->Map[GLFW_KEY_D].dispatcher.Add(new Event<CallbackInputInfo>("InputSystem", [this](CallbackInputInfo info) { PrintInput(info); }));
-	m_PlayMapping->Map[GLFW_KEY_R].dispatcher.Add(new Event<CallbackInputInfo>("InputSystem", [this](CallbackInputInfo info) { EndPlay(info); }));
+	m_PlayMapping->Map[GLFW_KEY_W].Dispatcher.Add(new Event<CallbackInputInfo>("InputSystem", [this](CallbackInputInfo info) { PrintInput(info); }));
+	m_PlayMapping->Map[GLFW_KEY_A].Dispatcher.Add(new Event<CallbackInputInfo>("InputSystem", [this](CallbackInputInfo info) { PrintInput(info); }));
+	m_PlayMapping->Map[GLFW_KEY_S].Dispatcher.Add(new Event<CallbackInputInfo>("InputSystem", [this](CallbackInputInfo info) { PrintInput(info); }));
+	m_PlayMapping->Map[GLFW_KEY_D].Dispatcher.Add(new Event<CallbackInputInfo>("InputSystem", [this](CallbackInputInfo info) { PrintInput(info); }));
+	m_PlayMapping->Map[GLFW_KEY_R].Dispatcher.Add(new Event<CallbackInputInfo>("InputSystem", [this](CallbackInputInfo info) { EndPlay(info); }));
 
 	// init with previous created map
 	InputSystem::Initialize(m_EditorMapping);
@@ -195,10 +203,25 @@ void Application::InitGameObject()
 
 	root->AddChild(obj3);
 
-	obj1->AddComponent<MirageEngine::Core::Components::Camera>();
-	auto camera = obj1->GetComponent<MirageEngine::Core::Components::Camera>();
-	std::cout << camera->GetName().c_str() << std::endl;
+	obj1->AddComponent<Camera>();
+	// obj1->AddComponent<InputMapping>();
+	Camera* camera = obj1->GetComponent<Camera>();
+	// InputMapping* inputMapping = obj1->GetComponent<InputMapping>();
+
+	std::cout << obj1->GetName().c_str() << " -> " << camera->GetName().c_str() << std::endl;
+	// std::cout << obj1->GetName().c_str() << " -> " << inputMapping->GetName().c_str() << std::endl;
 	camera->SetFov(60.f);
+	/*inputMapping->Add(GLFW_KEY_T, new Event<CallbackInputInfo>("InputSystem", [](CallbackInputInfo info) 
+	{
+		if (info.Pressed)
+		{
+			printf("T Pressed\n");
+		}
+		if (info.Released)
+		{
+			printf("T Released\n");
+		}
+	}));*/
 }
 
 void Application::PrintInput(MirageEngine::Core::Input::CallbackInputInfo info)
@@ -270,7 +293,7 @@ void Application::RenderScene()
 	m_UniformBuffer->SetProjection(m_EngineCamera->GetPerspective());
 	m_UniformBuffer->UpdateUniformBuffer(m_Pipeline, Matrix4::CreateTransformMatrix(Vector3(0, 0, 0), Vector3(0, 0, 0), Vector3(1, 1, 1)));  // view/proj
 
-	for (std::shared_ptr<MirageEngine::Core::Components::MeshRenderer> meshRenderer : m_meshRenderer)
+	for (std::shared_ptr<MeshRenderer> meshRenderer : m_meshRenderer)
 	{
 		meshRenderer->Render(m_CommandBuffer, m_Pipeline, m_UniformBuffer);
 	}

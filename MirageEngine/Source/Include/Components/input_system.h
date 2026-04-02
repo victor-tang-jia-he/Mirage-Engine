@@ -12,6 +12,10 @@ namespace MirageEngine
 {
 	namespace Core
 	{
+		namespace Components
+		{
+			class Component; // forward declaration
+		}
 		namespace Input
 		{
 			struct CallbackInputInfo
@@ -23,27 +27,43 @@ namespace MirageEngine
 
 			struct InputBind
 			{
-				MirageEngine::Core::EventSystem::EventDispatcher dispatcher;
-				CallbackInputInfo inputInfo;
+				EventSystem::EventDispatcher Dispatcher;
+				CallbackInputInfo InputInfo;
 			};
 
-			struct InputMapping
+			struct InputMapping// : public Components::Component
 			{
 				std::unordered_map<int, InputBind> Map;
+				void Add(int key, EventSystem::IEvent* event)
+				{
+					if (Map.find(key) != Map.end())
+					{
+						Map[key].Dispatcher.Add(event);
+					}
+					else
+					{
+						Map[key] = InputBind{};
+						Map[key].Dispatcher.Add(event);
+					}
+				}
+				InputMapping() = default;
 			};
 
-			class InputSystem// : public Component
+			class InputSystem
 			{
+			public:
+			protected:
 			private:
 				static InputMapping* _currentMap;
 				static std::unordered_map<int, InputBind*> m_heldButton;
 
-				InputSystem() = delete;
-				~InputSystem() = delete;
-				InputSystem(const InputSystem&) = delete;
 				InputSystem& operator=(const InputSystem&) = delete;
 
 			public:
+				InputSystem() = delete;
+				~InputSystem() = delete;
+				InputSystem(const InputSystem&) = delete;
+
 				static void Initialize(InputMapping* map = nullptr)
 				{
 					if (_currentMap != nullptr)
@@ -64,7 +84,7 @@ namespace MirageEngine
 				{
 					for (auto& kv : m_heldButton)
 					{
-						kv.second->dispatcher.Invoke("InputSystem", kv.second->inputInfo);
+						kv.second->Dispatcher.Invoke("InputSystem", kv.second->InputInfo);
 					}
 				}
 
@@ -76,13 +96,13 @@ namespace MirageEngine
 					if (input != _currentMap->Map.end())
 					{
 						InputBind& inputBind = input->second;
-						CallbackInputInfo& inputInfo = inputBind.inputInfo;
+						CallbackInputInfo& inputInfo = inputBind.InputInfo;
 
 						if (action == GLFW_PRESS)
 						{
 							inputInfo.Pressed = true;
 							inputInfo.Held = true;
-							inputBind.dispatcher.Invoke("InputSystem", inputInfo);
+							inputBind.Dispatcher.Invoke("InputSystem", inputInfo);
 							inputInfo.Pressed = false;
 							m_heldButton[key] = &inputBind;
 						}
@@ -90,7 +110,7 @@ namespace MirageEngine
 						{
 							inputInfo.Released = true;
 							inputInfo.Held = false;
-							inputBind.dispatcher.Invoke("InputSystem", inputInfo);
+							inputBind.Dispatcher.Invoke("InputSystem", inputInfo);
 							inputInfo.Released = false;
 							m_heldButton.erase(key);
 						}
@@ -104,7 +124,7 @@ namespace MirageEngine
 					auto event = _currentMap->Map.find(key);
 					if (event != _currentMap->Map.end())
 					{
-						return &event->second.inputInfo;
+						return &event->second.InputInfo;
 					}
 					return nullptr;
 				}
@@ -123,7 +143,7 @@ namespace MirageEngine
 					_currentMap = map;
 				}
 
-				static void Add(int _key, MirageEngine::Core::EventSystem::IEvent* _event)
+				static void Add(int _key, EventSystem::IEvent* _event)
 				{
 					if (_currentMap == nullptr) return;
 
@@ -131,7 +151,7 @@ namespace MirageEngine
 					if (input != _currentMap->Map.end())
 					{
 						InputBind& inputBind = input->second;
-						inputBind.dispatcher.Add(_event);
+						inputBind.Dispatcher.Add(_event);
 					}
 					else
 					{

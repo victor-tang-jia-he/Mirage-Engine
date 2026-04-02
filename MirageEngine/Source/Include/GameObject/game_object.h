@@ -65,7 +65,11 @@ namespace MirageEngine
 					return dynamic_cast<T*>(component);
 				}
 			}
-			return nullptr;
+			
+			if (m_Components.size() == 0)
+			{
+				throw std::runtime_error("Component not found: " + std::string(typeid(T).name()));
+			}
 		}
 		
 		void RemoveComponent(MirageEngine::Core::Components::Component* _component);
