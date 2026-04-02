@@ -22,9 +22,7 @@ namespace MirageEngine
 		MirageRHI::IDevice* m_Device = nullptr;
 		MirageRHI::ISwapChain* m_SwapChain = nullptr;
 		MirageRHI::IRenderPass* m_RenderPass = nullptr;
-		MirageRHI::IPipelineParameters* m_PipelineParameters = nullptr;
 		MirageRHI::IPipelineParameters* m_ScreenPipelineParameters = nullptr;
-		MirageRHI::IPipeline* m_Pipeline = nullptr;
 		MirageRHI::IPipeline* m_ScreenPipeline = nullptr;
 		MirageRHI::IUniformBuffer* m_UniformBuffer = nullptr;
 		MirageRHI::ICommandBuffer* m_CommandBuffer = nullptr;
@@ -35,9 +33,16 @@ namespace MirageEngine
 		void InitRenderer();
 		void Shutdown();
 
+		void BeginFrame();
+		void RenderScene(); // Finish When Scene and MeshRenderer are done
+		void RenderScreen();
+		void EndFrame();
+
 	private:
 		// Initialization Functions
 		void InitWindow();
 		void InitRHI();
+
+		void DrawMesh();
 	};
 }

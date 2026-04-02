@@ -5,6 +5,12 @@
 #include "OpenGL/openGL_swap_chain.h"
 #include "OpenGL/openGL_surface.h"
 
+void MirageRHI::OpenGLCommandBuffer::BeginDraw(IRenderPass* _renderPass, uint32_t _FBO)
+{
+    glBindFramebuffer(GL_FRAMEBUFFER, _FBO);
+    _renderPass->API_OpenGL().Begin();
+}
+
 void MirageRHI::OpenGLCommandBuffer::BindPipeline(IPipeline* _pipeline)
 {
 	_pipeline->API_OpenGL().Bind();
@@ -26,14 +32,9 @@ void MirageRHI::OpenGLCommandBuffer::ApplyPipelineParameters(IPipeline* _pipelin
 	_pipeline->API_OpenGL().ApplyParameters();
 }
 
-void MirageRHI::OpenGLCommandBuffer::BeginRenderPass(IRenderPass* _renderPass, uint32_t _FBO)
-{
-	glBindFramebuffer(GL_FRAMEBUFFER, _FBO);
-	_renderPass->API_OpenGL().Begin();
-}
-
 void MirageRHI::OpenGLCommandBuffer::Draw(uint32_t _indexCount)
 {
+    // Note : Made with the help of Copilot
     // Diagnostic: capture GL state to logs / break early in debug builds
     GLenum err = glGetError(); // clear previous error
     GLint vao = 0;
@@ -43,7 +44,8 @@ void MirageRHI::OpenGLCommandBuffer::Draw(uint32_t _indexCount)
     glGetIntegerv(GL_ELEMENT_ARRAY_BUFFER_BINDING, &ebo);
     glGetIntegerv(GL_CURRENT_PROGRAM, &prog);
 
-    //DEBUG_LOG("Draw() VAO=%d EBO=%d PROG=%d\n", vao, ebo, prog);
+    // To use when debugging draw issues (invalid state)
+	//DEBUG_LOG("Draw() VAO=%d EBO=%d PROG=%d\n", vao, ebo, prog);
 
     // If no element array buffer is bound, assume non-indexed draw (ex : fullscreen triangle)
     if (ebo == 0)
@@ -59,7 +61,7 @@ void MirageRHI::OpenGLCommandBuffer::Draw(uint32_t _indexCount)
     // Check for errors after draw (helps catch invalid state)
     GLenum postErr = glGetError();
     if (postErr != GL_NO_ERROR)
-        DEBUG_LOG("glDraw error: 0x%X\n", postErr);
+        DEBUG_LOG("glDraw error: 0x%X", postErr);
 }
 
 void MirageRHI::OpenGLCommandBuffer::SubmitAndPresent(ISwapChain* _swapChain, ISurface* _surface)

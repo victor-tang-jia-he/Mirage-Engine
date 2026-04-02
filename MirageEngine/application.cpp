@@ -137,26 +137,6 @@ void Application::InitInput()
     m_EditorMapping->Map[GLFW_KEY_Q] = InputBind{};
     m_EditorMapping->Map[GLFW_KEY_E] = InputBind{};
 
-    m_PlayMapping                  = new InputMapping();
-    m_PlayMapping->Map[GLFW_KEY_W] = InputBind{};
-    m_PlayMapping->Map[GLFW_KEY_A] = InputBind{};
-    m_PlayMapping->Map[GLFW_KEY_S] = InputBind{};
-    m_PlayMapping->Map[GLFW_KEY_D] = InputBind{};
-    m_PlayMapping->Map[GLFW_KEY_R] = InputBind{};
-
-    // add random function test member of current class
-    m_EditorMapping->Map[GLFW_KEY_W].dispatcher.Add(new Event<CallbackInputInfo>("InputSystem", [this](CallbackInputInfo info) { EditorPrintInput(info); }));
-    m_EditorMapping->Map[GLFW_KEY_A].dispatcher.Add(new Event<CallbackInputInfo>("InputSystem", [this](CallbackInputInfo info) { EditorPrintInput(info); }));
-    m_EditorMapping->Map[GLFW_KEY_S].dispatcher.Add(new Event<CallbackInputInfo>("InputSystem", [this](CallbackInputInfo info) { EditorPrintInput(info); }));
-    m_EditorMapping->Map[GLFW_KEY_D].dispatcher.Add(new Event<CallbackInputInfo>("InputSystem", [this](CallbackInputInfo info) { EditorPrintInput(info); }));
-    m_EditorMapping->Map[GLFW_KEY_R].dispatcher.Add(new Event<CallbackInputInfo>("InputSystem", [this](CallbackInputInfo info) { StartPlay(info); }));
-
-    m_PlayMapping->Map[GLFW_KEY_W].dispatcher.Add(new Event<CallbackInputInfo>("InputSystem", [this](CallbackInputInfo info) { PrintInput(info); }));
-    m_PlayMapping->Map[GLFW_KEY_A].dispatcher.Add(new Event<CallbackInputInfo>("InputSystem", [this](CallbackInputInfo info) { PrintInput(info); }));
-    m_PlayMapping->Map[GLFW_KEY_S].dispatcher.Add(new Event<CallbackInputInfo>("InputSystem", [this](CallbackInputInfo info) { PrintInput(info); }));
-    m_PlayMapping->Map[GLFW_KEY_D].dispatcher.Add(new Event<CallbackInputInfo>("InputSystem", [this](CallbackInputInfo info) { PrintInput(info); }));
-    m_PlayMapping->Map[GLFW_KEY_R].dispatcher.Add(new Event<CallbackInputInfo>("InputSystem", [this](CallbackInputInfo info) { EndPlay(info); }));
-
     // init with previous created map
     InputSystem::Initialize(m_EditorMapping);
     // get and set callback
@@ -180,36 +160,6 @@ void Application::InitGameObject()
     obj2->GetParent() ? obj2->GetParent()->Transform.SetPosition(Vector3(0, 67, 0)) : void();
 }
 
-void Application::PrintInput(MirageEngine::Core::Input::CallbackInputInfo info)
-{
-    if (info.Pressed) { printf("Pressed\n"); }
-    if (info.Released) { printf("Released\n"); }
-}
-
-void Application::EditorPrintInput(MirageEngine::Core::Input::CallbackInputInfo info)
-{
-    if (info.Pressed) { printf("Editor Pressed\n"); }
-    if (info.Released) { printf("Editor Released\n"); }
-}
-
-void Application::StartPlay(MirageEngine::Core::Input::CallbackInputInfo info)
-{
-    if (info.Pressed)
-    {
-        printf("Editor -> Play\n");
-        InputSystem::SetCurrentMapping(m_PlayMapping);
-    }
-}
-
-void Application::EndPlay(MirageEngine::Core::Input::CallbackInputInfo info)
-{
-    if (info.Pressed)
-    {
-        printf("Play -> Editor\n");
-        InputSystem::SetCurrentMapping(m_EditorMapping);
-    }
-}
-
 bool Application::IsRunning() const { return !glfwWindowShouldClose(m_Window); }
 
 void Application::BeginFrame()
@@ -219,8 +169,7 @@ void Application::BeginFrame()
 
     InputSystem::UpdateHeldInput();
     uint32_t currentFBO = m_SwapChain->AcquireCurrentFBO();
-    m_CommandBuffer->BeginRenderPass(m_RenderPass, currentFBO);
-    m_CommandBuffer->BeginDraw();
+    m_CommandBuffer->BeginDraw(m_RenderPass, currentFBO);
 }
 
 void Application::RenderScene()
@@ -229,25 +178,26 @@ void Application::RenderScene()
 
     m_CommandBuffer->BindPipeline(m_Pipeline);
     m_CommandBuffer->ApplyPipelineParameters(m_Pipeline);
+
     m_UniformBuffer->SetView(m_EngineCamera->GetView());
     m_UniformBuffer->SetProjection(m_EngineCamera->GetPerspective());
     m_UniformBuffer->UpdateUniformBuffer(m_Pipeline, Matrix4::CreateTransformMatrix(Vector3(0, 0, 0), Vector3(0, 0, 0), Vector3(1, 1, 1))); // view/proj
 
     for (std::shared_ptr<MirageEngine::Core::Components::MeshRenderer> meshRenderer : m_meshRenderer) { meshRenderer->Render(m_CommandBuffer, m_Pipeline, m_UniformBuffer); }
 
-    m_CommandBuffer->EndRenderPass();
+    m_CommandBuffer->EndDraw();
+    m_CommandBuffer->BeginDraw(m_RenderPass, 0);
 
-    m_CommandBuffer->BeginRenderPass(m_RenderPass, 0);
     m_CommandBuffer->BindPipeline(m_ScreenPipeline);
     m_CommandBuffer->ApplyPipelineParameters(m_ScreenPipeline);
     m_CommandBuffer->BindTextureFromID(m_SwapChain->AcquireCurrentImage());
+
     m_CommandBuffer->Draw(3);
 }
 
 void Application::EndFrame()
 {
     m_CommandBuffer->EndDraw();
-    m_CommandBuffer->EndRenderPass();
     m_CommandBuffer->SubmitAndPresent(m_SwapChain, m_Surface);
 }
 
