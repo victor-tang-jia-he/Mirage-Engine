@@ -6,7 +6,7 @@ DECLARE_LOG_CATEGORY_EXTERN(LogTexture)
 
 namespace MirageRHI
 {
-    class IBuffer;
+    class ITexture;
 }
 
 namespace MirageEngine
@@ -19,7 +19,7 @@ namespace MirageEngine
             {
                 private:
 
-                    MirageRHI::IBuffer* m_TextureBuffer = nullptr;
+                    MirageRHI::ITexture* m_TextureBuffer = nullptr;
 
                     int            width   = 0;
                     int            height  = 0;
@@ -30,7 +30,7 @@ namespace MirageEngine
 
                 public:
 
-                    Texture(MirageRHI::IBuffer* _textureBuffer)
+                    Texture(MirageRHI::ITexture* _textureBuffer)
                         : m_TextureBuffer(_textureBuffer) {};
 
                     ~Texture()
@@ -42,7 +42,7 @@ namespace MirageEngine
 
                     void Bind();
 
-                    MirageRHI::IBuffer* GetTextureBuffer() const { return m_TextureBuffer; }
+                    MirageRHI::ITexture* GetTextureBuffer() const { return m_TextureBuffer; }
             };
         } // namespace Resources
     } // namespace Core

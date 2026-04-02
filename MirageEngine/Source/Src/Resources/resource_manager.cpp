@@ -47,7 +47,7 @@ Texture* ResourceManager::CreateTexture(const std::string& _name, const std::str
     auto        it           = rm->m_Resources.find(_name);
     if (it != rm->m_Resources.end()) { newAssetName = rm->GenerateUniqueAssetName(_name); }
 
-    Texture* texture = new Texture(rm->m_Rhi->InstantiateBuffer());
+    Texture* texture = new Texture(rm->m_Rhi->InstantiateTexture());
     texture->m_Name  = newAssetName;
     texture->Load(_path);
     rm->m_Resources.emplace(newAssetName, texture);

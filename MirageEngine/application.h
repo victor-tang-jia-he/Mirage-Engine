@@ -76,7 +76,7 @@ public:
 private:
 	void InitWindow();
 	void InitRHI();
-	void InitScene(); // TODO
+	void InitScene();
 	void InitInput();
 	void InitGameObject();
 	void PrintInput(MirageEngine::Core::Input::CallbackInputInfo info); // debug

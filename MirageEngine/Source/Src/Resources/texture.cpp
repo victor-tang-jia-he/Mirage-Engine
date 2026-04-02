@@ -1,5 +1,5 @@
 #include <Resources/texture.h>
-#include <RHI/i_buffer.h>
+#include <RHI/i_texture.h>
 #include <string>
 
 #define STB_IMAGE_IMPLEMENTATION
@@ -11,6 +11,7 @@
 DEFINE_LOG_CATEGORY(LogTexture)
 
 using namespace MirageEngine::Core::Resources;
+using namespace MirageRHI;
 
 void Texture::Load(const std::string& _path)
 {
@@ -36,7 +37,8 @@ void Texture::Bind()
     if (!m_bIsUploaded)
     {
         m_bIsUploaded = true;
-        m_TextureBuffer->Create(static_cast<const void*>(data), size_t(width * height * channel), MirageRHI::IBuffer::BufferType::Texture);
+        TextureDesc desc = { static_cast<uint32_t>(width), static_cast<uint32_t>(height), static_cast<uint32_t>(channel), true };
+        m_TextureBuffer->Create(static_cast<const void*>(data), desc);
         free(data);
         data = nullptr; // Avoid dangling pointer
     }
