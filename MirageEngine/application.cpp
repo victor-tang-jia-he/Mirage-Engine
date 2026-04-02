@@ -184,13 +184,21 @@ void Application::InitInput()
 void Application::InitGameObject()
 {
 	MirageEngine::GameObject* root = new MirageEngine::GameObject(nullptr, "Root");
-	MirageEngine::GameObject* obj = new MirageEngine::GameObject(root, "Commelin");
-	MirageEngine::GameObject* obj2 = new MirageEngine::GameObject(obj, "Diego");
-	root->AddChild(obj);
-	obj->AddChild(obj2);
+	MirageEngine::GameObject* obj1 = new MirageEngine::GameObject(root, "Commelin");
+	MirageEngine::GameObject* obj2 = new MirageEngine::GameObject(root, "Lin");
+	MirageEngine::GameObject* obj3 = new MirageEngine::GameObject(obj2, "Monin");
+	MirageEngine::GameObject* obj4 = new MirageEngine::GameObject(obj3, "Tang");
+	root->AddChild(obj1);
+	root->AddChild(obj2);
+	obj2->AddChild(obj3);
+	obj3->AddChild(obj4);
 
-	obj->GetParent() ? obj->GetParent()->Transform.SetPosition(Vector3(0, 67, 0)) : void();
-	obj2->GetParent() ? obj2->GetParent()->Transform.SetPosition(Vector3(0, 67, 0)) : void();
+	root->AddChild(obj3);
+
+	obj1->AddComponent<MirageEngine::Core::Components::Camera>();
+	auto camera = obj1->GetComponent<MirageEngine::Core::Components::Camera>();
+	std::cout << camera->GetName().c_str() << std::endl;
+	camera->SetFov(60.f);
 }
 
 void Application::PrintInput(MirageEngine::Core::Input::CallbackInputInfo info)

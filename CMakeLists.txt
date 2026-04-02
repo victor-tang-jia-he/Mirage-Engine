@@ -70,16 +70,11 @@ endif()
 # GLAD (OpenGL loader) - needed for ImGui OpenGL backend
 # ============================================================================
 # Check if glad has its own CMakeLists
-if(EXISTS ${CMAKE_SOURCE_DIR}/Libraries/glad/CMakeLists.txt)
-    add_subdirectory(Libraries/glad glad)
+if(EXISTS ${CMAKE_SOURCE_DIR}/Libraries/glad/src/glad.c)
+    add_library(glad STATIC Libraries/glad/src/glad.c)
+    target_include_directories(glad PUBLIC Libraries/glad/include)
 else()
-    # Create simple glad target
-    if(EXISTS ${CMAKE_SOURCE_DIR}/Libraries/glad/src/glad.c)
-        add_library(glad STATIC Libraries/glad/src/glad.c)
-        target_include_directories(glad PUBLIC Libraries/glad/include)
-    else()
-        message(WARNING "glad.c not found! Please generate glad files first.")
-    endif()
+    message(WARNING "glad.c not found! Please generate glad files first.")
 endif()
 
 # ============================================================================
@@ -211,13 +206,12 @@ endif()
 # ImGizmo
 # ============================================================================
 
-if(EXISTS "${CMAKE_SOURCE_DIR}/Libraries/ImGizmo" AND EXISTS "${CMAKE_SOURCE_DIR}/Libraries/ImGizmo/CMakeLists.txt")
+if(EXISTS "${CMAKE_SOURCE_DIR}/Libraries/ImGizmo")
     message(STATUS "Using local ImGizmo")
     set(IMGIZMO_BUILD_DOCS OFF CACHE BOOL "Build documentation" FORCE)
     set(IMGIZMO_BUILD_TESTS OFF CACHE BOOL "Build tests" FORCE)
     set(IMGIZMO_BUILD_EXAMPLES OFF CACHE BOOL "Build examples" FORCE)
     set(IMGIZMO_INSTALL OFF CACHE BOOL "Generate installation target" FORCE)
-    add_subdirectory(${CMAKE_SOURCE_DIR}/Libraries/ImGizmo ${CMAKE_BINARY_DIR}/ImGizmo)
 else()
     message(STATUS "Fetching ImGizmo...")
     FetchContent_Declare(
