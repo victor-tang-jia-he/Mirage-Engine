@@ -344,6 +344,19 @@ namespace Mirage
 					std::filesystem::create_directory(m_CurrentPath / "NewFolder", ec);
 					ScanProjectDirectory(m_CurrentPath);
 				}
+				if (ImGui::MenuItem("New Text"))
+				{
+					std::filesystem::path newFilePath = m_CurrentPath / "NewFile.json";
+					int counter = 1;
+					while (std::filesystem::exists(newFilePath))
+					{
+						newFilePath = m_CurrentPath / ("NewFile (" + std::to_string(counter) + ").json");
+						counter++;
+					}
+					std::ofstream outfile(newFilePath);
+					outfile.close();
+					ScanProjectDirectory(m_CurrentPath);
+				}
 				if (ImGui::MenuItem("Cancel"))
 				{
 					ImGui::CloseCurrentPopup();
