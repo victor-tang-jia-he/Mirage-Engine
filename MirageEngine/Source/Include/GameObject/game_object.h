@@ -33,14 +33,10 @@ namespace MirageEngine
 
 	public:
 		// Game Object Constructor.
-		GameObject(GameObject* _parent, std::string _name);
-		GameObject(GameObject* _parent, std::string _name, bool _isStatic);
-		GameObject(GameObject* _parent, std::string _name, bool _isStatic, bool _isActive);
+		GameObject(GameObject* _parent, std::string _name, bool _isStatic = false, bool _isActive = true);
 
 		// Game Object Custom Methods
-		void AddChild(GameObject* _child);
-		void AddChild(GameObject* _child, bool _isStatic);
-		void AddChild(GameObject* _child, bool _isStatic, bool _isActive);
+		void AddChild(GameObject* _child, bool _isStatic = false, bool _isActive = true);
 
 		~GameObject();
 
