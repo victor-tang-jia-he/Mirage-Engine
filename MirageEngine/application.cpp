@@ -150,33 +150,9 @@ void Application::InitInput()
 {
 	// creating editorMapping
 	m_EditorMapping = new InputMapping();
-	m_EditorMapping->Map[GLFW_KEY_W] = InputBind{};
-	m_EditorMapping->Map[GLFW_KEY_A] = InputBind{};
-	m_EditorMapping->Map[GLFW_KEY_S] = InputBind{};
-	m_EditorMapping->Map[GLFW_KEY_D] = InputBind{};
-	m_EditorMapping->Map[GLFW_KEY_R] = InputBind{};
-	m_EditorMapping->Map[GLFW_KEY_Q] = InputBind{};
-	m_EditorMapping->Map[GLFW_KEY_E] = InputBind{};
-
-	m_PlayMapping = new InputMapping();
-	m_PlayMapping->Map[GLFW_KEY_W] = InputBind{};
-	m_PlayMapping->Map[GLFW_KEY_A] = InputBind{};
-	m_PlayMapping->Map[GLFW_KEY_S] = InputBind{};
-	m_PlayMapping->Map[GLFW_KEY_D] = InputBind{};
-	m_PlayMapping->Map[GLFW_KEY_R] = InputBind{};
 
 	// add random function test member of current class
-	m_EditorMapping->Map[GLFW_KEY_W].Dispatcher.Add(new Event<CallbackInputInfo>("InputSystem", [this](CallbackInputInfo info) { EditorPrintInput(info); }));
-	m_EditorMapping->Map[GLFW_KEY_A].Dispatcher.Add(new Event<CallbackInputInfo>("InputSystem", [this](CallbackInputInfo info) { EditorPrintInput(info); }));
-	m_EditorMapping->Map[GLFW_KEY_S].Dispatcher.Add(new Event<CallbackInputInfo>("InputSystem", [this](CallbackInputInfo info) { EditorPrintInput(info); }));
-	m_EditorMapping->Map[GLFW_KEY_D].Dispatcher.Add(new Event<CallbackInputInfo>("InputSystem", [this](CallbackInputInfo info) { EditorPrintInput(info); }));
-	m_EditorMapping->Map[GLFW_KEY_R].Dispatcher.Add(new Event<CallbackInputInfo>("InputSystem", [this](CallbackInputInfo info) { StartPlay(info); }));
-
-	m_PlayMapping->Map[GLFW_KEY_W].Dispatcher.Add(new Event<CallbackInputInfo>("InputSystem", [this](CallbackInputInfo info) { PrintInput(info); }));
-	m_PlayMapping->Map[GLFW_KEY_A].Dispatcher.Add(new Event<CallbackInputInfo>("InputSystem", [this](CallbackInputInfo info) { PrintInput(info); }));
-	m_PlayMapping->Map[GLFW_KEY_S].Dispatcher.Add(new Event<CallbackInputInfo>("InputSystem", [this](CallbackInputInfo info) { PrintInput(info); }));
-	m_PlayMapping->Map[GLFW_KEY_D].Dispatcher.Add(new Event<CallbackInputInfo>("InputSystem", [this](CallbackInputInfo info) { PrintInput(info); }));
-	m_PlayMapping->Map[GLFW_KEY_R].Dispatcher.Add(new Event<CallbackInputInfo>("InputSystem", [this](CallbackInputInfo info) { EndPlay(info); }));
+	//m_EditorMapping->Add(GLFW_KEY_W, this, &Application::EditorPrintInput); // template
 
 	// init with previous created map
 	InputSystem::Initialize(m_EditorMapping);
@@ -204,14 +180,14 @@ void Application::InitGameObject()
 	root->AddChild(obj3);
 
 	obj1->AddComponent<Camera>();
-	// obj1->AddComponent<InputMapping>();
+	obj1->AddComponent<InputMapping>();
 	Camera* camera = obj1->GetComponent<Camera>();
 	// InputMapping* inputMapping = obj1->GetComponent<InputMapping>();
 
 	std::cout << obj1->GetName().c_str() << " -> " << camera->GetName().c_str() << std::endl;
 	// std::cout << obj1->GetName().c_str() << " -> " << inputMapping->GetName().c_str() << std::endl;
 	camera->SetFov(60.f);
-	/*inputMapping->Add(GLFW_KEY_T, new Event<CallbackInputInfo>("InputSystem", [](CallbackInputInfo info) 
+	/*inputMapping->Add(GLFW_KEY_T, new Event<CallbackInputInfo>("InputSystem", [](CallbackInputInfo info)
 	{
 		if (info.Pressed)
 		{
@@ -297,7 +273,7 @@ void Application::RenderScene()
 	{
 		meshRenderer->Render(m_CommandBuffer, m_Pipeline, m_UniformBuffer);
 	}
-	
+
 	m_CommandBuffer->EndRenderPass();
 
 	m_CommandBuffer->BeginRenderPass(m_RenderPass, 0);

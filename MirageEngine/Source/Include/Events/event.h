@@ -44,11 +44,11 @@ namespace MirageEngine
 				EventDispatcher() {}
 				~EventDispatcher()
 				{
-					//for (auto& el : _eventList)
-					//{
-					//	for (auto* e : el.second) 
-					//		delete e;
-					//}
+					for (auto& el : _eventList)
+					{
+						for (auto* e : el.second) 
+							delete e;
+					}
 				}
 
 				void Add(IEvent* event)

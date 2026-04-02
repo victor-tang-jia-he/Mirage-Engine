@@ -1,5 +1,6 @@
 #include <Components/camera.h>
 #include <Components/input_system.h>
+#include <Components/input_mapping.h>
 #include <Events/event.h>
 #include <iostream>
 #include <time_manager.h>
