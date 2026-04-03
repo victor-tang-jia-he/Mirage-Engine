@@ -4,20 +4,26 @@
 
 namespace MirageRHI
 {
-	class OpenGLTexture;
-	class IDevice;
-}
+	struct TextureDesc 
+	{
+		uint32_t width;
+		uint32_t height;
+		uint32_t channel;
+		bool mipmaps;
+	};
 
-namespace MirageRHI
-{
+	class OpenGLTexture;
+
 	class ITexture
 	{
 	public:
 		virtual ~ITexture() = default;
 
-		virtual void Create(IDevice* device) = 0;
-		virtual void Destroy(IDevice* device) = 0;
+		virtual void Create(const void* _data, TextureDesc _desc) = 0;
+		virtual void Destroy() = 0;
 
-		//virtual VulkanTexture& API_Vulkan() { throw std::runtime_error("Bad API Call : object is not a VulkanTexture"); }
+		virtual void Bind() const = 0;
+
+		virtual OpenGLTexture& API_OpenGL() { throw std::runtime_error("Bad API Call : object is not an OpenGLTexture"); }
 	};
 }

@@ -15,6 +15,7 @@ namespace MirageRHI
 	class IShader;
 	class IFramebuffer;
 	class IBuffer;
+    class ITexture;
 	class ICommandBuffer;
 	class IUniformBuffer;
 
@@ -40,6 +41,7 @@ namespace MirageRHI
 		virtual IShader* InstantiateShader() = 0;
 		virtual IFramebuffer* InstantiateFramebuffer() = 0;
 		virtual IBuffer* InstantiateBuffer() = 0;
+		virtual ITexture* InstantiateTexture() = 0;
 		virtual IUniformBuffer* InstantiateUniformBuffer() = 0;
 		virtual ICommandBuffer* InstantiateCommandBuffer() = 0;
 
