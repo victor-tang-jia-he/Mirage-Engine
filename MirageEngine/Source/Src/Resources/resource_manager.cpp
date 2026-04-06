@@ -13,7 +13,10 @@
 #define TINYOBJLOADER_IMPLEMENTATION
 #include <TinyObjLoader/tiny_obj_loader.h>
 
- DEFINE_LOG_CATEGORY(LogResourceManager)
+#include <filesystem>
+namespace fs = std::filesystem;
+
+DEFINE_LOG_CATEGORY(LogResourceManager)
 
 using namespace MirageEngine::Core::Resources;
 
@@ -30,19 +33,63 @@ void ResourceManager::Init(MirageRHI::IRenderInterface* _rhi)
     m_Rhi = _rhi; // set for later creating resource
 }
 
+void MirageEngine::Core::Resources::ResourceManager::PreLoadResources()
+{
+    LOG(logInfo, LogResourceManager, "Preloading default resources...");
+
+    CreateShader("DefaultVertex", "Assets/Defaults/default.vert", MirageRHI::IShader::ShaderType::Vertex);
+    CreateShader("DefaultFragment", "Assets/Defaults/default.frag", MirageRHI::IShader::ShaderType::Fragment);
+    CreateTexture("DefaultTexture", "Assets/Defaults/default.png")->Bind();
+
+    LOG(logInfo, LogResourceManager, "Preloading default resources completed.");
+    LOG(logInfo, LogResourceManager, "Preloading resources...");
+
+    // Default directory for resources
+    std::string path = "Assets/";
+    for (auto it = fs::recursive_directory_iterator(path); it != fs::recursive_directory_iterator(); ++it)
+    {
+        if (it->is_directory() && it->path().filename() == "Defaults")
+        {
+            it.disable_recursion_pending();
+            continue;
+        }
+
+        const fs::directory_entry& entry = *it;
+
+        std::string extension = entry.path().extension().string();
+
+        if (extension == ".obj") { CreateMesh(entry.path().stem().string(), entry.path().string()); }
+        else if (extension == ".png" || extension == ".jpg" || extension == ".jpeg") { CreateTexture(entry.path().stem().string(), entry.path().string()); }
+        else if (extension == ".vert")
+        {
+            std::string shaderName = entry.path().stem().string();
+            std::string fragPath   = entry.path().parent_path().string() + "/" + shaderName + ".frag";
+            if (fs::exists(fragPath))
+            {
+                CreateShader(shaderName + "_Vertex", entry.path().string(), MirageRHI::IShader::ShaderType::Vertex);
+                CreateShader(shaderName + "_Fragment", fragPath, MirageRHI::IShader::ShaderType::Fragment);
+            }
+            else { LOG(logWarning, LogResourceManager, "Fragment shader not found for ", shaderName); }
+        }
+    }
+
+    LOG(logInfo, LogResourceManager, "Preloading completed.");
+}
+
 Texture* ResourceManager::CreateTexture(const std::string& _name, const std::string& _path)
 {
     ResourceManager* rm = ResourceManager::Instance();
     if (!rm)
     {
-         LOG(logWarning, LogResourceManager, "Resource Manager isn't instanciate or doesn't exist in this context");
+        LOG(logWarning, LogResourceManager, "Resource Manager isn't instanciate or doesn't exist in this context");
         return nullptr;
     }
     if (!rm->m_Rhi)
     {
-         LOG(logError, LogResourceManager, "Resource Manager RHI isn't init");
+        LOG(logError, LogResourceManager, "Resource Manager RHI isn't init");
         return nullptr;
     }
+    LOG(logTemp, LogResourceManager, "Loading Texture : ", _path);
     std::string newAssetName = _name;
     auto        it           = rm->m_Resources.find(_name);
     if (it != rm->m_Resources.end()) { newAssetName = rm->GenerateUniqueAssetName(_name); }
@@ -51,6 +98,7 @@ Texture* ResourceManager::CreateTexture(const std::string& _name, const std::str
     texture->m_Name  = newAssetName;
     texture->Load(_path);
     rm->m_Resources.emplace(newAssetName, texture);
+    LOG(logTemp, LogResourceManager, "Finish loading Texture : ", _path);
     return texture;
 }
 
@@ -59,14 +107,15 @@ Shader* ResourceManager::CreateShader(const std::string& _name, const std::strin
     ResourceManager* rm = ResourceManager::Instance();
     if (!rm)
     {
-         LOG(logWarning, LogResourceManager, "Resource Manager isn't instanciate or doesn't exist in this context");
+        LOG(logWarning, LogResourceManager, "Resource Manager isn't instanciate or doesn't exist in this context");
         return nullptr;
     }
     if (!rm->m_Rhi)
     {
-         LOG(logError, LogResourceManager, "Resource Manager RHI isn't init");
+        LOG(logError, LogResourceManager, "Resource Manager RHI isn't init");
         return nullptr;
     }
+    LOG(logTemp, LogResourceManager, "Loading Shader : ", _path);
     std::string newAssetName = _name;
     auto        it           = rm->m_Resources.find(_name);
     if (it != rm->m_Resources.end()) { newAssetName = rm->GenerateUniqueAssetName(_name); }
@@ -79,6 +128,7 @@ Shader* ResourceManager::CreateShader(const std::string& _name, const std::strin
 
     rm->m_Resources.emplace(newAssetName, shader); // global resource
     rm->m_ShaderCache.emplace(_path, rhiShader);   // local cache
+    LOG(logTemp, LogResourceManager, "Finish loading Shader : ", _path);
     return shader;
 }
 
@@ -87,14 +137,15 @@ Mesh* ResourceManager::CreateMesh(const std::string& _name, const std::string& _
     ResourceManager* rm = ResourceManager::Instance();
     if (!rm)
     {
-         LOG(logWarning, LogResourceManager, "Resource Manager isn't instanciate or doesn't exist in this context");
+        LOG(logWarning, LogResourceManager, "Resource Manager isn't instanciate or doesn't exist in this context");
         return nullptr;
     }
     if (!rm->m_Rhi)
     {
-         LOG(logError, LogResourceManager, "Resource Manager RHI isn't init");
+        LOG(logError, LogResourceManager, "Resource Manager RHI isn't init");
         return nullptr;
     }
+    LOG(logTemp, LogResourceManager, "Loading Mesh : ", _path);
     std::string newAssetName = _name;
     auto        resourceIt   = rm->m_Resources.find(_name);
     if (resourceIt != rm->m_Resources.end()) { newAssetName = rm->GenerateUniqueAssetName(_name); }
@@ -108,6 +159,7 @@ Mesh* ResourceManager::CreateMesh(const std::string& _name, const std::string& _
 
     mesh->m_Name = newAssetName;
     rm->m_Resources.emplace(newAssetName, mesh);
+    LOG(logTemp, LogResourceManager, "Finish loading Mesh : ", _path);
     return mesh;
 }
 
@@ -116,7 +168,7 @@ Material* ResourceManager::CreateMaterial(const std::string& _name)
     ResourceManager* rm = ResourceManager::Instance();
     if (!rm)
     {
-         LOG(logWarning, LogResourceManager, "Resource Manager isn't instanciate or doesn't exist in this context");
+        LOG(logWarning, LogResourceManager, "Resource Manager isn't instanciate or doesn't exist in this context");
         return nullptr;
     }
     std::string newAssetName = _name;
@@ -139,7 +191,7 @@ std::string ResourceManager::GenerateUniqueAssetName(const std::string& _baseNam
         uniqueName = ss.str();
         ++counter;
     }
-     LOG(logWarning, LogResourceManager, _baseName, " already taken, replaced by ", uniqueName);
+    LOG(logWarning, LogResourceManager, _baseName, " already taken, replaced by ", uniqueName);
 
     return uniqueName;
 }
@@ -236,9 +288,7 @@ void ResourceManager::LoadMeshUtility(std::string _path, std::vector<MirageRHI::
     }
 }
 
-void MirageEngine::Core::Resources::ResourceManager::LoadTextureUtility(const std::string& _path)
-{
-}
+void MirageEngine::Core::Resources::ResourceManager::LoadTextureUtility(const std::string& _path) {}
 
 MirageEngine::Core::Resources::ResourceManager::~ResourceManager()
 {
@@ -246,4 +296,87 @@ MirageEngine::Core::Resources::ResourceManager::~ResourceManager()
     for (auto& shader : m_ShaderCache) shader.second.reset();
     m_Resources.clear();
     m_ShaderCache.clear();
+}
+
+Texture* ResourceManager::GetTexture(const std::string& _name)
+{
+    ResourceManager* resourceManager = ResourceManager::Instance();
+    auto             it              = resourceManager->m_Resources.find(_name);
+    if (it != resourceManager->m_Resources.end())
+    {
+        if (Texture* resource = dynamic_cast<Texture*>(it->second.get())) return resource;
+
+        LOG(logWarning, LogResourceManager, "Resource type mismatch for name: ", _name);
+    }
+    else
+    {
+        LOG(logWarning, LogResourceManager, "Resource not found: ", _name);
+        return resourceManager->PrivateGet<Texture>("DefaultTexture"); // Return default texture if not found
+    }
+    return nullptr; // Should never reach here, but added to avoid compiler warning
+}
+
+Shader* ResourceManager::GetVertexShader(const std::string& _name)
+{
+    ResourceManager* resourceManager = ResourceManager::Instance();
+    auto             it              = resourceManager->m_Resources.find(_name);
+    if (it != resourceManager->m_Resources.end())
+    {
+        if (Shader* resource = dynamic_cast<Shader*>(it->second.get())) return resource;
+        LOG(logWarning, LogResourceManager, "Resource type mismatch for name: ", _name);
+    }
+    else
+    {
+        LOG(logWarning, LogResourceManager, "Resource not found: ", _name);
+        return resourceManager->PrivateGet<Shader>("DefaultVertex"); // Return default vertex shader if not found
+    }
+    return nullptr; // Should never reach here, but added to avoid compiler warning
+}
+
+Shader* ResourceManager::GetFragmentShader(const std::string& _name)
+{
+    ResourceManager* resourceManager = ResourceManager::Instance();
+    auto             it              = resourceManager->m_Resources.find(_name);
+    if (it != resourceManager->m_Resources.end())
+    {
+        if (Shader* resource = dynamic_cast<Shader*>(it->second.get())) return resource;
+        LOG(logWarning, LogResourceManager, "Resource type mismatch for name: ", _name);
+    }
+    else
+    {
+        LOG(logWarning, LogResourceManager, "Resource not found: ", _name);
+        return resourceManager->PrivateGet<Shader>("DefaultFragment"); // Return default fragment shader if not found
+    }
+    return nullptr; // Should never reach here, but added to avoid compiler warning
+}
+
+Mesh* ResourceManager::GetMesh(const std::string& _name)
+{
+    ResourceManager* resourceManager = ResourceManager::Instance();
+    auto             it              = resourceManager->m_Resources.find(_name);
+    if (it != resourceManager->m_Resources.end())
+    {
+        if (Mesh* resource = dynamic_cast<Mesh*>(it->second.get())) return resource;
+        LOG(logWarning, LogResourceManager, "Resource type mismatch for name: ", _name);
+    }
+    // else
+    //{
+    //     LOG(logWarning, LogResourceManager, "Resource not found: ", _name);
+    //     return resourceManager->PrivateGet<Mesh>("DefaultMesh"); // Return default mesh if not found
+    // }
+    LOG(logWarning, LogResourceManager, "Resource not found: ", _name);
+    return nullptr;
+}
+
+Material* ResourceManager::GetMaterial(const std::string& _name)
+{
+    ResourceManager* resourceManager = ResourceManager::Instance();
+    auto             it              = resourceManager->m_Resources.find(_name);
+    if (it != resourceManager->m_Resources.end())
+    {
+        if (Material* resource = dynamic_cast<Material*>(it->second.get())) return resource;
+        LOG(logWarning, LogResourceManager, "Resource type mismatch for name: ", _name);
+    }
+    LOG(logWarning, LogResourceManager, "Resource not found: ", _name);
+    return nullptr;
 }

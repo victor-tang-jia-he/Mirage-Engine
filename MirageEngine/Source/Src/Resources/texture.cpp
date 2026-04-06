@@ -5,8 +5,8 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
 #include <debug.h>
-#define RGBA 0x1908
-#define RGB  0x1907
+constexpr auto OPENGL_RGBA = 0x1908;
+constexpr auto OPENGL_RGB = 0x1907;
 
 DEFINE_LOG_CATEGORY(LogTexture)
 
@@ -24,7 +24,7 @@ void Texture::Load(const std::string& _path)
         return;
     }
 
-    format = (channel == 4) ? RGBA : RGB;
+    format = (channel == 4) ? OPENGL_RGBA : OPENGL_RGB;
 }
 
 void Texture::Bind()

@@ -7,10 +7,11 @@
 #include <RHI/i_shader.h>
 #include <memory>
 #include <vector3.h>
+#include <filesystem>
 
- #include <Logs/log_macro.h>
+#include <Logs/log_macro.h>
 
- DECLARE_LOG_CATEGORY_EXTERN(LogResourceManager)
+DECLARE_LOG_CATEGORY_EXTERN(LogResourceManager)
 
 namespace MirageRHI
 {
@@ -53,6 +54,8 @@ namespace MirageEngine
 
                     void Init(MirageRHI::IRenderInterface* _rhi);
 
+                    void PreLoadResources();
+
                     ResourceManager() = default;
                     ~ResourceManager();
 
@@ -92,21 +95,43 @@ namespace MirageEngine
                     /// Pointer to the resource casted to T if found and valid,
                     /// otherwise nullptr.
                     /// </returns>
-                    template <typename T> static T* Get(const std::string& _name)
+                    template <typename T> static T* Get(const std::filesystem::path& _name)
                     {
-                        if (!std::is_base_of_v<MirageEngine::Core::Resources::IResource, T>) return nullptr;
+                        LOG(logFatal, LogResourceManager, "ResourceManager::Get is deprecated. Use Resource getter instead for safer access.");
+                        //static_assert(std::is_base_of_v<IResource, T>, "T must derive from IResource");
+                        // ResourceManager* resourceManager = ResourceManager::Instance();
 
-                        ResourceManager* resourceManager = ResourceManager::Instance();
+                        // auto it = resourceManager->m_Resources.find(_name.string());
+                        // if (it != resourceManager->m_Resources.end())
+                        //{
+                        //     if (T* resource = dynamic_cast<T*>(it->second.get())) return resource;
 
-                        auto it = resourceManager->m_Resources.find(_name);
-                        if (it != resourceManager->m_Resources.end())
-                        {
-                            T* resource = dynamic_cast<T*>(it->second.get());
-                            return resource;
-                        }
+                        //    LOG(logWarning, LogResourceManager, "Resource type mismatch for name: ", _name);
+                        //}
+
+                        //// Return default resource if not found
+                        // if constexpr (std::is_same_v<T, Texture>) return Get<Texture>("DefaultTexture");
+                        // else if constexpr (std::is_same_v<T, Shader>)
+                        //{
+                        //     if (_name.extension() == ".vert") return Get<Shader>("DefaultVertex");
+                        //     else if (_name.extension() == ".frag") return Get<Shader>("DefaultFragment");
+                        // }
+                        //// else if constexpr (std::is_same_v<T, Mesh>) return Get<Mesh>("DefaultMesh");
+
+                        // LOG(logWarning, LogResourceManager, "Resource not found: ", _name);
 
                         return nullptr;
                     }
+
+                    Texture* GetTexture(const std::string& _name);
+
+                    Shader* GetVertexShader(const std::string& _name);
+
+                    Shader* GetFragmentShader(const std::string& _name);
+
+                    Mesh* GetMesh(const std::string& _name);
+
+                    Material* GetMaterial(const std::string& _name);
 
                     /// <summary>
                     /// Retrieves a resource by name and casts it to the requested type.
@@ -172,6 +197,26 @@ namespace MirageEngine
                     void LoadMeshUtility(std::string _path, std::vector<MirageRHI::LitVertex>& _vertices, std::vector<uint32_t>& _indices);
 
                     void LoadTextureUtility(const std::string& _path);
+
+
+                    /// <summary>
+                    /// Retrieves a resource by name and casts it to the requested type.
+                    /// Only for internal use, prefer type-specific getters or TryGet for safer access.
+                    template <typename T> T* PrivateGet(const std::string& _name)
+                    {
+                        static_assert(std::is_base_of_v<IResource, T>, "T must derive from IResource");
+                        ResourceManager* resourceManager = ResourceManager::Instance();
+
+                        auto it = resourceManager->m_Resources.find(_name);
+                        if (it != resourceManager->m_Resources.end())
+                        {
+                            if (T* resource = dynamic_cast<T*>(it->second.get())) return resource;
+
+                            LOG(logWarning, LogResourceManager, "Resource type mismatch for name: ", _name);
+                        }
+
+                        return nullptr;
+                    }
             };
         } // namespace Resources
     } // namespace Core
