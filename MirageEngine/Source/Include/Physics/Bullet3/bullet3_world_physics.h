@@ -44,6 +44,8 @@ namespace MirageEngine
 
                     void AddRigidBody(IRigidBody* body) override;
 
+                    void RemoveRigidBody(IRigidBody* body) override;
+
                     void Update(float deltaTime) override { m_world->stepSimulation(deltaTime); }
 
                     void SetGravity(float x, float y, float z) override { m_world->setGravity(btVector3(x, y, z)); }

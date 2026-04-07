@@ -67,7 +67,11 @@ namespace MirageEngine
             {
                 for (auto& component : m_Components)
                 {
-                    if (component->GetName() == typeid(T).name()) { return dynamic_cast<T*>(component); }
+                    std::cout << component->GetName() << " == " << typeid(T).name() << std::endl;
+                    if (component->GetName() == typeid(T).name()) 
+                    {
+                        return dynamic_cast<T*>(component);
+                    }
                 }
                 return nullptr;
             }
@@ -78,6 +82,10 @@ namespace MirageEngine
             bool IsRoot();
             void SetParent(GameObject* _parent);
             void RemoveChild(GameObject* _child);
+
+            void SetPosition(MirageEngine::Core::Math::Vector3 _position);
+
+            void SetPosition(float _x, float _y, float _z);
 
             // Getters
             std::string GetName() const { return m_Name; }

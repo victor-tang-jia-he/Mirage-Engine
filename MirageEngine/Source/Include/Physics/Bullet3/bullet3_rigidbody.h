@@ -10,17 +10,24 @@ namespace MirageEngine
         {
             class Bullet3RigidBody : public IRigidBody
             {
+                private:
                     btRigidBody* m_rigidBody = nullptr;
 
                 public:
 
                     Bullet3RigidBody() = default;
-                    ~Bullet3RigidBody() override {};
+                    ~Bullet3RigidBody() override;
 
-                    bool Create(ICollider* shape) override;
+                    bool Create(ICollider* _shape, ERigidBodyType _type) override;
 
                     void Init()   override {};
                     void Update() override;
+
+                    void OnTransformChanged(MirageEngine::Core::Components::Transform* _newTransform) override;
+
+                    void SetType(ERigidBodyType _type) override;
+
+                    void SetMass(float mass) override;
 
                     btRigidBody* GetBullet3RigidBody() const { return m_rigidBody; }
 

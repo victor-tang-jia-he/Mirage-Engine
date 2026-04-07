@@ -18,7 +18,7 @@ namespace MirageEngine
                 public:
 
                     Bullet3Collider() = default;
-                    ~Bullet3Collider() override {};
+                    ~Bullet3Collider() override;
 
                     bool Create(ECollisionShapeType shapeType) override;
 

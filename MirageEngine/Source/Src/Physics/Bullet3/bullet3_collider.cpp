@@ -1,6 +1,16 @@
 #include <Physics/Bullet3/bullet3_collider.h>
 using namespace MirageEngine::Core::Physics;
 
+
+MirageEngine::Core::Physics::Bullet3Collider::~Bullet3Collider()
+{
+    if (m_collisionShape)
+    {
+        delete m_collisionShape;
+        m_collisionShape = nullptr;
+    }
+}
+
 bool Bullet3Collider::Create(ECollisionShapeType shapeType)
 {
     switch (shapeType)

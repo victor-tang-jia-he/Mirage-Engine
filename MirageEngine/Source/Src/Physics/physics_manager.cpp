@@ -1,8 +1,5 @@
 #include <Physics/physics_manager.h>
-#include <Physics/i_world_physics.h>
-#include <Physics/Bullet3/bullet3_world_physics.h>
-#include <Physics/Bullet3/bullet3_rigidbody.h>
-#include <Physics/Bullet3/bullet3_collider.h>
+
 
 DEFINE_LOG_CATEGORY(LogPhysics);
 
@@ -30,7 +27,7 @@ void PhysicsManager::Initialize(EPhysicsEngine _physicsEngine)
     }
 }
 
-void PhysicsManager::Update(float deltaTime)
+void PhysicsManager::Update(float _deltaTime)
 {
     if (m_worldPhysics == nullptr)
     {
@@ -38,12 +35,12 @@ void PhysicsManager::Update(float deltaTime)
         return;
     }
 
-    m_worldPhysics->Update(deltaTime);
+    m_worldPhysics->Update(_deltaTime);
 }
 
-IRigidBody* MirageEngine::Core::Physics::PhysicsManager::CreateRigidBody(ICollider* shape)
+IRigidBody* PhysicsManager::CreateRigidBody(ICollider* _shape, ERigidBodyType _type)
 {
-    if (shape == nullptr)
+    if (_shape == nullptr)
     {
         LOG(logWarning, LogPhysics, "Cannot create rigid body : shape is null");
         return nullptr;
@@ -54,12 +51,16 @@ IRigidBody* MirageEngine::Core::Physics::PhysicsManager::CreateRigidBody(ICollid
         case EPhysicsEngine::Bullet3: body = new Bullet3RigidBody(); break;
         default                     : break;
     }
-    if (body != nullptr) { body->Create(shape); }
-    else { LOG(logWarning, LogPhysics, "Cannot create rigid body : physics engine not initialized"); }
+    if (body != nullptr) { body->Create(_shape, _type); }
+    else
+    {
+        LOG(logWarning, LogPhysics, "Cannot create rigid body : physics engine not initialized");
+        return nullptr;
+    }
     return body;
 }
 
-ICollider* MirageEngine::Core::Physics::PhysicsManager::CreateCollider(ECollisionShapeType shapeType)
+ICollider* PhysicsManager::CreateCollider(ECollisionShapeType _shapeType)
 {
     ICollider* collider = nullptr;
     switch (m_physicsEngine)
@@ -67,16 +68,26 @@ ICollider* MirageEngine::Core::Physics::PhysicsManager::CreateCollider(ECollisio
         case EPhysicsEngine::Bullet3: collider = new Bullet3Collider(); break;
         default                     : break;
     }
-    if (collider != nullptr) { collider->Create(shapeType); }
+    if (collider != nullptr) { collider->Create(_shapeType); }
     return collider;
 }
 
-void PhysicsManager::RegisterRigidBody(IRigidBody* body)
+void PhysicsManager::RegisterRigidBody(IRigidBody* _body)
 {
     if (m_worldPhysics == nullptr)
     {
         LOG(logWarning, LogPhysics, "Cannot register rigid body : physics engine not initialized");
         return;
     }
-    m_worldPhysics->AddRigidBody(body);
+    m_worldPhysics->AddRigidBody(_body);
+}
+
+void PhysicsManager::UnregisterRigidBody(IRigidBody* _body)
+{
+    if (m_worldPhysics == nullptr)
+    {
+        LOG(logWarning, LogPhysics, "Cannot unregister rigid body : physics engine not initialized");
+        return;
+    }
+    m_worldPhysics->RemoveRigidBody(_body);
 }
