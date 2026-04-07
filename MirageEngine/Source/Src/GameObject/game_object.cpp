@@ -12,21 +12,6 @@ uint64_t GenerateUniqueID() {
 	return s_NextID++;
 }
 
-MirageEngine::GameObject::GameObject(GameObject* _parent, std::string _name)
-	: m_Parent(_parent),
-	m_Name(_name)
-{
-	m_ID = GenerateUniqueID();
-}
-
-MirageEngine::GameObject::GameObject(GameObject* _parent, std::string _name, bool _isStatic)
-	: m_Parent(_parent),
-	m_Name(_name),
-	m_bIsStatic(_isStatic)
-{
-	m_ID = GenerateUniqueID();
-}
-
 MirageEngine::GameObject::GameObject(GameObject* _parent, std::string _name, bool _isStatic, bool _isActive)
 	: m_Parent(_parent),
 	m_Name(_name),
@@ -36,24 +21,6 @@ MirageEngine::GameObject::GameObject(GameObject* _parent, std::string _name, boo
 	m_ID = GenerateUniqueID();
 }
 
-void MirageEngine::GameObject::AddChild(GameObject* _child)
-{
-	if (_child->GetParent() != nullptr)
-		_child->GetParent()->RemoveChild(_child);
-
-	_child->SetParent(this);
-	m_Children.push_back(_child);
-}
-
-void MirageEngine::GameObject::AddChild(GameObject* _child, bool _isStatic)
-{
-	if (_child->GetParent() != nullptr)
-		_child->GetParent()->RemoveChild(_child);
-
-	_child->SetParent(this);
-	m_Children.push_back(_child);
-}
-
 void MirageEngine::GameObject::AddChild(GameObject* _child, bool _isStatic, bool _isActive)
 {
 	if (_child->GetParent() != nullptr)
@@ -61,6 +28,9 @@ void MirageEngine::GameObject::AddChild(GameObject* _child, bool _isStatic, bool
 
 	_child->SetParent(this);
 	m_Children.push_back(_child);
+
+	m_bIsStatic = _isStatic;
+	m_bIsActive = _isActive;
 }
 
 //MirageEngine::GameObject::~GameObject()
