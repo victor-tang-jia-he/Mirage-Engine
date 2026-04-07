@@ -117,24 +117,27 @@ void Application::InitRHI()
     m_ScreenPipeline->Create(Vert, Frag, m_ScreenPipelineParameters);
 
     // m_ScreenPipeline->Create(resManager->Get<Shader>("screen.vert")->ShaderBind, resManager->Get<Shader>("screen.frag")->ShaderBind, m_ScreenPipelineParameters);
-    //resManager->CreateTexture("Cat", "Assets/Textures/cat.png")->Bind();
-    //resManager->CreateTexture("Mirage", "Assets/Textures/Mirage.png")->Bind();
+    // resManager->CreateTexture("Cat", "Assets/Textures/cat.png")->Bind();
+    // resManager->CreateTexture("Mirage", "Assets/Textures/Mirage.png")->Bind();
 
-    resManager->GetTexture("cat")->Bind();
-    resManager->GetTexture("Mirage")->Bind();
-    mesh->Bind(); // upload vertex and index data to GPU, then clear CPU-side data to save memory
-    MeshRenderer one = MeshRenderer(mesh, resManager->CreateMaterial("DefaultMaterial"));
-    MeshRenderer two = MeshRenderer(mesh, resManager->GetMaterial("DefaultMaterial"));
-    one.Material->SetTexture("Cat", resManager->GetTexture("cat"));
-    two.Material->SetTexture("Mirage", resManager->GetTexture("Mirage"));
-    two.SetPos(Vector3(2.f, 2.f, 0.f));
+    // resManager->GetTexture("cat")->Bind();
+    // resManager->GetTexture("Mirage")->Bind();
+    // mesh->Bind(); // upload vertex and index data to GPU, then clear CPU-side data to save memory
+    // MeshRenderer one = MeshRenderer(mesh, resManager->CreateMaterial("DefaultMaterial"));
+    // MeshRenderer two = MeshRenderer(mesh, resManager->GetMaterial("DefaultMaterial"));
+    // one.Material->SetTexture("Cat", resManager->GetTexture("cat"));
+    // two.Material->SetTexture("Mirage", resManager->GetTexture("Mirage"));
+    // two.SetPos(Vector3(2.f, 2.f, 0.f));
 
-    Vector3 rotation = Vector3(0.f, 180.f, 0.f);
-    two.SetRotation(Quaternion(rotation));
-    m_meshRenderer.push_back(std::make_shared<MeshRenderer>(one));
-    m_meshRenderer.push_back(std::make_shared<MeshRenderer>(two));
-    Material* material = nullptr;
-    if (resManager->TryGet<Material>("DefaultMaterial", material)) { material->SetShader(m_Pipeline); }
+    // Vector3 rotation = Vector3(0.f, 180.f, 0.f);
+    // two.SetRotation(Quaternion(rotation));
+    // m_meshRenderer.push_back(std::make_shared<MeshRenderer>(one));
+    // m_meshRenderer.push_back(std::make_shared<MeshRenderer>(two));
+    // Material* material = nullptr;
+    // if (resManager->TryGet<Material>("DefaultMaterial", material))
+    // {
+    //     material->SetShader(m_Pipeline);
+    // }
     m_UniformBuffer->Create();
     m_CommandBuffer->Create();
     DEBUG_LOG("All Classes Created");
@@ -180,23 +183,18 @@ void Application::InitGameObject()
 
 	obj1->AddComponent<Camera>();
 	obj1->AddComponent<InputMapping>();
+	obj1->AddComponent<MeshRenderer>();
 	Camera* camera = obj1->GetComponent<Camera>();
-	// InputMapping* inputMapping = obj1->GetComponent<InputMapping>();
+	InputMapping* inputMapping = obj1->GetComponent<InputMapping>();
+	MeshRenderer* meshRenderer = obj1->GetComponent<MeshRenderer>();
 
 	std::cout << obj1->GetName().c_str() << " -> " << camera->GetName().c_str() << std::endl;
-	// std::cout << obj1->GetName().c_str() << " -> " << inputMapping->GetName().c_str() << std::endl;
+	std::cout << obj1->GetName().c_str() << " -> " << inputMapping->GetName().c_str() << std::endl;
+	std::cout << obj1->GetName().c_str() << " -> " << meshRenderer->GetName().c_str() << std::endl;
+	camera->BindInput(inputMapping);
 	camera->SetFov(60.f);
-	/*inputMapping->Add(GLFW_KEY_T, new Event<CallbackInputInfo>("InputSystem", [](CallbackInputInfo info)
-	{
-		if (info.Pressed)
-		{
-			printf("T Pressed\n");
-		}
-		if (info.Released)
-		{
-			printf("T Released\n");
-		}
-	}));*/
+    meshRenderer->GetMaterial();
+    InputSystem::SetCurrentMapping(inputMapping);
 }
 
 bool Application::IsRunning() const { return !glfwWindowShouldClose(m_Window); }
@@ -218,12 +216,15 @@ void Application::RenderScene()
     m_CommandBuffer->BindPipeline(m_Pipeline);
     m_CommandBuffer->ApplyPipelineParameters(m_Pipeline);
 
-	for (std::shared_ptr<MeshRenderer> meshRenderer : m_meshRenderer)
+	/*for (std::shared_ptr<MeshRenderer> meshRenderer : m_meshRenderer)
 	{
 		meshRenderer->Render(m_CommandBuffer, m_Pipeline, m_UniformBuffer);
 	}
 
-    for (std::shared_ptr<MirageEngine::Core::Components::MeshRenderer> meshRenderer : m_meshRenderer) { meshRenderer->Render(m_CommandBuffer, m_Pipeline, m_UniformBuffer); }
+    for (std::shared_ptr<MirageEngine::Core::Components::MeshRenderer> meshRenderer : m_meshRenderer)
+    {
+        meshRenderer->Render(m_CommandBuffer, m_Pipeline, m_UniformBuffer);
+    }*/
 
     m_CommandBuffer->EndDraw();
     m_CommandBuffer->BeginDraw(m_RenderPass, 0);

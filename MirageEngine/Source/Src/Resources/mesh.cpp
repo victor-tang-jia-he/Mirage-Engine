@@ -1,6 +1,5 @@
 #include <Resources/mesh.h>
-#include <RHI/OpenGL/openGL_buffer.h>
-#include <RHI/i_buffer.h>
+#include <i_buffer.h>
 #include <i_pipeline_parameters.h>
 
 DEFINE_LOG_CATEGORY(LogMesh)

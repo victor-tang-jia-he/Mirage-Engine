@@ -1,15 +1,8 @@
 #pragma once
 
-#include <Components/transform.h>
 #include <Resources/material.h>
 #include <Resources/mesh.h>
-
-namespace MirageRHI
-{
-	class ICommandBuffer;
-	class IUniformBuffer;
-	class IPipeline;
-}
+#include <Components/component.h>
 
 namespace MirageEngine
 {
@@ -17,25 +10,30 @@ namespace MirageEngine
 	{
 		namespace Components
 		{
-			class MeshRenderer {
-			public:
+			class MeshRenderer : public Component
+			{
+			private:
 				MirageEngine::Core::Resources::Mesh* Mesh = nullptr;
 				MirageEngine::Core::Resources::Material* Material = nullptr;
-				MirageEngine::Core::Components::Transform Transform;
 
-
+			public:
 				MeshRenderer() = default;
 				MeshRenderer(MirageEngine::Core::Resources::Mesh* _mesh, MirageEngine::Core::Resources::Material* _material)
-					: Mesh(_mesh), Material(_material) {
+					: Mesh(_mesh), Material(_material)
+				{
 				}
 
-				void SetPos(MirageEngine::Core::Math::Vector3 _pos) { Transform.SetPosition(_pos); }
-				void SetScale(MirageEngine::Core::Math::Vector3 _scale) { Transform.SetScale(_scale); }
-				void SetRotation(MirageEngine::Core::Math::Quaternion _rotation) { Transform.SetRotation(_rotation); }
+				void Init() override {};
+				void Update() override {};
 
-				void Render(MirageRHI::ICommandBuffer* _commandBuffer,MirageRHI::IPipeline* _pipeline, MirageRHI::IUniformBuffer* _uniformBuffer);
+				// Getters
+				MirageEngine::Core::Resources::Mesh* GetMesh() const { return Mesh; }
+				MirageEngine::Core::Resources::Material* GetMaterial() const { return Material; }
+
+				// Setters
+				void SetMesh(MirageEngine::Core::Resources::Mesh* _mesh) { Mesh = _mesh; }
+				void SetMaterial(MirageEngine::Core::Resources::Material* _material) { Material = _material; }
 			};
-
 		}
 	}
 }
