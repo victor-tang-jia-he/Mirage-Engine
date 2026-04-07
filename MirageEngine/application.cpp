@@ -167,13 +167,17 @@ void Application::InitInput()
 	DEBUG_LOG("Input system bind");
 }
 
+using namespace MirageEngine::Core::Resources;
+MirageEngine::GameObject* root = new MirageEngine::GameObject(nullptr, "Root");
+MirageEngine::GameObject* obj1 = new MirageEngine::GameObject(root, "Commelin");
+MirageEngine::GameObject* obj2 = new MirageEngine::GameObject(root, "Lin");
+MirageEngine::GameObject* obj3 = new MirageEngine::GameObject(obj2, "Monin");
+MirageEngine::GameObject* obj4 = new MirageEngine::GameObject(obj3, "Tang");
+MeshRenderer* meshRenderer;
+Camera* camera;
+
 void Application::InitGameObject()
 {
-	MirageEngine::GameObject* root = new MirageEngine::GameObject(nullptr, "Root");
-	MirageEngine::GameObject* obj1 = new MirageEngine::GameObject(root, "Commelin");
-	MirageEngine::GameObject* obj2 = new MirageEngine::GameObject(root, "Lin");
-	MirageEngine::GameObject* obj3 = new MirageEngine::GameObject(obj2, "Monin");
-	MirageEngine::GameObject* obj4 = new MirageEngine::GameObject(obj3, "Tang");
 	root->AddChild(obj1);
 	root->AddChild(obj2);
 	obj2->AddChild(obj3);
@@ -184,16 +188,28 @@ void Application::InitGameObject()
 	obj1->AddComponent<Camera>();
 	obj1->AddComponent<InputMapping>();
 	obj1->AddComponent<MeshRenderer>();
-	Camera* camera = obj1->GetComponent<Camera>();
+	camera = obj1->GetComponent<Camera>();
 	InputMapping* inputMapping = obj1->GetComponent<InputMapping>();
-	MeshRenderer* meshRenderer = obj1->GetComponent<MeshRenderer>();
+	meshRenderer = obj1->GetComponent<MeshRenderer>();
 
 	std::cout << obj1->GetName().c_str() << " -> " << camera->GetName().c_str() << std::endl;
 	std::cout << obj1->GetName().c_str() << " -> " << inputMapping->GetName().c_str() << std::endl;
 	std::cout << obj1->GetName().c_str() << " -> " << meshRenderer->GetName().c_str() << std::endl;
 	camera->BindInput(inputMapping);
+    camera->SetFar(100);
+    camera->SetHeight(1080);
+    camera->SetWidth(1920);
+    camera->SetNear(0.1);
 	camera->SetFov(60.f);
-    meshRenderer->GetMaterial();
+	Texture* texture = ResourceManager::Instance()->GetTexture("cat");
+	Material* material = ResourceManager::Instance()->CreateMaterial("TestMaterial");
+    texture->Bind();
+	material->SetShader(m_Pipeline);
+	material->SetTexture("cat", texture);
+    meshRenderer->SetMaterial(material);
+    ResourceManager::Instance()->GetMesh("cube")->Bind();
+	meshRenderer->SetMesh(ResourceManager::Instance()->GetMesh("cube"));
+
     InputSystem::SetCurrentMapping(inputMapping);
 }
 
@@ -221,10 +237,19 @@ void Application::RenderScene()
 		meshRenderer->Render(m_CommandBuffer, m_Pipeline, m_UniformBuffer);
 	}
 
-    for (std::shared_ptr<MirageEngine::Core::Components::MeshRenderer> meshRenderer : m_meshRenderer)
+    for (std::shared_ptr<MirageEngin;e::Core::Components::MeshRenderer> meshRenderer : m_meshRenderer)
     {
         meshRenderer->Render(m_CommandBuffer, m_Pipeline, m_UniformBuffer);
     }*/
+
+    m_UniformBuffer->SetView(camera->GetView());
+    m_UniformBuffer->SetProjection(camera->GetPerspective());
+
+	MirageEngine::Core::Resources::ResourceManager::Instance()->GetMaterial("TestMaterial")->Bind();
+    m_UniformBuffer->UpdateUniformBuffer(m_Pipeline, obj1->Transform.GetMatrix());
+    m_CommandBuffer->BindBuffer(meshRenderer->GetMesh()->GetVertexBuffer());
+    m_CommandBuffer->BindBuffer(meshRenderer->GetMesh()->GetIndexBuffer());
+    m_CommandBuffer->Draw((uint32_t)meshRenderer->GetMesh()->GetIndicesCount());
 
     m_CommandBuffer->EndDraw();
     m_CommandBuffer->BeginDraw(m_RenderPass, 0);
