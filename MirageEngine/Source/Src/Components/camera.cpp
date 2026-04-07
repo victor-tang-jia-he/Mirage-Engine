@@ -1,5 +1,6 @@
 #include <Components/camera.h>
 #include <Components/input_system.h>
+#include <Components/input_mapping.h>
 #include <Events/event.h>
 #include <iostream>
 #include <time_manager.h>
@@ -21,35 +22,36 @@ Camera::Camera(unsigned int _width, unsigned int _height,
 void Camera::BindInput(InputMapping* map)
 {
 	if (map == nullptr) return;
-	map->Map[GLFW_KEY_W].dispatcher.Add(new Event<CallbackInputInfo>("InputSystem", [this](CallbackInputInfo info) 
+	map->Map[GLFW_KEY_W].Dispatcher.Add(new Event<CallbackInputInfo>("InputSystem", [this](CallbackInputInfo info) 
 		{
 			if (info.Held)
 			{
+				std::cout << "W Pressed" << std::endl;
 				this->Transform().SetPosition(this->Transform().GetPosition() + this->Transform().Forward() * 1.f * TimeManager::GetDeltaTime());
 			}
 		}));
-	map->Map[GLFW_KEY_A].dispatcher.Add(new Event<CallbackInputInfo>("InputSystem", [this](CallbackInputInfo info) 
+	map->Map[GLFW_KEY_A].Dispatcher.Add(new Event<CallbackInputInfo>("InputSystem", [this](CallbackInputInfo info) 
 		{
 			if (info.Held)
 			{
 				this->Transform().SetPosition(this->Transform().GetPosition() + this->Transform().Right() * 1.f * TimeManager::GetDeltaTime());
 			}
 		}));
-	map->Map[GLFW_KEY_S].dispatcher.Add(new Event<CallbackInputInfo>("InputSystem", [this](CallbackInputInfo info) 
+	map->Map[GLFW_KEY_S].Dispatcher.Add(new Event<CallbackInputInfo>("InputSystem", [this](CallbackInputInfo info)
 		{
 			if (info.Held)
 			{
 				this->Transform().SetPosition(this->Transform().GetPosition() - this->Transform().Forward() * 1.f * TimeManager::GetDeltaTime());
 			}
 		}));
-	map->Map[GLFW_KEY_D].dispatcher.Add(new Event<CallbackInputInfo>("InputSystem", [this](CallbackInputInfo info) 
+	map->Map[GLFW_KEY_D].Dispatcher.Add(new Event<CallbackInputInfo>("InputSystem", [this](CallbackInputInfo info) 
 		{
 			if (info.Held)
 			{
 				this->Transform().SetPosition(this->Transform().GetPosition() - this->Transform().Right() * 1.f * TimeManager::GetDeltaTime());
 			}
 		}));
-	map->Map[GLFW_KEY_Q].dispatcher.Add(new Event<CallbackInputInfo>("InputSystem", [this](CallbackInputInfo info) 
+	map->Map[GLFW_KEY_Q].Dispatcher.Add(new Event<CallbackInputInfo>("InputSystem", [this](CallbackInputInfo info) 
 		{
 			if (info.Held)
 			{
@@ -57,7 +59,7 @@ void Camera::BindInput(InputMapping* map)
 				this->Transform().SetRotation(this->Transform().GetRotation() * Quaternion(vec,1.f * TimeManager::GetDeltaTime()));
 			}
 		}));
-	map->Map[GLFW_KEY_E].dispatcher.Add(new Event<CallbackInputInfo>("InputSystem", [this](CallbackInputInfo info) 
+	map->Map[GLFW_KEY_E].Dispatcher.Add(new Event<CallbackInputInfo>("InputSystem", [this](CallbackInputInfo info) 
 		{
 			if (info.Held)
 			{

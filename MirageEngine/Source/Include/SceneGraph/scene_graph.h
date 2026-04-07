@@ -7,7 +7,10 @@
 #include "GameObject/game_object.h"	
 
 //class GameObject;
-class Camera;
+namespace MirageEngine::Core::Components
+{
+	class Camera;
+}
 
 namespace MirageEngine
 {
@@ -20,12 +23,12 @@ namespace MirageEngine
 		std::unordered_map<uint64_t, GameObject*> m_Registry;
 
 		GameObject* m_SelectedObject = nullptr;
-		Camera* m_EditorCamera = nullptr;
-		Camera* m_ActiveCamera = nullptr;
+		MirageEngine::Core::Components::Camera* m_EditorCamera = nullptr;
+		MirageEngine::Core::Components::Camera* m_ActiveCamera = nullptr;
 
 	public:
 		SceneGraph() = default;
-		~SceneGraph() { ClearScene(); }
+		~SceneGraph() { }
 
 		GameObject* CreateGameObject(const std::string& _name, GameObject* _parent = nullptr);  // done
 		void RemoveGameObject(GameObject* _obj);												// done
@@ -45,8 +48,8 @@ namespace MirageEngine
 		const std::vector<GameObject*>& GetRootObjects() const { return m_RootsList; }
 		std::vector<GameObject*> GetChildren(GameObject* _parent) const;
 
-		void SetEditorCamera(Camera* _cam) { m_EditorCamera = _cam; m_ActiveCamera = _cam; }
-		Camera* GetActiveCamera() const { return m_ActiveCamera; }
+		void SetEditorCamera(MirageEngine::Core::Components::Camera* _cam) { m_EditorCamera = _cam; m_ActiveCamera = _cam; }
+		MirageEngine::Core::Components::Camera* GetActiveCamera() const { return m_ActiveCamera; }
 	protected:
 	private:
 		void WorldMatrixRecursive(GameObject* _obj, const void* _parentMatrix);

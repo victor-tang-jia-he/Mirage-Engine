@@ -3,11 +3,12 @@
 
 namespace Mirage
 {
-	enum DragDropTag
+	enum class DragDropTag
 	{
 		HIERARCHY_ITEM,
 		CONTENT_BROWSER_ITEM
 	};
+
 	class DragDrop
 	{
 	public:

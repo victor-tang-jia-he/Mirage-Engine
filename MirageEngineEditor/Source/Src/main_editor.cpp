@@ -13,16 +13,18 @@ int main()
 	Mirage::EditorApp editor;
 
 	application.InitApp();
-	editor.Init(application.GetWindowHandle());
+	editor.Init(application.m_Renderer.GetWindowHandle());
 	MirageEngine::TimeManager::Init();
-	while (application.IsRunning())
+	while (application.m_Renderer.IsRunning())
 	{
 		MirageEngine::TimeManager::Update();
-		application.BeginFrame();
-		application.RenderScene();
-		uint32_t textureID = application.GetFramebufferTextureID();
+		MirageEngine::Core::Input::InputSystem::UpdateHeldInput();
+		application.m_Renderer.BeginFrame();
+		application.m_Renderer.RenderScene(application.m_SceneGraph);
+		application.m_Renderer.RenderScreen();
+		uint32_t textureID = application.m_Renderer.GetFramebufferTextureID();
 		editor.Update(textureID);
-		application.EndFrame();
+		application.m_Renderer.EndFrame();
 	}
 
 	editor.Shutdown();

@@ -1,236 +1,116 @@
 #include <application.h>
-#include <OpenGL/openGL_render_interface.h>
+
+#include <renderer.h>
+#include <SceneGraph/scene_graph.h>
+
 #include <debug.h>
-#include <Components/camera.h>
+
+// Resources
 #include <Resources/resource_manager.h>
 #include <Resources/mesh.h>
 #include <Resources/material.h>
 #include <Resources/texture.h>
 #include <Resources/shader.h>
-#include <Components/mesh_renderer.h>
+
+// GameObject & Components
 #include <GameObject/game_object.h>
+#include <Components/input_system.h>
+#include <Components/camera.h>
+#include <Components/mesh_renderer.h>
 
 using namespace MirageEngine::Core::Input;
 using namespace MirageEngine::Core::EventSystem;
 using namespace MirageEngine::Core::Math;
+using namespace MirageEngine::Core::Components;
+using namespace MirageEngine::Core::Resources;
 
 void Application::InitApp()
 {
     Loggers::LogBuffer::GetInstance().EnableImmediateFlush(true); // Enable immediate flushing of log messages for real-time output during initialization
     Loggers::LogBuffer::GetInstance().EnableFileWriting(true);    // Enable writing logs to file during initialization to capture any issues that may occur before the main loop starts.
-    InitWindow();
-    InitRHI();
+
+    m_Renderer.InitRenderer();
+
+	ResourceManager* resManager = ResourceManager::Instance();
+	resManager->Init(m_Renderer.GetRenderInterfaceHandle());
+	MirageEngine::Core::Resources::ResourceManager::Instance()->PreLoadResources();
+
     InitScene();
     InitInput();
     InitGameObject();
 }
 
-void Application::InitWindow()
+void Application::InitScene()
 {
-    if (!glfwInit()) { DEBUG_THROW("Failed to init GLFW"); }
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-
-    m_Width  = 1920;
-    m_Height = 1080;
-
-    m_Window = glfwCreateWindow(m_Width, m_Height, "Mirage Engine", nullptr, nullptr);
-    if (!m_Window)
-    {
-        glfwTerminate();
-        DEBUG_THROW("Failed to create window");
-    }
-
-    glfwMakeContextCurrent(m_Window);
-    if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) { DEBUG_THROW("Failed to init GLAD"); }
-
-    glViewport(0, 0, m_Width, m_Height);
-
-    DEBUG_LOG("Window Created");
+	m_EngineCamera = new Camera(1920, 1080, 90.f, 0.1f, 100.f, Vector3(0.f, 0.f, -3.f));
+	m_SceneGraph.SetEditorCamera(m_EngineCamera);
 }
-
-void Application::InitRHI()
-{
-    using namespace MirageEngine::Core::Resources;
-    using namespace MirageEngine::Core::Components;
-    // Select RHI API
-    switch (m_API)
-    {
-        case MirageRHI::IRenderInterface::API::OPENGL: m_RenderInterface = new MirageRHI::OpenGLRenderInterface(); break;
-        default                                      : DEBUG_THROW("Unsupported RHI API");
-    }
-    ResourceManager* resManager = ResourceManager::Instance();
-    resManager->Init(m_RenderInterface);
-
-    MirageEngine::Core::Resources::ResourceManager::Instance()->PreLoadResources();
-    DEBUG_LOG("Render Interface Created");
-
-    // Instantiate All Classes
-    m_Instance                 = m_RenderInterface->InstantiateInstance();
-    m_Surface                  = m_RenderInterface->InstantiateSurface();
-    m_Device                   = m_RenderInterface->InstantiateDevice();
-    m_SwapChain                = m_RenderInterface->InstantiateSwapChain();
-    m_RenderPass               = m_RenderInterface->InstantiateRenderPass();
-    m_PipelineParameters       = m_RenderInterface->InstantiatePipelineParameters();
-    m_ScreenPipelineParameters = m_RenderInterface->InstantiatePipelineParameters();
-    m_Pipeline                 = m_RenderInterface->InstantiatePipeline();
-    m_ScreenPipeline           = m_RenderInterface->InstantiatePipeline();
-    m_Framebuffer              = m_RenderInterface->InstantiateFramebuffer();
-    m_UniformBuffer            = m_RenderInterface->InstantiateUniformBuffer();
-    m_CommandBuffer            = m_RenderInterface->InstantiateCommandBuffer();
-    DEBUG_LOG("All Classes Instantiated");
-
-    //Mesh* mesh = resManager->CreateMesh("Cube.obj", "Assets/Mesh/Cube.obj");
-    Mesh* mesh = resManager->GetMesh("cube");
-    DEBUG_LOG("Vertex and Index Data Created");
-
-    // Create All Classes
-    m_Instance->Create("Mirage");
-    m_Surface->Create(m_Window, m_Width, m_Height);
-    m_Device->Create();
-    m_SwapChain->Create(2, m_Width, m_Height);
-    m_RenderPass->Create(Vector4(0.f, 0.5f, 0.5f, 1.0f), 1.0f);
-
-    //resManager->CreateShader("default.vert", "Assets/Shaders/default.vert", MirageRHI::IShader::ShaderType::Vertex);
-    //resManager->CreateShader("default.frag", "Assets/Shaders/default.frag", MirageRHI::IShader::ShaderType::Fragment);
-    //resManager->CreateShader("screen.vert", "Assets/Shaders/screen.vert", MirageRHI::IShader::ShaderType::Vertex);
-    //resManager->CreateShader("screen.frag", "Assets/Shaders/screen.frag", MirageRHI::IShader::ShaderType::Fragment);
-    m_PipelineParameters->Create(MirageRHI::VertexType::PBR, MirageRHI::CullingType::None, true);
-    m_ScreenPipelineParameters->Create(MirageRHI::VertexType::None, MirageRHI::CullingType::None, false);
-
-    m_Pipeline->Create(resManager->GetVertexShader("default_Vertex")->ShaderBind, resManager->GetFragmentShader("default_Fragment")->ShaderBind, m_PipelineParameters);
-
-    MirageRHI::IShader* Vert = new OpenGLShader();
-    Vert->Create("Assets/Shaders/screen.vert", MirageRHI::IShader::ShaderType::Vertex);
-    MirageRHI::IShader* Frag = new OpenGLShader();
-    Frag->Create("Assets/Shaders/screen.frag", MirageRHI::IShader::ShaderType::Fragment);
-
-    m_ScreenPipeline->Create(Vert, Frag, m_ScreenPipelineParameters);
-
-    // m_ScreenPipeline->Create(resManager->Get<Shader>("screen.vert")->ShaderBind, resManager->Get<Shader>("screen.frag")->ShaderBind, m_ScreenPipelineParameters);
-    //resManager->CreateTexture("Cat", "Assets/Textures/cat.png")->Bind();
-    //resManager->CreateTexture("Mirage", "Assets/Textures/Mirage.png")->Bind();
-
-    resManager->GetTexture("cat")->Bind();
-    resManager->GetTexture("Mirage")->Bind();
-    mesh->Bind(); // upload vertex and index data to GPU, then clear CPU-side data to save memory
-    MeshRenderer one = MeshRenderer(mesh, resManager->CreateMaterial("DefaultMaterial"));
-    MeshRenderer two = MeshRenderer(mesh, resManager->GetMaterial("DefaultMaterial"));
-    one.Material->SetTexture("Cat", resManager->GetTexture("cat"));
-    two.Material->SetTexture("Mirage", resManager->GetTexture("Mirage"));
-    two.SetPos(Vector3(2.f, 2.f, 0.f));
-
-    Vector3 rotation = Vector3(0.f, 180.f, 0.f);
-    two.SetRotation(Quaternion(rotation));
-    m_meshRenderer.push_back(std::make_shared<MeshRenderer>(one));
-    m_meshRenderer.push_back(std::make_shared<MeshRenderer>(two));
-    Material* material = nullptr;
-    if (resManager->TryGet<Material>("DefaultMaterial", material)) { material->SetShader(m_Pipeline); }
-    m_UniformBuffer->Create();
-    m_CommandBuffer->Create();
-    DEBUG_LOG("All Classes Created");
-}
-
-void Application::InitScene() { m_EngineCamera = new MirageEngine::Core::Components::Camera(1920, 1080, 90.f, 0.1f, 100.f, Vector3(0.f, 0.f, -3.f)); }
 
 void Application::InitInput()
 {
-    // creating editorMapping
-    m_EditorMapping                  = new InputMapping();
-    m_EditorMapping->Map[GLFW_KEY_W] = InputBind{};
-    m_EditorMapping->Map[GLFW_KEY_A] = InputBind{};
-    m_EditorMapping->Map[GLFW_KEY_S] = InputBind{};
-    m_EditorMapping->Map[GLFW_KEY_D] = InputBind{};
-    m_EditorMapping->Map[GLFW_KEY_R] = InputBind{};
-    m_EditorMapping->Map[GLFW_KEY_Q] = InputBind{};
-    m_EditorMapping->Map[GLFW_KEY_E] = InputBind{};
+	// creating editorMapping
+	m_EditorMapping = new InputMapping();
 
-    // init with previous created map
-    InputSystem::Initialize(m_EditorMapping);
-    // get and set callback
-    GLFWwindow* window = glfwGetCurrentContext();
-    glfwSetKeyCallback(window, InputSystem::KeyCallback);
+	// add random function test member of current class
+	//m_EditorMapping->Add(GLFW_KEY_W, this, &Application::EditorPrintInput); // template
 
-    // bind camera
-    m_EngineCamera->BindInput(m_EditorMapping);
-    DEBUG_LOG("Input system bind");
+	// init with previous created map
+	InputSystem::Initialize(m_EditorMapping);
+	// get and set callback
+	GLFWwindow* window = glfwGetCurrentContext();
+	glfwSetKeyCallback(window, InputSystem::KeyCallback);
+
+	// bind camera
+	m_EngineCamera->BindInput(m_EditorMapping);
+	DEBUG_LOG("Input system bind");
 }
+
+using namespace MirageEngine::Core::Resources;
+MeshRenderer* meshRenderer;
+Camera* camera;
 
 void Application::InitGameObject()
 {
-	MirageEngine::GameObject* root = new MirageEngine::GameObject(nullptr, "Root");
-	MirageEngine::GameObject* obj1 = new MirageEngine::GameObject(root, "Commelin");
-	MirageEngine::GameObject* obj2 = new MirageEngine::GameObject(root, "Lin");
-	MirageEngine::GameObject* obj3 = new MirageEngine::GameObject(obj2, "Monin");
-	MirageEngine::GameObject* obj4 = new MirageEngine::GameObject(obj3, "Tang");
-	root->AddChild(obj1);
-	root->AddChild(obj2);
-	obj2->AddChild(obj3);
-	obj3->AddChild(obj4);
+	MirageEngine::GameObject* root = m_SceneGraph.CreateGameObject("Root", nullptr);
+	MirageEngine::GameObject* obj1 = m_SceneGraph.CreateGameObject("Commelin", root);
+	MirageEngine::GameObject* obj2 = m_SceneGraph.CreateGameObject("Lin", root);
+	MirageEngine::GameObject* obj3 = m_SceneGraph.CreateGameObject("Monin", obj2);
+	MirageEngine::GameObject* obj4 = m_SceneGraph.CreateGameObject("Tang", obj3);
 
 	root->AddChild(obj3);
 
-	obj1->AddComponent<MirageEngine::Core::Components::Camera>();
-	auto camera = obj1->GetComponent<MirageEngine::Core::Components::Camera>();
-	std::cout << camera->GetName().c_str() << std::endl;
+	obj1->AddComponent<Camera>();
+	obj1->AddComponent<InputMapping>();
+	obj1->AddComponent<MeshRenderer>();
+	camera = obj1->GetComponent<Camera>();
+	m_SceneGraph.SetEditorCamera(camera);
+	InputMapping* inputMapping = obj1->GetComponent<InputMapping>();
+	meshRenderer = obj1->GetComponent<MeshRenderer>();
+
+	std::cout << obj1->GetName().c_str() << " -> " << camera->GetName().c_str() << std::endl;
+	std::cout << obj1->GetName().c_str() << " -> " << inputMapping->GetName().c_str() << std::endl;
+	std::cout << obj1->GetName().c_str() << " -> " << meshRenderer->GetName().c_str() << std::endl;
+	camera->BindInput(inputMapping);
+    camera->SetFar(100);
+    camera->SetHeight(1080);
+    camera->SetWidth(1920);
+    camera->SetNear(0.1);
 	camera->SetFov(60.f);
-}
+	Texture* texture = ResourceManager::Instance()->GetTexture("cat");
+	Material* material = ResourceManager::Instance()->CreateMaterial("TestMaterial");
+    texture->Bind();
+	material->SetShader(m_Renderer.m_Pipeline);
+	material->SetTexture("cat", texture);
+    meshRenderer->SetMaterial(material);
+    ResourceManager::Instance()->GetMesh("cube")->Bind();
+	meshRenderer->SetMesh(ResourceManager::Instance()->GetMesh("cube"));
 
-bool Application::IsRunning() const { return !glfwWindowShouldClose(m_Window); }
-
-void Application::BeginFrame()
-{
-    glfwPollEvents();
-    if (glfwGetKey(m_Window, GLFW_KEY_ESCAPE) == GLFW_PRESS) glfwSetWindowShouldClose(m_Window, true);
-
-    InputSystem::UpdateHeldInput();
-    uint32_t currentFBO = m_SwapChain->AcquireCurrentFBO();
-    m_CommandBuffer->BeginDraw(m_RenderPass, currentFBO);
-}
-
-void Application::RenderScene()
-{
-    // using namespace MirageEngine::Core::Resources;
-
-    m_CommandBuffer->BindPipeline(m_Pipeline);
-    m_CommandBuffer->ApplyPipelineParameters(m_Pipeline);
-
-    m_UniformBuffer->SetView(m_EngineCamera->GetView());
-    m_UniformBuffer->SetProjection(m_EngineCamera->GetPerspective());
-    m_UniformBuffer->UpdateUniformBuffer(m_Pipeline, Matrix4::CreateTransformMatrix(Vector3(0, 0, 0), Vector3(0, 0, 0), Vector3(1, 1, 1))); // view/proj
-
-    for (std::shared_ptr<MirageEngine::Core::Components::MeshRenderer> meshRenderer : m_meshRenderer) { meshRenderer->Render(m_CommandBuffer, m_Pipeline, m_UniformBuffer); }
-
-    m_CommandBuffer->EndDraw();
-    m_CommandBuffer->BeginDraw(m_RenderPass, 0);
-
-    m_CommandBuffer->BindPipeline(m_ScreenPipeline);
-    m_CommandBuffer->ApplyPipelineParameters(m_ScreenPipeline);
-    m_CommandBuffer->BindTextureFromID(m_SwapChain->AcquireCurrentImage());
-
-    m_CommandBuffer->Draw(3);
-}
-
-void Application::EndFrame()
-{
-    m_CommandBuffer->EndDraw();
-    m_CommandBuffer->SubmitAndPresent(m_SwapChain, m_Surface);
-}
-
-uint32_t Application::GetFramebufferTextureID() const
-{
-	if (m_SwapChain)
-	{
-		return m_SwapChain->AcquireCurrentImage();
-	}
-	return 0;
+    InputSystem::SetCurrentMapping(inputMapping);
 }
 
 void Application::ShutDown()
 {
-    glfwMakeContextCurrent(m_Window);
-    glfwTerminate();
+	m_Renderer.Shutdown();
     delete m_EditorMapping;
     delete m_PlayMapping;
     delete m_EngineCamera;

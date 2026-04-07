@@ -1,6 +1,6 @@
 #include <Resources/material.h>
-#include <RHI/OpenGL/openGL_pipeline.h>
-#include <RHI/OpenGL/openGL_buffer.h>
+#include <RHI/i_pipeline.h>
+
 #include <RHI/i_texture.h>
 #include <RHI/i_shader.h>
 #include <Resources/mesh.h>
@@ -70,8 +70,6 @@ void Material::Bind()
     {
         if (_texture)
         {
-            // Activate the correct texture unit, then bind the texture object.
-            glActiveTexture(GL_TEXTURE0 + textureUnit);
             _texture->GetTextureBuffer()->Bind();
             m_Shader->SetInt(_name, textureUnit);
             textureUnit++;

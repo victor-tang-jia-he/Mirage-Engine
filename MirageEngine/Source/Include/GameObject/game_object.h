@@ -6,6 +6,7 @@
 
 #include <Components/component.h>
 #include <Components/transform.h>
+#include <Components/mesh_renderer.h>
 
 namespace MirageEngine
 {
@@ -65,7 +66,11 @@ namespace MirageEngine
 					return dynamic_cast<T*>(component);
 				}
 			}
-			return nullptr;
+			
+			if (m_Components.size() == 0)
+			{
+				return nullptr;
+			}
 		}
 		
 		void RemoveComponent(MirageEngine::Core::Components::Component* _component);

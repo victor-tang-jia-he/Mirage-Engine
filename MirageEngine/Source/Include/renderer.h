@@ -5,8 +5,17 @@
 
 #include "i_render_interface.h"
 
+#include <SceneGraph/scene_graph.h>
+
+
 namespace MirageEngine
 {
+	namespace Core::Components
+	{
+		class Transform;
+		class MeshRenderer;
+	}
+
 	class Renderer
 	{
 	private:
@@ -28,21 +37,29 @@ namespace MirageEngine
 		MirageRHI::ICommandBuffer* m_CommandBuffer = nullptr;
 
 	public:
-		Renderer(MirageRHI::IRenderInterface::API _api = MirageRHI::IRenderInterface::API::OPENGL) : m_API(_api) {}
+		// Temp Default Pipeline, will be replaced when material system is done
+		MirageRHI::IPipeline* m_Pipeline = nullptr;
+		MirageRHI::IPipelineParameters* m_PipelineParameters = nullptr;
 
-		void InitRenderer();
+	public:
+		void InitRenderer(MirageRHI::IRenderInterface::API _api = MirageRHI::IRenderInterface::API::OPENGL);
 		void Shutdown();
 
+		bool IsRunning() const;
 		void BeginFrame();
-		void RenderScene(); // Finish When Scene and MeshRenderer are done
+		void RenderScene(SceneGraph _sceneGraph); // Finish When Scene and MeshRenderer are done
 		void RenderScreen();
 		void EndFrame();
+
+		uint32_t GetFramebufferTextureID() const;
+		void* GetWindowHandle() const { return static_cast<void*>(m_Window); }
+		MirageRHI::IRenderInterface* GetRenderInterfaceHandle() const { return m_RenderInterface; }
 
 	private:
 		// Initialization Functions
 		void InitWindow();
 		void InitRHI();
 
-		void DrawMesh();
+		void DrawMesh(MirageEngine::Core::Components::MeshRenderer* _meshRenderer, MirageEngine::Core::Components::Transform* _meshTransform);
 	};
 }
