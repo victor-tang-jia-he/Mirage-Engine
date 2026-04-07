@@ -1,8 +1,5 @@
 #include <Resources/resource_manager.h>
-#include <RHI/OpenGL/openGL_buffer.h>
-#include <RHI/OpenGL/openGL_pipeline.h>
-#include <RHI/OpenGL/openGL_pipeline_parameters.h>
-#include <RHI/OpenGL/openGL_shader.h>
+#include <RHI/i_pipeline_parameters.h>
 #include <RHI/i_texture.h>
 #include <RHI/i_render_interface.h>
 

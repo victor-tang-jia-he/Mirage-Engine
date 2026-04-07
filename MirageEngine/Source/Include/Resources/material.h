@@ -2,6 +2,7 @@
 #include <vector3.h>
 #include <unordered_map>
 #include <Resources/resource_interface.h>
+#include <RHI/i_pipeline_parameters.h>
 #include <Logs/log_macro.h>
 
 DECLARE_LOG_CATEGORY_EXTERN(LogMaterial)

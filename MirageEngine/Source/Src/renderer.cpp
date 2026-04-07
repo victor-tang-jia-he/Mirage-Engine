@@ -1,14 +1,18 @@
 #include "renderer.h"
 
 #include <OpenGL/openGL_render_interface.h>
+#include <SceneGraph/scene_graph.h>
+
+#include <Components/mesh_renderer.h>
 
 #include <debug.h>
 
 using namespace MirageEngine;
 using namespace MirageEngine::Core::Math;
 
-void Renderer::InitRenderer()
+void Renderer::InitRenderer(MirageRHI::IRenderInterface::API _api)
 {
+	m_API = _api;
 	InitWindow();
 	InitRHI();
 }
@@ -40,6 +44,11 @@ void Renderer::Shutdown()
 	DEBUG_LOG("Renderer Shutdown");
 }
 
+bool Renderer::IsRunning() const
+{
+	return !glfwWindowShouldClose(m_Window);
+}
+
 void Renderer::BeginFrame()
 {
 	glfwPollEvents();
@@ -48,19 +57,25 @@ void Renderer::BeginFrame()
 	m_CommandBuffer->BeginDraw(m_RenderPass, currentFBO);
 }
 
-void Renderer::RenderScene()
+void Renderer::RenderScene(SceneGraph _sceneGraph)
 {
-	//m_CommandBuffer->BindPipeline(m_Pipeline);
-	//m_CommandBuffer->ApplyPipelineParameters(m_Pipeline);
+	m_CommandBuffer->BindPipeline(m_Pipeline);
+	m_CommandBuffer->ApplyPipelineParameters(m_Pipeline);
 
-	//m_UniformBuffer->SetView(m_EngineCamera->GetView());
-	//m_UniformBuffer->SetProjection(m_EngineCamera->GetPerspective());
-	//m_UniformBuffer->UpdateUniformBuffer(m_Pipeline, Matrix4::CreateTransformMatrix(Vector3(0, 0, 0), Vector3(0, 0, 0), Vector3(1, 1, 1))); // view/proj
+	m_UniformBuffer->SetView(_sceneGraph.GetActiveCamera()->GetView());
+	m_UniformBuffer->SetProjection(_sceneGraph.GetActiveCamera()->GetPerspective());
 
-	//for (std::shared_ptr<MirageEngine::Core::Components::MeshRenderer> meshRenderer : m_meshRenderer) 
-	//{ 
-	//	meshRenderer->Render(m_CommandBuffer, m_Pipeline, m_UniformBuffer); 
-	//}
+	for ( GameObject* root : _sceneGraph.GetRootObjects() ) 
+	{ 
+		for (GameObject* child : root->GetChildren())
+		{
+			MirageEngine::Core::Components::MeshRenderer* meshRenderer = child->GetComponent<MirageEngine::Core::Components::MeshRenderer>();
+			if (meshRenderer) 
+			{
+				DrawMesh(meshRenderer, &child->Transform);
+			}
+		}
+	}
 }
 
 void Renderer::RenderScreen()
@@ -71,7 +86,8 @@ void Renderer::RenderScreen()
 
 	m_CommandBuffer->BindPipeline(m_ScreenPipeline);
 	m_CommandBuffer->ApplyPipelineParameters(m_ScreenPipeline);
-	m_CommandBuffer->BindTextureFromID(m_SwapChain->AcquireCurrentImage());
+	m_CommandBuffer->BindTextureFromID(0);
+	//m_CommandBuffer->BindTextureFromID(m_SwapChain->AcquireCurrentImage());
 
 	m_CommandBuffer->Draw(3);
 }
@@ -80,6 +96,15 @@ void Renderer::EndFrame()
 {
 	m_CommandBuffer->EndDraw();
 	m_CommandBuffer->SubmitAndPresent(m_SwapChain, m_Surface);
+}
+
+uint32_t Renderer::GetFramebufferTextureID() const
+{
+	if (m_SwapChain)
+	{
+		return m_SwapChain->AcquireCurrentImage();
+	}
+	return 0;
 }
 
 void Renderer::InitWindow()
@@ -160,4 +185,36 @@ void Renderer::InitRHI()
 	m_UniformBuffer->Create();
 	m_CommandBuffer->Create();
 	DEBUG_LOG("All Classes Created");
+
+	// Temp Pipeline Creation, will be replaced when material system is done !
+	{
+		m_PipelineParameters = m_RenderInterface->InstantiatePipelineParameters();
+		m_Pipeline = m_RenderInterface->InstantiatePipeline();
+
+		m_PipelineParameters->Create(MirageRHI::VertexType::PBR, MirageRHI::CullingType::None, true);
+
+		// Creation of single use shader objects for screen rendering pipeline
+		MirageRHI::IShader* tempVertShader = m_RenderInterface->InstantiateShader();
+		MirageRHI::IShader* tempFragShader = m_RenderInterface->InstantiateShader();
+
+		tempVertShader->Create("Assets/Shaders/default.vert", MirageRHI::IShader::ShaderType::Vertex);
+		tempFragShader->Create("Assets/Shaders/default.frag", MirageRHI::IShader::ShaderType::Fragment);
+		m_Pipeline->Create(tempVertShader, tempFragShader, m_PipelineParameters);
+
+		// Single use shader objects is destroyed after screen rendering pipeline creation
+		tempVertShader->Destroy();
+		tempFragShader->Destroy();
+	}
+}
+
+void Renderer::DrawMesh(MirageEngine::Core::Components::MeshRenderer* _meshRenderer, MirageEngine::Core::Components::Transform* _meshTransform)
+{
+	if (!_meshRenderer->GetMesh() || !_meshRenderer->GetMaterial())
+		return;
+
+	_meshRenderer->GetMaterial()->Bind();
+	m_UniformBuffer->UpdateUniformBuffer(m_Pipeline, _meshTransform->GetMatrix());
+	m_CommandBuffer->BindBuffer(_meshRenderer->GetMesh()->GetVertexBuffer());
+	m_CommandBuffer->BindBuffer(_meshRenderer->GetMesh()->GetIndexBuffer());
+	m_CommandBuffer->Draw((uint32_t)_meshRenderer->GetMesh()->GetIndicesCount());
 }

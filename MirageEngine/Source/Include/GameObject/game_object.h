@@ -6,6 +6,7 @@
 
 #include <Components/component.h>
 #include <Components/transform.h>
+#include <Components/mesh_renderer.h>
 
 namespace MirageEngine
 {
@@ -68,7 +69,7 @@ namespace MirageEngine
 			
 			if (m_Components.size() == 0)
 			{
-				throw std::runtime_error("Component not found: " + std::string(typeid(T).name()));
+				return nullptr;
 			}
 		}
 		

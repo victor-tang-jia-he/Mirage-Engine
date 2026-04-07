@@ -24,7 +24,7 @@ void Camera::BindInput(InputMapping* map)
 	if (map == nullptr) return;
 	map->Map[GLFW_KEY_W].Dispatcher.Add(new Event<CallbackInputInfo>("InputSystem", [this](CallbackInputInfo info) 
 		{
-			if (info.Pressed)
+			if (info.Held)
 			{
 				std::cout << "W Pressed" << std::endl;
 				this->Transform().SetPosition(this->Transform().GetPosition() + this->Transform().Forward() * 1.f * TimeManager::GetDeltaTime());
