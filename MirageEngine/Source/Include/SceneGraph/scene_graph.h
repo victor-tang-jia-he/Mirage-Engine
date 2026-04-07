@@ -4,11 +4,12 @@
 #include <vector>
 #include <unordered_map>
 #include <cstdint>
+#include "GameObject/game_object.h"	
 
-class GameObject;
+//class GameObject;
 class Camera;
 
-namespace Mirage
+namespace MirageEngine
 {
 	class SceneGraph
 	{
@@ -26,7 +27,7 @@ namespace Mirage
 		SceneGraph() = default;
 		~SceneGraph() { ClearScene(); }
 
-		void AddGameObject(GameObject* _obj);
+		GameObject* CreateGameObject(const std::string& _name, GameObject* _parent = nullptr);
 		void RemoveGameObject(GameObject* _obj);
 		void ClearScene();
 		GameObject* FindGameObject(uint64_t _id) const;
@@ -34,7 +35,7 @@ namespace Mirage
 		void UpdateWorldMatrix(GameObject* _startObject);
 		void UpdateAllWorldMatrices();
 
-		void SetParent(GameObject* _parent); // Manages all the logic of change of parenting.
+		void SetParent(GameObject* _parent, GameObject* child); // Manages all the logic of change of parenting.
 		std::vector<GameObject*> GetChildren(GameObject* _parent);
 
 		void ObjectPicking(float _mouseX, float _mouseY); // Porjects a raycast to select an object
@@ -42,6 +43,7 @@ namespace Mirage
 		void SetSelectedObject(GameObject* _obj) { m_SelectedObject = _obj; }
 		GameObject* GetSelectedObject() { return m_SelectedObject; }
 		const std::vector<GameObject*>& GetRootObjects() const { return m_RootsList; }
+		std::vector<GameObject*> GetChildren(GameObject* _parent) const;
 
 		void SetEditorCamera(Camera* _cam) { m_EditorCamera = _cam; m_ActiveCamera = _cam; }
 		Camera* GetActiveCamera() const { return m_ActiveCamera; }
