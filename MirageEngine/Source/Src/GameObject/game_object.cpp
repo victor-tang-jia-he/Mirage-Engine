@@ -23,14 +23,14 @@ MirageEngine::GameObject::GameObject(GameObject* _parent, std::string _name, boo
 
 void MirageEngine::GameObject::AddChild(GameObject* _child, bool _isStatic, bool _isActive)
 {
-	if (_child->GetParent() != nullptr)
-		_child->GetParent()->RemoveChild(_child);
+	//if (_child->GetParent() != nullptr)
+	//	_child->GetParent()->RemoveChild(_child);
 
-	_child->SetParent(this);
+	//_child->SetParent(this);
 	m_Children.push_back(_child);
 
-	m_bIsStatic = _isStatic;
-	m_bIsActive = _isActive;
+	_child->m_bIsStatic = _isStatic;
+	_child->m_bIsActive = _isActive;
 }
 
 //MirageEngine::GameObject::~GameObject()

@@ -121,17 +121,17 @@ namespace Mirage
 				std::string name = entry.path().filename().string();
 				std::string id = entry.path().string();
 
-				bool isLeaf = true;
+				bool bisLeaf = true;
 				for (const auto& sub : std::filesystem::directory_iterator(entry.path())) {
 					if (sub.is_directory()) {
-						isLeaf = false;
+						bisLeaf = false;
 						break;
 					}
 				}
 
-				bool isSelected = (m_CurrentPath == entry.path());
+				bool bisSelected = (m_CurrentPath == entry.path());
 
-				if (UIWrapper::BeginFolderNode(name.c_str(), id.c_str(), isSelected, isLeaf))
+				if (UIWrapper::BeginFolderNode(name.c_str(), id.c_str(), bisSelected, bisLeaf))
 				{
 					if (ImGui::BeginDragDropTarget())
 					{
