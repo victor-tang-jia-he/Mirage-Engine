@@ -1,4 +1,5 @@
 #pragma once
+#include <cstdint>
 
 namespace Mirage
 {
@@ -13,7 +14,7 @@ namespace Mirage
 		IPanel(const char* _name) : p_Title(_name), p_IsActive(true) {};
 
 		virtual void InitPanel() {};
-		virtual void DrawPanel() = 0;
+		virtual void DrawPanel(uint32_t _textureID) = 0;
 		virtual void ShutdownPanel() {};
 
 		const char* GetTitle() const { return p_Title;  }

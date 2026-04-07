@@ -71,6 +71,7 @@ public:
 	void RenderScene();
 	void EndFrame();
 
+	uint32_t GetFramebufferTextureID() const;
 	void* GetWindowHandle() const { return static_cast<void*>(m_Window); }
 
 private:

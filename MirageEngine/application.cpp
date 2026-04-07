@@ -267,6 +267,15 @@ void Application::EndFrame()
     m_CommandBuffer->SubmitAndPresent(m_SwapChain, m_Surface);
 }
 
+uint32_t Application::GetFramebufferTextureID() const
+{
+	if (m_SwapChain)
+	{
+		return m_SwapChain->AcquireCurrentImage();
+	}
+	return 0;
+}
+
 void Application::ShutDown()
 {
     glfwMakeContextCurrent(m_Window);

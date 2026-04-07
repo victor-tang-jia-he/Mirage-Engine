@@ -1,5 +1,6 @@
 #pragma once
 #include "i_panel.h"
+#include "main_menu_bar.h"
 #include <iostream>
 #include <vector>
 #include <memory>
@@ -14,10 +15,11 @@ namespace Mirage
 		GameObject* m_SelectedObject = nullptr;
 		std::vector<std::unique_ptr<IPanel>> m_PanelList;
 		void* m_WindowHandle = nullptr;
+		MainMenuBar m_MainMenuBar;
 
 	public:
 		void Init(void* _windowHandle);
-		void Update();
+		void Update(uint32_t _textureID);
 		void Shutdown();
 
 		void SetSelectedObject(GameObject* _object) { m_SelectedObject = _object; };

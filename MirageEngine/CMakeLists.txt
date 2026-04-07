@@ -19,7 +19,7 @@ file(GLOB_RECURSE MIRAGE_ENGINE_HEADERS
 	"Components/*.hpp"
 )
 
-target_sources(MirageEngine PRIVATE ${MIRAGE_ENGINE_SOURCES} ${MIRAGE_ENGINE_HEADERS})
+target_sources(MirageEngine PRIVATE ${MIRAGE_ENGINE_SOURCES} ${MIRAGE_ENGINE_HEADERS} "Source/Src/SceneGraph/scene_graph.cpp")
 
 # Include directories
 target_include_directories(MirageEngine PUBLIC

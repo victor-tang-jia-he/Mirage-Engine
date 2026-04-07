@@ -8,7 +8,7 @@ namespace Mirage
 
 	}
 
-	void Hierarchy::DrawPanel()
+	void Hierarchy::DrawPanel(uint32_t _textureID)
 	{
 		UIWrapper::BeginWindow("Hierarchy");
 		UIWrapper::EndWindow();

@@ -18,7 +18,7 @@ namespace Mirage
 		AddLog("You know the drill", LogLevel::WARNING);
 	}
 
-	void Console::DrawPanel()
+	void Console::DrawPanel(uint32_t _textureID)
 	{
 		UIWrapper::BeginWindow("Console");
 

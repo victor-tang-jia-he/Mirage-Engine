@@ -19,14 +19,14 @@ namespace MirageEngine
 		// Game Object variables
 		std::string m_Name = "";
 		std::vector<MirageEngine::Core::Components::Component*> m_Components;
-		std::vector<GameObject*> m_Childrens;
+		std::vector<GameObject*> m_Children;
 		GameObject* m_Parent = nullptr;
+		uint64_t m_ID;
 
 		// Editor parameters
-		bool m_bIsActive = true;
-		bool m_bIsStatic = false;
-
-		bool m_bIsRoot = false;
+		bool m_bIsActive = true; // Do components update every frame
+		bool m_bIsStatic = false; // Does transform update every frame
+		bool m_bIsDirty = false;
 
 	public:
 		MirageEngine::Core::Components::Transform Transform;
@@ -38,7 +38,7 @@ namespace MirageEngine
 		// Game Object Custom Methods
 		void AddChild(GameObject* _child, bool _isStatic = false, bool _isActive = true);
 
-		~GameObject();
+		//~GameObject();
 
 		void SetActive(bool _isActive);
 
@@ -75,7 +75,7 @@ namespace MirageEngine
 		void RemoveComponent(MirageEngine::Core::Components::Component* _component);
 
 		// Game Object Public Methods
-		bool IsRoot();
+		bool IsRoot() const { return m_Parent == nullptr; };
 		void SetParent(GameObject* _parent);
 		void RemoveChild(GameObject* _child);
 
@@ -83,8 +83,9 @@ namespace MirageEngine
 		std::string GetName() const { return m_Name; }
 		bool GetIsStatic() const { return m_bIsStatic; }
 		bool GetIsActive() const { return m_bIsActive; }
-		bool GetIsRoot() const { return m_bIsRoot; }
 		GameObject* GetParent() const { return m_Parent; }
-	
+		std::vector<GameObject*> GetChildren() const { return m_Children; }
+		std::vector<MirageEngine::Core::Components::Component*> GetComponents() const { return m_Components; }
+		uint64_t GetID() const { return m_ID; }
 	};
 }

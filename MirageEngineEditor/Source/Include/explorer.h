@@ -33,12 +33,13 @@ namespace Mirage
 		AssetEntry* m_EntryToProcess = nullptr;
 		char m_RenameBuffer[256] = "";
 		bool m_ShouldOpenAssetPopup = false;
+		bool m_AnItemWasRightClicked = false;
 
 	public:
 		Explorer(const char* _name) : IPanel(_name) {};
 		
 		void InitPanel() override;
-		void DrawPanel() override;
+		void DrawPanel(uint32_t _textureID) override;
 		void ShutdownPanel() override;
 
 	private:
@@ -52,21 +53,20 @@ namespace Mirage
 
 		//Display
 		void DrawDirectoryContent();
-		void DrawAssetEntry();
+		void DrawBreadcrumb();
 		void DrawFileIcon();
 
 		//Interaction
 		void HandleFileClick();
-		bool AssetContextMenu(const char* _id);
 		void BeginFileDrag();
-		void ShowContextMenu();
 		void SyncWithOS(); //Watches if you add a file through Windows
 
 		void RenderAssetGrid();
 		void RenderAssetContextMenu();
 		void RenderEmptySpaceContextMenu();
 		void RenderRenameModal();
+		void RenderDeleteModal();
 		void RenameItem(std::filesystem::path& _oldPath, std::filesystem::path& _newPath);
-		void MoveItem();
+		void MoveItem(const std::filesystem::path& _source, const std::filesystem::path& _target);
 	};
 }

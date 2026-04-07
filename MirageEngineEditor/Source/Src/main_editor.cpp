@@ -20,7 +20,8 @@ int main()
 		MirageEngine::TimeManager::Update();
 		application.BeginFrame();
 		application.RenderScene();
-		editor.Update();
+		uint32_t textureID = application.GetFramebufferTextureID();
+		editor.Update(textureID);
 		application.EndFrame();
 	}
 
