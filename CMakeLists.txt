@@ -211,13 +211,12 @@ endif()
 # ImGizmo
 # ============================================================================
 
-if(EXISTS "${CMAKE_SOURCE_DIR}/Libraries/ImGizmo" AND EXISTS "${CMAKE_SOURCE_DIR}/Libraries/ImGizmo/CMakeLists.txt")
+if(EXISTS "${CMAKE_SOURCE_DIR}/Libraries/ImGizmo")
     message(STATUS "Using local ImGizmo")
     set(IMGIZMO_BUILD_DOCS OFF CACHE BOOL "Build documentation" FORCE)
     set(IMGIZMO_BUILD_TESTS OFF CACHE BOOL "Build tests" FORCE)
     set(IMGIZMO_BUILD_EXAMPLES OFF CACHE BOOL "Build examples" FORCE)
     set(IMGIZMO_INSTALL OFF CACHE BOOL "Generate installation target" FORCE)
-    add_subdirectory(${CMAKE_SOURCE_DIR}/Libraries/ImGizmo ${CMAKE_BINARY_DIR}/ImGizmo)
 else()
     message(STATUS "Fetching ImGizmo...")
     FetchContent_Declare(
@@ -234,6 +233,38 @@ else()
 endif()
 
 # ============================================================================
+# EnTTMeta Reflection
+# ============================================================================
+
+if(EXISTS "${CMAKE_SOURCE_DIR}/Libraries/EnTTMeta" AND EXISTS "${CMAKE_SOURCE_DIR}/Libraries/EnTTMeta/CMakeLists.txt")
+    message(STATUS "Using local EnTTMeta")
+    set(ENTTMETA_BUILD_DOCS OFF CACHE BOOL "Build documentation" FORCE)
+    set(ENTTMETA_BUILD_TESTS OFF CACHE BOOL "Build tests" FORCE)
+    set(ENTTMETA_BUILD_EXAMPLES OFF CACHE BOOL "Build examples" FORCE)
+    set(ENTTMETA_INSTALL OFF CACHE BOOL "Generate installation target" FORCE)
+    add_subdirectory(${CMAKE_SOURCE_DIR}/Libraries/EnTTMeta ${CMAKE_BINARY_DIR}/EnTTMeta)
+else()
+    message(STATUS "Fetching EnTTMeta...")
+    FetchContent_Declare(
+        enttmeta
+        GIT_REPOSITORY https://github.com/skypjack/entt.git
+        GIT_TAG v3.16.0
+        SOURCE_DIR ${CMAKE_SOURCE_DIR}/Libraries/EnTTMeta
+    )
+    set(ENTTMETA_BUILD_DOCS OFF CACHE BOOL "Build documentation" FORCE)
+    set(ENTTMETA_BUILD_TESTS OFF CACHE BOOL "Build tests" FORCE)
+    set(ENTTMETA_BUILD_EXAMPLES OFF CACHE BOOL "Build examples" FORCE)
+    set(ENTTMETA_INSTALL OFF CACHE BOOL "Generate installation target" FORCE)
+    FetchContent_MakeAvailable(enttmeta)
+endif()
+
+if(TARGET enttmeta)
+    message(STATUS "EnTTMeta target created successfully")
+    get_target_property(ENTTMETA_TYPE enttmeta TYPE)
+    message(STATUS "EnTTMeta target type: ${ENTTMETA_TYPE}")
+endif()
+
+# ============================================================================
 # System Engine Library (Core)
 # ============================================================================
 add_subdirectory(${CMAKE_SOURCE_DIR}/MirageEngine/Tools/Toolbox)
@@ -247,7 +278,9 @@ target_include_directories(third_party INTERFACE
     ${CMAKE_SOURCE_DIR}/Libraries/imgui
     ${CMAKE_SOURCE_DIR}/Libraries/ImGizmo
     ${CMAKE_SOURCE_DIR}/Libraries/imgui/backends
+    ${CMAKE_SOURCE_DIR}/Libraries/TinyObjLoader
     ${CMAKE_SOURCE_DIR}/Libraries/stb_image
+    ${CMAKE_SOURCE_DIR}/Libraries/EnTTMeta/single_include
     ${CMAKE_SOURCE_DIR}/Libraries
 )
 
@@ -256,6 +289,8 @@ target_link_libraries(third_party INTERFACE
     glfw
     glad
     imgui
+    enttmeta
+    tinyobjloader
     OpenGL::GL
     Toolbox
 ) 
