@@ -11,6 +11,7 @@ namespace Mirage
 	{
 	private:
 		MirageEngine::SceneGraph* m_Context;
+		bool m_AnItemWasRightClicked;
 
 	public:
 		Hierarchy(const char* _name, MirageEngine::SceneGraph* _context) : IPanel(_name), m_Context(_context) {};
@@ -22,5 +23,7 @@ namespace Mirage
 	private:
 		void DrawHierarchyTree();
 		void RenderRecursiveNode(MirageEngine::GameObject* _obj);
+		void RenderHierarchyItemMenu();
+		void RenderHierarchyEmptyMenu();
 	};
 }
