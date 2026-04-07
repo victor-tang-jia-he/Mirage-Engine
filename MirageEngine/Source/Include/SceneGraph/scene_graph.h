@@ -27,16 +27,16 @@ namespace MirageEngine
 		SceneGraph() = default;
 		~SceneGraph() { ClearScene(); }
 
-		GameObject* CreateGameObject(const std::string& _name, GameObject* _parent = nullptr);
-		void RemoveGameObject(GameObject* _obj);
-		void ClearScene();
+		GameObject* CreateGameObject(const std::string& _name, GameObject* _parent = nullptr);  // done
+		void RemoveGameObject(GameObject* _obj);												// done
+		void ClearScene();																		// done
 		GameObject* FindGameObject(uint64_t _id) const;
 
 		void UpdateWorldMatrix(GameObject* _startObject);
 		void UpdateAllWorldMatrices();
 
-		void SetParent(GameObject* _parent, GameObject* child); // Manages all the logic of change of parenting.
-		std::vector<GameObject*> GetChildren(GameObject* _parent);
+		bool SetParent(GameObject* _parent, GameObject* child); // Manages all the logic of change of parenting.  // done
+		std::vector<GameObject*> GetChildren(GameObject* _parent);												  // done
 
 		void ObjectPicking(float _mouseX, float _mouseY); // Porjects a raycast to select an object
 

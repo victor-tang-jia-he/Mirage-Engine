@@ -15,31 +15,6 @@ namespace MirageEngine
 		return newObject;
 	}
 
-	void SceneGraph::SetParent(GameObject* _parent, GameObject* _child)
-	{
-		if (!_child) return;
-
-		if (_child->GetParent() == nullptr)
-			std::erase(m_RootsList, _child);
-		else
-		{
-			_child->GetParent()->RemoveChild(_child);
-		}
-
-		if (_parent == nullptr)
-		{
-			m_RootsList.push_back(_child);
-			_child->SetParent(nullptr);
-		}
-		else
-		{
-			(_parent->AddChild(_child));
-			_child->SetParent(_parent);
-		}
-
-		_child->SetDirty(true);
-	}
-
 	void SceneGraph::RemoveGameObject(GameObject* _obj)
 	{
 		if (!_obj) return;
@@ -70,5 +45,51 @@ namespace MirageEngine
 		}	
 		m_Registry.clear();
 		m_RootsList.clear();
+	}
+
+	std::vector<GameObject*> SceneGraph::GetChildren(GameObject* _parent)
+	{
+		if (_parent == nullptr)
+			return m_RootsList;
+		return _parent->GetChildren();
+	}
+
+	bool SceneGraph::SetParent(GameObject* _parent, GameObject* _child)
+	{
+		if (!_child) return false;
+		if (_child == _parent) return false;
+
+		GameObject* current = _parent;
+		while (current != nullptr)
+		{
+			if (current == _child)
+			{
+				std::cout << "Error: Circular dependency detected!" << std::endl;
+				return false;
+			}
+			current = current->GetParent();
+		}
+
+		if (_child->GetParent() == nullptr)
+			std::erase(m_RootsList, _child);
+		else
+		{
+			_child->GetParent()->RemoveChild(_child);
+		}
+
+		if (_parent == nullptr)
+		{
+			m_RootsList.push_back(_child);
+			_child->SetParent(nullptr);
+		}
+		else
+		{
+			_parent->AddChild(_child);
+			_child->SetParent(_parent);
+		}
+
+		_child->SetDirty(true);
+
+		return true;
 	}
 }

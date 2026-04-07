@@ -4,25 +4,30 @@
 #include <iostream>
 #include <vector>
 #include <memory>
+#include "SceneGraph/scene_graph.h" 
 
-class GameObject;
+namespace MirageEngine
+{
+	class GameObject;
+}
 
 namespace Mirage
 {
 	class EditorApp
 	{
 	private:
-		GameObject* m_SelectedObject = nullptr;
+		MirageEngine::GameObject* m_SelectedObject = nullptr;
 		std::vector<std::unique_ptr<IPanel>> m_PanelList;
 		void* m_WindowHandle = nullptr;
 		MainMenuBar m_MainMenuBar;
+		MirageEngine::SceneGraph m_SceneGraph;
 
 	public:
 		void Init(void* _windowHandle);
 		void Update(uint32_t _textureID);
 		void Shutdown();
 
-		void SetSelectedObject(GameObject* _object) { m_SelectedObject = _object; };
-		GameObject* GetSelectedObject() const { return m_SelectedObject; };
+		void SetSelectedObject(MirageEngine::GameObject* _object) { m_SelectedObject = _object; };
+		MirageEngine::GameObject* GetSelectedObject() const { return m_SelectedObject; };
 	};
 }
