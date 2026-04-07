@@ -14,6 +14,7 @@
 #include "openGL_shader.h"
 #include "openGL_framebuffer.h"
 #include "openGL_buffer.h"
+#include "openGL_texture.h"
 #include "openGL_command_buffer.h"
 #include "openGL_uniform_buffer.h"
 
@@ -32,6 +33,7 @@ namespace MirageRHI
 		IShader* InstantiateShader() override { return new OpenGLShader(); }
 		IFramebuffer* InstantiateFramebuffer() override { return new OpenGLFramebuffer(); }
 		IBuffer* InstantiateBuffer() override { return new OpenGLBuffer(); }
+		ITexture* InstantiateTexture() override { return new OpenGLTexture(); }
 		IUniformBuffer* InstantiateUniformBuffer() override { return new OpenGLUniformBuffer(); }
 		ICommandBuffer* InstantiateCommandBuffer() override { return new OpenGLCommandBuffer(); }
 
