@@ -1,15 +1,22 @@
 #include <GameObject/game_object.h>
 #include <Components/component.h>
 #include <Components/transform.h>
+#include <atomic>
 
 using namespace MirageEngine::Core::Components;
 using namespace MirageEngine::Core::Math;
+
+static std::atomic<uint64_t> s_NextID = 1;
+
+uint64_t GenerateUniqueID() {
+	return s_NextID++;
+}
 
 MirageEngine::GameObject::GameObject(GameObject* _parent, std::string _name)
 	: m_Parent(_parent),
 	m_Name(_name)
 {
-	IsRoot();
+	m_ID = GenerateUniqueID();
 }
 
 MirageEngine::GameObject::GameObject(GameObject* _parent, std::string _name, bool _isStatic)
@@ -17,7 +24,7 @@ MirageEngine::GameObject::GameObject(GameObject* _parent, std::string _name, boo
 	m_Name(_name),
 	m_bIsStatic(_isStatic)
 {
-	IsRoot();
+	m_ID = GenerateUniqueID();
 }
 
 MirageEngine::GameObject::GameObject(GameObject* _parent, std::string _name, bool _isStatic, bool _isActive)
@@ -26,7 +33,7 @@ MirageEngine::GameObject::GameObject(GameObject* _parent, std::string _name, boo
 	m_bIsStatic(_isStatic),
 	m_bIsActive(_isActive)
 {
-	IsRoot();
+	m_ID = GenerateUniqueID();
 }
 
 void MirageEngine::GameObject::AddChild(GameObject* _child)
@@ -35,7 +42,7 @@ void MirageEngine::GameObject::AddChild(GameObject* _child)
 		_child->GetParent()->RemoveChild(_child);
 
 	_child->SetParent(this);
-	m_Childrens.push_back(_child);
+	m_Children.push_back(_child);
 }
 
 void MirageEngine::GameObject::AddChild(GameObject* _child, bool _isStatic)
@@ -44,7 +51,7 @@ void MirageEngine::GameObject::AddChild(GameObject* _child, bool _isStatic)
 		_child->GetParent()->RemoveChild(_child);
 
 	_child->SetParent(this);
-	m_Childrens.push_back(_child);
+	m_Children.push_back(_child);
 }
 
 void MirageEngine::GameObject::AddChild(GameObject* _child, bool _isStatic, bool _isActive)
@@ -53,22 +60,22 @@ void MirageEngine::GameObject::AddChild(GameObject* _child, bool _isStatic, bool
 		_child->GetParent()->RemoveChild(_child);
 
 	_child->SetParent(this);
-	m_Childrens.push_back(_child);
+	m_Children.push_back(_child);
 }
 
-MirageEngine::GameObject::~GameObject()
-{
-	for (auto& component : m_Components)
-	{
-		delete component;
-	}
-	m_Components.clear();
-	for (auto& child : m_Childrens)
-	{
-		delete child;
-	}
-	m_Childrens.clear();
-}
+//MirageEngine::GameObject::~GameObject()
+//{
+//	for (auto& component : m_Components)
+//	{
+//		delete component;
+//	}
+//	m_Components.clear();
+//	for (auto& child : m_Children)
+//	{
+//		delete child;
+//	}
+//	m_Children.clear();
+//}
 
 void MirageEngine::GameObject::SetActive(bool _isActive)
 {
@@ -89,19 +96,6 @@ void MirageEngine::GameObject::RemoveComponent(MirageEngine::Core::Components::C
 	m_Components.erase(std::remove(m_Components.begin(), m_Components.end(), _component), m_Components.end());
 }
 
-bool MirageEngine::GameObject::IsRoot()
-{
-	if (m_Parent == nullptr)
-	{
-		m_bIsRoot = true;
-	}
-	else
-	{
-		m_bIsRoot = false;
-	}
-	return m_bIsRoot;
-}
-
 void MirageEngine::GameObject::SetParent(GameObject* _parent)
 {
 	m_Parent = _parent;
@@ -109,5 +103,5 @@ void MirageEngine::GameObject::SetParent(GameObject* _parent)
 
 void MirageEngine::GameObject::RemoveChild(GameObject* _child)
 {
-	m_Childrens.erase(std::remove(m_Childrens.begin(), m_Childrens.end(), _child), m_Childrens.end());
+	m_Children.erase(std::remove(m_Children.begin(), m_Children.end(), _child), m_Children.end());
 }
