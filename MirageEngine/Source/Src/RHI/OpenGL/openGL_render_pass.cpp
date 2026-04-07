@@ -1,5 +1,9 @@
 #include "OpenGL/openGL_render_pass.h"
 
+#include <Logs/log_macro.h>
+
+DEFINE_LOG_CATEGORY(RHIRenderPass)
+
 using namespace MirageEngine::Core::Math;
 
 void MirageRHI::OpenGLRenderPass::Create(Vector4 _color, float _depth)
@@ -9,6 +13,8 @@ void MirageRHI::OpenGLRenderPass::Create(Vector4 _color, float _depth)
     m_ClearColor[2] = _color.Z;
     m_ClearColor[3] = _color.W;
     m_ClearDepth = _depth;
+
+	LOG(logInfo, RHIRenderPass, "Render Pass Created with Clear Color: (", m_ClearColor[0], ", ", m_ClearColor[1], ", ", m_ClearColor[2], ", ", m_ClearColor[3], ") and Clear Depth: ", m_ClearDepth);
 }
 
 void MirageRHI::OpenGLRenderPass::Begin()

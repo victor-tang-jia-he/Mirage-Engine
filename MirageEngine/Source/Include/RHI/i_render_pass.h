@@ -7,10 +7,7 @@
 namespace MirageRHI
 {
 	class OpenGLRenderPass;
-}
 
-namespace MirageRHI
-{
 	class IRenderPass
 	{
 	public:

@@ -2,6 +2,10 @@
 #include "OpenGL/openGL_shader.h"
 #include "OpenGL/openGL_pipeline_parameters.h"
 
+#include <Logs/log_macro.h>
+
+DEFINE_LOG_CATEGORY(RHIPipeline)
+
 using namespace MirageEngine::Core::Math;
 
 void MirageRHI::OpenGLPipeline::Create(IShader* _vertShader, IShader* _fragShader, IPipelineParameters* _pipelineParameters)
@@ -14,11 +18,15 @@ void MirageRHI::OpenGLPipeline::Create(IShader* _vertShader, IShader* _fragShade
     glAttachShader(m_Program, m_VertexShader->API_OpenGL().GetGLHandle());
     glAttachShader(m_Program, m_FragmentShader->API_OpenGL().GetGLHandle());
     Link();
+
+	LOG(logInfo, RHIPipeline, "Pipeline Created with Program ID: ", m_Program);
 }
 
 void MirageRHI::OpenGLPipeline::Destroy()
 {
     glDeleteProgram(m_Program);
+
+	LOG(logInfo, RHIPipeline, "Pipeline Destroyed with Program ID: ", m_Program);
 }
 
 bool MirageRHI::OpenGLPipeline::Link() const
@@ -32,7 +40,7 @@ bool MirageRHI::OpenGLPipeline::Link() const
         glGetProgramiv(m_Program, GL_INFO_LOG_LENGTH, &logLength);
         char* log = new char[logLength];
         glGetProgramInfoLog(m_Program, logLength, &logLength, log);
-        std::cerr << "Shader Program linking failed: " << log << "\n";
+        LOG(logError, RHIPipeline, "Shader Program linking failed: ", log);
         delete[] log;
         return false;
     }
@@ -94,7 +102,7 @@ void MirageRHI::OpenGLPipeline::SetBool(const std::string& name, bool value) con
     GLint location = glGetUniformLocation(m_Program, name.c_str());
     if (location == -1)
     {
-		DEBUG_THROW("Warning: uniform '%s' doesn't exist or is not used.", name.c_str());
+		LOG(logWarning, RHIPipeline, "Uniform '", name, "' doesn't exist or is not used in Program ID: ", m_Program);
     }
     glUniform1i(location, static_cast<int>(value));
 }

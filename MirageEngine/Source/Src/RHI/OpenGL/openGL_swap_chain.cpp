@@ -1,12 +1,17 @@
 #include "OpenGL/openGL_swap_chain.h"
 #include "OpenGL/openGL_surface.h"
 #include "OpenGL/openGL_framebuffer.h"
-#include "debug.h"
+
+#include <glad/glad.h>
+#include <GLFW/glfw3.h>
+#include <Logs/log_macro.h>
+
+DEFINE_LOG_CATEGORY(RHISwapChain)
 
 void MirageRHI::OpenGLSwapChain::Create(uint32_t _frameAmount, uint32_t _width, uint32_t _height)
 {
     if (_frameAmount <= 0)
-        DEBUG_THROW("Empty Swapchain !");
+        LOG(logWarning, RHISwapChain, "Empty Swapchain !");
 
     for (uint32_t i = 0; i < _frameAmount; ++i)
     {
@@ -14,6 +19,20 @@ void MirageRHI::OpenGLSwapChain::Create(uint32_t _frameAmount, uint32_t _width, 
         newFrameBuffer->Create(_width, _height);
         m_FrameBuffers.push_back(newFrameBuffer);
     }
+
+	LOG(logInfo, RHISwapChain, "SwapChain Created with ", _frameAmount, " framebuffers of size: ", _width, "x", _height);
+}
+
+void MirageRHI::OpenGLSwapChain::Destroy()
+{
+    for (OpenGLFramebuffer* frameBuffer : m_FrameBuffers)
+    {
+        frameBuffer->Destroy();
+        delete frameBuffer;
+    }
+    m_FrameBuffers.clear();
+
+	LOG(logInfo, RHISwapChain, "SwapChain Destroyed and all framebuffers released.");
 }
 
 void MirageRHI::OpenGLSwapChain::IsScreenResized(ISurface* _surface)
@@ -34,6 +53,8 @@ void MirageRHI::OpenGLSwapChain::RecreateSwapchain(ISurface* _surface, int _newW
         frameBuffer->RescaleFrameBuffer(_newWidth, _newHeight);
     }
     glViewport(0, 0, _newWidth, _newHeight);
+
+	LOG(logInfo, RHISwapChain, "SwapChain Recreated with new size: ", _newWidth, "x", _newHeight);
 }
 
 uint32_t MirageRHI::OpenGLSwapChain::AcquireCurrentFBO()

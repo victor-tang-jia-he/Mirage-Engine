@@ -5,10 +5,7 @@
 namespace MirageRHI
 {
 	class OpenGLShader;
-}
 
-namespace MirageRHI
-{
 	class IShader
 	{
 	public:

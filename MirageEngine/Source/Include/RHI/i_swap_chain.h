@@ -6,10 +6,7 @@ namespace MirageRHI
 {
 	class OpenGLSwapChain;
 	class ISurface;
-}
 
-namespace MirageRHI
-{
 	class ISwapChain
 	{
 	public:

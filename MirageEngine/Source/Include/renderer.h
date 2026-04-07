@@ -1,9 +1,8 @@
 #pragma once
 
-#include <glad/glad.h>
-#include <GLFW/glfw3.h>
-
 #include "i_render_interface.h"
+
+struct GLFWwindow;
 
 namespace MirageEngine
 {

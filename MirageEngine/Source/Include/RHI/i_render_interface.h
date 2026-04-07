@@ -44,6 +44,5 @@ namespace MirageRHI
 		virtual ITexture* InstantiateTexture() = 0;
 		virtual IUniformBuffer* InstantiateUniformBuffer() = 0;
 		virtual ICommandBuffer* InstantiateCommandBuffer() = 0;
-
 	};
 }

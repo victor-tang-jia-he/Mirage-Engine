@@ -3,11 +3,7 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
-#include <debug.h>
-
 #include <i_pipeline.h>
-
-using namespace MirageRHI::Debug;
 
 namespace MirageRHI
 {

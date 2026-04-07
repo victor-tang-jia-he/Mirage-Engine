@@ -1,5 +1,9 @@
 #include "OpenGL/openGL_instance.h"
 
+#include <Logs/log_macro.h>
+
+DEFINE_LOG_CATEGORY(RHIInstance)
+
 void MirageRHI::OpenGLInstance::Create(std::string _name)
 {
 	m_Name = _name;
@@ -8,23 +12,25 @@ void MirageRHI::OpenGLInstance::Create(std::string _name)
     m_Vendor = (const char*)glGetString(GL_VENDOR);
 
     if (m_Version) {
-        DEBUG_LOG("OpenGL Version: [%s].", m_Version);
+        LOG(logInfo, RHIInstance, "OpenGL Version: ", m_Version);
     }
     else {
-        DEBUG_THROW("Failed to get OpenGL Version!");
+        LOG(logError, RHIInstance, "Failed to get OpenGL Version!");
     }
 
     if (m_Renderer) {
-        DEBUG_LOG("OpenGL Renderer: [%s].", m_Renderer);
+        LOG(logInfo, RHIInstance, "OpenGL Renderer: ", m_Renderer);
     }
     else {
-        DEBUG_THROW("Failed to get OpenGL Renderer!");
+        LOG(logError, RHIInstance, "Failed to get OpenGL Renderer!");
     }
 
     if (m_Vendor) {
-        DEBUG_LOG("OpenGL Vendor: [%s].", m_Vendor);
+        LOG(logInfo, RHIInstance, "OpenGL Vendor: ", m_Vendor);
     }
     else {
-        DEBUG_THROW("Failed to get OpenGL Vendor!");
+        LOG(logError, RHIInstance, "Failed to get OpenGL Vendor!");
     }
+
+	LOG(logInfo, RHIInstance, "OpenGL Instance '", m_Name, "' created successfully.");
 }

@@ -5,6 +5,10 @@
 #include "OpenGL/openGL_swap_chain.h"
 #include "OpenGL/openGL_surface.h"
 
+#include <Logs/log_macro.h>
+
+DEFINE_LOG_CATEGORY(RHICommandBuffer)
+
 void MirageRHI::OpenGLCommandBuffer::BeginDraw(IRenderPass* _renderPass, uint32_t _FBO)
 {
     glBindFramebuffer(GL_FRAMEBUFFER, _FBO);
@@ -61,7 +65,7 @@ void MirageRHI::OpenGLCommandBuffer::Draw(uint32_t _indexCount)
     // Check for errors after draw (helps catch invalid state)
     GLenum postErr = glGetError();
     if (postErr != GL_NO_ERROR)
-        DEBUG_LOG("glDraw error: 0x%X", postErr);
+        LOG(logWarning, RHICommandBuffer, "glDraw error: 0x%X", postErr);
 }
 
 void MirageRHI::OpenGLCommandBuffer::SubmitAndPresent(ISwapChain* _swapChain, ISurface* _surface)

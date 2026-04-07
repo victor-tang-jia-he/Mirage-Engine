@@ -1,7 +1,9 @@
-#include <debug.h>
-
 #include "OpenGL/openGL_uniform_buffer.h"
 #include "OpenGL/openGL_pipeline.h"
+
+#include <Logs/log_macro.h>
+
+DEFINE_LOG_CATEGORY(RHIUniformBuffer)
 
 using namespace MirageEngine::Core::Math;
 
@@ -9,6 +11,8 @@ void MirageRHI::OpenGLUniformBuffer::Create()
 {
 	m_View = Matrix4::Identity();
 	m_Proj = Matrix4::Identity();
+
+	LOG(logInfo, RHIUniformBuffer, "Uniform Buffer Created.");
 }
 
 void MirageRHI::OpenGLUniformBuffer::UpdateUniformBuffer(IPipeline* _pipeline, MirageEngine::Core::Math::Matrix4 _model)

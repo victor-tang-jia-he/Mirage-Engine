@@ -1,8 +1,11 @@
 #include "renderer.h"
 
+#include <glad/glad.h>
+#include <GLFW/glfw3.h>
 #include <OpenGL/openGL_render_interface.h>
+#include <Logs/log_macro.h>
 
-#include <debug.h>
+DECLARE_LOG_CATEGORY_EXTERN(MirageRenderer)
 
 using namespace MirageEngine;
 using namespace MirageEngine::Core::Math;
@@ -11,6 +14,8 @@ void Renderer::InitRenderer()
 {
 	InitWindow();
 	InitRHI();
+
+	LOG(logInfo, MirageRenderer, "Renderer successfully Initialized");
 }
 
 void Renderer::Shutdown()
@@ -37,7 +42,7 @@ void Renderer::Shutdown()
 	delete m_Instance;
 
 	glfwTerminate();
-	DEBUG_LOG("Renderer Shutdown");
+	LOG(logInfo, MirageRenderer, "Renderer Shutdown");
 }
 
 void Renderer::BeginFrame()
@@ -85,7 +90,7 @@ void Renderer::EndFrame()
 void Renderer::InitWindow()
 {
 	if (!glfwInit()) {
-		DEBUG_THROW("Failed to init GLFW");
+		LOG(logFatal, MirageRenderer, "Failed to init GLFW");
 	}
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
@@ -97,17 +102,17 @@ void Renderer::InitWindow()
 	m_Window = glfwCreateWindow(m_Width, m_Height, "Mirage Engine", nullptr, nullptr);
 	if (!m_Window) {
 		glfwTerminate();
-		DEBUG_THROW("Failed to create window");
+		LOG(logFatal, MirageRenderer, "Failed to create window");
 	}
 
 	glfwMakeContextCurrent(m_Window);
 	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
-		DEBUG_THROW("Failed to init GLAD");
+		LOG(logFatal, MirageRenderer, "Failed to init GLAD");
 	}
 
 	glViewport(0, 0, m_Width, m_Height);
 
-	DEBUG_LOG("Window Created");
+	LOG(logInfo, MirageRenderer, "Window Created");
 }
 
 void Renderer::InitRHI()
@@ -117,11 +122,11 @@ void Renderer::InitRHI()
 	{
 	case MirageRHI::IRenderInterface::API::OPENGL:
 		m_RenderInterface = new MirageRHI::OpenGLRenderInterface();
+		LOG(logInfo, MirageRenderer, "Selected RHI API : OpenGL");
 		break;
 	default:
-		DEBUG_THROW("Unsupported API");
+		LOG(logFatal, MirageRenderer, "Unsupported API");
 	}
-	DEBUG_LOG("Render Interface Created");
 
 	// Instantiate All Classes
 	m_Instance = m_RenderInterface->InstantiateInstance();
@@ -133,7 +138,7 @@ void Renderer::InitRHI()
 	m_ScreenPipeline = m_RenderInterface->InstantiatePipeline();
 	m_UniformBuffer = m_RenderInterface->InstantiateUniformBuffer();
 	m_CommandBuffer = m_RenderInterface->InstantiateCommandBuffer();
-	DEBUG_LOG("All Classes Instantiated");
+	LOG(logInfo, MirageRenderer, "All Classes Instantiated");
 
 	// Create All Classes
 	m_Instance->Create("Mirage");
@@ -159,5 +164,5 @@ void Renderer::InitRHI()
 	
 	m_UniformBuffer->Create();
 	m_CommandBuffer->Create();
-	DEBUG_LOG("All Classes Created");
+	LOG(logInfo, MirageRenderer, "All Classes Created");
 }

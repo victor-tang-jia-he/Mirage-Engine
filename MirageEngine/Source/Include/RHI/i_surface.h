@@ -2,15 +2,12 @@
 
 #include <iostream>
 
-namespace MirageRHI
-{
-	class OpenGLSurface;
-}
-
 struct GLFWwindow;
 
 namespace MirageRHI
 {
+	class OpenGLSurface;
+
 	class ISurface
 	{
 	public:
