@@ -36,7 +36,7 @@ namespace MirageEngine
 		GameObject* FindGameObject(uint64_t _id) const;
 
 		void UpdateWorldMatrix(GameObject* _startObject);
-		void UpdateAllWorldMatrices();
+		void UpdateAllWorldMatrices();															// done
 
 		bool SetParent(GameObject* _parent, GameObject* child); // Manages all the logic of change of parenting.  // done
 		std::vector<GameObject*> GetChildren(GameObject* _parent);												  // done

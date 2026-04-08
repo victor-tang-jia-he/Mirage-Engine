@@ -1,4 +1,5 @@
 #include "SceneGraph/scene_graph.h"
+#include <matrix4.h>
 
 namespace MirageEngine
 {
@@ -47,6 +48,16 @@ namespace MirageEngine
 		m_RootsList.clear();
 	}
 
+	void SceneGraph::UpdateAllWorldMatrices()
+	{
+		MirageEngine::Core::Math::Matrix4 Identity = MirageEngine::Core::Math::Matrix4::Identity();
+
+		for (GameObject* root : m_RootsList)
+		{
+			WorldMatrixRecursive(root, &Identity);
+		}
+	}
+
 	std::vector<GameObject*> SceneGraph::GetChildren(GameObject* _parent)
 	{
 		if (_parent == nullptr)
@@ -91,5 +102,17 @@ namespace MirageEngine
 		_child->SetDirty(true);
 
 		return true;
+	}
+
+	void WorldMatrixRecursive(GameObject* _obj, const void* _parentMatrix)
+	{
+		MirageEngine::Core::Math::Matrix4 localMat = _obj->Transform.GetMatrix();
+		const MirageEngine::Core::Math::Matrix4* parentMat = static_cast<const MirageEngine::Core::Math::Matrix4*>(_parentMatrix);
+		MirageEngine::Core::Math::Matrix4 worldMatrix = (*parentMat) * localMat;
+		_obj->Transform.SetWorldMatrix(worldMatrix);
+		for (GameObject* child : _obj->GetChildren())
+		{
+			WorldMatrixRecursive(child, &worldMatrix);
+		}
 	}
 }

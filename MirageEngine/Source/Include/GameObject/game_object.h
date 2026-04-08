@@ -83,8 +83,7 @@ namespace MirageEngine
 		bool IsRoot() const { return m_Parent == nullptr; };
 		void SetParent(GameObject* _parent);
 		void RemoveChild(GameObject* _child);
-		void SetDirty(bool _isDirty) { m_bIsDirty = _isDirty; }
-
+		void SetDirty(bool _isDirty);
 		// Getters
 		std::string GetName() const { return m_Name; }
 		bool GetIsStatic() const { return m_bIsStatic; }

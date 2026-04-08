@@ -86,3 +86,12 @@ void MirageEngine::GameObject::SetPosition(MirageEngine::Core::Math::Vector3 _po
 }
 
 void MirageEngine::GameObject::SetPosition(float _x, float _y, float _z) { SetPosition(MirageEngine::Core::Math::Vector3(_x, _y, _z)); }
+
+void MirageEngine::GameObject::SetDirty(bool _isDirty) 
+{
+	m_bIsDirty = _isDirty;
+	if (_isDirty) 
+	{
+		Transform.SetDirty(true);
+	}
+}
