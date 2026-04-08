@@ -54,7 +54,7 @@ void RegisterMeta::RegisterTransformMeta()
 
 	transform.ctor<Math::Vector3, Math::Quaternion, Math::Vector3>();
 
-	transform.data<&Components::Transform::GetPosition>("Position"_hs);
-	transform.data<&Components::Transform::GetRotation>("Rotation"_hs);
-	transform.data<&Components::Transform::GetScale>("Scale"_hs);
+	transform.data<nullptr, &Components::Transform::GetPosition>("Position"_hs);
+	transform.data<nullptr, &Components::Transform::GetRotation>("Rotation"_hs);
+	transform.data<nullptr, &Components::Transform::GetScale>("Scale"_hs);
 }
