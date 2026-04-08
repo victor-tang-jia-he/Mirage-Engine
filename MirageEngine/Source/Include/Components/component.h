@@ -4,6 +4,10 @@
 #include <string>
 #include <stdexcept>
 
+#include <entt/meta/factory.hpp>
+#include <entt/meta/container.hpp>
+#include <entt/meta/meta.hpp>
+
 namespace MirageEngine
 {
 	class GameObject;
@@ -25,6 +29,8 @@ namespace MirageEngine
 
 				virtual void Init() = 0;
 				virtual void Update() = 0;
+
+				virtual entt::id_type GetType() const = 0;
 
 				// Getters
 				std::string GetName() const { return m_ComponentName; }

@@ -38,6 +38,8 @@ namespace MirageEngine
 
                     ~InputMapping() override { Map.clear(); }
 
+                    entt::id_type GetType() const override { return entt::type_id<InputMapping>().hash(); }
+
                     template <typename... Args> void Add(int key, std::function<void(Args...)> func)
                     {
                         EventSystem::Event<Args...>* event = new EventSystem::Event<Args...>("InputSystem", func);

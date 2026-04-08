@@ -18,6 +18,9 @@ public:
 	~RegisterMeta();
 
 	void RegisterAllMeta();
+	void RegisterMeshRendererMeta();
+	void RegisterCameraMeta();
+	void RegisterInputMappingMeta();
 
 protected:
 private:
