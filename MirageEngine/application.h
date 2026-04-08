@@ -38,6 +38,8 @@ public:
 	void InitApp();
 	void ShutDown();
 
+	MirageEngine::SceneGraph* GetSceneGraph() { return &m_SceneGraph; }
+
 private:
 	void InitScene();
 	void InitInput();

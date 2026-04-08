@@ -13,7 +13,7 @@ int main()
 	Mirage::EditorApp editor;
 
 	application.InitApp();
-	editor.Init(application.m_Renderer.GetWindowHandle());
+	editor.Init(application.m_Renderer.GetWindowHandle(), application.GetSceneGraph());
 	MirageEngine::TimeManager::Init();
 	while (application.m_Renderer.IsRunning())
 	{

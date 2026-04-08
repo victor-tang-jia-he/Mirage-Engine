@@ -14,8 +14,20 @@ namespace Mirage
 
 	void Hierarchy::DrawPanel([[maybe_unused]] uint32_t _textureID)
 	{
+		m_AnItemWasRightClicked = false;
 		UIWrapper::BeginWindow("Hierarchy");
+
 		DrawHierarchyTree();
+
+		ImGui::Dummy(ImGui::GetContentRegionAvail());
+
+		if (ImGui::IsWindowHovered() && !m_AnItemWasRightClicked && ImGui::IsMouseClicked(1))
+		{
+			m_Context->SetSelectedObject(nullptr);
+
+			UIWrapper::RequestModal("HierarchyEmptyMenu");
+		}
+
 		if (ImGui::BeginDragDropTarget())
 		{
 			void* droppedPointer = DragDrop::GetPointerPayload(DragDropTag::HIERARCHY_ITEM);
@@ -26,6 +38,11 @@ namespace Mirage
 			}
 			ImGui::EndDragDropTarget();
 		}
+
+		UIWrapper::UpdateModalRequests();
+
+		RenderHierarchyEmptyMenu();
+		RenderHierarchyItemMenu();
 		UIWrapper::EndWindow();
 	}
 
@@ -54,6 +71,7 @@ namespace Mirage
 
 		if (UIWrapper::BeginFolderNode(name.c_str(), idStr.c_str(), bisSelected, bisLeaf))
 		{
+			bool bHierarchyDirty = false;
 			if (ImGui::BeginDragDropSource())
 			{
 				DragDrop::SetPointerPayload(DragDropTag::HIERARCHY_ITEM, _obj);
@@ -62,34 +80,77 @@ namespace Mirage
 			}
 
 			if (ImGui::BeginDragDropTarget())
-			{	
+			{
 				void* droppedPointer = DragDrop::GetPointerPayload(DragDropTag::HIERARCHY_ITEM);
 				if (droppedPointer != nullptr)
 				{
+					std::cout << "je ne suis pas nul" << std::endl;
 					MirageEngine::GameObject* draggedChild = static_cast<MirageEngine::GameObject*>(droppedPointer);
 					bool success = m_Context->SetParent(_obj, draggedChild);
-					ImGui::EndDragDropTarget();
 
-					if (success) {
-						return;
-					}
+					if (success)
+						bHierarchyDirty = true;
 				}
+				ImGui::EndDragDropTarget();
 			}
 
 			if (UIWrapper::IsItemClicked())
 			{
 				m_Context->SetSelectedObject(_obj);
 			}
+			if (ImGui::IsItemClicked(1))
+			{
+				m_Context->SetSelectedObject(_obj);
+				UIWrapper::RequestModal("HierarchyItemMenu");
+				m_AnItemWasRightClicked = true;
+			}
+
 			if (!bisLeaf)
 			{
 				std::vector<MirageEngine::GameObject*> objChildren = _obj->GetChildren();
-				for (MirageEngine::GameObject* obj : objChildren)
+				if (!bHierarchyDirty)
 				{
-					RenderRecursiveNode(obj);
+					for (MirageEngine::GameObject* obj : objChildren)
+					{
+						RenderRecursiveNode(obj);
+					}
 				}
 			}
 
 			UIWrapper::EndFolderNode();
+		}
+	}
+
+	void Hierarchy::RenderHierarchyItemMenu()
+	{
+		if (ImGui::BeginPopup("HierarchyItemMenu"))
+		{
+			MirageEngine::GameObject* selected = m_Context->GetSelectedObject();
+			if (selected) {
+				if (ImGui::MenuItem("Create Child")) {
+					m_Context->CreateGameObject("New Child", selected);
+				}
+				ImGui::Separator();
+				if (ImGui::MenuItem("Delete", "Del")) {
+					m_Context->RemoveGameObject(selected);
+					ImGui::CloseCurrentPopup();
+				}
+			}
+			ImGui::EndPopup();
+		}
+	}
+
+	void Hierarchy::RenderHierarchyEmptyMenu()
+	{
+		if (!m_AnItemWasRightClicked)
+		{
+			if (ImGui::BeginPopup("HierarchyEmptyMenu"))
+			{
+				if (ImGui::MenuItem("Create Empty Object")) {
+					m_Context->CreateGameObject("New GameObject", nullptr);
+				}
+				ImGui::EndPopup();
+			}
 		}
 	}
 }
