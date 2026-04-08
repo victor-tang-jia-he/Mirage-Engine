@@ -135,10 +135,10 @@ void MirageEngine::Core::Physics::Bullet3RigidBody::SetType(ERigidBodyType _type
     }
 }
 
-void MirageEngine::Core::Physics::Bullet3RigidBody::SetMass(float mass)
+void MirageEngine::Core::Physics::Bullet3RigidBody::SetMass(float _mass)
 {
     PhysicsManager::Instance()->UnregisterRigidBody(this);
-    m_Mass = mass;
+    m_Mass = _mass;
     if (m_rigidBody == nullptr) return;
     if (m_Type == ERigidBodyType::Static || m_Type == ERigidBodyType::Kinematic)
     {
@@ -146,9 +146,9 @@ void MirageEngine::Core::Physics::Bullet3RigidBody::SetMass(float mass)
         return;
     }
     btVector3 inertia(0, 0, 0);
-    if (mass > 0) m_rigidBody->getCollisionShape()->calculateLocalInertia(mass, inertia);
+    if (_mass > 0) m_rigidBody->getCollisionShape()->calculateLocalInertia(_mass, inertia);
 
-    m_rigidBody->setMassProps(mass, inertia);
+    m_rigidBody->setMassProps(_mass, inertia);
     m_rigidBody->updateInertiaTensor();
     PhysicsManager::Instance()->RegisterRigidBody(this);
 }
