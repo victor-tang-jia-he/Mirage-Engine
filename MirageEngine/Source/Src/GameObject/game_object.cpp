@@ -2,6 +2,7 @@
 #include <Components/component.h>
 #include <Components/transform.h>
 #include <atomic>
+#include <Physics/i_rigidbody.h>
 
 using namespace MirageEngine::Core::Components;
 using namespace MirageEngine::Core::Math;
@@ -75,3 +76,13 @@ void MirageEngine::GameObject::RemoveChild(GameObject* _child)
 {
 	m_Children.erase(std::remove(m_Children.begin(), m_Children.end(), _child), m_Children.end());
 }
+
+void MirageEngine::GameObject::SetPosition(MirageEngine::Core::Math::Vector3 _pos)
+{
+    Transform.SetPosition(_pos);
+
+    if (auto rb = GetComponent<MirageEngine::Core::Physics::IRigidBody>()) rb->OnTransformChanged(&Transform);
+
+}
+
+void MirageEngine::GameObject::SetPosition(float _x, float _y, float _z) { SetPosition(MirageEngine::Core::Math::Vector3(_x, _y, _z)); }

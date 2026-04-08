@@ -29,23 +29,24 @@ namespace MirageEngine
 		bool m_bIsStatic = false; // Does transform update every frame
 		bool m_bIsDirty = false;
 
-	public:
-		MirageEngine::Core::Components::Transform Transform;
+		bool m_bIsRoot = false;
 
 	public:
-		// Game Object Constructor.
+
+		MirageEngine::Core::Components::Transform Transform;
+
+		//~GameObject();
+
+			// Game Object Constructor.
 		GameObject(GameObject* _parent, std::string _name, bool _isStatic = false, bool _isActive = true);
 
 		// Game Object Custom Methods
 		void AddChild(GameObject* _child, bool _isStatic = false, bool _isActive = true);
-
-		//~GameObject();
-
 		void SetActive(bool _isActive);
 
+
 		// Components Methods
-		template <typename T>
-		T* AddComponent()
+		template <typename T> T* AddComponent()
 		{
 			// std::unique_ptr<T> component = std::make_unique<T>();
 			T* component = new T();
@@ -54,6 +55,12 @@ namespace MirageEngine
 			component->m_ComponentName = typeid(T).name();
 			m_Components.push_back(component);
 			return component;
+		}
+
+		void AddComponent(MirageEngine::Core::Components::Component* _component)
+		{
+			_component->m_Owner = this;
+			m_Components.push_back(_component);
 		}
 
 		template <typename T>
@@ -66,13 +73,13 @@ namespace MirageEngine
 					return dynamic_cast<T*>(component);
 				}
 			}
-			
+
 			if (m_Components.size() == 0)
 			{
 				return nullptr;
 			}
 		}
-		
+
 		void RemoveComponent(MirageEngine::Core::Components::Component* _component);
 
 		// Game Object Public Methods
@@ -89,5 +96,7 @@ namespace MirageEngine
 		std::vector<GameObject*> GetChildren() const { return m_Children; }
 		std::vector<MirageEngine::Core::Components::Component*> GetComponents() const { return m_Components; }
 		uint64_t GetID() const { return m_ID; }
-	};
+		void SetPosition(float _x, float _y, float _z);
+		void SetPosition(MirageEngine::Core::Math::Vector3 _position);
+	}; // namespace MirageEngine
 }

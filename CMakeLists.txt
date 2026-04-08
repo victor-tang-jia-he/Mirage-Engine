@@ -1,4 +1,4 @@
-﻿# CMake version
+# CMake version
 cmake_minimum_required(VERSION 3.16)
 
 # Project name
@@ -227,6 +227,25 @@ else()
     FetchContent_MakeAvailable(imgizmo)
 endif()
 
+
+
+# ============================================================================
+# Bullet Physics
+# ============================================================================
+
+if(EXISTS "${CMAKE_SOURCE_DIR}/Libraries/bullet3" AND EXISTS "${CMAKE_SOURCE_DIR}/Libraries/bullet3/CMakeLists.txt")
+    message(STATUS "Using local bullet3")
+    add_subdirectory(${CMAKE_SOURCE_DIR}/Libraries/bullet3 ${CMAKE_BINARY_DIR}/bullet3)
+else()
+    message(STATUS "Fetching bullet3...")
+    FetchContent_Declare(
+        bullet3
+        GIT_REPOSITORY https://github.com/bulletphysics/bullet3.git
+        SOURCE_DIR ${CMAKE_SOURCE_DIR}/Libraries/bullet3
+    )
+    FetchContent_MakeAvailable(bullet3)
+endif()
+
 # ============================================================================
 # EnTTMeta Reflection
 # ============================================================================
@@ -277,6 +296,7 @@ target_include_directories(third_party INTERFACE
     ${CMAKE_SOURCE_DIR}/Libraries/stb_image
     ${CMAKE_SOURCE_DIR}/Libraries/EnTTMeta/single_include
     ${CMAKE_SOURCE_DIR}/Libraries
+    ${CMAKE_SOURCE_DIR}/Libraries/bullet3/src
 )
 
 target_link_libraries(third_party INTERFACE
@@ -287,6 +307,9 @@ target_link_libraries(third_party INTERFACE
     tinyobjloader
     OpenGL::GL
     Toolbox
+    BulletDynamics
+    BulletCollision
+    LinearMath
 ) 
 
 # Engine project
