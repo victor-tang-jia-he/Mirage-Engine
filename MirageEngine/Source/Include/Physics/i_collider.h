@@ -1,3 +1,4 @@
+// i_collider.h
 #pragma once
 
 #include <iostream>
@@ -5,35 +6,93 @@
 #include <Components/component.h>
 #include <Components/transform.h>
 
-namespace MirageEngine
+// Forward declarations
+class btCollisionShape;
+class btTransform;
+
+namespace MirageEngine::Core::Physics
 {
-    namespace Core
+    class IRigidBody;
+    using Vector3    = MirageEngine::Core::Math::Vector3;
+    using Quaternion = MirageEngine::Core::Math::Quaternion;
+
+    //=========================================================================
+    // Collider-specific interfaces
+    //=========================================================================
+    class ISphereCollider
     {
-        namespace Physics
-        {
-            class Bullet3Collider;
+        public:
 
-            class ICollider : public MirageEngine::Core::Components::Component
+            virtual ~ISphereCollider()             = default;
+            virtual void  SetRadius(float _radius) = 0;
+            virtual float GetRadius() const        = 0;
+    };
+
+    class IBoxCollider
+    {
+        public:
+
+            virtual ~IBoxCollider()                                     = default;
+            virtual void    SetHalfExtents(const Vector3& _halfExtents) = 0;
+            virtual Vector3 GetHalfExtents() const                      = 0;
+    };
+
+    class ICapsuleCollider
+    {
+        public:
+
+            virtual ~ICapsuleCollider()            = default;
+            virtual void  SetRadius(float _radius) = 0;
+            virtual void  SetHeight(float _height) = 0;
+            virtual float GetRadius() const        = 0;
+            virtual float GetHeight() const        = 0;
+    };
+
+    class IBulletColliderData
+    {
+        public:
+
+            virtual ~IBulletColliderData()       = default;
+            virtual btCollisionShape* GetShape() = 0;
+    };
+
+    //=========================================================================
+    // ICollider - Base collider interface
+    //=========================================================================
+    class ICollider : public MirageEngine::Core::Components::Component
+    {
+        protected:
+
+            Vector3             m_Scale  = Vector3(1.f);
+            Vector3             m_Offset = Vector3(0.f);
+            Quaternion          m_Rot    = Quaternion(0.f, 0.f, 0.f, 1.f);
+            ECollisionShapeType m_Type;
+
+            IRigidBody* m_RigidBody = nullptr;
+
+        public:
+
+            virtual ~ICollider() = default;
+
+            virtual bool Create()                                         = 0;
+            virtual void Init()                                           = 0;
+            virtual void Update()                                         = 0;
+            virtual void SetOffset(Vector3 _offset, Quaternion _rotation) = 0;
+
+            void SetRigidbody(IRigidBody* _rigidbody)
             {
-                protected:
+                if (_rigidbody == nullptr)
+                {
+                    LOG(logWarning, LogCat::System, "Trying to set with a nullptr rigidbody");
+                    return;
+                }
+                m_RigidBody = _rigidbody;
+            }
 
-                    Components::Transform m_Transform;    // collision shape transform (position, rotation, scale)
-                    float                 m_Radius = 1.f; // for sphere and capsule
-                    float                 m_Height = 2.f; // for capsule
-                public:
+            ECollisionShapeType GetType() const { return m_Type; }
 
-                    ICollider()          = default;
-                    virtual ~ICollider() = default;
+            virtual IBulletColliderData* AsBullet3Collider() { return nullptr; }
 
-                    virtual bool Create(ECollisionShapeType shapeType) = 0;
-
-                    virtual void Init()   = 0;
-                    virtual void Update() = 0;
-
-                    Components::Transform& GetTransform() { return m_Transform; }
-
-                    virtual Bullet3Collider& API_Bullet3() { throw std::runtime_error("Bad API Call : object is not a Bullet3Collider"); }
-            };
-        } // namespace Physics
-    } // namespace Core
-} // namespace MirageEngine
+            template <typename T> T* As() { return dynamic_cast<T*>(this); }
+    };
+} // namespace MirageEngine::Core::Physics

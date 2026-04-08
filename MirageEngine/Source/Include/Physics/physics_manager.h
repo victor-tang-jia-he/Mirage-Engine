@@ -4,43 +4,41 @@
 #include <Physics/i_world_physics.h>
 #include <Physics/Bullet3/bullet3_world_physics.h>
 #include <Physics/Bullet3/bullet3_rigidbody.h>
-#include <Physics/Bullet3/bullet3_collider.h>
+#include <Physics/Bullet3/bullet3_box_collider.h>
+#include <Physics/Bullet3/bullet3_sphere_collider.h>
+#include <Physics/Bullet3/bullet3_capsule_collider.h>
 
 DECLARE_LOG_CATEGORY_EXTERN(LogPhysics);
 
-namespace MirageEngine
+namespace MirageEngine::Core::Physics
 {
-    namespace Core
+    class IWorldPhysics;
+    class ICollider;
+    class IRigidBody;
+
+    class PhysicsManager
     {
-        namespace Physics
-        {
-            class IWorldPhysics;
-            class ICollider;
-            class IRigidBody;
-            class PhysicsManager
-            {
-                private:
-                    EPhysicsEngine m_physicsEngine = EPhysicsEngine::Bullet3;
+        private:
 
-                    IWorldPhysics* m_worldPhysics = nullptr;
+            EPhysicsEngine m_physicsEngine = EPhysicsEngine::Bullet3;
 
-                public:
 
-                    static PhysicsManager* Instance();
+        public:
+            IWorldPhysics* m_worldPhysics = nullptr;
 
-                    PhysicsManager()  = default;
-                    ~PhysicsManager() = default;
-                    void Initialize(EPhysicsEngine _physicsEngine);
-                    void Update(float _deltaTime);
+            static PhysicsManager* Instance();
 
-                    IRigidBody* CreateRigidBody(ICollider* _shape, ERigidBodyType _type);
+            PhysicsManager()  = default;
+            ~PhysicsManager() = default;
+            void Initialize(EPhysicsEngine _physicsEngine = EPhysicsEngine::Bullet3);
+            void Update(float _deltaTime);
 
-                    ICollider* CreateCollider(ECollisionShapeType _shapeType);
+            IRigidBody* CreateRigidBody(ICollider* _shape, ERigidBodyType _type);
 
-                    void RegisterRigidBody(IRigidBody* _body);
+            ICollider* CreateCollider(ECollisionShapeType _shapeType);
 
-                    void UnregisterRigidBody(IRigidBody* _body);
-            };
-        } // namespace Physics
-    } // namespace Core
-} // namespace MirageEngine
+            void RegisterRigidBody(IRigidBody* _body);
+
+            void UnregisterRigidBody(IRigidBody* _body);
+    };
+} // namespace MirageEngine::Core::Physics

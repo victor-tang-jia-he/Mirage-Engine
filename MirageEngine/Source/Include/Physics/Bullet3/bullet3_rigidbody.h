@@ -2,37 +2,32 @@
 #include "bullet3_pch.h"
 #include "../i_rigidbody.h"
 
-namespace MirageEngine
+namespace MirageEngine::Core::Physics
 {
-    namespace Core
+    class Bullet3RigidBody : public IRigidBody
     {
-        namespace Physics
-        {
-            class Bullet3RigidBody : public IRigidBody
-            {
-                private:
-                    btRigidBody* m_rigidBody = nullptr;
+        private:
 
-                public:
+            btRigidBody* m_rigidBody = nullptr;
 
-                    Bullet3RigidBody() = default;
-                    ~Bullet3RigidBody() override;
+        public:
 
-                    bool Create(ICollider* _shape, ERigidBodyType _type) override;
+            Bullet3RigidBody() = default;
+            ~Bullet3RigidBody() override;
 
-                    void Init()   override {};
-                    void Update() override;
+            bool Create(ICollider* _shape, ERigidBodyType _type) override;
 
-                    void OnTransformChanged(MirageEngine::Core::Components::Transform* _newTransform) override;
+            void Init() override {};
+            void Update() override;
 
-                    void SetType(ERigidBodyType _type) override;
+            void OnTransformChanged(MirageEngine::Core::Components::Transform* _newTransform) override;
+            void SetType(ERigidBodyType _type) override;
+            void SetMass(float _mass) override;
 
-                    void SetMass(float mass) override;
+            void SetNewCollisionShape(ICollider* _newShape);
 
-                    btRigidBody* GetBullet3RigidBody() const { return m_rigidBody; }
+            btRigidBody* GetBullet3RigidBody() const { return m_rigidBody; }
 
-                    Bullet3RigidBody& API_Bullet3() override { return *this; }
-            };
-        } // namespace Physics
-    } // namespace Core
-} // namespace MirageEngine
+            Bullet3RigidBody& API_Bullet3() override { return *this; }
+    };
+} // namespace MirageEngine::Core::Physics

@@ -1,6 +1,5 @@
 #include <Physics/physics_manager.h>
 
-
 DEFINE_LOG_CATEGORY(LogPhysics);
 
 using namespace MirageEngine::Core::Physics;
@@ -65,10 +64,18 @@ ICollider* PhysicsManager::CreateCollider(ECollisionShapeType _shapeType)
     ICollider* collider = nullptr;
     switch (m_physicsEngine)
     {
-        case EPhysicsEngine::Bullet3: collider = new Bullet3Collider(); break;
-        default                     : break;
+        case EPhysicsEngine::Bullet3:
+            switch (_shapeType)
+            {
+                case ECollisionShapeType::Box    : collider = new Bullet3BoxCollider(); break;
+                case ECollisionShapeType::Sphere : collider = new Bullet3SphereCollider(); break;
+                case ECollisionShapeType::Capsule: collider = new Bullet3CapsuleCollider(); break;
+                default: break;
+            }
+            break;
+        default: break;
     }
-    if (collider != nullptr) { collider->Create(_shapeType); }
+    if (collider != nullptr) { collider->Create(); }
     return collider;
 }
 
@@ -79,6 +86,7 @@ void PhysicsManager::RegisterRigidBody(IRigidBody* _body)
         LOG(logWarning, LogPhysics, "Cannot register rigid body : physics engine not initialized");
         return;
     }
+    LOG(logInfo, LogPhysics, "Rigidbody registered in physics engine", _body->GetName());
     m_worldPhysics->AddRigidBody(_body);
 }
 
