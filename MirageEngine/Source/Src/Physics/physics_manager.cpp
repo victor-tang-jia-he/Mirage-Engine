@@ -35,6 +35,8 @@ void PhysicsManager::Update(float _deltaTime)
     }
 
     m_worldPhysics->Update(_deltaTime);
+
+    for (IRigidBody* rb : m_WorldRigidbodys) { rb->Update(); };
 }
 
 IRigidBody* PhysicsManager::CreateRigidBody(ICollider* _shape, ERigidBodyType _type)
@@ -70,7 +72,7 @@ ICollider* PhysicsManager::CreateCollider(ECollisionShapeType _shapeType)
                 case ECollisionShapeType::Box    : collider = new Bullet3BoxCollider(); break;
                 case ECollisionShapeType::Sphere : collider = new Bullet3SphereCollider(); break;
                 case ECollisionShapeType::Capsule: collider = new Bullet3CapsuleCollider(); break;
-                default: break;
+                default                          : break;
             }
             break;
         default: break;
@@ -86,8 +88,8 @@ void PhysicsManager::RegisterRigidBody(IRigidBody* _body)
         LOG(logWarning, LogPhysics, "Cannot register rigid body : physics engine not initialized");
         return;
     }
-    LOG(logInfo, LogPhysics, "Rigidbody registered in physics engine", _body->GetName());
     m_worldPhysics->AddRigidBody(_body);
+    m_WorldRigidbodys.push_back(_body);
 }
 
 void PhysicsManager::UnregisterRigidBody(IRigidBody* _body)
@@ -98,4 +100,5 @@ void PhysicsManager::UnregisterRigidBody(IRigidBody* _body)
         return;
     }
     m_worldPhysics->RemoveRigidBody(_body);
+    m_WorldRigidbodys.erase(std::remove(m_WorldRigidbodys.begin(), m_WorldRigidbodys.end(), _body), m_WorldRigidbodys.end());
 }

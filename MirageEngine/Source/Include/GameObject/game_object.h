@@ -93,6 +93,7 @@ namespace MirageEngine
 		std::vector<GameObject*> GetChildren() const { return m_Children; }
 		std::vector<MirageEngine::Core::Components::Component*> GetComponents() const { return m_Components; }
 		uint64_t GetID() const { return m_ID; }
+		void SetRotation(MirageEngine::Core::Math::Quaternion _rotation);
 		void SetPosition(float _x, float _y, float _z);
 		void SetPosition(MirageEngine::Core::Math::Vector3 _position);
 	}; // namespace MirageEngine

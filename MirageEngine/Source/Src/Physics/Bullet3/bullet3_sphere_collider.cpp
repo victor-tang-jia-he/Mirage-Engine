@@ -127,7 +127,7 @@ void Bullet3SphereCollider::UpdateCollisionShape()
 
     if (m_Compound)
     {
-        m_Compound->removeChildShape(m_CollisionShape);
+        m_Compound->removeChildShape(oldShape);
 
         btTransform local;
         local.setIdentity();

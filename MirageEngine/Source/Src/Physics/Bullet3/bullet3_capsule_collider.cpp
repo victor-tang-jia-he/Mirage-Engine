@@ -38,7 +38,7 @@ void Bullet3CapsuleCollider::SetOffset(Vector3 offset, Quaternion _rotation)
     m_Offset = offset;
     m_Rot    = _rotation;
 
-    if (m_RigidBody) { UpdateRigidBodyTransform(); }
+    UpdateRigidBodyTransform(); 
 }
 
 void Bullet3CapsuleCollider::SetRadius(float _radius)
@@ -129,7 +129,7 @@ void Bullet3CapsuleCollider::UpdateCollisionShape()
 
     if (m_Compound)
     {
-        m_Compound->removeChildShape(m_CollisionShape);
+        m_Compound->removeChildShape(oldShape);
 
         btTransform local;
         local.setIdentity();

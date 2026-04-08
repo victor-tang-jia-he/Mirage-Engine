@@ -22,8 +22,10 @@ namespace MirageEngine::Core::Physics
 
             EPhysicsEngine m_physicsEngine = EPhysicsEngine::Bullet3;
 
+            std::vector<IRigidBody*> m_WorldRigidbodys;
 
         public:
+
             IWorldPhysics* m_worldPhysics = nullptr;
 
             static PhysicsManager* Instance();

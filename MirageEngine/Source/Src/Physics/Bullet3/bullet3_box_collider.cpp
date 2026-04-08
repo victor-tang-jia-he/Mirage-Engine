@@ -37,7 +37,8 @@ void Bullet3BoxCollider::SetOffset(Vector3 _offset, Quaternion _rotation)
     m_Offset = _offset;
     m_Rot    = _rotation;
 
-    if (m_RigidBody) { UpdateRigidBodyTransform(); }
+    UpdateRigidBodyTransform();
+    UpdateCompoundShape();
 }
 
 void Bullet3BoxCollider::UpdateRigidBodyTransform()
@@ -81,7 +82,7 @@ void Bullet3BoxCollider::SetHalfExtents(const Vector3& halfExtents)
 
     if (m_Compound)
     {
-        m_Compound->removeChildShape(m_CollisionShape);
+        m_Compound->removeChildShape(oldShape);
 
         btTransform local;
         local.setIdentity();

@@ -27,28 +27,28 @@ void Camera::BindInput(InputMapping* map)
 			if (info.Held)
 			{
 				std::cout << "W Pressed" << std::endl;
-				this->Transform().SetPosition(this->Transform().GetPosition() + this->Transform().Forward() * 1.f * TimeManager::GetDeltaTime());
+				this->Transform().SetPosition(this->Transform().GetPosition() + this->Transform().Forward() * 5.f * TimeManager::GetDeltaTime());
 			}
 		}));
 	map->Map[GLFW_KEY_A].Dispatcher.Add(new Event<CallbackInputInfo>("InputSystem", [this](CallbackInputInfo info) 
 		{
 			if (info.Held)
 			{
-				this->Transform().SetPosition(this->Transform().GetPosition() + this->Transform().Right() * 1.f * TimeManager::GetDeltaTime());
+				this->Transform().SetPosition(this->Transform().GetPosition() + this->Transform().Right() * 5.f * TimeManager::GetDeltaTime());
 			}
 		}));
 	map->Map[GLFW_KEY_S].Dispatcher.Add(new Event<CallbackInputInfo>("InputSystem", [this](CallbackInputInfo info)
 		{
 			if (info.Held)
 			{
-				this->Transform().SetPosition(this->Transform().GetPosition() - this->Transform().Forward() * 1.f * TimeManager::GetDeltaTime());
+				this->Transform().SetPosition(this->Transform().GetPosition() - this->Transform().Forward() * 5.f * TimeManager::GetDeltaTime());
 			}
 		}));
 	map->Map[GLFW_KEY_D].Dispatcher.Add(new Event<CallbackInputInfo>("InputSystem", [this](CallbackInputInfo info) 
 		{
 			if (info.Held)
 			{
-				this->Transform().SetPosition(this->Transform().GetPosition() - this->Transform().Right() * 1.f * TimeManager::GetDeltaTime());
+				this->Transform().SetPosition(this->Transform().GetPosition() - this->Transform().Right() * 5.f * TimeManager::GetDeltaTime());
 			}
 		}));
 	map->Map[GLFW_KEY_Q].Dispatcher.Add(new Event<CallbackInputInfo>("InputSystem", [this](CallbackInputInfo info) 
@@ -56,7 +56,7 @@ void Camera::BindInput(InputMapping* map)
 			if (info.Held)
 			{
 				Vector3 vec = this->Transform().Up();
-				this->Transform().SetRotation(this->Transform().GetRotation() * Quaternion(vec,1.f * TimeManager::GetDeltaTime()));
+				this->Transform().SetRotation(this->Transform().GetRotation() * Quaternion(vec,5.f * TimeManager::GetDeltaTime()));
 			}
 		}));
 	map->Map[GLFW_KEY_E].Dispatcher.Add(new Event<CallbackInputInfo>("InputSystem", [this](CallbackInputInfo info) 
@@ -64,7 +64,7 @@ void Camera::BindInput(InputMapping* map)
 			if (info.Held)
 			{
 				Vector3 vec = this->Transform().Up();
-				this->Transform().SetRotation(this->Transform().GetRotation() * Quaternion(vec, -1.f * TimeManager::GetDeltaTime()));
+				this->Transform().SetRotation(this->Transform().GetRotation() * Quaternion(vec, -5.f * TimeManager::GetDeltaTime()));
 			}
 		}));
 }
