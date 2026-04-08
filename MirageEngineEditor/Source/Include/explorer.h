@@ -48,7 +48,6 @@ namespace Mirage
 		void DrawFolderTree();
 		void RenderRecursiveFolder(const std::filesystem::path& _path);
 		void ChangeDirectory(const std::filesystem::path& _newPath);
-		void SearchFilter();
 
 		//Display
 		void DrawDirectoryContent();

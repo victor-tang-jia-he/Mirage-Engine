@@ -42,9 +42,9 @@ Vector3 Transform::Rotate(const Quaternion& q, const Vector3& v) const
 	return Vector3(res.X, res.Y, res.Z);
 }
 
-void Transform::LookAt(const Vector3& target)
+void Transform::LookAt(const Vector3& _target)
 {
-	Vector3 f = (target - m_LocalPosition).Normalized();
+	Vector3 f = (_target - m_LocalPosition).Normalized();
 	Vector3 s = Vector3(0.f, 1.f, 0.f).CrossProductVector3(f).Normalized();
 	Vector3 u = f.CrossProductVector3(s);
 
@@ -102,4 +102,3 @@ void Transform::SetRotation(Quaternion _rotation)
 	m_bDirty = true;
 	m_LocalRotation = _rotation;
 }
-
