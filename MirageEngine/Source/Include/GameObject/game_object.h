@@ -68,16 +68,13 @@ namespace MirageEngine
 		{
 			for (auto& component : m_Components)
 			{
-				if (component->GetName() == typeid(T).name())
+				if (auto casted = dynamic_cast<T*>(component))
 				{
-					return dynamic_cast<T*>(component);
+					return casted;
 				}
 			}
 
-			if (m_Components.size() == 0)
-			{
-				return nullptr;
-			}
+			return nullptr;
 		}
 
 		void RemoveComponent(MirageEngine::Core::Components::Component* _component);
