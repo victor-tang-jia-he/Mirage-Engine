@@ -1,5 +1,4 @@
 #include <Resources/material.h>
-#include <RHI/i_pipeline.h>
 
 #include <RHI/i_texture.h>
 #include <RHI/i_shader.h>

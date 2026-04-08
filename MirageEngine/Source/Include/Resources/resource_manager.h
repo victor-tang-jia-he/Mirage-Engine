@@ -86,43 +86,6 @@ namespace MirageEngine
 
                     static Material* CreateMaterial(const std::string& _name);
 
-                    /// <summary>
-                    /// Retrieves a resource by name and casts it to the requested type.
-                    /// </summary>
-                    /// <typeparam name="T">Expected resource type (must inherit from IResource).</typeparam>
-                    /// <param name="_name">Name of the resource.</param>
-                    /// <returns>
-                    /// Pointer to the resource casted to T if found and valid,
-                    /// otherwise nullptr.
-                    /// </returns>
-                    template <typename T> static T* Get(const std::filesystem::path& _name)
-                    {
-                        LOG(logFatal, LogResourceManager, "ResourceManager::Get is deprecated. Use Resource getter instead for safer access.");
-                        //static_assert(std::is_base_of_v<IResource, T>, "T must derive from IResource");
-                        // ResourceManager* resourceManager = ResourceManager::Instance();
-
-                        // auto it = resourceManager->m_Resources.find(_name.string());
-                        // if (it != resourceManager->m_Resources.end())
-                        //{
-                        //     if (T* resource = dynamic_cast<T*>(it->second.get())) return resource;
-
-                        //    LOG(logWarning, LogResourceManager, "Resource type mismatch for name: ", _name);
-                        //}
-
-                        //// Return default resource if not found
-                        // if constexpr (std::is_same_v<T, Texture>) return Get<Texture>("DefaultTexture");
-                        // else if constexpr (std::is_same_v<T, Shader>)
-                        //{
-                        //     if (_name.extension() == ".vert") return Get<Shader>("DefaultVertex");
-                        //     else if (_name.extension() == ".frag") return Get<Shader>("DefaultFragment");
-                        // }
-                        //// else if constexpr (std::is_same_v<T, Mesh>) return Get<Mesh>("DefaultMesh");
-
-                        // LOG(logWarning, LogResourceManager, "Resource not found: ", _name);
-
-                        return nullptr;
-                    }
-
                     Texture* GetTexture(const std::string& _name);
 
                     Shader* GetVertexShader(const std::string& _name);
@@ -184,7 +147,7 @@ namespace MirageEngine
                     /// </summary>
                     /// <param name="_vec">the vector </param>
                     /// <param name="_pos">the index of the element need to be removed</param>
-                    template <typename T> static void remove(std::vector<T>& _vec, std::size_t _pos)
+                    template <typename T> static void Remove(std::vector<T>& _vec, std::size_t _pos)
                     {
                         if (_pos < _vec.size())
                         {

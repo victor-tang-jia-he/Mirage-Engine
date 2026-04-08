@@ -15,6 +15,7 @@ namespace MirageEngine
 		{
 			struct Shader : public IResource
 			{
+			public:
 				MirageRHI::IShader* ShaderBind = nullptr;
 
 				Shader() = default;

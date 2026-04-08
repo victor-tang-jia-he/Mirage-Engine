@@ -17,19 +17,19 @@ void Texture::Load(const std::string& _path)
 {
     stbi_set_flip_vertically_on_load(true);
 
-    data = stbi_load(_path.c_str(), &width, &height, &channel, 0);
-    if (!data)
+    m_Data = stbi_load(_path.c_str(), &m_Width, &m_Height, &m_Channel, 0);
+    if (!m_Data)
     {
         LOG(logError, LogTexture, "Failed to load texture from path: ", _path);
         return;
     }
 
-    format = (channel == 4) ? OPENGL_RGBA : OPENGL_RGB;
+    m_Format = (m_Channel == 4) ? OPENGL_RGBA : OPENGL_RGB;
 }
 
 void Texture::Bind()
 {
-    if (m_TextureBuffer == nullptr || data == nullptr)
+    if (m_TextureBuffer == nullptr || m_Data == nullptr)
     {
         LOG(logError, LogTexture, "Texture buffer or data isn't set, use Load to get the texture data before calling bind");
         return;
@@ -37,10 +37,10 @@ void Texture::Bind()
     if (!m_bIsUploaded)
     {
         m_bIsUploaded = true;
-        TextureDesc desc = { static_cast<uint32_t>(width), static_cast<uint32_t>(height), static_cast<uint32_t>(channel), true };
-        m_TextureBuffer->Create(static_cast<const void*>(data), desc);
-        free(data);
-        data = nullptr; // Avoid dangling pointer
+        TextureDesc desc = { static_cast<uint32_t>(m_Width), static_cast<uint32_t>(m_Height), static_cast<uint32_t>(m_Channel), true };
+        m_TextureBuffer->Create(static_cast<const void*>(m_Data), desc);
+        free(m_Data);
+        m_Data = nullptr; // Avoid dangling pointer
     }
     m_TextureBuffer->Bind();
 }

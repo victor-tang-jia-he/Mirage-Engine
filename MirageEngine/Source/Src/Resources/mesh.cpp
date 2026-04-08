@@ -10,7 +10,7 @@ void Mesh::Bind()
 {
     if (!m_VertexBuffer || !m_IndexBuffer)
     {
-        LOG(logError, LogMesh, "Mesh ", m_Name, " has invalid buffers !");
+        LOG(logError, LogMesh, "Mesh ", p_Name, " has invalid buffers !");
         return;
     }
     if (!m_bIsUpload)

@@ -12,12 +12,12 @@ namespace MirageEngine
 			{
 				friend class ResourceManager;
 			protected:
-				std::string m_Name;
+				std::string p_Name;
 
 			public:
 				virtual ~IResource() = default;
 
-				std::string GetName() { return m_Name; }
+				std::string GetName() { return p_Name; }
 			};
 		}
 	}

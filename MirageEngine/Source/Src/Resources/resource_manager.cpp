@@ -92,7 +92,7 @@ Texture* ResourceManager::CreateTexture(const std::string& _name, const std::str
     if (it != rm->m_Resources.end()) { newAssetName = rm->GenerateUniqueAssetName(_name); }
 
     Texture* texture = new Texture(rm->m_Rhi->InstantiateTexture());
-    texture->m_Name  = newAssetName;
+    texture->p_Name  = newAssetName;
     texture->Load(_path);
     rm->m_Resources.emplace(newAssetName, texture);
     LOG(logTemp, LogResourceManager, "Finish loading Texture : ", _path);
@@ -120,7 +120,7 @@ Shader* ResourceManager::CreateShader(const std::string& _name, const std::strin
     rhiShader->Create(_path.c_str(), _type);
 
     Shader* shader     = new Shader();
-    shader->m_Name     = newAssetName;
+    shader->p_Name     = newAssetName;
     shader->ShaderBind = rhiShader;
 
     rm->m_Resources.emplace(newAssetName, shader); // global resource
@@ -154,7 +154,7 @@ Mesh* ResourceManager::CreateMesh(const std::string& _name, const std::string& _
     rm->LoadMeshUtility(_path, vertices, indices);
     Mesh* mesh = new Mesh(rm->m_Rhi->InstantiateBuffer(), rm->m_Rhi->InstantiateBuffer(), vertices, indices, indices.size());
 
-    mesh->m_Name = newAssetName;
+    mesh->p_Name = newAssetName;
     rm->m_Resources.emplace(newAssetName, mesh);
     LOG(logTemp, LogResourceManager, "Finish loading Mesh : ", _path);
     return mesh;
@@ -172,7 +172,7 @@ Material* ResourceManager::CreateMaterial(const std::string& _name)
     auto        resourceIt   = rm->m_Resources.find(_name);
     if (resourceIt != rm->m_Resources.end()) { newAssetName = rm->GenerateUniqueAssetName(_name); }
     Material* material = new Material();
-    material->m_Name   = newAssetName;
+    material->p_Name   = newAssetName;
     rm->m_Resources.emplace(newAssetName, material);
     return material;
 }

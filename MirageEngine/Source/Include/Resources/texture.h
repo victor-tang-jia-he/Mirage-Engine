@@ -21,11 +21,11 @@ namespace MirageEngine
 
                     MirageRHI::ITexture* m_TextureBuffer = nullptr;
 
-                    int            width   = 0;
-                    int            height  = 0;
-                    int            channel = 0;
-                    int            format  = NAN;
-                    unsigned char* data    = nullptr;
+                    int            m_Width   = 0;
+                    int            m_Height  = 0;
+                    int            m_Channel = 0;
+                    int            m_Format  = NAN;
+                    unsigned char* m_Data    = nullptr;
                     bool           m_bIsUploaded = false;
 
                 public:
@@ -35,7 +35,7 @@ namespace MirageEngine
 
                     ~Texture()
                     {
-                        if (data != nullptr) free(data);
+                        if (m_Data != nullptr) free(m_Data);
                     }
 
                     void Load(const std::string& _path);
