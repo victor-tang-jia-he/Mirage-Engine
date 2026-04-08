@@ -35,6 +35,8 @@ void RegisterMeta::RegisterAllMeta()
 	RegisterGameObjectMeta();
 	RegisterTransformMeta();
 	RegisterMeshRendererMeta();
+	RegisterCameraMeta();
+	RegisterInputMappingMeta();
 }
 
 void RegisterMeta::RegisterGameObjectMeta()
@@ -95,4 +97,18 @@ void RegisterMeta::RegisterCameraMeta()
 void RegisterMeta::RegisterInputMappingMeta()
 {
 	using namespace entt::literals;
+	using namespace MirageEngine::Core::Input;
+
+	entt::meta_factory<CallbackInputInfo>()
+		.type("InputInfo"_hs)
+		.data<&CallbackInputInfo::Pressed>("Pressed"_hs)
+		.data<&CallbackInputInfo::Held>("Held"_hs)
+		.data<&CallbackInputInfo::Released>("Released"_hs);
+
+	entt::meta_factory<InputMapping>()
+		.type("InputMappingReflection"_hs)
+		.base<MirageEngine::Core::Components::Component>()
+		.data<&InputMapping::Map>("Bindings"_hs)
+		.func<&InputMapping::Clear>("ClearAll"_hs)
+		.func<(void(InputMapping::*)(int))& InputMapping::Remove>("RemoveKey"_hs);
 }
