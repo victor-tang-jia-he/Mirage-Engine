@@ -71,6 +71,7 @@ namespace Mirage
 
 		if (UIWrapper::BeginFolderNode(name.c_str(), idStr.c_str(), bisSelected, bisLeaf))
 		{
+			bool bHierarchyDirty = false;
 			if (ImGui::BeginDragDropSource())
 			{
 				DragDrop::SetPointerPayload(DragDropTag::HIERARCHY_ITEM, _obj);
@@ -83,13 +84,14 @@ namespace Mirage
 				void* droppedPointer = DragDrop::GetPointerPayload(DragDropTag::HIERARCHY_ITEM);
 				if (droppedPointer != nullptr)
 				{
+					std::cout << "je ne suis pas nul" << std::endl;
 					MirageEngine::GameObject* draggedChild = static_cast<MirageEngine::GameObject*>(droppedPointer);
 					bool success = m_Context->SetParent(_obj, draggedChild);
-					ImGui::EndDragDropTarget();
 
 					if (success)
-						return;
+						bHierarchyDirty = true;
 				}
+				ImGui::EndDragDropTarget();
 			}
 
 			if (UIWrapper::IsItemClicked())
@@ -106,9 +108,12 @@ namespace Mirage
 			if (!bisLeaf)
 			{
 				std::vector<MirageEngine::GameObject*> objChildren = _obj->GetChildren();
-				for (MirageEngine::GameObject* obj : objChildren)
+				if (!bHierarchyDirty)
 				{
-					RenderRecursiveNode(obj);
+					for (MirageEngine::GameObject* obj : objChildren)
+					{
+						RenderRecursiveNode(obj);
+					}
 				}
 			}
 
