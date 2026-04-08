@@ -1,11 +1,5 @@
 #pragma once
 
-#include <entt/meta/factory.hpp>
-#include <entt/meta/container.hpp>
-#include <entt/meta/meta.hpp>
-
-#include <GameObject/game_object.h>
-
 namespace MirageEngine
 {
 	class GameObject;
@@ -23,9 +17,10 @@ public:
 	RegisterMeta();
 	~RegisterMeta();
 
-	void GameObjectMeta();
+	void RegisterAllMeta();
 
 protected:
 private:
-
+	void RegisterGameObjectMeta();
+	void RegisterTransformMeta();
 };
