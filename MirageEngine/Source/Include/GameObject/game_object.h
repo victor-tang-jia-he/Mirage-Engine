@@ -1,5 +1,8 @@
 #pragma once
 
+#include <entt/entt.hpp>
+#include <entt/meta/meta.hpp>
+
 #include <iostream>
 #include <string>
 #include <vector>
