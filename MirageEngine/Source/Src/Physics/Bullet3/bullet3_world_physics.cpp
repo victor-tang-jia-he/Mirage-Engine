@@ -17,7 +17,7 @@ void Bullet3WorldPhysics::AddRigidBody(IRigidBody* _body)
     m_World->addRigidBody(_body->API_Bullet3().GetBullet3RigidBody());
 }
 
-void MirageEngine::Core::Physics::Bullet3WorldPhysics::RemoveRigidBody(IRigidBody* _body)
+void Bullet3WorldPhysics::RemoveRigidBody(IRigidBody* _body)
 {
     if (_body == nullptr) return;
     if (m_World == nullptr)

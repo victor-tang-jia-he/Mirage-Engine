@@ -2,7 +2,7 @@
 #include <Physics/Bullet3/bullet3_rigidbody.h>
 using namespace MirageEngine::Core::Physics;
 
-MirageEngine::Core::Physics::Bullet3BoxCollider::~Bullet3BoxCollider()
+Bullet3BoxCollider::~Bullet3BoxCollider()
 {
     if (m_Compound)
     {
@@ -72,24 +72,28 @@ void Bullet3BoxCollider::UpdateRigidBodyTransform()
 void Bullet3BoxCollider::SetHalfExtents(const Vector3& halfExtents)
 {
     if (m_HalfExtents == halfExtents) return;
+
     m_HalfExtents = halfExtents;
 
-    btCollisionShape* newCollisionShape = new btBoxShape(btVector3(halfExtents.X, halfExtents.Y, halfExtents.Z));
+    btCollisionShape* oldShape = m_CollisionShape;
 
-    btCollisionShape* oldCollisionShape = m_CollisionShape;
-
-    m_CollisionShape = newCollisionShape;
+    m_CollisionShape = new btBoxShape(btVector3(halfExtents.X, halfExtents.Y, halfExtents.Z));
 
     if (m_Compound)
     {
-        UpdateCompoundShape();
-    }
-    else if (m_RigidBody)
-    {
-        m_RigidBody->API_Bullet3().SetNewCollisionShape(this);
+        m_Compound->removeChildShape(m_CollisionShape);
+
+        btTransform local;
+        local.setIdentity();
+        local.setOrigin(btVector3(m_Offset.X, m_Offset.Y, m_Offset.Z));
+        local.setRotation(btQuaternion(m_Rot.X, m_Rot.Y, m_Rot.Z, m_Rot.W));
+
+        m_Compound->addChildShape(local, m_CollisionShape);
     }
 
-    delete oldCollisionShape;
+    if (m_RigidBody) { m_RigidBody->API_Bullet3().SetNewCollisionShape(this); }
+
+    delete oldShape;
 }
 
 void Bullet3BoxCollider::UpdateCompoundShape()
@@ -100,25 +104,27 @@ void Bullet3BoxCollider::UpdateCompoundShape()
 
     if (needsCompound)
     {
-        btCompoundShape* newCompound = new btCompoundShape();
+        if (!m_Compound) m_Compound = new btCompoundShape();
+
+        m_Compound->removeChildShape(m_CollisionShape);
 
         btTransform local;
         local.setIdentity();
         local.setOrigin(btVector3(m_Offset.X, m_Offset.Y, m_Offset.Z));
         local.setRotation(btQuaternion(m_Rot.X, m_Rot.Y, m_Rot.Z, m_Rot.W));
 
-        newCompound->addChildShape(local, m_CollisionShape);
-
-        delete m_Compound;
-        m_Compound = newCompound;
+        m_Compound->addChildShape(local, m_CollisionShape);
     }
     else
     {
-        delete m_Compound;
-        m_Compound = nullptr;
+        if (m_Compound)
+        {
+            delete m_Compound;
+            m_Compound = nullptr;
+        }
     }
 
-    if (m_RigidBody) { m_RigidBody->API_Bullet3().SetNewCollisionShape(this); }
+    if (m_RigidBody) m_RigidBody->API_Bullet3().SetNewCollisionShape(this);
 }
 
 Vector3 Bullet3BoxCollider::GetHalfExtents() const { return m_HalfExtents; }

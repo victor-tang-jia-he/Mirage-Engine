@@ -44,5 +44,7 @@ namespace MirageEngine::Core::Physics
             void UpdateRigidBodyTransform();
 
             void UpdateCompoundShape();
+
+            void UpdateCollisionShape();
     };
 } // namespace MirageEngine::Core::Physics

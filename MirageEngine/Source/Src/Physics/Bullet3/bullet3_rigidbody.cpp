@@ -6,7 +6,7 @@
 
 using namespace MirageEngine::Core::Physics;
 
-MirageEngine::Core::Physics::Bullet3RigidBody::~Bullet3RigidBody()
+Bullet3RigidBody::~Bullet3RigidBody()
 {
     if (m_rigidBody)
     {
@@ -59,7 +59,7 @@ bool Bullet3RigidBody::Create(ICollider* _shape, ERigidBodyType _type)
     return true;
 }
 
-void MirageEngine::Core::Physics::Bullet3RigidBody::Update()
+void Bullet3RigidBody::Update()
 {
     if (m_rigidBody == nullptr) return;
     MirageEngine::GameObject* owner = GetOwner();
@@ -110,7 +110,7 @@ void Bullet3RigidBody::SetType(ERigidBodyType _type)
     m_rigidBody->setActivationState(m_Type == ERigidBodyType::Dynamic ? ACTIVE_TAG : DISABLE_DEACTIVATION);
 }
 
-void MirageEngine::Core::Physics::Bullet3RigidBody::SetMass(float _mass)
+void Bullet3RigidBody::SetMass(float _mass)
 {
     if (m_rigidBody == nullptr) return;
     if (m_Type == ERigidBodyType::Static || m_Type == ERigidBodyType::Kinematic)
@@ -128,7 +128,7 @@ void MirageEngine::Core::Physics::Bullet3RigidBody::SetMass(float _mass)
     PhysicsManager::Instance()->RegisterRigidBody(this);
 }
 
-void MirageEngine::Core::Physics::Bullet3RigidBody::SetNewCollisionShape(ICollider* _newShape)
+void Bullet3RigidBody::SetNewCollisionShape(ICollider* _newShape)
 {
     if (!m_rigidBody || !_newShape) return;
 

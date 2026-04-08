@@ -3,7 +3,7 @@
 
 using namespace MirageEngine::Core::Physics;
 
-MirageEngine::Core::Physics::Bullet3CapsuleCollider::~Bullet3CapsuleCollider()
+Bullet3CapsuleCollider::~Bullet3CapsuleCollider()
 {
     if (m_Compound)
     {
@@ -41,18 +41,18 @@ void Bullet3CapsuleCollider::SetOffset(Vector3 offset, Quaternion _rotation)
     if (m_RigidBody) { UpdateRigidBodyTransform(); }
 }
 
-void MirageEngine::Core::Physics::Bullet3CapsuleCollider::SetRadius(float _radius)
+void Bullet3CapsuleCollider::SetRadius(float _radius)
 {
     if (m_Radius == _radius) return;
     m_Radius = _radius;
-    if (m_RigidBody) UpdateCompoundShape();
+    UpdateCollisionShape();     
 }
 
-void MirageEngine::Core::Physics::Bullet3CapsuleCollider::SetHeight(float _height)
+void Bullet3CapsuleCollider::SetHeight(float _height)
 {
     if (m_Height == _height) return;
     m_Height = _height;
-    if (m_RigidBody) UpdateCompoundShape();
+    UpdateCollisionShape();
 }
 
 void Bullet3CapsuleCollider::UpdateRigidBodyTransform()
@@ -84,7 +84,7 @@ void Bullet3CapsuleCollider::UpdateRigidBodyTransform()
     rb->activate(true);
 }
 
-void MirageEngine::Core::Physics::Bullet3CapsuleCollider::UpdateCompoundShape()
+void Bullet3CapsuleCollider::UpdateCompoundShape()
 {
     const bool needsCompound = !(m_Offset.IsNull() && m_Rot == Quaternion(0.f, 0.f, 0.f, 1.f));
 
@@ -114,6 +114,29 @@ void MirageEngine::Core::Physics::Bullet3CapsuleCollider::UpdateCompoundShape()
             delete m_Compound;
             m_Compound = nullptr;
         }
+    }
+
+    if (m_RigidBody) { m_RigidBody->API_Bullet3().SetNewCollisionShape(this); }
+
+    delete oldShape;
+}
+
+void Bullet3CapsuleCollider::UpdateCollisionShape()
+{
+    btCollisionShape* oldShape = m_CollisionShape;
+
+    m_CollisionShape = new btCapsuleShape(m_Radius, m_Height);
+
+    if (m_Compound)
+    {
+        m_Compound->removeChildShape(m_CollisionShape);
+
+        btTransform local;
+        local.setIdentity();
+        local.setOrigin(btVector3(m_Offset.X, m_Offset.Y, m_Offset.Z));
+        local.setRotation(btQuaternion(m_Rot.X, m_Rot.Y, m_Rot.Z, m_Rot.W));
+
+        m_Compound->addChildShape(local, m_CollisionShape);
     }
 
     if (m_RigidBody) { m_RigidBody->API_Bullet3().SetNewCollisionShape(this); }
