@@ -1,5 +1,7 @@
 #include "OpenGL/openGL_shader.h"
 
+DEFINE_LOG_CATEGORY(LogRHIShader)
+
 void MirageRHI::OpenGLShader::Create(const char* _shaderPath, ShaderType _type)
 {
 	m_Type = _type;
@@ -9,13 +11,17 @@ void MirageRHI::OpenGLShader::Create(const char* _shaderPath, ShaderType _type)
     else if (_type == ShaderType::Fragment)
         glType = GL_FRAGMENT_SHADER;
     else
-        DEBUG_THROW("Unknown Shader Type Used!");
+        LOG(logError, LogRHIShader, "Unknown Shader Type Used!");
     CompileShader(_shaderPath, glType, m_Shader);
+
+	LOG(logTemp, LogRHIShader, "Shader Created with ID: ", m_Shader);
 }
 
 void MirageRHI::OpenGLShader::Destroy()
 {
     glDeleteShader(m_Shader);
+
+	LOG(logTemp, LogRHIShader, "Shader Destroyed with ID: ", m_Shader);
 }
 
 bool MirageRHI::OpenGLShader::CompileShader(const std::string& _path, unsigned int _type, unsigned int& _shaderOut)
@@ -23,7 +29,7 @@ bool MirageRHI::OpenGLShader::CompileShader(const std::string& _path, unsigned i
     std::ifstream file(_path);
     if (!file.is_open())
     {
-        DEBUG_THROW("Cant open shader file : %s", _path.c_str());
+        LOG(logError, LogRHIShader, "Can't open shader file: ", _path);
         return false;
     }
 
@@ -42,10 +48,10 @@ bool MirageRHI::OpenGLShader::CompileShader(const std::string& _path, unsigned i
     {
         char infoLog[512];
         glGetShaderInfoLog(_shaderOut, 512, nullptr, infoLog);
-        DEBUG_THROW("Shader compile error : [%s]", infoLog);
+		LOG(logError, LogRHIShader, "Shader compile error: ", infoLog);
         return false;
     }
 
-    DEBUG_LOG("Shader Compiled");
+    LOG(logTemp, LogRHIShader, "Shader Compiled with ID: ", _shaderOut);
     return true;
 }

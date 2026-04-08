@@ -5,6 +5,9 @@
 #include <vector3.h>
 #include <matrix3.h>
 #include <matrix4.h>
+#include <Logs/log_macro.h>
+
+DECLARE_LOG_CATEGORY_EXTERN(LogRHIPipeline)
 
 namespace MirageRHI
 {

@@ -6,6 +6,9 @@
 
 #include <vector3.h>
 #include <Components/camera.h>
+#include <Logs/log_macro.h>
+
+DECLARE_LOG_CATEGORY_EXTERN(LogRHIUniformBuffer)
 
 namespace MirageRHI
 {

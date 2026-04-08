@@ -2,6 +2,9 @@
 
 #include <iostream>
 #include <filesystem>
+#include <Logs/log_macro.h>
+
+DECLARE_LOG_CATEGORY_EXTERN(LogRHIBuffer)
 
 namespace MirageRHI
 {

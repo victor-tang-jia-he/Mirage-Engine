@@ -1,8 +1,5 @@
 #pragma once
 
-#include <glad/glad.h>
-#include <GLFW/glfw3.h>
-
 #include <i_framebuffer.h>
 
 namespace MirageRHI

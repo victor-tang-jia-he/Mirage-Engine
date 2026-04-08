@@ -1,5 +1,6 @@
 #include "OpenGL/openGL_pipeline_parameters.h"
-#include "debug.h"
+
+DEFINE_LOG_CATEGORY(LogRHIPipelineParameters)
 
 using namespace MirageEngine::Core::Math;
 
@@ -10,6 +11,8 @@ void MirageRHI::OpenGLPipelineParameters::Create(VertexType _vertexType, Culling
 	m_VertexType = _vertexType;
 	m_CullingType = _cullingType;
 	m_bDepthTest = _depthTest;
+
+	LOG(logTemp, LogRHIPipelineParameters, "Pipeline Parameters Created with VAO ID: ", m_VAO);
 }
 
 void MirageRHI::OpenGLPipelineParameters::ApplyParameters()
@@ -48,6 +51,7 @@ void MirageRHI::OpenGLPipelineParameters::SetLayout() const
 	{
 	case MirageRHI::VertexType::None:
 		break;
+
 	case MirageRHI::VertexType::Simple:
 		glEnableVertexAttribArray(0);
 		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(UnlitVertex), (void*)offsetof(UnlitVertex, Position));
@@ -55,6 +59,7 @@ void MirageRHI::OpenGLPipelineParameters::SetLayout() const
 		glEnableVertexAttribArray(1);
 		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(VertexType), (void*)offsetof(UnlitVertex, Color));
 		break;
+
 	case MirageRHI::VertexType::PBR:
 		glEnableVertexAttribArray(0);
 		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(LitVertex), (void*)offsetof(LitVertex, Position));
@@ -65,7 +70,9 @@ void MirageRHI::OpenGLPipelineParameters::SetLayout() const
 		glEnableVertexAttribArray(2);
 		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(LitVertex), (void*)offsetof(LitVertex, UV));
 		break;
+
 	default:
+		LOG(logWarning, LogRHIPipelineParameters, "Unknown Vertex Layout");
 		break;
 	}
 }

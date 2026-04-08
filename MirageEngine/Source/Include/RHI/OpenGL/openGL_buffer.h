@@ -1,11 +1,10 @@
 #pragma once
 
-#include <glad/glad.h>
-#include <GLFW/glfw3.h>
-
-#include <debug.h>
-
 #include <i_buffer.h>
+
+#include <Logs/log_macro.h>
+
+DECLARE_LOG_CATEGORY_EXTERN(LogRHIBuffer)
 
 namespace MirageRHI
 {

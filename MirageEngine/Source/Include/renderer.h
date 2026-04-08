@@ -1,15 +1,17 @@
 #pragma once
 
-#include <glad/glad.h>
-#include <GLFW/glfw3.h>
-
 #include "i_render_interface.h"
 
-#include <SceneGraph/scene_graph.h>
+#include <Logs/log_macro.h>
 
+DECLARE_LOG_CATEGORY_EXTERN(LogMirageRenderer)
+
+struct GLFWwindow;
 
 namespace MirageEngine
 {
+	class SceneGraph;
+
 	namespace Core::Components
 	{
 		class Transform;

@@ -17,7 +17,7 @@ namespace MirageRHI
     public:
         // Check and store GPU infos
         void Create(uint32_t _frameAmount, uint32_t _width, uint32_t _height) override;
-        void Destroy() override {}
+        void Destroy() override;
 
         OpenGLSwapChain& API_OpenGL() override { return *this; }
 

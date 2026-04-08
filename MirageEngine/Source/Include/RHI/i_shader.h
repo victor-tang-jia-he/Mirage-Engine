@@ -1,14 +1,14 @@
 #pragma once
 
 #include <iostream>
+#include <Logs/log_macro.h>
+
+DECLARE_LOG_CATEGORY_EXTERN(LogRHIShader)
 
 namespace MirageRHI
 {
 	class OpenGLShader;
-}
 
-namespace MirageRHI
-{
 	class IShader
 	{
 	public:

@@ -1,15 +1,15 @@
 #pragma once
 
 #include <iostream>
+#include <Logs/log_macro.h>
+
+DECLARE_LOG_CATEGORY_EXTERN(LogRHISwapChain)
 
 namespace MirageRHI
 {
 	class OpenGLSwapChain;
 	class ISurface;
-}
 
-namespace MirageRHI
-{
 	class ISwapChain
 	{
 	public:

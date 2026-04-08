@@ -1,6 +1,10 @@
 #include "OpenGL/openGL_framebuffer.h"
 #include "OpenGL/openGL_buffer.h"
-#include "debug.h"
+
+#include <glad/glad.h>
+#include <GLFW/glfw3.h>
+
+DEFINE_LOG_CATEGORY(LogRHIFramebuffer)
 
 void MirageRHI::OpenGLFramebuffer::Create(uint32_t _width, uint32_t _height)
 {
@@ -33,11 +37,16 @@ void MirageRHI::OpenGLFramebuffer::Create(uint32_t _width, uint32_t _height)
 
 	// Verification
 	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
-		DEBUG_THROW("ERROR::FRAMEBUFFER:: Framebuffer is not complete!");
+	{
+		LOG(logError, LogRHIFramebuffer, "Framebuffer is not complete!");
+		return;
+	}
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	glBindTexture(GL_TEXTURE_2D, 0);
 	glBindRenderbuffer(GL_RENDERBUFFER, 0);
+
+	LOG(logTemp, LogRHIFramebuffer, "Framebuffer Created with ID: ", m_FBO);
 }
 
 void MirageRHI::OpenGLFramebuffer::Destroy()
@@ -45,6 +54,8 @@ void MirageRHI::OpenGLFramebuffer::Destroy()
 	glDeleteFramebuffers(1, &m_FBO);
 	glDeleteTextures(1, &m_Texture);
 	glDeleteRenderbuffers(1, &m_RBO);
+
+	LOG(logTemp, LogRHIFramebuffer, "Framebuffer Destroyed with ID: ", m_FBO);
 }
 
 void MirageRHI::OpenGLFramebuffer::RescaleFrameBuffer(uint32_t _width, uint32_t _height) const

@@ -1,16 +1,16 @@
 #pragma once
 
 #include <iostream>
+#include <Logs/log_macro.h>
 
-namespace MirageRHI
-{
-	class OpenGLSurface;
-}
+DECLARE_LOG_CATEGORY_EXTERN(LogRHISurface)
 
 struct GLFWwindow;
 
 namespace MirageRHI
 {
+	class OpenGLSurface;
+
 	class ISurface
 	{
 	public:

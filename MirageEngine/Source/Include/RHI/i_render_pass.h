@@ -3,14 +3,14 @@
 #include <iostream>
 
 #include <vector4.h>
+#include <Logs/log_macro.h>
+
+DECLARE_LOG_CATEGORY_EXTERN(LogRHIRenderPass)
 
 namespace MirageRHI
 {
 	class OpenGLRenderPass;
-}
 
-namespace MirageRHI
-{
 	class IRenderPass
 	{
 	public:
