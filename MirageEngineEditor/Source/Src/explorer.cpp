@@ -271,7 +271,6 @@ namespace Mirage
 					m_EntryToProcess = const_cast<AssetEntry*>(&entry);
 					UIWrapper::RequestModal("AssetContextMenu");
 					m_AnItemWasRightClicked = true;
-					
 				}
 
 				if (ImGui::BeginDragDropSource())

@@ -20,10 +20,10 @@ namespace Mirage
 		std::vector<std::unique_ptr<IPanel>> m_PanelList;
 		void* m_WindowHandle = nullptr;
 		MainMenuBar m_MainMenuBar;
-		MirageEngine::SceneGraph m_SceneGraph;
+		MirageEngine::SceneGraph* m_SceneGraph;
 
 	public:
-		void Init(void* _windowHandle);
+		void Init(void* _windowHandle, MirageEngine::SceneGraph* _engineSceneGraph);
 		void Update(uint32_t _textureID);
 		void Shutdown();
 
