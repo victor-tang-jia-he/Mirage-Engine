@@ -235,6 +235,16 @@ endif()
 
 if(EXISTS "${CMAKE_SOURCE_DIR}/Libraries/bullet3" AND EXISTS "${CMAKE_SOURCE_DIR}/Libraries/bullet3/CMakeLists.txt")
     message(STATUS "Using local bullet3")
+    set(BUILD_BULLET3 OFF CACHE BOOL "" FORCE)
+    set(BUILD_PYBULLET OFF CACHE BOOL "" FORCE)
+    set(BUILD_EXTRAS OFF CACHE BOOL "" FORCE)
+    set(BUILD_UNIT_TESTS OFF CACHE BOOL "" FORCE)
+    set(BUILD_CPU_DEMOS OFF CACHE BOOL "" FORCE)
+    set(BUILD_OPENGL3_DEMOS OFF CACHE BOOL "" FORCE)
+    set(BUILD_BULLET2_DEMOS OFF CACHE BOOL "" FORCE)
+    set(BUILD_CLSOCKET OFF CACHE BOOL "" FORCE)
+    set(BUILD_ENET OFF CACHE BOOL "" FORCE)
+    set(USE_GRAPHICAL_BENCHMARK OFF CACHE BOOL "" FORCE)
     add_subdirectory(${CMAKE_SOURCE_DIR}/Libraries/bullet3 ${CMAKE_BINARY_DIR}/bullet3)
 else()
     message(STATUS "Fetching bullet3...")
@@ -243,6 +253,16 @@ else()
         GIT_REPOSITORY https://github.com/bulletphysics/bullet3.git
         SOURCE_DIR ${CMAKE_SOURCE_DIR}/Libraries/bullet3
     )
+    set(BUILD_BULLET3 OFF CACHE BOOL "" FORCE)
+    set(BUILD_PYBULLET OFF CACHE BOOL "" FORCE)
+    set(BUILD_EXTRAS OFF CACHE BOOL "" FORCE)
+    set(BUILD_UNIT_TESTS OFF CACHE BOOL "" FORCE)
+    set(BUILD_CPU_DEMOS OFF CACHE BOOL "" FORCE)
+    set(BUILD_OPENGL3_DEMOS OFF CACHE BOOL "" FORCE)
+    set(BUILD_BULLET2_DEMOS OFF CACHE BOOL "" FORCE)
+    set(BUILD_CLSOCKET OFF CACHE BOOL "" FORCE)
+    set(BUILD_ENET OFF CACHE BOOL "" FORCE)
+    set(USE_GRAPHICAL_BENCHMARK OFF CACHE BOOL "" FORCE)
     FetchContent_MakeAvailable(bullet3)
 endif()
 
@@ -279,6 +299,20 @@ if(TARGET enttmeta)
 endif()
 
 # ============================================================================
+# Debug system
+# ============================================================================
+
+include(FetchContent)
+FetchContent_Declare(
+  cpptrace
+  GIT_REPOSITORY https://github.com/jeremy-rifkin/cpptrace.git
+  GIT_TAG        v1.0.4 # <HASH or TAG>
+  SOURCE_DIR ${CMAKE_SOURCE_DIR}/Libraries/CppTrace
+)
+FetchContent_MakeAvailable(cpptrace)
+
+
+# ============================================================================
 # System Engine Library (Core)
 # ============================================================================
 add_subdirectory(${CMAKE_SOURCE_DIR}/MirageEngine/Tools/Toolbox)
@@ -298,6 +332,7 @@ target_include_directories(third_party INTERFACE
     ${CMAKE_SOURCE_DIR}/Libraries/EnTTMeta/src
     ${CMAKE_SOURCE_DIR}/Libraries
     ${CMAKE_SOURCE_DIR}/Libraries/bullet3/src
+    ${CMAKE_SOURCE_DIR}/Libraries/CppTrace/include
 )
 
 target_link_libraries(third_party INTERFACE
@@ -311,6 +346,8 @@ target_link_libraries(third_party INTERFACE
     BulletDynamics
     BulletCollision
     LinearMath
+    MirageEngine
+    cpptrace::cpptrace
 ) 
 
 # Engine project

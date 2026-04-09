@@ -1,4 +1,4 @@
-﻿# Project executable
+# Project executable
 add_library(MirageEngine STATIC)
 
 # Sources
@@ -33,6 +33,11 @@ target_include_directories(MirageEngine PRIVATE
     "${CMAKE_CURRENT_SOURCE_DIR}/Source/Src/RHI"
 )
 
+target_compile_options(MirageEngine PRIVATE
+    $<$<CXX_COMPILER_ID:MSVC>:/Zi>        # Windows
+    $<$<NOT:$<CXX_COMPILER_ID:MSVC>>:-g>  # Linux/Mac
+)
+
 # Link third-party libraries
 target_link_libraries(MirageEngine PRIVATE third_party)
 
@@ -43,4 +48,14 @@ if(EXISTS ${PROJECT_SOURCE_DIR}/MirageEngine/Assets)
 			"${CMAKE_SOURCE_DIR}/MirageEngine/Assets"
 			"${CMAKE_SOURCE_DIR}/Build/${CMAKE_CXX_COMPILER_ID}_$<CONFIG>/Assets")
 	message(STATUS "Assets copied successfully")
+endif()
+
+
+# Debug
+if(WIN32)
+  add_custom_command(
+    TARGET MirageEngine POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+    $<TARGET_FILE:cpptrace::cpptrace>
+    "${CMAKE_SOURCE_DIR}/Build/${CMAKE_CXX_COMPILER_ID}_$<CONFIG>")
 endif()

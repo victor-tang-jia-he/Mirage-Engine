@@ -9,6 +9,10 @@
 #include <csignal> // For signal handling
 #include <filesystem>
 
+#ifndef NDEBUG
+    #include <cpptrace/cpptrace.hpp>
+#endif
+
 #ifdef _WIN32
 #    include <io.h>      // _write()
 #    include <windows.h> // STD_ERROR_HANDLE
@@ -267,7 +271,16 @@ namespace Loggers
             static void handle_crash(int sig)
             {
                 LogBuffer& log = LogBuffer::GetInstance();
-                log.Append("A critical error occurred. Attempting to flush logs before termination...\n");
+                log.Append("A critical error occurred. Attempting to flush logs before termination...\n Error is comming from below :\n");
+#ifndef NDEBUG
+                cpptrace::stacktrace trace = cpptrace::generate_trace();
+                for (const auto& frame : trace.frames)
+                {
+                    std::ostringstream oss;
+                    oss << frame.filename << ":" << frame.line.raw_value << " | " << frame.symbol << "\n";
+                    log.Append(oss.str());
+                }
+#endif
 
                 const char* msg;
                 switch (sig)
