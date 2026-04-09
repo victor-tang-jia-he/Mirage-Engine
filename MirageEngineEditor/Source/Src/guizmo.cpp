@@ -80,17 +80,17 @@ void MirageEditor::Guizmo::EditTransform(MirageEngine::SceneGraph* _sceneGraph)
 
 	if (manipulated)
 	{
-		// Si l'objet a un parent, on repasse en local
-		auto* parent = _sceneGraph->GetSelectedObject()->GetParent();
+		MirageEngine::GameObject* parent = _sceneGraph->GetSelectedObject()->GetParent();
 		if (parent)
 		{
-			Math::Matrix4 parentWorld = parent->Transform.GetWorldMatrix();
-			_sceneGraph->GetSelectedObject()->Transform.SetLocalMatrix(parentWorld.Inverse() * worldMatrix);
+			Math::Matrix4 parentWorld = parent->Transform.GetWorldMatrix().Inverse() *worldMatrix;
+			_sceneGraph->GetSelectedObject()->SetPosition(parentWorld.GetTranslation());
+			_sceneGraph->GetSelectedObject()->SetRotation(parentWorld.GetRotation());
 		}
 		else
 		{
-			// Pas de parent, world == local
-			_sceneGraph->GetSelectedObject()->Transform.SetLocalMatrix(worldMatrix);
+			_sceneGraph->GetSelectedObject()->SetPosition(worldMatrix.GetTranslation());
+			_sceneGraph->GetSelectedObject()->SetRotation(worldMatrix.GetRotation());
 		}
 	}
 }
