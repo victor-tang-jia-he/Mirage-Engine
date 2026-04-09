@@ -1,10 +1,5 @@
 #pragma once
 
-namespace MirageEngine
-{
-	class GameObject;
-}
-
 class RegisterMeta
 {
 // Variables

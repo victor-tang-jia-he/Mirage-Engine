@@ -102,4 +102,3 @@ void Transform::SetRotation(Quaternion _rotation)
 	m_bDirty = true;
 	m_LocalRotation = _rotation;
 }
-

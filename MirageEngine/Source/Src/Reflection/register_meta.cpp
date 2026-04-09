@@ -9,15 +9,14 @@
 
 // EnTT includes
 #include <entt/entt.hpp>
-//#include <entt/meta/factory.hpp>
-//#include <entt/meta/container.hpp>
-//#include <entt/meta/meta.hpp>
 
 #include <vector3.h>
 #include <quaternion.h>
 
 using namespace MirageEngine;
 using namespace MirageEngine::Core;
+using namespace MirageEngine::Core::Components;
+
 using namespace entt::literals;		// for _hs (hash)
 
 RegisterMeta::RegisterMeta()
@@ -47,10 +46,9 @@ void RegisterMeta::RegisterGameObjectMeta()
 
 	gameObject.ctor<GameObject*, std::string, bool, bool>();
 
-	gameObject.data<nullptr, &GameObject::GetName>("Name"_hs);
-	gameObject.data<nullptr, &GameObject::GetComponents>("Components"_hs);
-
-	gameObject.func<&GameObject::AddChild>("AddChild"_hs);
+	gameObject.data<&GameObject::SetName, &GameObject::GetName>("Name"_hs);
+	gameObject.data<&GameObject::SetIsActive, &GameObject::GetIsActive>("IsActive"_hs);
+	gameObject.data<&GameObject::SetIsStatic, &GameObject::GetIsStatic>("IsStatic"_hs);
 }
 
 void RegisterMeta::RegisterTransformMeta()
@@ -61,54 +59,53 @@ void RegisterMeta::RegisterTransformMeta()
 
 	transform.ctor<Math::Vector3, Math::Quaternion, Math::Vector3>();
 
-	transform.data<nullptr, &Components::Transform::GetPosition>("Position"_hs);
-	transform.data<nullptr, &Components::Transform::GetRotation>("Rotation"_hs);
-	transform.data<nullptr, &Components::Transform::GetScale>("Scale"_hs);
+	transform.data<&Components::Transform::SetPosition, &Components::Transform::GetPosition>("Position"_hs);
+	transform.data<&Components::Transform::SetRotation, &Components::Transform::GetRotation>("Rotation"_hs);
+	transform.data<&Components::Transform::SetRotation, &Components::Transform::GetScale>("Scale"_hs);
 }
 void RegisterMeta::RegisterMeshRendererMeta()
-{	
-	using namespace entt::literals;
-	using MeshRenderer = Core::Components::MeshRenderer;
-	using Component = Core::Components::Component;
+{
+	entt::meta_factory<MeshRenderer> meshRenderer{};
+	meshRenderer.type("MeshRendererReflection"_hs);
 
-	entt::meta_factory<MeshRenderer>{}
-	.type("MeshRendererReflection"_hs)
-		.base<Component>()
-		.data<&MeshRenderer::SetMesh, &MeshRenderer::GetMesh>("Mesh"_hs)
-		.data<&MeshRenderer::SetMaterial, &MeshRenderer::GetMaterial>("Material"_hs);
+	meshRenderer.base<Component>();
+
+	meshRenderer.data<&MeshRenderer::SetMesh, &MeshRenderer::GetMesh>("Mesh"_hs);
+	meshRenderer.data<&MeshRenderer::SetMaterial, &MeshRenderer::GetMaterial>("Material"_hs);
 }
 
 void RegisterMeta::RegisterCameraMeta()
 {
-	using namespace entt::literals;
-	using Camera = Core::Components::Camera;
-	using Component = Core::Components::Component;
+	entt::meta_factory<Camera> camera{};
+	camera.type("CameraReflection"_hs);
 
-	entt::meta_factory<Camera>{}
-	.type("CameraReflection"_hs)
-		.base<Component>()
-		.data<&Camera::SetFov, &Camera::GetFov>("Field of View"_hs)
-		.data<&Camera::SetNear, &Camera::GetNear>("Near Plane"_hs)
-		.data<&Camera::SetFar, &Camera::GetFar>("Far Plane"_hs)
-		.data<&Camera::SetWidth, &Camera::GetWidth>("Width"_hs)
-		.data<&Camera::SetHeight, &Camera::GetHeight>("Height"_hs);
+	camera.base<Component>();
+
+	camera.data<&Camera::SetFov, &Camera::GetFov>("Field of View"_hs);
+	camera.data<&Camera::SetNear, &Camera::GetNear>("Near Plane"_hs);
+	camera.data<&Camera::SetFar, &Camera::GetFar>("Far Plane"_hs);
+	camera.data<&Camera::SetWidth, &Camera::GetWidth>("Width"_hs);
+	camera.data<&Camera::SetHeight, &Camera::GetHeight>("Height"_hs);
 }
 
 void RegisterMeta::RegisterInputMappingMeta()
 {
-	using namespace entt::literals;
 	using namespace MirageEngine::Core::Input;
 
-	entt::meta_factory<CallbackInputInfo>()
-		.type("InputInfo"_hs)
-		.data<&CallbackInputInfo::Pressed>("Pressed"_hs)
-		.data<&CallbackInputInfo::Held>("Held"_hs)
-		.data<&CallbackInputInfo::Released>("Released"_hs);
+	entt::meta_factory<CallbackInputInfo> callbackInputInfo{};
+	callbackInputInfo.type("InputInfo"_hs);
 
-	entt::meta_factory<InputMapping>()
-		.type("InputMappingReflection"_hs)
-		.base<MirageEngine::Core::Components::Component>()
-		.data<&InputMapping::Map>("Bindings"_hs)
-		.func<&InputMapping::Clear>("ClearAll"_hs)
-		.func<(void(InputMapping::*)(int))& InputMapping::Remove>("RemoveKey"_hs);
+	callbackInputInfo.data<&CallbackInputInfo::Pressed>("Pressed"_hs);
+	callbackInputInfo.data<&CallbackInputInfo::Held>("Held"_hs);
+	callbackInputInfo.data<&CallbackInputInfo::Released>("Released"_hs);;
+
+	entt::meta_factory<InputMapping> inputMapping{};
+	inputMapping.type("InputMappingReflection"_hs);
+
+	inputMapping.base<Component>();
+
+	inputMapping.data<&InputMapping::Map>("Bindings"_hs);
+
+	inputMapping.func<&InputMapping::Clear>("ClearAll"_hs);
+	inputMapping.func<(void(InputMapping::*)(int))& InputMapping::Remove>("RemoveKey"_hs);
 }

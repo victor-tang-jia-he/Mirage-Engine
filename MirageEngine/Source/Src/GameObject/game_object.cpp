@@ -66,11 +66,6 @@ void MirageEngine::GameObject::RemoveComponent(MirageEngine::Core::Components::C
 	m_Components.erase(std::remove(m_Components.begin(), m_Components.end(), _component), m_Components.end());
 }
 
-void MirageEngine::GameObject::SetParent(GameObject* _parent)
-{
-	m_Parent = _parent;
-}
-
 void MirageEngine::GameObject::RemoveChild(GameObject* _child)
 {
 	m_Children.erase(std::remove(m_Children.begin(), m_Children.end(), _child), m_Children.end());
