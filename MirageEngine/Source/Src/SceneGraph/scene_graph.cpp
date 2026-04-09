@@ -125,7 +125,7 @@ namespace MirageEngine
 
 	void SceneGraph::WorldMatrixRecursive(GameObject* _obj, const void* _parentMatrix, bool _forceUpdate)
 	{
-		bool mustUpdate = _obj->Transform.IsDirty() || _forceUpdate;
+		bool mustUpdate = _obj->Transform.GetIsDirty() || _forceUpdate;
 
 		if (mustUpdate)
 		{

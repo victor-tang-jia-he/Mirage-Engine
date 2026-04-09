@@ -1,5 +1,8 @@
 #pragma once
 
+#include <entt/entt.hpp>
+#include <entt/meta/meta.hpp>
+
 #include <iostream>
 #include <string>
 #include <vector>
@@ -81,18 +84,27 @@ namespace MirageEngine
 
 		// Game Object Public Methods
 		bool IsRoot() const { return m_Parent == nullptr; };
-		void SetParent(GameObject* _parent);
 		void RemoveChild(GameObject* _child);
 		void SetDirty(bool _isDirty);
+
+
 		// Getters
 		std::string GetName() const { return m_Name; }
+		std::vector<GameObject*> GetChildren() const { return m_Children; }
+		GameObject* GetParent() const { return m_Parent; }
+		uint64_t GetID() const { return m_ID; }
 		bool GetIsStatic() const { return m_bIsStatic; }
 		bool GetIsActive() const { return m_bIsActive; }
-		GameObject* GetParent() const { return m_Parent; }
-		std::vector<GameObject*> GetChildren() const { return m_Children; }
-		std::vector<MirageEngine::Core::Components::Component*> GetComponents() const { return m_Components; }
-		uint64_t GetID() const { return m_ID; }
+
+		// Setters
+		void SetName(std::string _name) { m_Name = _name; }
+		void SetChildren(std::vector<GameObject*> _children) { m_Children = _children; }
+		void SetParent(GameObject* _parent) { m_Parent = _parent; }
+		void SetID(uint64_t _id) { m_ID = _id; }
+		void SetIsStatic(bool _isStatic) { m_bIsStatic = _isStatic; }
+		void SetIsActive(bool _isActive) { m_bIsActive = _isActive; }
 		void SetPosition(float _x, float _y, float _z);
 		void SetPosition(MirageEngine::Core::Math::Vector3 _position);
+		
 	}; // namespace MirageEngine
 }

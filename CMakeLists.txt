@@ -295,6 +295,7 @@ target_include_directories(third_party INTERFACE
     ${CMAKE_SOURCE_DIR}/Libraries/TinyObjLoader
     ${CMAKE_SOURCE_DIR}/Libraries/stb_image
     ${CMAKE_SOURCE_DIR}/Libraries/EnTTMeta/single_include
+    ${CMAKE_SOURCE_DIR}/Libraries/EnTTMeta/src
     ${CMAKE_SOURCE_DIR}/Libraries
     ${CMAKE_SOURCE_DIR}/Libraries/bullet3/src
 )
