@@ -20,7 +20,7 @@ int main()
     {
         MirageEngine::TimeManager::Update();
         MirageEngine::Core::Input::InputSystem::UpdateHeldInput();
-        MirageEngine::Core::Physics::PhysicsManager::Instance()->Update(MirageEngine::TimeManager::GetDeltaTime() / 10.f);
+        MirageEngine::Core::Physics::PhysicsManager::Instance()->Update(MirageEngine::TimeManager::GetDeltaTime());
         application.m_Renderer.BeginFrame();
         application.m_Renderer.RenderScene(application.m_SceneGraph);
         application.m_Renderer.RenderScreen();

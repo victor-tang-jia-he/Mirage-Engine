@@ -69,7 +69,7 @@ void Bullet3RigidBody::Update()
     
 
     owner->Transform.SetPosition(MirageEngine::Core::Math::Vector3(position.getX(), position.getY(), position.getZ()));
-    owner->Transform.SetRotation(Quaternion(rotation.x(), rotation.y(), rotation.z(), rotation.w()));
+    owner->Transform.SetRotation(Quaternion(rotation.w() ,rotation.x(), rotation.y(), rotation.z()));
     m_Velocity = MirageEngine::Core::Math::Vector3(m_rigidBody->getLinearVelocity().getX(), m_rigidBody->getLinearVelocity().getY(), m_rigidBody->getLinearVelocity().getZ());
 }
 
