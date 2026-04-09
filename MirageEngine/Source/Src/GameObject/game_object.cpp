@@ -72,6 +72,14 @@ void MirageEngine::GameObject::RemoveChild(GameObject* _child)
 	m_Children.erase(std::remove(m_Children.begin(), m_Children.end(), _child), m_Children.end());
 }
 
+void MirageEngine::GameObject::SetRotation(MirageEngine::Core::Math::Quaternion _rotation)
+{
+    Transform.SetRotation(_rotation);
+
+    if (auto rb = GetComponent<MirageEngine::Core::Physics::IRigidBody>()) rb->OnTransformChanged(&Transform);
+
+}
+
 void MirageEngine::GameObject::SetPosition(MirageEngine::Core::Math::Vector3 _pos)
 {
     Transform.SetPosition(_pos);

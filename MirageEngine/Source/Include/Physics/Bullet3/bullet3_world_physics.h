@@ -3,58 +3,51 @@
 #include "bullet3_pch.h"
 #include "../i_world_physics.h"
 
-namespace MirageEngine
+namespace MirageEngine::Core::Physics
 {
-    namespace Core
+    class IRigidBody;
+
+    class Bullet3WorldPhysics : public IWorldPhysics
     {
-        namespace Physics
-        {
-            class IRigidBody;
+            using Vector3 = MirageEngine::Core::Math::Vector3;
 
-            class Bullet3WorldPhysics : public IWorldPhysics
+        public:
+
+            btDefaultCollisionConfiguration*     m_CollisionConfig;
+            btCollisionDispatcher*               m_Dispatcher;
+            btBroadphaseInterface*               m_Broadphase;
+            btSequentialImpulseConstraintSolver* m_Solver;
+            btDiscreteDynamicsWorld*             m_World;
+
+            Bullet3WorldPhysics()
             {
-                    using Vector3 = MirageEngine::Core::Math::Vector3;
+                m_CollisionConfig = new btDefaultCollisionConfiguration();
+                m_Dispatcher      = new btCollisionDispatcher(m_CollisionConfig);
+                m_Broadphase      = new btDbvtBroadphase();
+                m_Solver          = new btSequentialImpulseConstraintSolver();
+                m_World           = new btDiscreteDynamicsWorld(m_Dispatcher, m_Broadphase, m_Solver, m_CollisionConfig);
+                m_World->setGravity(btVector3(0, -9.81f, 0)); // default gravity
+            }
 
-                public:
+            ~Bullet3WorldPhysics() override
+            {
+                delete m_World;
+                delete m_Solver;
+                delete m_Broadphase;
+                delete m_Dispatcher;
+                delete m_CollisionConfig;
+            }
 
-                    btDefaultCollisionConfiguration*     m_collisionConfig;
-                    btCollisionDispatcher*               m_dispatcher;
-                    btBroadphaseInterface*               m_broadphase;
-                    btSequentialImpulseConstraintSolver* m_solver;
-                    btDiscreteDynamicsWorld*             m_world;
+            void AddRigidBody(IRigidBody* _body) override;
 
-                    Bullet3WorldPhysics()
-                    {
-                        m_collisionConfig = new btDefaultCollisionConfiguration();
-                        m_dispatcher      = new btCollisionDispatcher(m_collisionConfig);
-                        m_broadphase      = new btDbvtBroadphase();
-                        m_solver          = new btSequentialImpulseConstraintSolver();
-                        m_world           = new btDiscreteDynamicsWorld(m_dispatcher, m_broadphase, m_solver, m_collisionConfig);
-                        m_world->setGravity(btVector3(0, -9.81f, 0)); // default gravity
-                    }
+            void RemoveRigidBody(IRigidBody* _body) override;
 
-                    ~Bullet3WorldPhysics() override
-                    {
-                        delete m_world;
-                        delete m_solver;
-                        delete m_broadphase;
-                        delete m_dispatcher;
-                        delete m_collisionConfig;
-                    }
+            void Update(float _deltaTime) override { m_World->stepSimulation(_deltaTime); }
 
-                    void AddRigidBody(IRigidBody* body) override;
+            void SetGravity(float _x, float _y, float _z) override { m_World->setGravity(btVector3(_x, _y, _z)); }
 
-                    void RemoveRigidBody(IRigidBody* body) override;
+            void SetGravity(Vector3& _v) override { m_World->setGravity(btVector3(_v.X, _v.Y, _v.Z)); }
 
-                    void Update(float deltaTime) override { m_world->stepSimulation(deltaTime); }
-
-                    void SetGravity(float x, float y, float z) override { m_world->setGravity(btVector3(x, y, z)); }
-
-                    void SetGravity(Vector3& v) override { m_world->setGravity(btVector3(v.X, v.Y, v.Z)); }
-
-                    Bullet3WorldPhysics& API_Bullet3() override { return *this; }
-            };
-
-        } // namespace Physics
-    } // namespace Core
-} // namespace MirageEngine
+            Bullet3WorldPhysics& API_Bullet3() override { return *this; }
+    };
+} // namespace MirageEngine::Core::Physics

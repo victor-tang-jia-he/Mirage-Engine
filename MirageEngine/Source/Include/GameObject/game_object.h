@@ -103,6 +103,7 @@ namespace MirageEngine
 		void SetID(uint64_t _id) { m_ID = _id; }
 		void SetIsStatic(bool _isStatic) { m_bIsStatic = _isStatic; }
 		void SetIsActive(bool _isActive) { m_bIsActive = _isActive; }
+		void SetRotation(MirageEngine::Core::Math::Quaternion _rotation);
 		void SetPosition(float _x, float _y, float _z);
 		void SetPosition(MirageEngine::Core::Math::Vector3 _position);
 		

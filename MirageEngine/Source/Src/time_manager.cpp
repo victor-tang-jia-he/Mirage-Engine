@@ -15,7 +15,7 @@ void TimeManager::Init()
 
 void TimeManager::Update()
 {
-	auto currentTime = std::chrono::high_resolution_clock::now();
+	std::chrono::high_resolution_clock::time_point currentTime = std::chrono::high_resolution_clock::now();
 	m_DeltaTime = std::chrono::duration<float>(currentTime - m_LastFrameTime).count();
 	m_Time += m_DeltaTime;
 	m_LastFrameTime = currentTime;

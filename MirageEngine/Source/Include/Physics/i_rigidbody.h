@@ -6,40 +6,36 @@
 #include <GameObject/game_object.h>
 #include <vector3.h>
 
-namespace MirageEngine
+namespace MirageEngine::Core::Physics
 {
-    namespace Core
+    class Bullet3RigidBody;
+    class ICollider;
+
+    class IRigidBody : public MirageEngine::Core::Components::Component
     {
-        namespace Physics
-        {
-            class Bullet3RigidBody;
-            class ICollider;
 
-            class IRigidBody : public MirageEngine::Core::Components::Component
-            {
+            using Vector3 = MirageEngine::Core::Math::Vector3;
 
-                    using Vector3 = MirageEngine::Core::Math::Vector3;
+        protected:
 
-                protected:
+            float          m_Mass     = 1.f;
+            Vector3        m_Velocity = Vector3(0.f);
+            ERigidBodyType m_Type;
 
-                    float          m_Mass     = 1.f;
-                    Vector3        m_Velocity = Vector3(0.f);
-                    ERigidBodyType m_Type;
+        public:
 
-                public:
+            IRigidBody()          = default;
+            virtual ~IRigidBody() = default;
 
-                    IRigidBody()          = default;
-                    virtual ~IRigidBody() = default;
+            virtual bool Create(ICollider* _shape, ERigidBodyType _type) = 0;
 
-                    virtual bool Create(ICollider* _shape, ERigidBodyType _type) = 0;
+            virtual void OnTransformChanged(MirageEngine::Core::Components::Transform* _newTransform) = 0;
+            virtual void SetType(ERigidBodyType _type)                                                = 0;
 
-                    virtual void OnTransformChanged(MirageEngine::Core::Components::Transform* _newTransform) = 0;
-                    virtual void SetType(ERigidBodyType _type) = 0;
+            entt::id_type GetType() const override { return 0; }
 
-                    virtual void SetMass(float _mass) = 0;
+            virtual void SetMass(float _mass) = 0;
 
-                    virtual Bullet3RigidBody& API_Bullet3() { throw std::runtime_error("Bad API Call : object is not a Bullet3RigidBody"); }
-            };
-        } // namespace Physics
-    } // namespace Core
-} // namespace MirageEngine
+            virtual Bullet3RigidBody& API_Bullet3() { throw std::runtime_error("Bad API Call : object is not a Bullet3RigidBody"); }
+    };
+} // namespace MirageEngine::Core::Physics

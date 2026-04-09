@@ -333,18 +333,13 @@ bool Matrix3::operator==(const Matrix3& _other) const
 		std::abs((*this)(2,1) - _other(2,1)) < EPSILON &&
 		std::abs((*this)(2,2) - _other(2,2)) < EPSILON;
 }
-Vector3 Matrix3::operator[](int _index) const
-{
-	assert(_index >= 0 && _index < 3 && "Index out of range");
-	return Vector3((*this)(_index,0), (*this)(_index, 1), (*this)(_index, 2));
-}
 const float& Matrix3::operator()(size_t _row, size_t _col) const
 {
 	assert(_row < 3 && _col < 3);
-	return M[_col + _row * 3];
+    return M[_row + _col * 3];
 }
 float& Matrix3::operator()(size_t _row, size_t _col)
 {
 	assert(_row < 3 && _col < 3);
-	return M[_col + _row * 3];
+    return M[_row + _col * 3];
 }
