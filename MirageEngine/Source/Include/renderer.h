@@ -11,6 +11,7 @@ struct GLFWwindow;
 namespace MirageEngine
 {
 	class SceneGraph;
+	class GameObject;
 
 	namespace Core::Components
 	{
@@ -50,6 +51,7 @@ namespace MirageEngine
 		bool IsRunning() const;
 		void BeginFrame();
 		void RenderScene(SceneGraph _sceneGraph); // Finish When Scene and MeshRenderer are done
+		void RenderObjectRecursive(GameObject* _obj);
 		void RenderScreen();
 		void EndFrame();
 

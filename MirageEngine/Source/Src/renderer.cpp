@@ -6,6 +6,7 @@
 #include <OpenGL/openGL_render_interface.h>
 #include <SceneGraph/scene_graph.h>
 #include <Components/mesh_renderer.h>
+//#include "GameObject/game_object.h"
 
 DEFINE_LOG_CATEGORY(MirageRenderer)
 
@@ -70,19 +71,31 @@ void Renderer::RenderScene(SceneGraph _sceneGraph)
 	m_CommandBuffer->BindPipeline(m_Pipeline);
 	m_CommandBuffer->ApplyPipelineParameters(m_Pipeline);
 
-	m_UniformBuffer->SetView(_sceneGraph.GetActiveCamera()->GetView());
-	m_UniformBuffer->SetProjection(_sceneGraph.GetActiveCamera()->GetPerspective());
+	if (_sceneGraph.GetActiveCamera())
+	{
+		m_UniformBuffer->SetView(_sceneGraph.GetActiveCamera()->GetView());
+		m_UniformBuffer->SetProjection(_sceneGraph.GetActiveCamera()->GetPerspective());
+	}
 
-	for ( GameObject* root : _sceneGraph.GetRootObjects() ) 
-	{ 
-		for (GameObject* child : root->GetChildren())
-		{
-			MirageEngine::Core::Components::MeshRenderer* meshRenderer = child->GetComponent<MirageEngine::Core::Components::MeshRenderer>();
-			if (meshRenderer) 
-			{
-				DrawMesh(meshRenderer, &child->Transform);
-			}
-		}
+	for (GameObject* root : _sceneGraph.GetRootObjects())
+	{
+		RenderObjectRecursive(root);
+	}
+}
+
+void Renderer::RenderObjectRecursive(GameObject* _obj)
+{
+	if (!_obj) return;
+
+	Core::Components::MeshRenderer* meshRenderer = _obj->GetComponent<Core::Components::MeshRenderer>();
+	if (meshRenderer)
+	{
+		DrawMesh(meshRenderer, &_obj->Transform);
+	}
+
+	for (GameObject* child : _obj->GetChildren())
+	{
+		RenderObjectRecursive(child);
 	}
 }
 
@@ -220,7 +233,7 @@ void Renderer::DrawMesh(MirageEngine::Core::Components::MeshRenderer* _meshRende
 		return;
 
 	_meshRenderer->GetMaterial()->Bind();
-	m_UniformBuffer->UpdateUniformBuffer(m_Pipeline, _meshTransform->GetMatrix());
+	m_UniformBuffer->UpdateUniformBuffer(m_Pipeline, _meshTransform->GetWorldMatrix());
 	m_CommandBuffer->BindBuffer(_meshRenderer->GetMesh()->GetVertexBuffer());
 	m_CommandBuffer->BindBuffer(_meshRenderer->GetMesh()->GetIndexBuffer());
 	m_CommandBuffer->Draw((uint32_t)_meshRenderer->GetMesh()->GetIndicesCount());
