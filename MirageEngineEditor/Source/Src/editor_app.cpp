@@ -5,6 +5,7 @@
 #include "console.h"
 #include "explorer.h"
 #include "UI_wrapper.h"
+#include "guizmo.h"
 
 namespace Mirage
 {
@@ -39,6 +40,8 @@ namespace Mirage
 				panel->DrawPanel(_textureID);
 			}
 		}
+
+		MirageEditor::Guizmo::EditTransform(m_SceneGraph);
 
 		UIWrapper::EndFrame();
 	}
