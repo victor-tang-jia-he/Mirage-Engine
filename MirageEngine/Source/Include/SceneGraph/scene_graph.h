@@ -51,6 +51,6 @@ namespace MirageEngine
 		MirageEngine::Core::Components::Camera* GetActiveCamera() const { return m_ActiveCamera; }
 	protected:
 	private:
-		void WorldMatrixRecursive(GameObject* _obj, const void* _parentMatrix, bool _forceUpdate);
+		void WorldMatrixRecursive(GameObject* _obj, Core::Math::Matrix4& _parentMatrix, bool _forceUpdate);
 	};
 }

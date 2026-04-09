@@ -24,14 +24,14 @@ namespace MirageEngine
 		for (GameObject* child : childrenCopy)
 			RemoveGameObject(child);
 
-		if (_obj->GetParent() == nullptr)	
+		if (_obj->GetParent() == nullptr)
 			std::erase(m_RootsList, _obj);
 		else
 			_obj->GetParent()->RemoveChild(_obj);
 
 		m_Registry.erase(_obj->GetID());
 
-		if (m_SelectedObject == _obj) 
+		if (m_SelectedObject == _obj)
 			m_SelectedObject = nullptr;
 
 		delete _obj;
@@ -40,10 +40,10 @@ namespace MirageEngine
 	void SceneGraph::ClearScene()
 	{
 		std::vector<GameObject*> rootsCopy = m_RootsList;
-		for (GameObject* obj : rootsCopy) 
+		for (GameObject* obj : rootsCopy)
 		{
 			RemoveGameObject(obj);
-		}	
+		}
 		m_Registry.clear();
 		m_RootsList.clear();
 	}
@@ -54,7 +54,7 @@ namespace MirageEngine
 
 		for (GameObject* root : m_RootsList)
 		{
-			WorldMatrixRecursive(root, &Identity, false);
+			WorldMatrixRecursive(root, Identity, false);
 		}
 	}
 
@@ -79,7 +79,7 @@ namespace MirageEngine
 		while (current != nullptr)
 		{
 			if (current == _child)
-			{	
+			{
 				std::cout << "Error: Circular dependency detected!" << std::endl;
 				return false;
 			}
@@ -123,27 +123,28 @@ namespace MirageEngine
 		return true;
 	}
 
-	void SceneGraph::WorldMatrixRecursive(GameObject* _obj, const void* _parentMatrix, bool _forceUpdate)
+	void SceneGraph::WorldMatrixRecursive(GameObject* _obj, Core::Math::Matrix4& _parentMatrix, bool _forceUpdate)
 	{
 		bool mustUpdate = _obj->Transform.GetIsDirty() || _forceUpdate;
 
+		Core::Math::Matrix4 worldMatrix;
+
 		if (mustUpdate)
 		{
-			Core::Math::Matrix4 localMat = _obj->Transform.GetMatrix();
-			const Core::Math::Matrix4* parentMat = static_cast<const Core::Math::Matrix4*>(_parentMatrix);
-			Core::Math::Matrix4 worldMatrix = (*parentMat) * localMat;
+			const Core::Math::Matrix4 localMat = _obj->Transform.GetMatrix();
+
+			worldMatrix = _parentMatrix * localMat;
+
 			_obj->Transform.SetWorldMatrix(worldMatrix);
-			for (GameObject* child : _obj->GetChildren())
-			{
-				WorldMatrixRecursive(child, &worldMatrix, true);
-			}
 		}
 		else
 		{
-			for (GameObject* child : _obj->GetChildren())
-			{
-				WorldMatrixRecursive(child, &_obj->Transform.GetWorldMatrix(), false);
-			}
+			worldMatrix = _obj->Transform.GetWorldMatrix();
+		}
+
+		for (GameObject* child : _obj->GetChildren())
+		{
+			WorldMatrixRecursive(child, worldMatrix, mustUpdate);
 		}
 	}
 }

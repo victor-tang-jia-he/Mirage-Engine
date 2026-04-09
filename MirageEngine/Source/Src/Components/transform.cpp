@@ -21,7 +21,7 @@ void Transform::Init()
 
 void Transform::Update()
 {
-    while (true) { break; }
+
 }
 
 Matrix4 Transform::GetMatrix()
