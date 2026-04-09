@@ -19,6 +19,7 @@ namespace MirageEngine
 					float _m10 = 0.f, float _m11 = 0.f, float _m12 = 0.f, float _m13 = 0.f,
 					float _m20 = 0.f, float _m21 = 0.f, float _m22 = 0.f, float _m23 = 0.f,
 					float _m30 = 0.f, float _m31 = 0.f, float _m32 = 0.f, float _m33 = 0.f) noexcept;
+				Matrix4(float* _m) noexcept;
 
 				// -------------------------------------------------------------------------------- //
 				// Basic Matrix Operations

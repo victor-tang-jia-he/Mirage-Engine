@@ -6,6 +6,7 @@
 #include "imgui.h"
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_opengl3.h"
+#include "ImGuizmo.h"
 #include "GLFW/glfw3.h"
 
 namespace Math = MirageEngine::Core::Math;
@@ -15,13 +16,15 @@ namespace Mirage
 	void UIWrapper::Init(void* _windowHandle)
 	{
 		IMGUI_CHECKVERSION();
-		ImGui::CreateContext();
+		ImGuiContext* context = ImGui::CreateContext();
 		ImGuiIO& io = ImGui::GetIO();
 		io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
 		io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;
 		io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
 		//io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
 		ImGui::StyleColorsDark();
+
+		ImGuizmo::SetImGuiContext(context);
 
 		GLFWwindow* window = static_cast<GLFWwindow*>(_windowHandle);
 		ImGui_ImplGlfw_InitForOpenGL(window, true);
@@ -40,6 +43,7 @@ namespace Mirage
 		ImGui_ImplOpenGL3_NewFrame();
 		ImGui_ImplGlfw_NewFrame();
 		ImGui::NewFrame();
+		ImGuizmo::BeginFrame();
 		ImGui::DockSpaceOverViewport(0, ImGui::GetMainViewport(), ImGuiDockNodeFlags_PassthruCentralNode);
 		//ImGui::ShowDemoWindow();
 	}

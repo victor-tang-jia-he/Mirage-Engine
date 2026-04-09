@@ -22,7 +22,14 @@ Matrix4::Matrix4(
 	(*this)(1,0) = _m10; (*this)(1,1) = _m11; (*this)(1,2) = _m12; (*this)(1,3) = _m13;
 	(*this)(2,0) = _m20; (*this)(2,1) = _m21; (*this)(2,2) = _m22; (*this)(2,3) = _m23;
 	(*this)(3,0) = _m30; (*this)(3,1) = _m31; (*this)(3,2) = _m32; (*this)(3,3) = _m33;
-};
+}
+Matrix4::Matrix4(float* _m) noexcept
+{
+	(*this)(0, 0) = _m[0]; (*this)(0, 1) = _m[1]; (*this)(0, 2) = _m[2]; (*this)(0, 3) = _m[3];
+	(*this)(1, 0) = _m[4]; (*this)(1, 1) = _m[5]; (*this)(1, 2) = _m[6]; (*this)(1, 3) = _m[7];
+	(*this)(2, 0) = _m[8]; (*this)(2, 1) = _m[9]; (*this)(2, 2) = _m[10]; (*this)(2, 3) = _m[11];
+	(*this)(3, 0) = _m[12]; (*this)(3, 1) = _m[13]; (*this)(3, 2) = _m[14]; (*this)(3, 3) = _m[15];
+}
 Matrix4 Matrix4::Identity()
 {
 	return Matrix4(

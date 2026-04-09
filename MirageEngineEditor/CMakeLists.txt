@@ -5,6 +5,7 @@ add_executable(MirageEngineEditor)
 file(GLOB_RECURSE MIRAGE_ENGINE_EDITOR_SOURCES
     "Source/Src/*.cpp"
     "Source/Src/*.c"
+    "../libraries/ImGizmo/ImGuizmo.cpp"
 )
 
 # Sources
