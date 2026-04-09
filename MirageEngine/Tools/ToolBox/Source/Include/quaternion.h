@@ -50,6 +50,8 @@ namespace MirageEngine
 				Quaternion Inverse() const;
 				Quaternion Normalize() const;
 
+				static Quaternion Identity() { return Quaternion(1.f, 0.f, 0.f, 0.f); }
+
 				float SquaredNorm() const;
 				float Norm() const;
 				float DotProduct(const Quaternion& _q) const;

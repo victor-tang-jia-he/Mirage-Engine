@@ -2,6 +2,7 @@
 #include <iostream>
 #include <array>
 #include <assert.h>
+#include "quaternion.h"
 
 using namespace MirageEngine::Core::Math;
 Matrix4::Matrix4(const Matrix4& _copy) noexcept
@@ -223,6 +224,60 @@ Matrix4 MirageEngine::Core::Math::Matrix4::LookAt(Vector3 eye, Vector3 center, V
 	result(1, 3) = -(u.DotProductVector3(eye));
 	result(2, 3) = (f.DotProductVector3(eye));
 	return result;
+}
+Vector3 Matrix4::GetTranslation() const 
+{
+	return Vector3((*this)(0, 3), (*this)(1, 3), (*this)(2, 3));
+}
+Vector3 Matrix4::GetScale() const 
+{
+	float sx = Vector3((*this)(0, 0), (*this)(1, 0), (*this)(2, 0)).Norm();
+	float sy = Vector3((*this)(0, 1), (*this)(1, 1), (*this)(2, 1)).Norm();
+	float sz = Vector3((*this)(0, 2), (*this)(1, 2), (*this)(2, 2)).Norm();
+
+	return Vector3(sx, sy, sz);
+}
+Quaternion Matrix4::GetRotation() const {
+	Vector3 scale = GetScale();
+
+	float m00 = (*this)(0, 0) / scale.X;
+	float m11 = (*this)(1, 1) / scale.Y;
+	float m22 = (*this)(2, 2) / scale.Z;
+
+	float trace = m00 + m11 + m22;
+	float x, y, z, w;
+
+	if (trace > 0.0f) {
+		float s = 0.5f / sqrtf(trace + 1.0f);
+		w = 0.25f / s;
+		x = ((*this)(2, 1) / scale.Y - (*this)(1, 2) / scale.Z) * s;
+		y = ((*this)(0, 2) / scale.Z - (*this)(2, 0) / scale.X) * s;
+		z = ((*this)(1, 0) / scale.X - (*this)(0, 1) / scale.Y) * s;
+	}
+	else {
+		if (m00 > m11 && m00 > m22) {
+			float s = 2.0f * sqrtf(1.0f + m00 - m11 - m22);
+			w = ((*this)(2, 1) / scale.Y - (*this)(1, 2) / scale.Z) / s;
+			x = 0.25f * s;
+			y = ((*this)(0, 1) / scale.Y + (*this)(1, 0) / scale.X) / s;
+			z = ((*this)(0, 2) / scale.Z + (*this)(2, 0) / scale.X) / s;
+		}
+		else if (m11 > m22) {
+			float s = 2.0f * sqrtf(1.0f + m11 - m00 - m22);
+			w = ((*this)(0, 2) / scale.Z - (*this)(2, 0) / scale.X) / s;
+			x = ((*this)(0, 1) / scale.Y + (*this)(1, 0) / scale.X) / s;
+			y = 0.25f * s;
+			z = ((*this)(1, 2) / scale.Z + (*this)(2, 1) / scale.Y) / s;
+		}
+		else {
+			float s = 2.0f * sqrtf(1.0f + m22 - m00 - m11);
+			w = ((*this)(1, 0) / scale.X - (*this)(0, 1) / scale.Y) / s;
+			x = ((*this)(0, 2) / scale.Z + (*this)(2, 0) / scale.X) / s;
+			y = ((*this)(1, 2) / scale.Z + (*this)(2, 1) / scale.Y) / s;
+			z = 0.25f * s;
+		}
+	}
+	return Quaternion(w, x, y, z);
 }
 std::array<float, 16> Matrix4::ToArray() const
 {

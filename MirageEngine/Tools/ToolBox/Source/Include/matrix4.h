@@ -8,6 +8,7 @@ namespace MirageEngine
 	{
 		namespace Math
 		{
+			struct Quaternion;
 			struct Matrix4
 			{
 				float M[16];
@@ -153,6 +154,22 @@ namespace MirageEngine
 				static Matrix4 GetPerspectiveMatrix(unsigned int _width, unsigned int _height, float _near, float _far, float _fov);
 
 				static Matrix4 LookAt(Vector3 eye, Vector3 center, Vector3 up);
+
+
+				// -------------------------------------------------------------------------------- //		
+				// Decomposition (For Transform usage)
+				// -------------------------------------------------------------------------------- //
+
+				/// <summary> Extracts the translation part as a Vector3. </summary>
+				Vector3 GetTranslation() const;
+
+				/// <summary> Extracts the scale part as a Vector3. </summary>
+				Vector3 GetScale() const;
+
+				/// <summary> Extracts the rotation part as a Quaternion. </summary>
+				Quaternion GetRotation() const;
+
+
 
 				// -------------------------------------------------------------------------------- //	
 				// Display inline
