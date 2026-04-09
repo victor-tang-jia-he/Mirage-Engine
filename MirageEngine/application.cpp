@@ -77,7 +77,7 @@ void Application::InitGameObject()
 	MirageEngine::GameObject* obj3 = m_SceneGraph.CreateGameObject("Monin", obj2);
 	MirageEngine::GameObject* obj4 = m_SceneGraph.CreateGameObject("Tang", obj3);
 
-	root->AddChild(obj3);
+	//root->AddChild(obj3);
 
 	obj1->AddComponent<Camera>();
 	obj1->AddComponent<InputMapping>();

@@ -102,3 +102,11 @@ void Transform::SetRotation(Quaternion _rotation)
 	m_bDirty = true;
 	m_LocalRotation = _rotation;
 }
+
+void Transform::SetLocalMatrix(Math::Matrix4 _mat)
+{
+	m_LocalPosition = _mat.GetTranslation();
+	m_LocalScale = _mat.GetScale();
+	m_LocalRotation = _mat.GetRotation();
+	m_bDirty = true;
+}

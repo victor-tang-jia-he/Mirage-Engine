@@ -38,8 +38,7 @@ namespace MirageEngine
 		void UpdateWorldMatrix(GameObject* _startObject);
 		void UpdateAllWorldMatrices();															// done
 
-		bool SetParent(GameObject* _parent, GameObject* child); // Manages all the logic of change of parenting.  // done
-		std::vector<GameObject*> GetChildren(GameObject* _parent);												  // done
+		bool SetParent(GameObject* _parent, GameObject* child); // Manages all the logic of change of parenting.
 
 		void ObjectPicking(float _mouseX, float _mouseY); // Porjects a raycast to select an object
 
@@ -52,6 +51,6 @@ namespace MirageEngine
 		MirageEngine::Core::Components::Camera* GetActiveCamera() const { return m_ActiveCamera; }
 	protected:
 	private:
-		void WorldMatrixRecursive(GameObject* _obj, const void* _parentMatrix);
+		void WorldMatrixRecursive(GameObject* _obj, const void* _parentMatrix, bool _forceUpdate);
 	};
 }

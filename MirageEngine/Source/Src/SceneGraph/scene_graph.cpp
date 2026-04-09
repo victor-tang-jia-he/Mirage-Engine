@@ -50,15 +50,15 @@ namespace MirageEngine
 
 	void SceneGraph::UpdateAllWorldMatrices()
 	{
-		MirageEngine::Core::Math::Matrix4 Identity = MirageEngine::Core::Math::Matrix4::Identity();
+		MirageEngine::Core::Math::Matrix4 Identity = Core::Math::Matrix4::Identity();
 
 		for (GameObject* root : m_RootsList)
 		{
-			WorldMatrixRecursive(root, &Identity);
+			WorldMatrixRecursive(root, &Identity, false);
 		}
 	}
 
-	std::vector<GameObject*> SceneGraph::GetChildren(GameObject* _parent)
+	std::vector<GameObject*> SceneGraph::GetChildren(GameObject* _parent) const
 	{
 		if (_parent == nullptr)
 			return m_RootsList;
@@ -70,11 +70,16 @@ namespace MirageEngine
 		if (!_child) return false;
 		if (_child == _parent) return false;
 
+		std::cout << "\n--- DEBUT SET PARENT ---" << std::endl;
+		std::cout << "Enfant: " << _child->GetName() << " | Parent: " << (_parent ? _parent->GetName() : "Root") << std::endl;
+
+		Core::Math::Matrix4 childWorldBefore = _child->Transform.GetWorldMatrix();
+
 		GameObject* current = _parent;
 		while (current != nullptr)
 		{
 			if (current == _child)
-			{
+			{	
 				std::cout << "Error: Circular dependency detected!" << std::endl;
 				return false;
 			}
@@ -99,20 +104,46 @@ namespace MirageEngine
 			_child->SetParent(_parent);
 		}
 
+		if (_parent != nullptr)
+		{
+			Core::Math::Matrix4 invParent = _parent->Transform.GetWorldMatrix().Inverse();
+			Core::Math::Matrix4 newLoc = invParent * childWorldBefore;
+
+			_child->Transform.SetLocalMatrix(newLoc);
+			std::cout << "New Local calculated. Scale: " << newLoc.GetScale().X << std::endl;
+		}
+		else
+		{
+			std::cout << "Root" << std::endl;
+			_child->Transform.SetLocalMatrix(childWorldBefore);
+		}
+
 		_child->SetDirty(true);
 
 		return true;
 	}
 
-	void WorldMatrixRecursive(GameObject* _obj, const void* _parentMatrix)
+	void SceneGraph::WorldMatrixRecursive(GameObject* _obj, const void* _parentMatrix, bool _forceUpdate)
 	{
-		MirageEngine::Core::Math::Matrix4 localMat = _obj->Transform.GetMatrix();
-		const MirageEngine::Core::Math::Matrix4* parentMat = static_cast<const MirageEngine::Core::Math::Matrix4*>(_parentMatrix);
-		MirageEngine::Core::Math::Matrix4 worldMatrix = (*parentMat) * localMat;
-		_obj->Transform.SetWorldMatrix(worldMatrix);
-		for (GameObject* child : _obj->GetChildren())
+		bool mustUpdate = _obj->Transform.IsDirty() || _forceUpdate;
+
+		if (mustUpdate)
 		{
-			WorldMatrixRecursive(child, &worldMatrix);
+			Core::Math::Matrix4 localMat = _obj->Transform.GetMatrix();
+			const Core::Math::Matrix4* parentMat = static_cast<const Core::Math::Matrix4*>(_parentMatrix);
+			Core::Math::Matrix4 worldMatrix = (*parentMat) * localMat;
+			_obj->Transform.SetWorldMatrix(worldMatrix);
+			for (GameObject* child : _obj->GetChildren())
+			{
+				WorldMatrixRecursive(child, &worldMatrix, true);
+			}
+		}
+		else
+		{
+			for (GameObject* child : _obj->GetChildren())
+			{
+				WorldMatrixRecursive(child, &_obj->Transform.GetWorldMatrix(), false);
+			}
 		}
 	}
 }

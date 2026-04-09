@@ -84,7 +84,6 @@ namespace Mirage
 				void* droppedPointer = DragDrop::GetPointerPayload(DragDropTag::HIERARCHY_ITEM);
 				if (droppedPointer != nullptr)
 				{
-					std::cout << "je ne suis pas nul" << std::endl;
 					MirageEngine::GameObject* draggedChild = static_cast<MirageEngine::GameObject*>(droppedPointer);
 					bool success = m_Context->SetParent(_obj, draggedChild);
 
