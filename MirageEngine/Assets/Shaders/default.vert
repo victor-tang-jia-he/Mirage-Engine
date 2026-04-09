@@ -1,5 +1,4 @@
 #version 330 core
-
 layout(location = 0) in vec3 aPos;
 layout(location = 1) in vec3 aNormal;
 layout(location = 2) in vec2 aTexCoord;
@@ -13,9 +12,9 @@ out vec3 Normal;
 out vec2 TexCoord;
 
 void main() {
-    vec4 worldPos = vec4(aPos, 1.0) * model;
+    vec4 worldPos = model * vec4(aPos, 1.0);
     FragPos = vec3(worldPos);
     Normal = mat3(transpose(inverse(model))) * aNormal;
     TexCoord = aTexCoord;
-    gl_Position = vec4(FragPos, 1.0) * view * proj;
+    gl_Position = proj * view * vec4(FragPos, 1.0);
 }

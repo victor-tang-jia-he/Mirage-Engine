@@ -162,19 +162,15 @@ bool Matrix2::operator==(const Matrix2& _other) const
 		std::abs((*this)(1, 0) - _other(1, 0)) < 1e-6f &&
 		std::abs((*this)(1, 1) - _other(1, 1)) < 1e-6f;
 }
-Vector2 Matrix2::operator[](int _index) const
-{
-	assert(_index >= 0 && _index < 2 && "Index out of range");
-	return Vector2((*this)(_index, 0), (*this)(_index, 1));
-}
 
 const float& Matrix2::operator()(size_t _row, size_t _col) const
 {
-	assert(_row < 2 && _col < 2);
-	return M[_col + _row * 2];
+    assert(_row < 2 && _col < 2);
+    return M[_row + _col * 2]; 
 }
+
 float& Matrix2::operator()(size_t _row, size_t _col)
 {
-	assert(_row < 2 && _col < 2);
-	return M[_col + _row * 2];
+    assert(_row < 2 && _col < 2);
+    return M[_row + _col * 2];
 }

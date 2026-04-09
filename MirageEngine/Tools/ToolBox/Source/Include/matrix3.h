@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 
 #include "matrix2.h"
 
@@ -182,7 +182,6 @@ namespace MirageEngine
 				bool operator==(const Matrix3& _other) const;
 
 				Vector3 operator*(const Vector3& _m);
-				Vector3 operator[](int _index) const;
 
 				// -------------------------------------------------------------------------------- //
 

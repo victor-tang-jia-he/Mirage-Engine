@@ -81,8 +81,9 @@ void Application::InitGameObject()
     ICollider*      collider      = pManager->CreateCollider(ECollisionShapeType::Box);
     IRigidBody*     rb            = pManager->CreateRigidBody(collider, ERigidBodyType::Dynamic);
     ICollider*      colliderPlane = pManager->CreateCollider(ECollisionShapeType::Box);
-    if (auto* box = colliderPlane->As<IBoxCollider>()) box->SetHalfExtents(Vector3(10, 0.5f, 10));
-    Vector3 rotation = Vector3(PI / 8.f,0.f,0.f);
+    if (auto* box = colliderPlane->As<IBoxCollider>()) box->SetHalfExtents(Vector3(1, 1, 1));
+    Vector3     rotation = Vector3(1.f, 0.f, 0.f);
+    Quaternion  rotationQ(rotation, PI / 8.f);
     IRigidBody* rb2 = pManager->CreateRigidBody(colliderPlane, ERigidBodyType::Static);
 
     MirageEngine::GameObject* root = m_SceneGraph.CreateGameObject("Root", nullptr);
@@ -103,13 +104,13 @@ void Application::InitGameObject()
     obj2->AddComponent(rb2);
     obj2->AddComponent<MeshRenderer>();
     obj2->SetPosition(Vector3(0, -3, 0));
-    obj2->SetRotation(rotation);
+    obj2->SetRotation(rotationQ);
 
     camera = obj1->GetComponent<Camera>();
     m_SceneGraph.SetEditorCamera(camera);
     InputMapping* inputMapping = obj1->GetComponent<InputMapping>();
     meshRenderer               = obj1->GetComponent<MeshRenderer>();
-    meshRenderer2               = obj2->GetComponent<MeshRenderer>();
+    meshRenderer2              = obj2->GetComponent<MeshRenderer>();
 
     std::cout << obj1->GetName().c_str() << " -> " << camera->GetName().c_str() << std::endl;
     std::cout << obj1->GetName().c_str() << " -> " << inputMapping->GetName().c_str() << std::endl;

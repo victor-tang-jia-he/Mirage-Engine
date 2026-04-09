@@ -66,6 +66,7 @@ void Bullet3RigidBody::Update()
     if (owner == nullptr) return;
     btVector3 position = m_rigidBody->getWorldTransform().getOrigin();
     btQuaternion rotation = m_rigidBody->getWorldTransform().getRotation();
+    
 
     owner->Transform.SetPosition(MirageEngine::Core::Math::Vector3(position.getX(), position.getY(), position.getZ()));
     owner->Transform.SetRotation(Quaternion(rotation.x(), rotation.y(), rotation.z(), rotation.w()));

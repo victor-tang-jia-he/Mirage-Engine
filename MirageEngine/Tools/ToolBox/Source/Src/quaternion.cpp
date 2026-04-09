@@ -131,12 +131,12 @@ Quaternion::Quaternion(float _x1, float _x2, float _x3, float _x4, float _y1, fl
 
 Quaternion::Quaternion(Matrix4 _m)
 {
-	W = sqrtf(1 + _m[0][0] + _m[1][1] + _m[2][2]) / 2.f;
+	W = sqrtf(1 + _m(0,0) + _m(1,1) + _m(2,2)) / 2.f;
 
 	float a4 = 1 / (4 * W);
-	X = (_m[2][1] - _m[1][2]) * a4;
-	Y = (_m[0][2] - _m[2][0]) * a4;
-	Z = (_m[1][0] - _m[0][1]) * a4;
+	X = (_m(2,1) - _m(1,2)) * a4;
+	Y = (_m(0,2) - _m(2,0)) * a4;
+	Z = (_m(1,0) - _m(0,1)) * a4;
 }
 
 float Quaternion::GetReal() const
