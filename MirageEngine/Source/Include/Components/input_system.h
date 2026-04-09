@@ -1,0 +1,62 @@
+#pragma once
+#include <GLFW/glfw3.h>
+
+#include <utility>
+#include <unordered_map>
+
+#include <Events/event.h>
+
+#include "component.h"
+
+#include <Components/input_mapping.h>
+
+namespace MirageEngine
+{
+    namespace Core
+    {
+        namespace Components
+        {
+            class Component; // forward declaration
+        }
+
+        namespace Input
+        {
+            struct InputBind;
+            class InputMapping;
+
+            class InputSystem
+            {
+                public:
+                protected:
+                private:
+
+                    static InputMapping*                       _currentMap;
+                    static std::unordered_map<int, InputBind*> m_heldButton;
+
+                    InputSystem& operator=(const InputSystem&) = delete;
+
+                public:
+
+                    InputSystem()                   = delete;
+                    ~InputSystem()                  = delete;
+                    InputSystem(const InputSystem&) = delete;
+
+                    static void Initialize(InputMapping* map = nullptr);
+
+                    static void Shutdown();
+
+                    static void UpdateHeldInput();
+
+                    static void KeyCallback(GLFWwindow*, int key, int, int action, int);
+
+                    static CallbackInputInfo* GetKeyStats(int key);
+
+                    static InputMapping* GetCurrentMapping() { return _currentMap; }
+
+                    static void SetCurrentMapping(InputMapping* map);
+
+                    static void Add(int _key, EventSystem::IEvent* _event);
+            };
+        } // namespace Input
+    } // namespace Core
+} // namespace MirageEngine

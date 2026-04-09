@@ -1,4 +1,4 @@
-﻿# CMake version
+# CMake version
 cmake_minimum_required(VERSION 3.16)
 
 # Project name
@@ -10,8 +10,8 @@ set(MY_BIN_OUTPUT_DIR "${CMAKE_SOURCE_DIR}/Build/${CMAKE_CXX_COMPILER_ID}_$<CONF
 message("[${CMAKE_PROJECT_NAME}]: Output directory: ${MY_BIN_OUTPUT_DIR}")
 
 # Set output directory for compiled libs and exe (project-level)
-set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${MY_BIN_OUTPUT_DIR}/libs")
-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${MY_BIN_OUTPUT_DIR}/libs")
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${MY_BIN_OUTPUT_DIR}/Libs")
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${MY_BIN_OUTPUT_DIR}/Libs")
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${MY_BIN_OUTPUT_DIR}")
 
 # Set C standard version
@@ -70,16 +70,11 @@ endif()
 # GLAD (OpenGL loader) - needed for ImGui OpenGL backend
 # ============================================================================
 # Check if glad has its own CMakeLists
-if(EXISTS ${CMAKE_SOURCE_DIR}/Libraries/glad/CMakeLists.txt)
-    add_subdirectory(Libraries/glad glad)
+if(EXISTS ${CMAKE_SOURCE_DIR}/Libraries/glad/src/glad.c)
+    add_library(glad STATIC Libraries/glad/src/glad.c)
+    target_include_directories(glad PUBLIC Libraries/glad/include)
 else()
-    # Create simple glad target
-    if(EXISTS ${CMAKE_SOURCE_DIR}/Libraries/glad/src/glad.c)
-        add_library(glad STATIC Libraries/glad/src/glad.c)
-        target_include_directories(glad PUBLIC Libraries/glad/include)
-    else()
-        message(WARNING "glad.c not found! Please generate glad files first.")
-    endif()
+    message(WARNING "glad.c not found! Please generate glad files first.")
 endif()
 
 # ============================================================================
@@ -169,10 +164,124 @@ target_compile_definitions(imgui
 add_library(ImGui::imgui ALIAS imgui)
 
 # ============================================================================
+# Tiny Object Loader
+# ============================================================================
+
+if(EXISTS "${CMAKE_SOURCE_DIR}/Libraries/TinyObjLoader" AND EXISTS "${CMAKE_SOURCE_DIR}/Libraries/TinyObjLoader/CMakeLists.txt")
+    message(STATUS "Using local TinyObjLoader")
+    set(TINYOBJLOADER_BUILD_DOCS OFF CACHE BOOL "Build documentation" FORCE)
+    set(TINYOBJLOADER_BUILD_TESTS OFF CACHE BOOL "Build tests" FORCE)
+    set(TINYOBJLOADER_BUILD_EXAMPLES OFF CACHE BOOL "Build examples" FORCE)
+    set(TINYOBJLOADER_INSTALL OFF CACHE BOOL "Generate installation target" FORCE)
+    add_subdirectory(${CMAKE_SOURCE_DIR}/Libraries/TinyObjLoader ${CMAKE_BINARY_DIR}/TinyObjLoader)
+else()
+    message(STATUS "Fetching TinyObjLoader...")
+    FetchContent_Declare(
+        tinyobjloader
+        GIT_REPOSITORY https://github.com/tinyobjloader/tinyobjloader.git
+        GIT_TAG v1.0.6
+        SOURCE_DIR ${CMAKE_SOURCE_DIR}/Libraries/TinyObjLoader
+    )
+    set(TINYOBJLOADER_BUILD_DOCS OFF CACHE BOOL "Build documentation" FORCE)
+    set(TINYOBJLOADER_BUILD_TESTS OFF CACHE BOOL "Build tests" FORCE)
+    set(TINYOBJLOADER_BUILD_EXAMPLES OFF CACHE BOOL "Build examples" FORCE)
+    set(TINYOBJLOADER_INSTALL OFF CACHE BOOL "Generate installation target" FORCE)
+    FetchContent_MakeAvailable(tinyobjloader)
+endif()
+
+if(TARGET tinyobjloader)
+    message(STATUS "TinyObjLoader target created successfully")
+    get_target_property(TINYOBJLOADER_TYPE tinyobjloader TYPE)
+    message(STATUS "TinyObjLoader target type: ${TINYOBJLOADER_TYPE}")
+else()
+    message(WARNING "TinyObjLoader target not found, checking for tinyobjloader::tinyobjloader...")
+    if(TARGET tinyobjloader::tinyobjloader)
+        message(STATUS "Found tinyobjloader::tinyobjloader target")
+    else()
+        message(FATAL_ERROR "No TinyObjLoader target found")
+    endif()
+endif()
+
+# ============================================================================
+# ImGizmo
+# ============================================================================
+
+if(EXISTS "${CMAKE_SOURCE_DIR}/Libraries/ImGizmo")
+    message(STATUS "Using local ImGizmo")
+    set(IMGIZMO_BUILD_DOCS OFF CACHE BOOL "Build documentation" FORCE)
+    set(IMGIZMO_BUILD_TESTS OFF CACHE BOOL "Build tests" FORCE)
+    set(IMGIZMO_BUILD_EXAMPLES OFF CACHE BOOL "Build examples" FORCE)
+    set(IMGIZMO_INSTALL OFF CACHE BOOL "Generate installation target" FORCE)
+else()
+    message(STATUS "Fetching ImGizmo...")
+    FetchContent_Declare(
+        imgizmo
+        GIT_REPOSITORY https://github.com/CedricGuillemet/ImGuizmo
+        GIT_TAG master
+        SOURCE_DIR ${CMAKE_SOURCE_DIR}/Libraries/ImGizmo
+    )
+    set(IMGIZMO_BUILD_DOCS OFF CACHE BOOL "Build documentation" FORCE)
+    set(IMGIZMO_BUILD_TESTS OFF CACHE BOOL "Build tests" FORCE)
+    set(IMGIZMO_BUILD_EXAMPLES OFF CACHE BOOL "Build examples" FORCE)
+    set(IMGIZMO_INSTALL OFF CACHE BOOL "Generate installation target" FORCE)
+    FetchContent_MakeAvailable(imgizmo)
+endif()
+
+
+
+# ============================================================================
+# Bullet Physics
+# ============================================================================
+
+if(EXISTS "${CMAKE_SOURCE_DIR}/Libraries/bullet3" AND EXISTS "${CMAKE_SOURCE_DIR}/Libraries/bullet3/CMakeLists.txt")
+    message(STATUS "Using local bullet3")
+    add_subdirectory(${CMAKE_SOURCE_DIR}/Libraries/bullet3 ${CMAKE_BINARY_DIR}/bullet3)
+else()
+    message(STATUS "Fetching bullet3...")
+    FetchContent_Declare(
+        bullet3
+        GIT_REPOSITORY https://github.com/bulletphysics/bullet3.git
+        SOURCE_DIR ${CMAKE_SOURCE_DIR}/Libraries/bullet3
+    )
+    FetchContent_MakeAvailable(bullet3)
+endif()
+
+# ============================================================================
+# EnTTMeta Reflection
+# ============================================================================
+
+if(EXISTS "${CMAKE_SOURCE_DIR}/Libraries/EnTTMeta" AND EXISTS "${CMAKE_SOURCE_DIR}/Libraries/EnTTMeta/CMakeLists.txt")
+    message(STATUS "Using local EnTTMeta")
+    set(ENTTMETA_BUILD_DOCS OFF CACHE BOOL "Build documentation" FORCE)
+    set(ENTTMETA_BUILD_TESTS OFF CACHE BOOL "Build tests" FORCE)
+    set(ENTTMETA_BUILD_EXAMPLES OFF CACHE BOOL "Build examples" FORCE)
+    set(ENTTMETA_INSTALL OFF CACHE BOOL "Generate installation target" FORCE)
+    add_subdirectory(${CMAKE_SOURCE_DIR}/Libraries/EnTTMeta ${CMAKE_BINARY_DIR}/EnTTMeta)
+else()
+    message(STATUS "Fetching EnTTMeta...")
+    FetchContent_Declare(
+        enttmeta
+        GIT_REPOSITORY https://github.com/skypjack/entt.git
+        GIT_TAG v3.16.0
+        SOURCE_DIR ${CMAKE_SOURCE_DIR}/Libraries/EnTTMeta
+    )
+    set(ENTTMETA_BUILD_DOCS OFF CACHE BOOL "Build documentation" FORCE)
+    set(ENTTMETA_BUILD_TESTS OFF CACHE BOOL "Build tests" FORCE)
+    set(ENTTMETA_BUILD_EXAMPLES OFF CACHE BOOL "Build examples" FORCE)
+    set(ENTTMETA_INSTALL OFF CACHE BOOL "Generate installation target" FORCE)
+    FetchContent_MakeAvailable(enttmeta)
+endif()
+
+if(TARGET enttmeta)
+    message(STATUS "EnTTMeta target created successfully")
+    get_target_property(ENTTMETA_TYPE enttmeta TYPE)
+    message(STATUS "EnTTMeta target type: ${ENTTMETA_TYPE}")
+endif()
+
+# ============================================================================
 # System Engine Library (Core)
 # ============================================================================
-add_subdirectory(${CMAKE_SOURCE_DIR}/mirage_engine/engine/core)
-add_subdirectory(${CMAKE_SOURCE_DIR}/mirage_engine/tools/toolbox3D)
+add_subdirectory(${CMAKE_SOURCE_DIR}/MirageEngine/Tools/Toolbox)
 
 # Create Convenience Interface for All Dependencies
 add_library(third_party INTERFACE)
@@ -181,9 +290,14 @@ target_include_directories(third_party INTERFACE
     ${CMAKE_SOURCE_DIR}/Libraries/glad/include
     ${CMAKE_SOURCE_DIR}/Libraries/GLFW/include
     ${CMAKE_SOURCE_DIR}/Libraries/imgui
+    ${CMAKE_SOURCE_DIR}/Libraries/ImGizmo
     ${CMAKE_SOURCE_DIR}/Libraries/imgui/backends
+    ${CMAKE_SOURCE_DIR}/Libraries/TinyObjLoader
     ${CMAKE_SOURCE_DIR}/Libraries/stb_image
+    ${CMAKE_SOURCE_DIR}/Libraries/EnTTMeta/single_include
+    ${CMAKE_SOURCE_DIR}/Libraries/EnTTMeta/src
     ${CMAKE_SOURCE_DIR}/Libraries
+    ${CMAKE_SOURCE_DIR}/Libraries/bullet3/src
 )
 
 target_link_libraries(third_party INTERFACE
@@ -191,18 +305,21 @@ target_link_libraries(third_party INTERFACE
     glfw
     glad
     imgui
+    tinyobjloader
     OpenGL::GL
     Toolbox
-    Core
+    BulletDynamics
+    BulletCollision
+    LinearMath
 ) 
 
 # Engine project
 message(STATUS "Adding mirage_engine project...")
-add_subdirectory(mirage_engine)
+add_subdirectory(MirageEngine)
 
 # Editor project
 message(STATUS "Adding mirage_engine_editor project...")
-add_subdirectory(mirage_engine_editor)
+add_subdirectory(MirageEngineEditor)
 
 # Final Log
 message(STATUS "")
