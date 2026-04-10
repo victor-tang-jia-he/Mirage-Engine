@@ -13,15 +13,15 @@ namespace MirageEngine::Core::Physics
         private:
 
             btCollisionShape* m_CollisionShape = nullptr;
-            btCompoundShape*  m_Compound       = nullptr;
             float             m_Radius         = 1.f;
+            btTransform       m_LocalTransform;
 
         public:
 
             Bullet3SphereCollider() = default;
             ~Bullet3SphereCollider() override;
 
-            bool Create() override;
+            void Create() override;
 
             void Init() override {};
             void Update() override {};
@@ -36,12 +36,6 @@ namespace MirageEngine::Core::Physics
 
             IBulletColliderData* AsBullet3Collider() override { return this; }
 
-        private:
-
-            void UpdateRigidBodyTransform();
-
-            void UpdateCompoundShape();
-
-            void UpdateCollisionShape();
+            btTransform GetTransform() override;
     };
 } // namespace MirageEngine::Core::Physics

@@ -2,13 +2,20 @@
 #include "bullet3_pch.h"
 #include "../i_rigidbody.h"
 
+DECLARE_LOG_CATEGORY_EXTERN(LogBullet3Rigidbody)
+
 namespace MirageEngine::Core::Physics
 {
+    class Bullet3BoxCollider;
+
     class Bullet3RigidBody : public IRigidBody
     {
+            friend class Bullet3BoxCollider;
+
         private:
 
-            btRigidBody* m_rigidBody = nullptr;
+            btRigidBody*     m_rigidBody = nullptr;
+            btCompoundShape* m_Compound  = nullptr;
 
         public:
 
@@ -24,7 +31,10 @@ namespace MirageEngine::Core::Physics
             void SetType(ERigidBodyType _type) override;
             void SetMass(float _mass) override;
 
-            void SetNewCollisionShape(ICollider* _newShape);
+            void AddCollider(ICollider* _newCollider) override;
+            void RemoveCollider(ICollider* _collider) override;
+
+            void UpdateCompound();
 
             btRigidBody* GetBullet3RigidBody() const { return m_rigidBody; }
 

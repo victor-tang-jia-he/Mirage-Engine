@@ -4,4 +4,4 @@
 // here lay all common include for bullet3
 #include <bullet3/src/btBulletDynamicsCommon.h>
 
-#include <logs/log.h>
+#include <logs/log_macro.h>
