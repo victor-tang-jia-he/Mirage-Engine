@@ -1,5 +1,5 @@
 # CMake version
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.20)
 
 # Project name
 project(CustomEngine)
@@ -36,9 +36,6 @@ message(STATUS "================================================================
 message(STATUS "GLFW")
 
 set(GLFW_SOURCE "${CMAKE_SOURCE_DIR}/Libraries/GLFW")
-
-file(GLOB GLFW_CONTENTS ${GLFW_SOURCE}/*)
-list(LENGTH GLFW_CONTENTS GLFW_CONTENT_COUNT)
 
 set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)
 set(GLFW_BUILD_TESTS OFF CACHE BOOL "" FORCE)
@@ -83,11 +80,13 @@ message(STATUS "================================================================
 message(STATUS "GLAD")
 
 if(EXISTS ${CMAKE_SOURCE_DIR}/Libraries/Glad/Src/Glad/glad.c)
-    add_library(glad STATIC Libraries/Glad/Src/Glad/glad.c)
-    target_include_directories(glad PUBLIC Libraries/Glad/Include)
+    add_library(glad STATIC ${CMAKE_SOURCE_DIR}/Libraries/Glad/Src/Glad/glad.c)
+    target_include_directories(glad PUBLIC ${CMAKE_SOURCE_DIR}/Libraries/Glad/Include)
 else()
     message(WARNING "glad.c not found! Please generate glad files first.")
 endif()
+
+message(STATUS "GLAD target created successfully")
 
 message(STATUS "================================================================================")
 message("")
@@ -119,9 +118,10 @@ if(NOT EXISTS ${IMGUI_DIR} OR IMGUI_CONTENT_COUNT EQUAL 0)
         message(FATAL_ERROR "ImGui failed to populate")
     endif()
 else()
-    message(STATUS "Using local ImGui")
+    message(STATUS "Using local ImGui from ${IMGUI_DIR}")
 endif()
 
+set(imgui_SOURCE_DIR ${IMGUI_DIR})
 message(STATUS "ImGui fetched successfully")
 
 # Explicit list of ImGui core files (more reliable than GLOB)
@@ -275,7 +275,7 @@ set(BUILD_CLSOCKET OFF CACHE BOOL "" FORCE)
 set(BUILD_ENET OFF CACHE BOOL "" FORCE)
 set(USE_GRAPHICAL_BENCHMARK OFF CACHE BOOL "" FORCE)
 
-if(EXISTS "${CMAKE_SOURCE_DIR}/Libraries/Bullet3Collision" AND EXISTS "${CMAKE_SOURCE_DIR}/Libraries/Bullet3/CMakeLists.txt")
+if(EXISTS "${CMAKE_SOURCE_DIR}/Libraries/Bullet3/CMakeLists.txt")
     message(STATUS "Using local Bullet3")
     add_subdirectory(${CMAKE_SOURCE_DIR}/Libraries/Bullet3 ${CMAKE_BINARY_DIR}/Bullet3)
 else()
@@ -372,7 +372,7 @@ target_include_directories(third_party INTERFACE
     ${CMAKE_SOURCE_DIR}/Libraries/ImGizmo
     ${CMAKE_SOURCE_DIR}/Libraries/ImGui/backends
     ${CMAKE_SOURCE_DIR}/Libraries/TinyObjLoader
-    ${CMAKE_SOURCE_DIR}/Libraries/stb_image
+    ${CMAKE_SOURCE_DIR}/Libraries/STBImage
     ${CMAKE_SOURCE_DIR}/Libraries/EnTT/single_include
     ${CMAKE_SOURCE_DIR}/Libraries/EnTT/src
     ${CMAKE_SOURCE_DIR}/Libraries/Bullet3/src
