@@ -107,6 +107,8 @@ namespace MirageEngine
 		void SetRotation(MirageEngine::Core::Math::Quaternion _rotation);
 		void SetPosition(float _x, float _y, float _z);
 		void SetPosition(MirageEngine::Core::Math::Vector3 _position);
+		void SetScale(float _x, float _y, float _z);
+		void SetScale(MirageEngine::Core::Math::Vector3 _scale);
 		
 	}; // namespace MirageEngine
 }

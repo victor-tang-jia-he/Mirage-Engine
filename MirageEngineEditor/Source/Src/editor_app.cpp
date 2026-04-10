@@ -41,6 +41,7 @@ namespace Mirage
 			}
 		}
 
+		MirageEditor::Guizmo::ViewGuizmo(m_SceneGraph);
 		MirageEditor::Guizmo::EditTransform(m_SceneGraph);
 
 		UIWrapper::EndFrame();

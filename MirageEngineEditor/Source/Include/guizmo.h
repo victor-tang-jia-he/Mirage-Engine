@@ -12,4 +12,5 @@ namespace MirageEngine
 namespace MirageEditor::Guizmo
 {
 	void EditTransform(MirageEngine::SceneGraph* _sceneGraph);
+	void ViewGuizmo(MirageEngine::SceneGraph* _sceneGraph);
 }

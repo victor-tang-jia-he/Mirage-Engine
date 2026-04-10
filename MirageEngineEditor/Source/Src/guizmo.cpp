@@ -30,21 +30,6 @@ void MirageEditor::Guizmo::EditTransform(MirageEngine::SceneGraph* _sceneGraph)
 	if (ImGui::IsKeyPressed(ImGuiKey_Y))
 		mCurrentGizmoOperation = ImGuizmo::SCALE;
 
-	/*if (ImGui::RadioButton("Translate", mCurrentGizmoOperation == ImGuizmo::TRANSLATE))
-		mCurrentGizmoOperation = ImGuizmo::TRANSLATE;
-	ImGui::SameLine();
-	if (ImGui::RadioButton("Rotate", mCurrentGizmoOperation == ImGuizmo::ROTATE))
-		mCurrentGizmoOperation = ImGuizmo::ROTATE;
-	ImGui::SameLine();
-	if (ImGui::RadioButton("Scale", mCurrentGizmoOperation == ImGuizmo::SCALE))
-		mCurrentGizmoOperation = ImGuizmo::SCALE;
-	float matrixTranslation[3], matrixRotation[3], matrixScale[3];
-	ImGuizmo::DecomposeMatrixToComponents(localMatrix, matrixTranslation, matrixRotation, matrixScale);
-	ImGui::InputFloat3("Tr", matrixTranslation, "%.3f", 3);
-	ImGui::InputFloat3("Rt", matrixRotation, "%.3f", 3);
-	ImGui::InputFloat3("Sc", matrixScale, "%.3f", 3);
-	ImGuizmo::RecomposeMatrixFromComponents(matrixTranslation, matrixRotation, matrixScale, localMatrix);*/
-
 	if (ImGui::IsKeyPressed(ImGuiKey_L))
 	{
 		if (mCurrentGizmoMode == ImGuizmo::WORLD)
@@ -53,24 +38,6 @@ void MirageEditor::Guizmo::EditTransform(MirageEngine::SceneGraph* _sceneGraph)
 			mCurrentGizmoMode = ImGuizmo::WORLD;
 	}
 
-	/*if (mCurrentGizmoOperation != ImGuizmo::SCALE)
-	{
-		if (ImGui::RadioButton("Local", mCurrentGizmoMode == ImGuizmo::LOCAL))
-			mCurrentGizmoMode = ImGuizmo::LOCAL;
-		ImGui::SameLine();
-		if (ImGui::RadioButton("World", mCurrentGizmoMode == ImGuizmo::WORLD))
-			mCurrentGizmoMode = ImGuizmo::WORLD;
-	}
-	static bool useSnap(false);
-	if (ImGui::IsKeyPressed(ImGuiKey_U))
-		useSnap = !useSnap;
-	ImGui::SameLine();
-
-	ImGuiIO& io = ImGui::GetIO();
-	ImGuizmo::SetRect(0, 0, io.DisplaySize.x, io.DisplaySize.y);*/
-
-	if (mCurrentGizmoOperation == ImGuizmo::SCALE) // Desabled Scale Temporarily (TODO: Fix Scale)
-		return;
 	bool manipulated = ImGuizmo::Manipulate(
 		mainCamera->GetView().ToArray().data(),
 		mainCamera->GetPerspective().ToArray().data(),
@@ -86,11 +53,26 @@ void MirageEditor::Guizmo::EditTransform(MirageEngine::SceneGraph* _sceneGraph)
 			Math::Matrix4 parentWorld = parent->Transform.GetWorldMatrix().Inverse() *worldMatrix;
 			_sceneGraph->GetSelectedObject()->SetPosition(parentWorld.GetTranslation());
 			_sceneGraph->GetSelectedObject()->SetRotation(parentWorld.GetRotation());
+			_sceneGraph->GetSelectedObject()->SetScale(parentWorld.GetScale());
 		}
 		else
 		{
 			_sceneGraph->GetSelectedObject()->SetPosition(worldMatrix.GetTranslation());
 			_sceneGraph->GetSelectedObject()->SetRotation(worldMatrix.GetRotation());
+			_sceneGraph->GetSelectedObject()->SetScale(worldMatrix.GetScale());
+
 		}
 	}
+}
+
+void MirageEditor::Guizmo::ViewGuizmo(MirageEngine::SceneGraph* _sceneGraph)
+{
+	Components::Camera* mainCamera = _sceneGraph->GetActiveCamera();
+	float* view = mainCamera->GetView().M;
+
+	ImGuizmo::ViewManipulate(view, 1, ImVec2(0, 0), ImVec2(128, 128), 0);
+
+	Math::Matrix4 viewMatrix(view);
+	
+	mainCamera->Transform().SetLocalMatrix(viewMatrix.Inverse().Transpose());
 }

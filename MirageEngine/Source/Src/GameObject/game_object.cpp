@@ -80,6 +80,8 @@ void MirageEngine::GameObject::SetRotation(MirageEngine::Core::Math::Quaternion 
 
 }
 
+void MirageEngine::GameObject::SetPosition(float _x, float _y, float _z) { SetPosition(MirageEngine::Core::Math::Vector3(_x, _y, _z)); }
+
 void MirageEngine::GameObject::SetPosition(MirageEngine::Core::Math::Vector3 _pos)
 {
     Transform.SetPosition(_pos);
@@ -88,7 +90,14 @@ void MirageEngine::GameObject::SetPosition(MirageEngine::Core::Math::Vector3 _po
 
 }
 
-void MirageEngine::GameObject::SetPosition(float _x, float _y, float _z) { SetPosition(MirageEngine::Core::Math::Vector3(_x, _y, _z)); }
+void MirageEngine::GameObject::SetScale(float _x, float _y, float _z) { SetScale(MirageEngine::Core::Math::Vector3(_x, _y, _z)); }
+
+void MirageEngine::GameObject::SetScale(MirageEngine::Core::Math::Vector3 _scale)
+{
+	Transform.SetScale(_scale);
+
+	if (auto rb = GetComponent<MirageEngine::Core::Physics::IRigidBody>()) rb->OnTransformChanged(&Transform);
+}
 
 void MirageEngine::GameObject::SetDirty(bool _isDirty) 
 {
