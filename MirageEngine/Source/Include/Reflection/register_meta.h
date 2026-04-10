@@ -1,24 +1,27 @@
 #pragma once
 
-class RegisterMeta
+namespace MirageEngine
 {
-// Variables
-public:
-protected:
-private:
+	class RegisterMeta
+	{
+		// Variables
+	public:
+	protected:
+	private:
 
-// Methods
-public:
-	RegisterMeta();
-	~RegisterMeta();
+		// Methods
+	public:
+		RegisterMeta();
+		~RegisterMeta();
 
-	void RegisterAllMeta();
-	void RegisterMeshRendererMeta();
-	void RegisterCameraMeta();
-	void RegisterInputMappingMeta();
+		void RegisterAllMeta();
+		void RegisterMeshRendererMeta();
+		void RegisterCameraMeta();
+		void RegisterInputMappingMeta();
 
-protected:
-private:
-	void RegisterGameObjectMeta();
-	void RegisterTransformMeta();
-};
+	protected:
+	private:
+		void RegisterGameObjectMeta();
+		void RegisterTransformMeta();
+	};
+}
