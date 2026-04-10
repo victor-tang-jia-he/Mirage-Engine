@@ -95,6 +95,7 @@ namespace MirageEngine
 		uint64_t GetID() const { return m_ID; }
 		bool GetIsStatic() const { return m_bIsStatic; }
 		bool GetIsActive() const { return m_bIsActive; }
+		std::vector<MirageEngine::Core::Components::Component*> GetComponents() const { return m_Components; }
 
 		// Setters
 		void SetName(std::string _name) { m_Name = _name; }

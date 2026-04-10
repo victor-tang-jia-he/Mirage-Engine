@@ -17,7 +17,7 @@ namespace Mirage
 
 		m_PanelList.push_back(std::make_unique<Viewport>("Viewport"));
 		m_PanelList.push_back(std::make_unique<Hierarchy>("Hierarchy", m_SceneGraph));
-		m_PanelList.push_back(std::make_unique<Inspector>("Inspector"));
+		m_PanelList.push_back(std::make_unique<Inspector>("Inspector", m_SceneGraph));
 		m_PanelList.push_back(std::make_unique<Console>("Console"));
 		m_PanelList.push_back(std::make_unique<Explorer>("Explorer"));
 

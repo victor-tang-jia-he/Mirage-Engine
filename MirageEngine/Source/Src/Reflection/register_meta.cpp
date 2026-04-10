@@ -46,23 +46,40 @@ void RegisterMeta::RegisterGameObjectMeta()
 
 	gameObject.ctor<GameObject*, std::string, bool, bool>();
 
-	gameObject.data<&GameObject::SetName, &GameObject::GetName>("Name"_hs);
-	gameObject.data<&GameObject::SetIsActive, &GameObject::GetIsActive>("IsActive"_hs);
-	gameObject.data<&GameObject::SetIsStatic, &GameObject::GetIsStatic>("IsStatic"_hs);
+	gameObject.data<&GameObject::SetName, &GameObject::GetName>("Name");
+	gameObject.data<&GameObject::SetIsActive, &GameObject::GetIsActive>("IsActive");
+	gameObject.data<&GameObject::SetIsStatic, &GameObject::GetIsStatic>("IsStatic");
 }
 
 void RegisterMeta::RegisterTransformMeta()
 {
+	std::cout << "[DEBUG REGISTER] Registering Transform metadata\n" << std::flush;
+	
 	entt::meta_factory<Components::Transform> transform{};
 
 	transform.type("Transform"_hs);
-
 	transform.ctor<Math::Vector3, Math::Quaternion, Math::Vector3>();
 
-	transform.data<&Components::Transform::SetPosition, &Components::Transform::GetPosition>("Position"_hs);
-	transform.data<&Components::Transform::SetRotation, &Components::Transform::GetRotation>("Rotation"_hs);
-	transform.data<&Components::Transform::SetRotation, &Components::Transform::GetScale>("Scale"_hs);
+	std::cout << "[DEBUG REGISTER] Setting Position property with setter/getter\n" << std::flush;
+	transform.data<&Components::Transform::SetPosition, &Components::Transform::GetPosition>("Position");
+	
+	std::cout << "[DEBUG REGISTER] Setting Rotation property with setter/getter\n" << std::flush;
+	transform.data<&Components::Transform::SetRotation, &Components::Transform::GetRotation>("Rotation");
+	
+	std::cout << "[DEBUG REGISTER] Setting Scale property with setter/getter\n" << std::flush;
+	transform.data<&Components::Transform::SetScale, &Components::Transform::GetScale>("Scale");
+	
+	auto transType = entt::resolve("Transform"_hs);
+	if (transType) {
+		std::cout << "[DEBUG REGISTER] Transform type resolved successfully\n" << std::flush;
+		for (auto [id, data] : transType.data()) {
+			std::cout << "[DEBUG REGISTER]   - Property: " << data.name() << "\n" << std::flush;
+		}
+	} else {
+		std::cout << "[DEBUG REGISTER] ERREUR: Transform type could not be resolved\n" << std::flush;
+	}
 }
+
 void RegisterMeta::RegisterMeshRendererMeta()
 {
 	entt::meta_factory<MeshRenderer> meshRenderer{};
@@ -70,8 +87,8 @@ void RegisterMeta::RegisterMeshRendererMeta()
 
 	meshRenderer.base<Component>();
 
-	meshRenderer.data<&MeshRenderer::SetMesh, &MeshRenderer::GetMesh>("Mesh"_hs);
-	meshRenderer.data<&MeshRenderer::SetMaterial, &MeshRenderer::GetMaterial>("Material"_hs);
+	meshRenderer.data<&MeshRenderer::SetMesh, &MeshRenderer::GetMesh>("Mesh");
+	meshRenderer.data<&MeshRenderer::SetMaterial, &MeshRenderer::GetMaterial>("Material");
 }
 
 void RegisterMeta::RegisterCameraMeta()
@@ -81,11 +98,11 @@ void RegisterMeta::RegisterCameraMeta()
 
 	camera.base<Component>();
 
-	camera.data<&Camera::SetFov, &Camera::GetFov>("Field of View"_hs);
-	camera.data<&Camera::SetNear, &Camera::GetNear>("Near Plane"_hs);
-	camera.data<&Camera::SetFar, &Camera::GetFar>("Far Plane"_hs);
-	camera.data<&Camera::SetWidth, &Camera::GetWidth>("Width"_hs);
-	camera.data<&Camera::SetHeight, &Camera::GetHeight>("Height"_hs);
+	camera.data<&Camera::SetFov, &Camera::GetFov>("Field of View");
+	camera.data<&Camera::SetNear, &Camera::GetNear>("Near Plane");
+	camera.data<&Camera::SetFar, &Camera::GetFar>("Far Plane");
+	camera.data<&Camera::SetWidth, &Camera::GetWidth>("Width");
+	camera.data<&Camera::SetHeight, &Camera::GetHeight>("Height");
 }
 
 void RegisterMeta::RegisterInputMappingMeta()
@@ -95,17 +112,17 @@ void RegisterMeta::RegisterInputMappingMeta()
 	entt::meta_factory<CallbackInputInfo> callbackInputInfo{};
 	callbackInputInfo.type("InputInfo"_hs);
 
-	callbackInputInfo.data<&CallbackInputInfo::Pressed>("Pressed"_hs);
-	callbackInputInfo.data<&CallbackInputInfo::Held>("Held"_hs);
-	callbackInputInfo.data<&CallbackInputInfo::Released>("Released"_hs);;
+	callbackInputInfo.data<&CallbackInputInfo::Pressed>("Pressed");
+	callbackInputInfo.data<&CallbackInputInfo::Held>("Held");
+	callbackInputInfo.data<&CallbackInputInfo::Released>("Released");;
 
 	entt::meta_factory<InputMapping> inputMapping{};
 	inputMapping.type("InputMappingReflection"_hs);
 
 	inputMapping.base<Component>();
 
-	inputMapping.data<&InputMapping::Map>("Bindings"_hs);
+	inputMapping.data<&InputMapping::Map>("Bindings");
 
-	inputMapping.func<&InputMapping::Clear>("ClearAll"_hs);
-	inputMapping.func<(void(InputMapping::*)(int))& InputMapping::Remove>("RemoveKey"_hs);
+	inputMapping.func<&InputMapping::Clear>("ClearAll");
+	inputMapping.func<(void(InputMapping::*)(int))& InputMapping::Remove>("RemoveKey");
 }
