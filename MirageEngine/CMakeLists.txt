@@ -3,20 +3,21 @@ add_library(MirageEngine STATIC)
 
 # Sources
 file(GLOB_RECURSE MIRAGE_ENGINE_SOURCES
-	"Source/Src/*.cpp"
-	"Source/Src/RHI/*.cpp"
-	"Components/*.c"
-	"Components/*.cpp"
-	"application.cpp"
-	"main.cpp"
+	"${CMAKE_CURRENT_SOURCE_DIR}/*.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/Source/Src/*.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/Source/Src/RHI/*.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/Source/Src/SceneGraph/*.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/Components/*.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/application/*.cpp"
 )
 
 file(GLOB_RECURSE MIRAGE_ENGINE_HEADERS
-	"Source/Src/*.h"
-	"Source/Src/RHI/*.h"
-	"application.h"
-	"Components/*.h"
-	"Components/*.hpp"
+	"${CMAKE_CURRENT_SOURCE_DIR}/*.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/Source/Src/*.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/Source/Src/RHI/*.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/Source/Src/SceneGraph/*.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/Components/*.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/application/*.h"
 )
 
 target_sources(MirageEngine PRIVATE ${MIRAGE_ENGINE_SOURCES} ${MIRAGE_ENGINE_HEADERS} "Source/Src/SceneGraph/scene_graph.cpp")
@@ -42,20 +43,19 @@ target_compile_options(MirageEngine PRIVATE
 target_link_libraries(MirageEngine PRIVATE third_party)
 
 # Copy all asset in the build
-if(EXISTS ${PROJECT_SOURCE_DIR}/MirageEngine/Assets)
-	add_custom_command(TARGET MirageEngine POST_BUILD
-		COMMAND ${CMAKE_COMMAND} -E copy_directory
-			"${CMAKE_SOURCE_DIR}/MirageEngine/Assets"
-			"${CMAKE_SOURCE_DIR}/Build/${CMAKE_CXX_COMPILER_ID}_$<CONFIG>/Assets")
-	message(STATUS "Assets copied successfully")
-endif()
+set(ASSETS_SOURCE "${CMAKE_SOURCE_DIR}/MirageEngine/Assets")
+set(ASSETS_DEST "${CMAKE_SOURCE_DIR}/Build/${CMAKE_CXX_COMPILER_ID}_$<CONFIG>/Assets")
 
-
-# Debug
-if(WIN32)
-  add_custom_command(
-    TARGET MirageEngine POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different
-    $<TARGET_FILE:cpptrace::cpptrace>
-    "${CMAKE_SOURCE_DIR}/Build/${CMAKE_CXX_COMPILER_ID}_$<CONFIG>")
+if(EXISTS ${ASSETS_SOURCE})
+    add_custom_command(TARGET MirageEngine POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E make_directory "${ASSETS_DEST}"
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+            "${ASSETS_SOURCE}"
+            "${ASSETS_DEST}"
+        COMMENT "Copying assets to ${ASSETS_DEST}"
+        VERBATIM
+    )
+    message(STATUS "Assets will be copie from ${ASSETS_SOURCE}")
+else()
+    message(STATUS "No Assets folder found at ${ASSETS_SOURCE} skip asset copy")
 endif()
