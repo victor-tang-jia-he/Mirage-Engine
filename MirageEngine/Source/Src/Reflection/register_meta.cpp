@@ -49,6 +49,9 @@ void RegisterMeta::RegisterGameObjectMeta()
 	gameObject.data<&GameObject::SetName, &GameObject::GetName>("Name");
 	gameObject.data<&GameObject::SetIsActive, &GameObject::GetIsActive>("IsActive");
 	gameObject.data<&GameObject::SetIsStatic, &GameObject::GetIsStatic>("IsStatic");
+
+	gameObject.data<static_cast<void(GameObject::*)(Math::Vector3)>(&GameObject::SetPosition), &GameObject::GetPosition>("Position");
+	gameObject.data<&GameObject::SetRotation, &GameObject::GetRotation>("Rotation");
 }
 
 void RegisterMeta::RegisterTransformMeta()

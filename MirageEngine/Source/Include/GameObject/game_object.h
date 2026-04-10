@@ -96,6 +96,9 @@ namespace MirageEngine
 		bool GetIsStatic() const { return m_bIsStatic; }
 		bool GetIsActive() const { return m_bIsActive; }
 		std::vector<MirageEngine::Core::Components::Component*> GetComponents() const { return m_Components; }
+		MirageEngine::Core::Math::Vector3 GetPosition() const { return Transform.GetPosition(); }
+		MirageEngine::Core::Math::Quaternion GetRotation() const { return Transform.GetRotation(); }
+		MirageEngine::Core::Math::Vector3 GetScale() const { return Transform.GetScale(); }
 
 		// Setters
 		void SetName(std::string _name) { m_Name = _name; }
