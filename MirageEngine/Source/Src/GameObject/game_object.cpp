@@ -74,8 +74,8 @@ void MirageEngine::GameObject::RemoveChild(GameObject* _child)
 
 void MirageEngine::GameObject::SetRotation(MirageEngine::Core::Math::Quaternion _rotation)
 {
-	Transform.SetRotation(_rotation);
-
+    Transform.SetRotation(_rotation);
+    Transform.GetMatrix();
 	if (auto rb = GetComponent<MirageEngine::Core::Physics::IRigidBody>()) rb->OnTransformChanged(&Transform);
 
 }
@@ -83,15 +83,15 @@ void MirageEngine::GameObject::SetRotation(MirageEngine::Core::Math::Quaternion 
 void MirageEngine::GameObject::SetPosition(MirageEngine::Core::Math::Vector3 _pos)
 {
 	Transform.SetPosition(_pos);
-
-	if (auto rb = GetComponent<MirageEngine::Core::Physics::IRigidBody>()) rb->OnTransformChanged(&Transform);
+    Transform.GetMatrix();
+        if (auto rb = GetComponent<MirageEngine::Core::Physics::IRigidBody>()) rb->OnTransformChanged(&Transform);
 
 }
 
 void MirageEngine::GameObject::SetScale(MirageEngine::Core::Math::Vector3 _scale)
 {
-	Transform.SetScale(_scale);
-
+    Transform.SetScale(_scale);
+    Transform.GetMatrix();
 	if (auto rb = GetComponent<MirageEngine::Core::Physics::IRigidBody>()) rb->OnTransformChanged(&Transform);
 
 }

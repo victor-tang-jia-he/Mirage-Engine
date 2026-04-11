@@ -96,6 +96,24 @@ namespace MirageEngine::Core::Physics
 
             ECollisionShapeType GetColliderType() const { return m_Type; }
 
+            void SetScale(Vector3 _scale)
+            {
+                m_Scale    = _scale;
+                m_bIsDirty = true;
+            }
+
+            void SetTranslate(Vector3 _offset)
+            {
+                m_Offset   = _offset;
+                m_bIsDirty = true;
+            }
+
+            void SetRotation(Quaternion _rotation)
+            {
+                m_Rot      = _rotation;
+                m_bIsDirty = true;
+            }
+
             virtual IBulletColliderData* AsBullet3Collider() { throw std::runtime_error("Bad API Call : object is not an Bullet3 Collider"); }
 
             template <typename T> T* As() { return dynamic_cast<T*>(this); }

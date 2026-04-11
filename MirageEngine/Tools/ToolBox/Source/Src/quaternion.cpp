@@ -39,13 +39,13 @@ Quaternion::Quaternion(Quaternion&& _q) noexcept
 
 Quaternion::Quaternion(Vector3& _axis, float _angle)
 {
-	if (_axis.IsNull())
-	{
-		W = NAN;
-		X = NAN;
-		Y = NAN;
-		Z = NAN;
-	}
+    if (_axis.IsNull())
+    {
+        W = 1.0f;
+        X = 0.0f;
+        Y = 0.0f;
+        Z = 0.0f;
+    }
 
 	else
 	{

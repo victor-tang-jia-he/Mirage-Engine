@@ -105,8 +105,31 @@ void Bullet3RigidBody::OnTransformChanged(MirageEngine::Core::Components::Transf
     btTrans.setOrigin(btVector3(_newTransform->GetPosition().X, _newTransform->GetPosition().Y, _newTransform->GetPosition().Z));
     btTrans.setRotation(btQuaternion(_newTransform->GetRotation().X, _newTransform->GetRotation().Y, _newTransform->GetRotation().Z, _newTransform->GetRotation().W));
 
+    SetScale(_newTransform->GetScale());
+
     m_rigidBody->setWorldTransform(btTrans);
     m_rigidBody->getMotionState()->setWorldTransform(btTrans);
+
+    int numManifolds = PhysicsManager::Instance()->m_worldPhysics->API_Bullet3().m_World->getDispatcher()->getNumManifolds();
+    for (int i = 0; i < numManifolds; i++)
+    {
+        btPersistentManifold*    manifold = PhysicsManager::Instance()->m_worldPhysics->API_Bullet3().m_World->getDispatcher()->getManifoldByIndexInternal(i);
+        const btCollisionObject* objA     = manifold->getBody0();
+        const btCollisionObject* objB     = manifold->getBody1();
+
+        if (objA == m_rigidBody || objB == m_rigidBody)
+        {
+            const btCollisionObject* other = (objA == m_rigidBody) ? objB : objA;
+            const_cast<btCollisionObject*>(other)->activate(true);
+        }
+    }
+}
+
+void Bullet3RigidBody::SetScale(const Vector3& scale)
+{
+    if (m_CurrentScale == scale) return;
+    m_CurrentScale = scale;
+    m_bIsDirty     = true;
 }
 
 void Bullet3RigidBody::SetType(ERigidBodyType _type)
@@ -194,6 +217,8 @@ void Bullet3RigidBody::UpdateCompound()
             collider->Create();                                     // Create a new shape
         }
         collisionShape = collider->AsBullet3Collider()->GetShape(); // Get new shape created
+        Vector3 finalScale = collider->GetScale() * m_CurrentScale;
+        collisionShape->setLocalScaling(btVector3(finalScale.X, finalScale.Y, finalScale.Z));
         // Add to compound
         m_Compound->addChildShape(collisionShapeData->GetTransform(), collisionShape); // Getting new transform
     }
