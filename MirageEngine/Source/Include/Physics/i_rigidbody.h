@@ -13,14 +13,16 @@ namespace MirageEngine::Core::Physics
 
     class IRigidBody : public MirageEngine::Core::Components::Component
     {
-
-            using Vector3 = MirageEngine::Core::Math::Vector3;
-
         protected:
+            using Vector3 = MirageEngine::Core::Math::Vector3;
 
             float          m_Mass     = 1.f;
             Vector3        m_Velocity = Vector3(0.f);
             ERigidBodyType m_Type;
+
+            bool m_bIsDirty = true;
+
+            std::vector<ICollider*> m_CurrentRigidBodyShapesBind;
 
         public:
 
@@ -31,6 +33,9 @@ namespace MirageEngine::Core::Physics
 
             virtual void OnTransformChanged(MirageEngine::Core::Components::Transform* _newTransform) = 0;
             virtual void SetType(ERigidBodyType _type)                                                = 0;
+
+            virtual void AddCollider(ICollider* _newCollider) = 0;
+            virtual void RemoveCollider(ICollider* _collider) = 0;
 
             entt::id_type GetType() const override { return 0; }
 

@@ -81,9 +81,9 @@ void Application::InitGameObject()
     ICollider*      collider      = pManager->CreateCollider(ECollisionShapeType::Box);
     IRigidBody*     rb            = pManager->CreateRigidBody(collider, ERigidBodyType::Dynamic);
     ICollider*      colliderPlane = pManager->CreateCollider(ECollisionShapeType::Box);
-    if (auto* box = colliderPlane->As<IBoxCollider>()) box->SetHalfExtents(Vector3(1, 1, 1));
+    //if (auto* box = colliderPlane->As<IBoxCollider>()) box->SetHalfExtents(Vector3(1, 1, 1));
     Vector3     rotation = Vector3(1.f, 0.f, 0.f);
-    Quaternion  rotationQ(rotation, PI / 8.f);
+    Quaternion  rotationQ(rotation, PI / 12.f);
     IRigidBody* rb2 = pManager->CreateRigidBody(colliderPlane, ERigidBodyType::Static);
 
     MirageEngine::GameObject* root = m_SceneGraph.CreateGameObject("Root", nullptr);
@@ -104,6 +104,7 @@ void Application::InitGameObject()
     obj2->AddComponent<MeshRenderer>();
     obj2->SetPosition(Vector3(0, -3, 0));
     obj2->SetRotation(rotationQ);
+    obj2->SetScale(Vector3(10, 1, 10));
 
     camera = obj1->GetComponent<Camera>();
     m_SceneGraph.SetEditorCamera(camera);

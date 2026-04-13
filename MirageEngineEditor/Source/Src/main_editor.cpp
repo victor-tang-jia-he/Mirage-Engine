@@ -22,7 +22,7 @@ int main()
 	{
 		MirageEngine::TimeManager::Update();
 		MirageEngine::Core::Input::InputSystem::UpdateHeldInput();
-		MirageEngine::Core::Physics::PhysicsManager::Instance()->Update(MirageEngine::TimeManager::GetDeltaTime());
+		MirageEngine::Core::Physics::PhysicsManager::Instance()->Update(MirageEngine::TimeManager::GetDeltaTime() / 2);
 		application.m_Renderer.BeginFrame();
 		uint32_t textureID = application.m_Renderer.GetFramebufferTextureID();
 

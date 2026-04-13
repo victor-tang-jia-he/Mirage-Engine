@@ -52,8 +52,9 @@ namespace MirageEngine::Core::Physics
     {
         public:
 
-            virtual ~IBulletColliderData()       = default;
-            virtual btCollisionShape* GetShape() = 0;
+            virtual ~IBulletColliderData()           = default;
+            virtual btCollisionShape* GetShape()     = 0;
+            virtual btTransform       GetTransform() = 0;
     };
 
     //=========================================================================
@@ -70,30 +71,50 @@ namespace MirageEngine::Core::Physics
 
             IRigidBody* m_RigidBody = nullptr;
 
+            bool m_bIsDirty = true;
+
         public:
 
             virtual ~ICollider() = default;
 
-            virtual bool Create()                                         = 0;
+            virtual void Create()                                         = 0;
             virtual void Init()                                           = 0;
             virtual void Update()                                         = 0;
             virtual void SetOffset(Vector3 _offset, Quaternion _rotation) = 0;
 
-            void SetRigidbody(IRigidBody* _rigidbody)
-            {
-                if (_rigidbody == nullptr)
-                {
-                    LOG(logWarning, LogCat::System, "Trying to set with a nullptr rigidbody");
-                    return;
-                }
-                m_RigidBody = _rigidbody;
-            }
+            bool SetRigidbody(IRigidBody* _rigidbody);
 
-            entt::id_type GetType() const override { return 0; };
+            Vector3 GetScale() const { return m_Scale; }
+
+            Vector3 GetTranslate() const { return m_Offset; }
+
+            Quaternion GetRotation() const { return m_Rot; }
+
+            bool GetIsDirty() const { return m_bIsDirty; }
+
+            entt::id_type GetType() const override { return 0; }
 
             ECollisionShapeType GetColliderType() const { return m_Type; }
 
-            virtual IBulletColliderData* AsBullet3Collider() { return nullptr; }
+            void SetScale(Vector3 _scale)
+            {
+                m_Scale    = _scale;
+                m_bIsDirty = true;
+            }
+
+            void SetTranslate(Vector3 _offset)
+            {
+                m_Offset   = _offset;
+                m_bIsDirty = true;
+            }
+
+            void SetRotation(Quaternion _rotation)
+            {
+                m_Rot      = _rotation;
+                m_bIsDirty = true;
+            }
+
+            virtual IBulletColliderData* AsBullet3Collider() { throw std::runtime_error("Bad API Call : object is not an Bullet3 Collider"); }
 
             template <typename T> T* As() { return dynamic_cast<T*>(this); }
     };
