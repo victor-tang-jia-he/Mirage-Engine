@@ -3,24 +3,19 @@ add_library(MirageEngine STATIC)
 
 # Sources
 file(GLOB_RECURSE MIRAGE_ENGINE_SOURCES
-	"${CMAKE_CURRENT_SOURCE_DIR}/*.cpp"
+	"application.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/Source/Src/*.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/Source/Src/RHI/*.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/Source/Src/SceneGraph/*.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/Components/*.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/application/*.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/Tools/Toolbox/Source/*.cpp"
+
 )
 
 file(GLOB_RECURSE MIRAGE_ENGINE_HEADERS
-	"${CMAKE_CURRENT_SOURCE_DIR}/*.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/Source/Src/*.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/Source/Src/RHI/*.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/Source/Src/SceneGraph/*.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/Components/*.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/application/*.h"
+	"application.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/Source/Include/*.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/Tools/Toolbox/Include/*.h"
 )
 
-target_sources(MirageEngine PRIVATE ${MIRAGE_ENGINE_SOURCES} ${MIRAGE_ENGINE_HEADERS} "Source/Src/SceneGraph/scene_graph.cpp")
+target_sources(MirageEngine PRIVATE ${MIRAGE_ENGINE_SOURCES} ${MIRAGE_ENGINE_HEADERS})
 
 # Include directories
 target_include_directories(MirageEngine PUBLIC

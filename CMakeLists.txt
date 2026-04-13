@@ -13,7 +13,7 @@ message("[${CMAKE_PROJECT_NAME}]: Output directory: ${MIRAGE_BIN_OUTPUT_DIR}")
 # Set output directory for compiled libs and exe (project-level)
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${MIRAGE_BIN_OUTPUT_DIR}/Libs")
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${MIRAGE_BIN_OUTPUT_DIR}/Libs")
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${MIRAGE_BIN_OUTPUT_DIR}/MirageEngine")
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${MIRAGE_BIN_OUTPUT_DIR}")
 
 # Set C standard version
 set(CMAKE_C_STANDARD 11)
