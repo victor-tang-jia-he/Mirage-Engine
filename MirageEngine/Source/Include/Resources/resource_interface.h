@@ -1,24 +1,18 @@
 #pragma once
 #include <string>
 
-namespace MirageEngine
+namespace MirageEngine::Core::Resources
 {
-	namespace Core
+	// Interface
+	class IResource
 	{
-		namespace Resources
-		{
-			// Interface
-			class IResource
-			{
-				friend class ResourceManager;
-			protected:
-				std::string p_Name;
+		friend class ResourceManager;
+	protected:
+		std::string p_Name;
 
-			public:
-				virtual ~IResource() = default;
+	public:
+		virtual ~IResource() = default;
 
-				std::string GetName() { return p_Name; }
-			};
-		}
-	}
+		std::string GetName() { return p_Name; }
+	};
 }

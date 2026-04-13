@@ -15,172 +15,185 @@ DECLARE_LOG_CATEGORY_EXTERN(LogResourceManager)
 
 namespace MirageRHI
 {
-    class IShader;
-    class ITexture;
-    class IBuffer;
-    class IRenderInterface;
-    struct IPipelineParameters;
-    struct LitVertex;
+	class IShader;
+	class ITexture;
+	class IBuffer;
+	class IRenderInterface;
+	struct IPipelineParameters;
+	struct LitVertex;
 } // namespace MirageRHI
 
-namespace MirageEngine
+namespace MirageEngine::Core::Resources
 {
-    namespace Core
-    {
-        namespace Resources
-        {
-            class Texture;
-            class Mesh;
-            class Material;
-            struct Shader;
+	class Texture;
+	class Mesh;
+	class Material;
+	struct Shader;
+	struct Pipeline;
 
-            class ResourceManager
-            {
-                    friend class IResource;
+	class ResourceManager
+	{
+		friend class IResource;
 
-                private:
+	private:
 
-                    std::unordered_map<std::string, std::shared_ptr<IResource>> m_Resources;
+		std::unordered_map<std::string, std::shared_ptr<IResource>>          m_Resources;
+		std::unordered_map<std::string, std::shared_ptr<MirageRHI::IShader>> m_ShaderCache;
 
-                    std::unordered_map<std::string, std::shared_ptr<MirageRHI::IShader>> m_ShaderCache;
+		static ResourceManager* m_Instance;
+		MirageRHI::IRenderInterface* m_Rhi = nullptr;
 
-                    static ResourceManager* m_Instance;
+	public:
 
-                    MirageRHI::IRenderInterface* m_Rhi = nullptr;
+		ResourceManager() = default;
+		~ResourceManager();
 
-                public:
+		// -------------------------------------------------------------------------
+		// Lifecycle
+		// -------------------------------------------------------------------------
 
-                    static ResourceManager* Instance();
+		static ResourceManager* Instance();
 
-                    void Init(MirageRHI::IRenderInterface* _rhi);
+		/// <summary>
+		/// Initializes the ResourceManager with the given render interface.
+		/// Must be called once before any resource creation.
+		/// </summary>
+		/// <param name="_rhi">Pointer to the active render interface.</param>
+		void Init(MirageRHI::IRenderInterface* _rhi);
 
-                    void PreLoadResources();
+		/// <summary>
+		/// Pre-loads a set of essential resources at startup and all resource from Assets folder.
+		/// </summary>
+		void PreLoadResources();
 
-                    ResourceManager() = default;
-                    ~ResourceManager();
+		// -------------------------------------------------------------------------
+		// Resource creation
+		// -------------------------------------------------------------------------
 
-                    /// <summary>
-                    /// Creates a texture resource and registers it in the ResourceManager.
-                    /// </summary>
-                    /// <param name="_name">Unique identifier of the texture.</param>
-                    /// <param name="_path">File path to the texture on disk.</param>
-                    /// <returns>Pointer to the created Texture, or nullptr on failure.</returns>
-                    static Texture* CreateTexture(const std::string& _name, const std::string& _path);
+		/// <summary>
+		/// Creates a texture resource and registers it in the ResourceManager.
+		/// </summary>
+		/// <param name="_name">Unique identifier for the texture.</param>
+		/// <param name="_path">File path to the texture on disk.</param>
+		/// <returns>Pointer to the created Texture, or nullptr on failure.</returns>
+		static Texture* CreateTexture(const std::string& _name, const std::string& _path);
 
-                    /// <summary>
-                    /// Creates a shader resource from a file and registers it.
-                    /// </summary>
-                    /// <param name="_name">Unique identifier of the shader.</param>
-                    /// <param name="_path">File path to the shader source.</param>
-                    /// <param name="_type">Type of shader (e.g., vertex, fragment).</param>
-                    /// <returns>Pointer to the created shader, or nullptr on failure.</returns>
-                    static Shader* CreateShader(const std::string& _name, const std::string& _path, const MirageRHI::IShader::ShaderType _type);
+		/// <summary>
+		/// Creates a shader resource from a file and registers it.
+		/// </summary>
+		/// <param name="_name">Unique identifier for the shader.</param>
+		/// <param name="_path">File path to the shader source.</param>
+		/// <param name="_type">Type of shader (e.g., vertex, fragment).</param>
+		/// <returns>Pointer to the created Shader, or nullptr on failure.</returns>
+		static Shader* CreateShader(const std::string& _name, const std::string& _path, MirageRHI::IShader::ShaderType _type);
 
-                    /// <summary>
-                    /// Loads a mesh from file, creates GPU buffers, and registers it.
-                    /// </summary>
-                    /// <param name="_name">Unique identifier of the mesh.</param>
-                    /// <param name="_path">File path to the mesh (e.g., OBJ).</param>
-                    /// <returns>Pointer to the created mesh, or nullptr on failure.</returns>
-                    static Mesh* CreateMesh(const std::string& _name, const std::string& _path);
+		/// <summary>
+		/// Loads a mesh from file, creates the GPU buffers, and registers it.
+		/// </summary>
+		/// <param name="_name">Unique identifier for the mesh.</param>
+		/// <param name="_path">File path to the mesh asset (e.g., .obj).</param>
+		/// <returns>Pointer to the created Mesh, or nullptr on failure.</returns>
+		static Mesh* CreateMesh(const std::string& _name, const std::string& _path);
 
-                    static Material* CreateMaterial(const std::string& _name);
+		/// <summary>
+		/// Creates an empty material and registers it.
+		/// </summary>
+		/// <param name="_name">Unique identifier for the material.</param>
+		/// <returns>Pointer to the created Material, or nullptr on failure.</returns>
+		static Material* CreateMaterial(const std::string& _name);
 
-                    Texture* GetTexture(const std::string& _name);
+		/// <summary>
+		/// Creates an empty material and registers it.
+		/// </summary>
+		/// <param name="_name">Unique identifier for the material.</param>
+		/// <returns>Pointer to the created Material, or nullptr on failure.</returns>
+		static Pipeline* CreatePipeline(const std::string& _name, const char* _pathFrag, const char* _pathVertex, MirageRHI::IPipelineParameters* _pipelineParamter);
 
-                    Shader* GetVertexShader(const std::string& _name);
+		// -------------------------------------------------------------------------
+		// Resource access
+		// -------------------------------------------------------------------------
 
-                    Shader* GetFragmentShader(const std::string& _name);
+		Texture* GetTexture(const std::string& _name);
+		Shader* GetVertexShader(const std::string& _name);
+		Shader* GetFragmentShader(const std::string& _name);
+		Mesh* GetMesh(const std::string& _name);
+		Material* GetMaterial(const std::string& _name);
 
-                    Mesh* GetMesh(const std::string& _name);
+		/// <summary>
+		/// Retrieves a resource by name and casts it to the requested type.
+		/// </summary>
+		/// <typeparam name="T">Expected resource type (must inherit from IResource).</typeparam>
+		/// <param name="_name">Unique identifier of the resource.</param>
+		/// <param name="out">Output pointer set to the retrieved resource, or nullptr on failure.</param>
+		/// <returns>True if the resource was found and the cast succeeded, false otherwise.</returns>
+		template <typename T>
+		static bool TryGet(const std::string& _name, T*& out)
+		{
+			if (!std::is_base_of_v<MirageEngine::Core::Resources::IResource, T>) return false;
 
-                    Material* GetMaterial(const std::string& _name);
+			ResourceManager* resourceManager = ResourceManager::Instance();
 
-                    /// <summary>
-                    /// Retrieves a resource by name and casts it to the requested type.
-                    /// </summary>
-                    /// <typeparam name="T">Expected resource type (must inherit from IResource).</typeparam>
-                    /// <typeparam name="T">Output parameter to store the retrieved resource.</typeparam>
-                    /// <param name="_name">Name of the resource.</param>
-                    /// <returns>
-                    /// True if found and valid,
-                    /// otherwise False.
-                    /// </returns>
-                    template <typename T> static bool TryGet(const std::string& _name, T*& out)
-                    {
-                        if (!std::is_base_of_v<MirageEngine::Core::Resources::IResource, T>) return false;
-                        ResourceManager* resourceManager = ResourceManager::Instance();
+			auto it = resourceManager->m_Resources.find(_name);
+			if (it != resourceManager->m_Resources.end())
+			{
+				out = dynamic_cast<T*>(it->second.get());
+				return out != nullptr;
+			}
 
-                        auto it = resourceManager->m_Resources.find(_name);
-                        if (it != resourceManager->m_Resources.end())
-                        {
-                            out = dynamic_cast<T*>(it->second.get());
-                            return out != nullptr;
-                        }
+			out = nullptr;
+			return false;
+		}
 
-                        out = nullptr;
-                        return false;
-                    }
+		// -------------------------------------------------------------------------
+		// Resource removal
+		// -------------------------------------------------------------------------
 
-                    /// <summary>
-                    /// Removes a resource from the manager by name.
-                    /// </summary>
-                    /// <param name="_name">Name of the resource to delete.</param>
-                    /// <returns>True if the resource was found and removed, false otherwise.</returns>
-                    inline bool Delete(const std::string& _name) { return m_Resources.erase(_name) > 0; }
+		/// <summary>
+		/// Removes a resource from the manager by name.
+		/// </summary>
+		/// <param name="_name">Unique identifier of the resource to remove.</param>
+		/// <returns>True if the resource was found and removed, false otherwise.</returns>
+		inline bool Delete(const std::string& _name) { return m_Resources.erase(_name) > 0; }
 
-                private:
+	private:
 
-                    /// <summary>
-                    /// Generate a Unique name
-                    /// </summary>
-                    /// <param name="baseName">Original name</param>
-                    /// <returns>New name exemple : (enter)resourceName -> (OutPut) resourceName_1 </returns>
-                    std::string GenerateUniqueAssetName(const std::string& _baseName);
+		// -------------------------------------------------------------------------
+		// Internal utilities
+		// -------------------------------------------------------------------------
 
-                    // Source - https://stackoverflow.com/a
-                    // Posted by Max, modified by community. See post 'Timeline' for change history
-                    // Retrieved 2026-01-28, License - CC BY-SA 4.0
+		/// <summary>
+		/// Generates a unique name by appending an incremented suffix if the base name is already taken.
+		/// </summary>
+		/// <param name="_baseName">Desired resource name.</param>
+		/// <returns>A unique name (e.g., "resourceName" becomes "resourceName_1").</returns>
+		std::string GenerateUniqueAssetName(const std::string& _baseName);
 
-                    /// <summary>
-                    /// Remove an element from a vector list
-                    /// </summary>
-                    /// <param name="_vec">the vector </param>
-                    /// <param name="_pos">the index of the element need to be removed</param>
-                    template <typename T> static void Remove(std::vector<T>& _vec, std::size_t _pos)
-                    {
-                        if (_pos < _vec.size())
-                        {
-                            typename std::vector<T>::iterator it = _vec.begin();
-                            std::advance(it, _pos);
-                            _vec.erase(it);
-                        }
-                    }
+		void LoadMeshUtility(std::string _path, std::vector<MirageRHI::LitVertex>& _vertices, std::vector<uint32_t>& _indices);
 
-                    void LoadMeshUtility(std::string _path, std::vector<MirageRHI::LitVertex>& _vertices, std::vector<uint32_t>& _indices);
+		void LoadTextureUtility(const std::string& _path, int& m_Width, int& m_Height, int& m_Channel, int& m_Format, unsigned char*& m_Data);
 
-                    void LoadTextureUtility(const std::string& _path);
+		/// <summary>
+		/// Retrieves a resource by name and casts it to the requested type.
+		/// For internal use only ¡ª prefer TryGet or the type-specific getters for external access.
+		/// </summary>
+		/// <typeparam name="T">Expected resource type (must inherit from IResource).</typeparam>
+		/// <param name="_name">Unique identifier of the resource.</param>
+		/// <returns>Pointer to the resource, or nullptr if not found or the cast failed.</returns>
+		template <typename T>
+		T* PrivateGet(const std::string& _name)
+		{
+			static_assert(std::is_base_of_v<IResource, T>, "T must derive from IResource");
 
+			auto it = m_Resources.find(_name);
+			if (it != m_Resources.end())
+			{
+				if (T* resource = dynamic_cast<T*>(it->second.get())) return resource;
 
-                    /// <summary>
-                    /// Retrieves a resource by name and casts it to the requested type.
-                    /// Only for internal use, prefer type-specific getters or TryGet for safer access.
-                    template <typename T> T* PrivateGet(const std::string& _name)
-                    {
-                        static_assert(std::is_base_of_v<IResource, T>, "T must derive from IResource");
-                        ResourceManager* resourceManager = ResourceManager::Instance();
+				LOG(logWarning, LogResourceManager, "Resource type mismatch for name: ", _name);
+			}
 
-                        auto it = resourceManager->m_Resources.find(_name);
-                        if (it != resourceManager->m_Resources.end())
-                        {
-                            if (T* resource = dynamic_cast<T*>(it->second.get())) return resource;
+			return nullptr;
+		}
+	};
 
-                            LOG(logWarning, LogResourceManager, "Resource type mismatch for name: ", _name);
-                        }
-
-                        return nullptr;
-                    }
-            };
-        } // namespace Resources
-    } // namespace Core
-} // namespace MirageEngine
+} // namespace MirageEngine::Core::Resources

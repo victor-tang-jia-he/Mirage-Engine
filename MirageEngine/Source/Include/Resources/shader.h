@@ -7,19 +7,18 @@ namespace MirageRHI
 	class IShader;
 }
 
-namespace MirageEngine
+namespace MirageEngine::Core::Resources
 {
-	namespace Core
+	struct Shader : public IResource
 	{
-		namespace Resources
-		{
-			struct Shader : public IResource
-			{
-			public:
-				MirageRHI::IShader* ShaderBind = nullptr;
+	public:
+		MirageRHI::IShader* ShaderBind = nullptr;
 
-				Shader() = default;
-			};
+		Shader() = default;
+		~Shader()
+		{
+			if (ShaderBind)
+				ShaderBind->Destroy();
 		}
-	}
+	};
 }

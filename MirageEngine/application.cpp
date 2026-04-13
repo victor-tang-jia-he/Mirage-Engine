@@ -66,7 +66,6 @@ void Application::InitInput()
 
     // bind camera
     m_EngineCamera->BindInput(m_EditorMapping);
-    DEBUG_LOG("Input system bind");
 }
 
 using namespace MirageEngine::Core::Resources;

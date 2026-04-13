@@ -6,44 +6,39 @@ DECLARE_LOG_CATEGORY_EXTERN(LogTexture)
 
 namespace MirageRHI
 {
-    class ITexture;
+	class ITexture;
 }
 
-namespace MirageEngine
+namespace MirageEngine::Core::Resources
 {
-    namespace Core
-    {
-        namespace Resources
-        {
-            class Texture : public IResource
-            {
-                private:
+	class Texture : public IResource
+	{
+	private:
 
-                    MirageRHI::ITexture* m_TextureBuffer = nullptr;
+		MirageRHI::ITexture* m_TextureBuffer = nullptr;
 
-                    int            m_Width   = 0;
-                    int            m_Height  = 0;
-                    int            m_Channel = 0;
-                    int            m_Format  = NAN;
-                    unsigned char* m_Data    = nullptr;
-                    bool           m_bIsUploaded = false;
+		int m_Width = 0;
+		int m_Height = 0;
+		int m_Channel = 0;
+		int m_Format = NAN;
+		unsigned char* m_Data = nullptr;
+		bool m_bIsUploaded = false;
 
-                public:
+	public:
 
-                    Texture(MirageRHI::ITexture* _textureBuffer)
-                        : m_TextureBuffer(_textureBuffer) {};
+		Texture(MirageRHI::ITexture* _textureBuffer, int& _width, int& _height, int& _channel, int& _format, unsigned char* _data)
+			: m_TextureBuffer(_textureBuffer),  
+			m_Width(_width),  
+			m_Height(_height),  
+			m_Channel(_channel), 
+			m_Format(_format), 
+			m_Data(_data)
+		{
+		};
 
-                    ~Texture()
-                    {
-                        if (m_Data != nullptr) free(m_Data);
-                    }
+		~Texture();
+		void Bind();
 
-                    void Load(const std::string& _path);
-
-                    void Bind();
-
-                    MirageRHI::ITexture* GetTextureBuffer() const { return m_TextureBuffer; }
-            };
-        } // namespace Resources
-    } // namespace Core
+		MirageRHI::ITexture* GetTextureBuffer() const { return m_TextureBuffer; }
+	};
 } // namespace MirageEngine

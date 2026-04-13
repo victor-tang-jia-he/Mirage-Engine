@@ -7,8 +7,14 @@
 #include <Resources/texture.h>
 #include <Resources/material.h>
 #include <Resources/shader.h>
+#include <Resources/pipeline.h>
 #define TINYOBJLOADER_IMPLEMENTATION
 #include <TinyObjLoader/tiny_obj_loader.h>
+#define STB_IMAGE_IMPLEMENTATION
+#include <stb_image.h>
+
+constexpr auto OPENGL_RGBA = 0x1908;
+constexpr auto OPENGL_RGB = 0x1907;
 
 #include <filesystem>
 namespace fs = std::filesystem;
@@ -18,19 +24,23 @@ DEFINE_LOG_CATEGORY(LogResourceManager)
 using namespace MirageEngine::Core::Resources;
 
 ResourceManager* ResourceManager::m_Instance = nullptr;
-
 ResourceManager* ResourceManager::Instance()
 {
 	if (m_Instance == nullptr) m_Instance = new ResourceManager();
 	return m_Instance;
 }
-
+ResourceManager::~ResourceManager()
+{
+	for (auto& resource : m_Resources) resource.second.reset();
+	for (auto& shader : m_ShaderCache) shader.second.reset();
+	m_Resources.clear();
+	m_ShaderCache.clear();
+}
 void ResourceManager::Init(MirageRHI::IRenderInterface* _rhi)
 {
 	m_Rhi = _rhi; // set for later creating resource
 }
-
-void MirageEngine::Core::Resources::ResourceManager::PreLoadResources()
+void ResourceManager::PreLoadResources()
 {
 	LOG(logInfo, LogResourceManager, "Preloading default resources...");
 
@@ -72,7 +82,6 @@ void MirageEngine::Core::Resources::ResourceManager::PreLoadResources()
 
 	LOG(logInfo, LogResourceManager, "Preloading completed.");
 }
-
 Texture* ResourceManager::CreateTexture(const std::string& _name, const std::string& _path)
 {
 	ResourceManager* rm = ResourceManager::Instance();
@@ -91,14 +100,21 @@ Texture* ResourceManager::CreateTexture(const std::string& _name, const std::str
 	auto        it = rm->m_Resources.find(_name);
 	if (it != rm->m_Resources.end()) { newAssetName = rm->GenerateUniqueAssetName(_name); }
 
-	Texture* texture = new Texture(rm->m_Rhi->InstantiateTexture());
+
+	int width = 0;
+	int height = 0;
+	int channel = 0;
+	int format = NAN;
+	unsigned char* data = nullptr;
+	rm->LoadTextureUtility(_path, width, height, channel, format, data);
+
+	Texture* texture = new Texture(rm->m_Rhi->InstantiateTexture(), width, height, channel, format, data);
+
 	texture->p_Name = newAssetName;
-	texture->Load(_path);
 	rm->m_Resources.emplace(newAssetName, texture);
 	LOG(logTemp, LogResourceManager, "Finish loading Texture : ", _path);
 	return texture;
 }
-
 Shader* ResourceManager::CreateShader(const std::string& _name, const std::string& _path, const MirageRHI::IShader::ShaderType _type)
 {
 	ResourceManager* rm = ResourceManager::Instance();
@@ -128,7 +144,6 @@ Shader* ResourceManager::CreateShader(const std::string& _name, const std::strin
 	LOG(logTemp, LogResourceManager, "Finish loading Shader : ", _path);
 	return shader;
 }
-
 Mesh* ResourceManager::CreateMesh(const std::string& _name, const std::string& _path)
 {
 	ResourceManager* rm = ResourceManager::Instance();
@@ -159,7 +174,6 @@ Mesh* ResourceManager::CreateMesh(const std::string& _name, const std::string& _
 	LOG(logTemp, LogResourceManager, "Finish loading Mesh : ", _path);
 	return mesh;
 }
-
 Material* ResourceManager::CreateMaterial(const std::string& _name)
 {
 	ResourceManager* rm = ResourceManager::Instance();
@@ -176,7 +190,54 @@ Material* ResourceManager::CreateMaterial(const std::string& _name)
 	rm->m_Resources.emplace(newAssetName, material);
 	return material;
 }
+Pipeline* ResourceManager::CreatePipeline(const std::string& _name, const char* _pathFrag, const char* _pathVertex, MirageRHI::IPipelineParameters* _pipelineParamter)
+{
+	ResourceManager* rm = ResourceManager::Instance();
+	if (!rm)
+	{
+		LOG(logWarning, LogResourceManager, "Resource Manager isn't instanciate or doesn't exist in this context");
+		return nullptr;
+	}
+	if (!rm->m_Rhi)
+	{
+		LOG(logError, LogResourceManager, "Resource Manager RHI isn't init");
+		return nullptr;
+	}
+	std::string    newAssetName = _name;
+	auto resourceIt = rm->m_Resources.find(_name);
+	if (resourceIt != rm->m_Resources.end())
+	{
+		newAssetName = rm->GenerateUniqueAssetName(_name);
+	}
 
+	// pre define ptr
+	Shader* frag = new Shader();
+	Shader* vert = new Shader();
+
+	// search in cache
+	auto shaderFragIt = rm->m_ShaderCache.find(_pathFrag);
+	auto shaderVertIt = rm->m_ShaderCache.find(_pathVertex);
+
+	// If find get, else, load
+	if (shaderFragIt != rm->m_ShaderCache.end())
+		if (MirageRHI::IShader* ref = shaderFragIt->second.get())
+			frag->ShaderBind = ref;
+	if (shaderVertIt != rm->m_ShaderCache.end())
+		if (MirageRHI::IShader* ref = shaderVertIt->second.get())
+			vert->ShaderBind = ref;
+
+	if (!frag)
+		frag = ResourceManager::CreateShader("ShaderFragment", _pathFrag, MirageRHI::IShader::ShaderType::Fragment);
+	if (!vert)
+		vert = ResourceManager::CreateShader("ShaderVertex", _pathVertex, MirageRHI::IShader::ShaderType::Vertex);
+
+	Pipeline* pipeline = new Pipeline();
+	pipeline->BindPipeline = rm->m_Rhi->InstantiatePipeline();
+	pipeline->BindPipeline->Create(frag->ShaderBind, vert->ShaderBind, _pipelineParamter);
+	pipeline->p_Name = newAssetName;
+	rm->m_Resources.emplace(newAssetName, pipeline);
+	return pipeline;
+}
 std::string ResourceManager::GenerateUniqueAssetName(const std::string& _baseName)
 {
 	std::string uniqueName = _baseName;
@@ -192,7 +253,6 @@ std::string ResourceManager::GenerateUniqueAssetName(const std::string& _baseNam
 
 	return uniqueName;
 }
-
 void ResourceManager::LoadMeshUtility(std::string _path, std::vector<MirageRHI::LitVertex>& _vertices, std::vector<uint32_t>& _indices)
 {
 	tinyobj::attrib_t                attrib;
@@ -203,7 +263,7 @@ void ResourceManager::LoadMeshUtility(std::string _path, std::vector<MirageRHI::
 
 	bool ret = tinyobj::LoadObj(&attrib, &shapes, &materials, &err, _path.c_str());
 
-	if (!err.empty()) 
+	if (!err.empty())
 	{
 		LOG(logWarning, LogResourceManager, err);
 	}
@@ -218,6 +278,7 @@ void ResourceManager::LoadMeshUtility(std::string _path, std::vector<MirageRHI::
 
 	_vertices.reserve(totalIndices);
 	_indices.reserve(totalIndices);
+	uint32_t vertexIndex = static_cast<uint32_t>(_vertices.size());
 
 	for (const auto& shape : shapes)
 	{
@@ -228,6 +289,7 @@ void ResourceManager::LoadMeshUtility(std::string _path, std::vector<MirageRHI::
 			size_t fv = shape.mesh.num_face_vertices[f];
 
 			std::vector<uint32_t> faceIndices;
+
 			faceIndices.reserve(fv);
 
 			for (size_t v = 0; v < fv; v++)
@@ -250,10 +312,9 @@ void ResourceManager::LoadMeshUtility(std::string _path, std::vector<MirageRHI::
 				if (idx.texcoord_index >= 0) { vertex.UV = MirageEngine::Core::Math::Vector2(attrib.texcoords[2 * idx.texcoord_index + 0], attrib.texcoords[2 * idx.texcoord_index + 1]); }
 				else { vertex.UV = MirageEngine::Core::Math::Vector2(0, 0); }
 
-				uint32_t vertexIndex = static_cast<uint32_t>(_vertices.size());
 				_vertices.push_back(vertex);
 
-				faceIndices.push_back(vertexIndex);
+				faceIndices.push_back(vertexIndex++);
 			}
 
 			// Triangulate faces if necessary
@@ -287,17 +348,19 @@ void ResourceManager::LoadMeshUtility(std::string _path, std::vector<MirageRHI::
 		}
 	}
 }
-
-void MirageEngine::Core::Resources::ResourceManager::LoadTextureUtility(const std::string& _path) {}
-
-MirageEngine::Core::Resources::ResourceManager::~ResourceManager()
+void ResourceManager::LoadTextureUtility(const std::string& _path, int& _width, int& _height, int& _channel, int& _format, unsigned char*& _data)
 {
-	for (auto& resource : m_Resources) resource.second.reset();
-	for (auto& shader : m_ShaderCache) shader.second.reset();
-	m_Resources.clear();
-	m_ShaderCache.clear();
-}
+	stbi_set_flip_vertically_on_load(true);
 
+	_data = stbi_load(_path.c_str(), &_width, &_height, &_channel, 0);
+	if (!_data)
+	{
+		LOG(logError, LogTexture, "Failed to load texture from path: ", _path);
+		return;
+	}
+
+	_format = (_channel == 4) ? OPENGL_RGBA : OPENGL_RGB;
+}
 Texture* ResourceManager::GetTexture(const std::string& _name)
 {
 	ResourceManager* resourceManager = ResourceManager::Instance();
@@ -315,7 +378,6 @@ Texture* ResourceManager::GetTexture(const std::string& _name)
 	}
 	return nullptr; // Should never reach here, but added to avoid compiler warning
 }
-
 Shader* ResourceManager::GetVertexShader(const std::string& _name)
 {
 	ResourceManager* resourceManager = ResourceManager::Instance();
@@ -332,7 +394,6 @@ Shader* ResourceManager::GetVertexShader(const std::string& _name)
 	}
 	return nullptr; // Should never reach here, but added to avoid compiler warning
 }
-
 Shader* ResourceManager::GetFragmentShader(const std::string& _name)
 {
 	ResourceManager* resourceManager = ResourceManager::Instance();
@@ -349,7 +410,6 @@ Shader* ResourceManager::GetFragmentShader(const std::string& _name)
 	}
 	return nullptr; // Should never reach here, but added to avoid compiler warning
 }
-
 Mesh* ResourceManager::GetMesh(const std::string& _name)
 {
 	ResourceManager* resourceManager = ResourceManager::Instance();
@@ -367,7 +427,6 @@ Mesh* ResourceManager::GetMesh(const std::string& _name)
 	LOG(logWarning, LogResourceManager, "Resource not found: ", _name);
 	return nullptr;
 }
-
 Material* ResourceManager::GetMaterial(const std::string& _name)
 {
 	ResourceManager* resourceManager = ResourceManager::Instance();
