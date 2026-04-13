@@ -10,7 +10,7 @@ namespace Mirage
 {
 	void Explorer::InitPanel()
 	{
-		m_RootPath = ASSETS_PATH;
+		m_RootPath = "Assets";
 		m_CurrentPath = m_RootPath;
 		ScanProjectDirectory(m_CurrentPath);
 	}
