@@ -1,4 +1,4 @@
-#include <guizmo.h>
+#include <gizmo.h>
 
 #include <SceneGraph/scene_graph.h>
 #include <Components/camera.h>
@@ -9,11 +9,14 @@
 #include <imgui.h>
 #include <ImGuizmo.h>
 
-DEFINE_LOG_CATEGORY(LogGuizmo)
+DEFINE_LOG_CATEGORY(LogGizmo)
 
 using namespace MirageEngine::Core;
 
-void MirageEditor::Guizmo::EditTransform(MirageEngine::SceneGraph* _sceneGraph)
+static ImGuizmo::OPERATION mCurrentGizmoOperation(ImGuizmo::TRANSLATE);
+static ImGuizmo::MODE mCurrentGizmoMode(ImGuizmo::WORLD);
+
+void MirageEditor::Gizmo::EditTransform(MirageEngine::SceneGraph* _sceneGraph)
 {
 	if (!_sceneGraph->GetSelectedObject())
 		return;
@@ -21,21 +24,34 @@ void MirageEditor::Guizmo::EditTransform(MirageEngine::SceneGraph* _sceneGraph)
 	MirageEngine::Core::Math::Matrix4 worldMatrix(_sceneGraph->GetSelectedObject()->Transform.GetWorldMatrix());
 	Components::Camera* mainCamera = _sceneGraph->GetActiveCamera();
 
-	static ImGuizmo::OPERATION mCurrentGizmoOperation(ImGuizmo::TRANSLATE);
-	static ImGuizmo::MODE mCurrentGizmoMode(ImGuizmo::WORLD);
 	if (ImGui::IsKeyPressed(ImGuiKey_T))
+	{
 		mCurrentGizmoOperation = ImGuizmo::TRANSLATE;
+		LOG(logTemp, LogGizmo, "Gizmo Operation: TRANSLATE");
+	}
 	if (ImGui::IsKeyPressed(ImGuiKey_R))
+	{
 		mCurrentGizmoOperation = ImGuizmo::ROTATE;
+		LOG(logTemp, LogGizmo, "Gizmo Operation: ROTATE");
+	}
 	if (ImGui::IsKeyPressed(ImGuiKey_Y))
+	{
 		mCurrentGizmoOperation = ImGuizmo::SCALE;
+		LOG(logTemp, LogGizmo, "Gizmo Operation: SCALE");
+	}
 
 	if (ImGui::IsKeyPressed(ImGuiKey_L))
 	{
 		if (mCurrentGizmoMode == ImGuizmo::WORLD)
+		{
 			mCurrentGizmoMode = ImGuizmo::LOCAL;
+			LOG(logTemp, LogGizmo, "Gizmo Mode: LOCAL");
+		}
 		else
+		{
 			mCurrentGizmoMode = ImGuizmo::WORLD;
+			LOG(logTemp, LogGizmo, "Gizmo Mode: WORLD");
+		}
 	}
 
 	bool manipulated = ImGuizmo::Manipulate(
@@ -65,12 +81,16 @@ void MirageEditor::Guizmo::EditTransform(MirageEngine::SceneGraph* _sceneGraph)
 	}
 }
 
-void MirageEditor::Guizmo::ViewGuizmo(MirageEngine::SceneGraph* _sceneGraph)
+void MirageEditor::Gizmo::EditView(MirageEngine::SceneGraph* _sceneGraph)
 {
 	Components::Camera* mainCamera = _sceneGraph->GetActiveCamera();
-	float* view = mainCamera->GetView().M;
+	float* view = mainCamera->GetView().ToArray().data();
 
-	ImGuizmo::ViewManipulate(view, 1, ImVec2(0, 0), ImVec2(128, 128), 0);
+	ImVec2 size = ImGui::GetContentRegionAvail();
+	ImVec2 pos = ImVec2(200, 50);
+
+	ImGuizmo::ViewManipulate(view, 1, pos, size, 0);
+
 
 	Math::Matrix4 viewMatrix(view);
 	

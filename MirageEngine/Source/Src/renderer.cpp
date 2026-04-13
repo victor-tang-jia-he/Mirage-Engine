@@ -83,22 +83,6 @@ void Renderer::RenderScene(SceneGraph _sceneGraph)
 	}
 }
 
-void Renderer::RenderObjectRecursive(GameObject* _obj)
-{
-	if (!_obj) return;
-
-	Core::Components::MeshRenderer* meshRenderer = _obj->GetComponent<Core::Components::MeshRenderer>();
-	if (meshRenderer)
-	{
-		DrawMesh(meshRenderer, &_obj->Transform);
-	}
-
-	for (GameObject* child : _obj->GetChildren())
-	{
-		RenderObjectRecursive(child);
-	}
-}
-
 void Renderer::RenderScreen()
 {
 	// End previous render pass and start new one for screen rendering
@@ -158,6 +142,20 @@ void Renderer::InitWindow()
 void Renderer::InitRHI()
 {
 	// Select RHI API
+	APISelection();
+
+	// Instantiate All Classes
+	ClassInstantiation();
+
+	// Create All Classes
+	ClassCreation();
+
+	// Temp Pipeline Creation, will be replaced when material system is done !
+	TEMP_PIPELINE_PLACEHOLDER();
+}
+
+void MirageEngine::Renderer::APISelection()
+{
 	switch (m_API)
 	{
 	case MirageRHI::IRenderInterface::API::OPENGL:
@@ -167,8 +165,10 @@ void Renderer::InitRHI()
 	default:
 		LOG(logFatal, MirageRenderer, "Unsupported API");
 	}
+}
 
-	// Instantiate All Classes
+void MirageEngine::Renderer::ClassInstantiation()
+{
 	m_Instance = m_RenderInterface->InstantiateInstance();
 	m_Surface = m_RenderInterface->InstantiateSurface();
 	m_Device = m_RenderInterface->InstantiateDevice();
@@ -178,15 +178,26 @@ void Renderer::InitRHI()
 	m_ScreenPipeline = m_RenderInterface->InstantiatePipeline();
 	m_UniformBuffer = m_RenderInterface->InstantiateUniformBuffer();
 	m_CommandBuffer = m_RenderInterface->InstantiateCommandBuffer();
-	LOG(logTemp, MirageRenderer, "All Classes successfully Instantiated");
 
-	// Create All Classes
+	LOG(logTemp, MirageRenderer, "All Classes successfully Instantiated");
+}
+
+void MirageEngine::Renderer::ClassCreation()
+{
 	m_Instance->Create("Mirage");
 	m_Surface->Create(m_Window, m_Width, m_Height);
 	m_Device->Create();
 	m_SwapChain->Create(2, m_Width, m_Height);
 	m_RenderPass->Create(Vector4(0.f, 0.5f, 0.5f, 1.0f), 1.0f);
+	ScreenPipelineCreation();
+	m_UniformBuffer->Create();
+	m_CommandBuffer->Create();
 
+	LOG(logTemp, MirageRenderer, "All Classes successfully Created");
+}
+
+void MirageEngine::Renderer::ScreenPipelineCreation()
+{
 	m_ScreenPipelineParameters->Create(MirageRHI::VertexType::None, MirageRHI::CullingType::None, false);
 
 	// Creation of single use shader objects for screen rendering pipeline
@@ -201,29 +212,41 @@ void Renderer::InitRHI()
 	// Single use shader objects is destroyed after screen rendering pipeline creation
 	screenVertShader->Destroy();
 	screenFragShader->Destroy();
-	
-	m_UniformBuffer->Create();
-	m_CommandBuffer->Create();
-	LOG(logTemp, MirageRenderer, "All Classes successfully Created");
+}
 
-	// Temp Pipeline Creation, will be replaced when material system is done !
+void MirageEngine::Renderer::TEMP_PIPELINE_PLACEHOLDER()
+{
+	m_PipelineParameters = m_RenderInterface->InstantiatePipelineParameters();
+	m_Pipeline = m_RenderInterface->InstantiatePipeline();
+
+	m_PipelineParameters->Create(MirageRHI::VertexType::PBR, MirageRHI::CullingType::None, true);
+
+	// Creation of single use shader objects for screen rendering pipeline
+	MirageRHI::IShader* tempVertShader = m_RenderInterface->InstantiateShader();
+	MirageRHI::IShader* tempFragShader = m_RenderInterface->InstantiateShader();
+
+	tempVertShader->Create("Assets/Shaders/default.vert", MirageRHI::IShader::ShaderType::Vertex);
+	tempFragShader->Create("Assets/Shaders/default.frag", MirageRHI::IShader::ShaderType::Fragment);
+	m_Pipeline->Create(tempVertShader, tempFragShader, m_PipelineParameters);
+
+	// Single use shader objects is destroyed after screen rendering pipeline creation
+	tempVertShader->Destroy();
+	tempFragShader->Destroy();
+}
+
+void Renderer::RenderObjectRecursive(GameObject* _obj)
+{
+	if (!_obj) return;
+
+	Core::Components::MeshRenderer* meshRenderer = _obj->GetComponent<Core::Components::MeshRenderer>();
+	if (meshRenderer)
 	{
-		m_PipelineParameters = m_RenderInterface->InstantiatePipelineParameters();
-		m_Pipeline = m_RenderInterface->InstantiatePipeline();
+		DrawMesh(meshRenderer, &_obj->Transform);
+	}
 
-		m_PipelineParameters->Create(MirageRHI::VertexType::PBR, MirageRHI::CullingType::None, true);
-
-		// Creation of single use shader objects for screen rendering pipeline
-		MirageRHI::IShader* tempVertShader = m_RenderInterface->InstantiateShader();
-		MirageRHI::IShader* tempFragShader = m_RenderInterface->InstantiateShader();
-
-		tempVertShader->Create("Assets/Shaders/default.vert", MirageRHI::IShader::ShaderType::Vertex);
-		tempFragShader->Create("Assets/Shaders/default.frag", MirageRHI::IShader::ShaderType::Fragment);
-		m_Pipeline->Create(tempVertShader, tempFragShader, m_PipelineParameters);
-
-		// Single use shader objects is destroyed after screen rendering pipeline creation
-		tempVertShader->Destroy();
-		tempFragShader->Destroy();
+	for (GameObject* child : _obj->GetChildren())
+	{
+		RenderObjectRecursive(child);
 	}
 }
 
