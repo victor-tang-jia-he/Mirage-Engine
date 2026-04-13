@@ -104,7 +104,7 @@ file(GLOB IMGUI_CONTENTS ${IMGUI_DIR}/*)
 list(LENGTH IMGUI_CONTENTS IMGUI_CONTENT_COUNT)
 
 # Check if ImGui folder is empty
-if(NOT EXISTS ${IMGUI_DIR} OR IMGUI_CONTENT_COUNT EQUAL 0)
+if(NOT EXISTS ${IMGUI_DIR} AND IMGUI_CONTENT_COUNT EQUAL 0)
     message(STATUS "Fetching ImGui...")
     FetchContent_Declare(
         imgui
@@ -183,7 +183,7 @@ set(IMGUIZMO_DIR "${CMAKE_SOURCE_DIR}/Libraries/ImGuizmo")
 file(GLOB IMGUIZMO_CONTENTS ${IMGUIZMO_DIR}/*)
 list(LENGTH IMGUIZMO_CONTENTS IMGUIZMO_CONTENT_COUNT)
 
-if(NOT EXISTS ${IMGUIZMO_DIR} OR IMGUIZMO_CONTENT_COUNT EQUAL 0)
+if(NOT EXISTS ${IMGUIZMO_DIR} AND IMGUIZMO_CONTENT_COUNT EQUAL 0)
     message(STATUS "Fetching ImGuizmo...")
     FetchContent_Declare(
         imguizmo
@@ -207,8 +207,19 @@ set(IMGUIZMO_ALL_SOURCES
 
 # Create the ImGui library
 add_library(imguizmo STATIC ${IMGUIZMO_ALL_SOURCES})
-message(STATUS "ImGuizmo configured successfully")
 
+target_include_directories(imguizmo
+    PUBLIC
+        ${IMGUIZMO_DIR}
+)
+
+# Linking dependencies
+target_link_libraries(imguizmo
+    PUBLIC
+        imgui
+)
+
+message(STATUS "ImGuizmo configured successfully")
 message(STATUS "================================================================================")
 message("")
 
@@ -369,7 +380,7 @@ target_include_directories(third_party INTERFACE
     ${CMAKE_SOURCE_DIR}/Libraries/Glad/include
     ${CMAKE_SOURCE_DIR}/Libraries/GLFW/include
     ${CMAKE_SOURCE_DIR}/Libraries/ImGui
-    ${CMAKE_SOURCE_DIR}/Libraries/ImGizmo
+    ${CMAKE_SOURCE_DIR}/Libraries/ImGuizmo
     ${CMAKE_SOURCE_DIR}/Libraries/ImGui/backends
     ${CMAKE_SOURCE_DIR}/Libraries/TinyObjLoader
     ${CMAKE_SOURCE_DIR}/Libraries/STBImage

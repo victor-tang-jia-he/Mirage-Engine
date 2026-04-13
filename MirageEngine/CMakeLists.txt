@@ -12,6 +12,7 @@ file(GLOB_RECURSE MIRAGE_ENGINE_SOURCES
 file(GLOB_RECURSE MIRAGE_ENGINE_HEADERS
 	"application.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/Source/Include/*.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/Source/Include/*.inl"
     "${CMAKE_CURRENT_SOURCE_DIR}/Tools/Toolbox/Include/*.h"
 )
 
