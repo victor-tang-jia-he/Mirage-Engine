@@ -44,11 +44,9 @@ bool MirageRHI::OpenGLPipeline::Link() const
     }
     if (m_VertexShader->API_OpenGL().GetGLHandle()) {
         glDetachShader(m_Program, m_VertexShader->API_OpenGL().GetGLHandle());
-        glDeleteShader(m_VertexShader->API_OpenGL().GetGLHandle());
     }
     if (m_FragmentShader->API_OpenGL().GetGLHandle()) {
         glDetachShader(m_Program, m_FragmentShader->API_OpenGL().GetGLHandle());
-        glDeleteShader(m_FragmentShader->API_OpenGL().GetGLHandle());
     }
     return true;
 }

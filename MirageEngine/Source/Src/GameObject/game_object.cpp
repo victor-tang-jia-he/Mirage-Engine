@@ -96,8 +96,8 @@ void MirageEngine::GameObject::SetScale(MirageEngine::Core::Math::Vector3 _scale
 
 }
 
-void MirageEngine::GameObject::SetScale(float _x, float _y, float _z) { SetScale(MirageEngine::Core::Math::Vector3(_x, _y, _z)); }
 void MirageEngine::GameObject::SetPosition(float _x, float _y, float _z) { SetPosition(MirageEngine::Core::Math::Vector3(_x, _y, _z)); }
+void MirageEngine::GameObject::SetScale(float _x, float _y, float _z) { SetScale(MirageEngine::Core::Math::Vector3(_x, _y, _z)); }
 
 void MirageEngine::GameObject::SetDirty(bool _isDirty)
 {
