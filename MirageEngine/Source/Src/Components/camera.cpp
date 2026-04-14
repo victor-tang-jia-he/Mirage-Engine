@@ -66,4 +66,18 @@ void Camera::BindInput(InputMapping* map)
 				this->Transform().SetRotation(this->Transform().GetRotation() * Quaternion(vec, -5.f * TimeManager::GetDeltaTime()));
 			}
 		}));
+	map->Map[GLFW_KEY_SPACE].Dispatcher.Add(new Event<CallbackInputInfo>("InputSystem", [this](CallbackInputInfo info)
+		{
+			if (info.Held)
+			{
+				this->Transform().SetPosition(this->Transform().GetPosition() + this->Transform().Up() * 1.f * TimeManager::GetDeltaTime());
+			}
+		}));
+	map->Map[GLFW_KEY_LEFT_CONTROL].Dispatcher.Add(new Event<CallbackInputInfo>("InputSystem", [this](CallbackInputInfo info)
+		{
+			if (info.Held)
+			{
+				this->Transform().SetPosition(this->Transform().GetPosition() - this->Transform().Up() * 1.f * TimeManager::GetDeltaTime());
+			}
+		}));
 }

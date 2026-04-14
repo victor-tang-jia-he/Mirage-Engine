@@ -38,46 +38,24 @@ namespace MirageEngine
 
 		MirageEngine::Core::Components::Transform Transform;
 
-		//~GameObject();
+		template <typename T>
+		T* AddComponent();
+
+		template <typename T>
+		T* GetComponent();
 
 			// Game Object Constructor.
 		GameObject(GameObject* _parent, std::string _name, bool _isStatic = false, bool _isActive = true);
+		~GameObject() = default;
 
 		// Game Object Custom Methods
 		void AddChild(GameObject* _child, bool _isStatic = false, bool _isActive = true);
 		void SetActive(bool _isActive);
 
-
-		// Components Methods
-		template <typename T> T* AddComponent()
-		{
-			// std::unique_ptr<T> component = std::make_unique<T>();
-			T* component = new T();
-			component->m_Owner = this;
-			// Name of the type ID
-			component->m_ComponentName = typeid(T).name();
-			m_Components.push_back(component);
-			return component;
-		}
-
 		void AddComponent(MirageEngine::Core::Components::Component* _component)
 		{
 			_component->m_Owner = this;
 			m_Components.push_back(_component);
-		}
-
-		template <typename T>
-		T* GetComponent()
-		{
-			for (auto& component : m_Components)
-			{
-				if (auto casted = dynamic_cast<T*>(component))
-				{
-					return casted;
-				}
-			}
-
-			return nullptr;
 		}
 
 		void RemoveComponent(MirageEngine::Core::Components::Component* _component);
@@ -108,10 +86,12 @@ namespace MirageEngine
 		void SetIsStatic(bool _isStatic) { m_bIsStatic = _isStatic; }
 		void SetIsActive(bool _isActive) { m_bIsActive = _isActive; }
 		void SetRotation(MirageEngine::Core::Math::Quaternion _rotation);
-		void SetPosition(float _x, float _y, float _z);
 		void SetPosition(MirageEngine::Core::Math::Vector3 _position);
 		void SetScale(MirageEngine::Core::Math::Vector3 _scale);
+		void SetPosition(float _x, float _y, float _z);
 		void SetScale(float _x, float _y, float _z);
 		
 	}; // namespace MirageEngine
 }
+
+#include "game_object.inl"

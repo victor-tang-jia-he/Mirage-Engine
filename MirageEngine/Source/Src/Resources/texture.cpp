@@ -15,7 +15,7 @@ Texture::~Texture()
 
 void Texture::Bind()
 {
-    if (m_TextureBuffer == nullptr || m_Data == nullptr)
+    if (!m_bIsUploaded && (m_TextureBuffer == nullptr || m_Data == nullptr))
     {
         LOG(logError, LogTexture, "Texture buffer or data isn't set, use Load to get the texture data before calling bind");
         return;
