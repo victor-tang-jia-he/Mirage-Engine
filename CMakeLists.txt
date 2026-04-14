@@ -51,25 +51,12 @@ if(NOT EXISTS "${GLFW_SOURCE}/CMakeLists.txt")
         SOURCE_DIR ${GLFW_SOURCE}
     )
     FetchContent_MakeAvailable(glfw)
-    add_subdirectory(${GLFW_SOURCE} ${CMAKE_BINARY_DIR}/GLFW)
 else()
     message(STATUS "Using local GLFW")
     add_subdirectory(${GLFW_SOURCE} ${CMAKE_BINARY_DIR}/GLFW)
 endif()
 
-if(TARGET glfw)
-    message(STATUS "GLFW target created successfully")
-    get_target_property(GLFW_TYPE glfw TYPE)
-    message(STATUS "GLFW target type: ${GLFW_TYPE}")
-else()
-    message(WARNING "GLFW target not found, checking for glfw::glfw...")
-    if(TARGET glfw::glfw)
-        message(STATUS "Found glfw::glfw target")
-    else()
-        message(FATAL_ERROR "No GLFW target found")
-    endif()
-endif()
-
+message(STATUS "GLFW created successfully")
 message(STATUS "================================================================================")
 message("")
 
@@ -86,8 +73,7 @@ else()
     message(WARNING "glad.c not found! Please generate glad files first.")
 endif()
 
-message(STATUS "GLAD target created successfully")
-
+message(STATUS "GLAD created successfully")
 message(STATUS "================================================================================")
 message("")
 
@@ -169,6 +155,7 @@ target_compile_definitions(imgui
         IMGUI_IMPL_OPENGL_LOADER_GLAD 
 )
 
+message(STATUS "ImGui created successfully")
 message(STATUS "================================================================================")
 message("")
 
@@ -219,7 +206,7 @@ target_link_libraries(imguizmo
         imgui
 )
 
-message(STATUS "ImGuizmo configured successfully")
+message(STATUS "ImGuizmo created successfully")
 message(STATUS "================================================================================")
 message("")
 
@@ -244,28 +231,15 @@ if(NOT EXISTS ${TINYOBJLOADER_DIR}/CMakeLists.txt)
         tinyobjloader
         GIT_REPOSITORY https://github.com/tinyobjloader/tinyobjloader.git
         GIT_TAG v1.0.6
-        SOURCE_DIR ${CMAKE_SOURCE_DIR}/Libraries/TinyObjLoader
+        SOURCE_DIR ${TINYOBJLOADER_DIR}
     )
     FetchContent_MakeAvailable(tinyobjloader)
-    add_subdirectory(${TINYOBJLOADER_DIR} ${CMAKE_BINARY_DIR}/TinyObjLoader EXCLUDE_FROM_ALL)
 else()
     message(STATUS "Using local TinyObjLoader")
     add_subdirectory(${TINYOBJLOADER_DIR} ${CMAKE_BINARY_DIR}/TinyObjLoader EXCLUDE_FROM_ALL)
 endif()
 
-if(TARGET tinyobjloader)
-    message(STATUS "TinyObjLoader target created successfully")
-    get_target_property(TINYOBJLOADER_TYPE tinyobjloader TYPE)
-    message(STATUS "TinyObjLoader target type: ${TINYOBJLOADER_TYPE}")
-else()
-    message(WARNING "TinyObjLoader target not found, checking for tinyobjloader::tinyobjloader...")
-    if(TARGET tinyobjloader::tinyobjloader)
-        message(STATUS "Found tinyobjloader::tinyobjloader target")
-    else()
-        message(FATAL_ERROR "No TinyObjLoader target found")
-    endif()
-endif()
-
+message(STATUS "TinyObjLoader created successfully")
 message(STATUS "================================================================================")
 message("")
 
@@ -299,6 +273,7 @@ else()
     FetchContent_MakeAvailable(Bullet3)
 endif()
 
+message(STATUS "Bullet3 created successfully")
 message(STATUS "================================================================================")
 message("")
 
@@ -329,12 +304,7 @@ else()
     add_subdirectory(${CMAKE_SOURCE_DIR}/Libraries/EnTT ${CMAKE_BINARY_DIR}/EnTT EXCLUDE_FROM_ALL)
 endif()
 
-if(TARGET entt)
-    message(STATUS "EnTT target created successfully")
-    get_target_property(ENTT_TYPE entt TYPE)
-    message(STATUS "EnTT target type: ${ENTT_TYPE}")
-endif()
-
+message(STATUS "EnTT target created successfully")
 message(STATUS "================================================================================")
 message("")
 
@@ -365,6 +335,7 @@ else()
     add_subdirectory(${CMAKE_SOURCE_DIR}/Libraries/CppTrace ${CMAKE_BINARY_DIR}/CppTrace EXCLUDE_FROM_ALL)
 endif()
 
+message(STATUS "CPP Trace created successfully")
 message(STATUS "================================================================================")
 message("")
 
@@ -377,7 +348,7 @@ add_subdirectory(${CMAKE_SOURCE_DIR}/MirageEngine/Tools/Toolbox)
 add_library(third_party INTERFACE)
 
 target_include_directories(third_party INTERFACE
-    ${CMAKE_SOURCE_DIR}/Libraries/Glad/include
+    ${CMAKE_SOURCE_DIR}/Libraries/Glad/Include
     ${CMAKE_SOURCE_DIR}/Libraries/GLFW/include
     ${CMAKE_SOURCE_DIR}/Libraries/ImGui
     ${CMAKE_SOURCE_DIR}/Libraries/ImGuizmo
