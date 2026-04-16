@@ -98,7 +98,6 @@ namespace MirageEngine::Core::Physics
 			m_Rot = _rotation;
 			m_bIsDirty = true;
 		}
-
 		Vector3 GetScale() const { return m_Scale; }
 		Vector3 GetTranslate() const { return m_Offset; }
 		Quaternion GetRotation() const { return m_Rot; }

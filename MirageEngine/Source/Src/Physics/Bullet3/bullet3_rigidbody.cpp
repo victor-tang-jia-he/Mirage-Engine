@@ -73,7 +73,7 @@ bool Bullet3RigidBody::Create(ICollider* _shape, ERigidBodyType _type)
     if (_type == ERigidBodyType::Static) m_rigidBody->setCollisionFlags(m_rigidBody->getCollisionFlags() | btCollisionObject::CF_STATIC_OBJECT);
     else if (_type == ERigidBodyType::Kinematic) m_rigidBody->setCollisionFlags(m_rigidBody->getCollisionFlags() | btCollisionObject::CF_KINEMATIC_OBJECT);
 
-    PhysicsManager::Instance()->RegisterRigidBody(this);
+    PhysicsManager::Instance()->RegisterRigidBody(this, m_CollisionMask, m_CollisionGroup);
     return true;
 }
 
@@ -233,6 +233,6 @@ void Bullet3RigidBody::UpdateCompound()
     }
     m_rigidBody->setCollisionShape(m_Compound);          // Set new compound to the rigidbody
     m_rigidBody->activate(true);
-    PhysicsManager::Instance()->RegisterRigidBody(this); // Register back to the world
+    PhysicsManager::Instance()->RegisterRigidBody(this,m_CollisionMask, m_CollisionGroup); // Register back to the world
     m_bIsDirty = false;
 }

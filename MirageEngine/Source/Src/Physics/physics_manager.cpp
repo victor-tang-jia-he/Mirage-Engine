@@ -81,14 +81,14 @@ ICollider* PhysicsManager::CreateCollider(ECollisionShapeType _shapeType)
     return collider;
 }
 
-void PhysicsManager::RegisterRigidBody(IRigidBody* _body)
+void PhysicsManager::RegisterRigidBody(IRigidBody* _body, ECollisionGroup _group, ECollisionGroup _mask)
 {
     if (m_worldPhysics == nullptr)
     {
         LOG(logWarning, LogPhysics, "Cannot register rigid body : physics engine not initialized");
         return;
     }
-    m_worldPhysics->AddRigidBody(_body);
+    m_worldPhysics->AddRigidBody(_body, _group, _mask);
     m_WorldRigidbodys.push_back(_body);
 }
 

@@ -78,11 +78,19 @@ void Application::InitGameObject()
     PhysicsManager* pManager      = PhysicsManager::Instance();
     ICollider*      collider      = pManager->CreateCollider(ECollisionShapeType::Box);
     IRigidBody*     rb            = pManager->CreateRigidBody(collider, ERigidBodyType::Dynamic);
+
+
     ICollider*      colliderPlane = pManager->CreateCollider(ECollisionShapeType::Box);
     //if (auto* box = colliderPlane->As<IBoxCollider>()) box->SetHalfExtents(Vector3(1, 1, 1));
     Vector3     rotation = Vector3(1.f, 0.f, 0.f);
     Quaternion  rotationQ(rotation, PI / 12.f);
     IRigidBody* rb2 = pManager->CreateRigidBody(colliderPlane, ERigidBodyType::Static);
+
+    rb->SetCollisionGroup(ECollisionGroup::Group1);
+    rb->SetCollisionMask(ECollisionGroup::Group1 | ECollisionGroup::Group2 | ECollisionGroup::Group3);
+
+    rb2->SetCollisionGroup(ECollisionGroup::Group2);
+    rb2->SetCollisionMask(ECollisionGroup::All);
 
     MirageEngine::GameObject* root = m_SceneGraph.CreateGameObject("Root", nullptr);
     MirageEngine::GameObject* obj1 = m_SceneGraph.CreateGameObject("Commelin", root);

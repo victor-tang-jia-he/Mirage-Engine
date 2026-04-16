@@ -39,7 +39,7 @@ namespace MirageEngine::Core::Physics
 
             ICollider* CreateCollider(ECollisionShapeType _shapeType);
 
-            void RegisterRigidBody(IRigidBody* _body);
+            void RegisterRigidBody(IRigidBody* _body, ECollisionGroup _group, ECollisionGroup _mask);
 
             void UnregisterRigidBody(IRigidBody* _body);
     };
