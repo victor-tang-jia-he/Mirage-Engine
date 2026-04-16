@@ -1,11 +1,19 @@
 #include "SceneGraph/scene_graph.h"
 #include <matrix4.h>
 #include <vector3.h>
+
 #include "Resources/resource_manager.h"
 #include "Components/mesh_renderer.h"
+#include <Resources/material.h>
+#include <Resources/texture.h>
+#include <Resources/shader.h>
+
+#include "renderer.h"
+
 #include "Components/camera.h"
 
 using namespace MirageEngine::Core::Math;
+using namespace MirageEngine::Core::Resources;
 
 namespace MirageEngine
 {
@@ -158,11 +166,27 @@ namespace MirageEngine
 		}
 	}
 
-	GameObject* SceneGraph::CreateCube(const std::string& _name, GameObject* _parent)
+	GameObject* SceneGraph::CreateCube(const std::string& _name, GameObject* _parent, MirageEngine::Renderer* _renderer)
 	{
 		GameObject* newObject = CreateGameObject(_name, _parent);
 		Core::Components::MeshRenderer* meshRenderer = newObject->AddComponent<Core::Components::MeshRenderer>();
+		ResourceManager* rm = ResourceManager::Instance();
+
 		meshRenderer->SetMesh(MirageEngine::Core::Resources::ResourceManager::Instance()->GetMesh("cube"));
+
+		Texture* texture = rm->GetTexture("White");
+		Material* material = rm->CreateMaterial("TestMaterial");
+		if (texture)
+		{
+			texture->Bind();
+			material->SetTexture("White", texture);
+		}
+		if (_renderer)
+		{
+			material->SetShader(_renderer->m_Pipeline);
+		}
+
+		meshRenderer->SetMaterial(material);
 		newObject->Transform.SetPosition(Vector3(0, 0, -10));
 		return newObject;
 	}

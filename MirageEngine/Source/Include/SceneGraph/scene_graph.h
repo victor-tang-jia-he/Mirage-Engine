@@ -14,6 +14,8 @@ namespace MirageEngine::Core::Components
 
 namespace MirageEngine
 {
+	class Renderer;
+
 	class SceneGraph
 	{
 	public:
@@ -31,7 +33,7 @@ namespace MirageEngine
 		~SceneGraph() { }
 
 		GameObject* CreateGameObject(const std::string& _name, GameObject* _parent = nullptr); 
-		GameObject* CreateCube(const std::string& _name = "Cube", GameObject* _parent = nullptr);
+		GameObject* CreateCube(const std::string& _name = "Cube", GameObject* _parent = nullptr, MirageEngine::Renderer* _renderer = nullptr);
 		GameObject* CreateCamera(const std::string& _name = "Camera", GameObject* _parent = nullptr);
 
 		void RemoveGameObject(GameObject* _obj);											

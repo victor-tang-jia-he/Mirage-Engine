@@ -137,7 +137,7 @@ namespace Mirage
 				{
 					if (ImGui::MenuItem("Create Cube"))
 					{
-						m_Context->CreateCube("New Cube", selected);
+						m_Context->CreateCube("New Cube", selected, m_Renderer);
 					}
 					ImGui::EndMenu();
 				}
@@ -169,7 +169,7 @@ namespace Mirage
 				{
 					if (ImGui::MenuItem("Create Cube"))
 					{
-						m_Context->CreateCube("New Cube", nullptr);
+						m_Context->CreateCube("New Cube", nullptr, m_Renderer);
 					}
 					ImGui::EndMenu();
 				}
