@@ -31,6 +31,9 @@ namespace MirageEngine
 		~SceneGraph() { }
 
 		GameObject* CreateGameObject(const std::string& _name, GameObject* _parent = nullptr); 
+		GameObject* CreateCube(const std::string& _name = "Cube", GameObject* _parent = nullptr);
+		GameObject* CreateCamera(const std::string& _name = "Camera", GameObject* _parent = nullptr);
+
 		void RemoveGameObject(GameObject* _obj);											
 		void ClearScene();																		
 		GameObject* FindGameObject(uint64_t _id) const;
@@ -54,7 +57,5 @@ namespace MirageEngine
 	protected:
 	private:
 		void WorldMatrixRecursive(GameObject* _obj, Core::Math::Matrix4& _parentMatrix, bool _forceUpdate);
-		GameObject* CreateCube(const std::string& _name = "Cube", GameObject* _parent = nullptr);
-		GameObject* CreateCamera(const std::string& _name = "Camera", GameObject* _parent = nullptr);
 	};
 }

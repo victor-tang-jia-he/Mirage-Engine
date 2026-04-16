@@ -130,8 +130,20 @@ namespace Mirage
 		{
 			MirageEngine::GameObject* selected = m_Context->GetSelectedObject();
 			if (selected) {
-				if (ImGui::MenuItem("Create Child")) {
+				if (ImGui::MenuItem("Create Empty")) {
 					m_Context->CreateGameObject("New Child", selected);
+				}
+				if (ImGui::BeginMenu("3D Object"))
+				{
+					if (ImGui::MenuItem("Create Cube"))
+					{
+						m_Context->CreateCube("New Cube", selected);
+					}
+					ImGui::EndMenu();
+				}
+				if(ImGui::MenuItem("Create Camera"))
+				{
+					m_Context->CreateCamera("New Camera", selected);
 				}
 				ImGui::Separator();
 				if (ImGui::MenuItem("Delete", "Del")) {
@@ -150,8 +162,20 @@ namespace Mirage
 		{
 			if (ImGui::BeginPopup("HierarchyEmptyMenu"))
 			{
-				if (ImGui::MenuItem("Create Empty Object")) {
+				if (ImGui::MenuItem("Create Empty")) {
 					m_Context->CreateGameObject("New GameObject", nullptr);
+				}
+				if (ImGui::BeginMenu("3D Object"))
+				{
+					if (ImGui::MenuItem("Create Cube"))
+					{
+						m_Context->CreateCube("New Cube", nullptr);
+					}
+					ImGui::EndMenu();
+				}
+				if (ImGui::MenuItem("Create Camera"))
+				{
+					m_Context->CreateCamera("New Camera", nullptr);
 				}
 				ImGui::EndPopup();
 			}
