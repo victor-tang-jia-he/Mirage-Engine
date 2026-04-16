@@ -1,5 +1,11 @@
 #include "SceneGraph/scene_graph.h"
 #include <matrix4.h>
+#include <vector3.h>
+#include "Resources/resource_manager.h"
+#include "Components/mesh_renderer.h"
+#include "Components/camera.h"
+
+using namespace MirageEngine::Core::Math;
 
 namespace MirageEngine
 {
@@ -50,7 +56,7 @@ namespace MirageEngine
 
 	void SceneGraph::UpdateAllWorldMatrices()
 	{
-		MirageEngine::Core::Math::Matrix4 Identity = Core::Math::Matrix4::Identity();
+		Matrix4 Identity = Matrix4::Identity();
 
 		for (GameObject* root : m_RootsList)
 		{
@@ -127,15 +133,15 @@ namespace MirageEngine
 		return true;
 	}
 
-	void SceneGraph::WorldMatrixRecursive(GameObject* _obj, Core::Math::Matrix4& _parentMatrix, bool _forceUpdate)
+	void SceneGraph::WorldMatrixRecursive(GameObject* _obj, Matrix4& _parentMatrix, bool _forceUpdate)
 	{
 		bool mustUpdate = _obj->Transform.GetIsDirty() || _forceUpdate;
 
-		Core::Math::Matrix4 worldMatrix;
+		Matrix4 worldMatrix;
 
 		if (mustUpdate)
 		{
-			const Core::Math::Matrix4 localMat = _obj->Transform.GetMatrix();
+			const Matrix4 localMat = _obj->Transform.GetMatrix();
 
 			worldMatrix = _parentMatrix * localMat;
 
@@ -150,5 +156,26 @@ namespace MirageEngine
 		{
 			WorldMatrixRecursive(child, worldMatrix, mustUpdate);
 		}
+	}
+
+	GameObject* SceneGraph::CreateCube(const std::string& _name, GameObject* _parent)
+	{
+		GameObject* newObject = CreateGameObject(_name, _parent);
+		Core::Components::MeshRenderer* meshRenderer = newObject->AddComponent<Core::Components::MeshRenderer>();
+		meshRenderer->SetMesh(MirageEngine::Core::Resources::ResourceManager::Instance()->GetMesh("cube"));
+		newObject->Transform.SetPosition(Vector3(0, 0, -10));
+		return newObject;
+	}
+
+	GameObject* SceneGraph::CreateCamera(const std::string& _name, GameObject* _parent)
+	{
+		GameObject* newObject = CreateGameObject(_name, _parent);
+		Core::Components::Camera* camera = newObject->AddComponent<Core::Components::Camera>();
+		camera->SetFar(100);
+		camera->SetHeight(1080);
+		camera->SetWidth(1920);
+		camera->SetNear(0.1);
+		camera->SetFov(60.f);
+		return newObject;
 	}
 }

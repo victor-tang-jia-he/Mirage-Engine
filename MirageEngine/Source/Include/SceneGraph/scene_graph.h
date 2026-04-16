@@ -30,17 +30,19 @@ namespace MirageEngine
 		SceneGraph() = default;
 		~SceneGraph() { }
 
-		GameObject* CreateGameObject(const std::string& _name, GameObject* _parent = nullptr);  // done
-		void RemoveGameObject(GameObject* _obj);												// done
-		void ClearScene();																		// done
+		GameObject* CreateGameObject(const std::string& _name, GameObject* _parent = nullptr); 
+		void RemoveGameObject(GameObject* _obj);											
+		void ClearScene();																		
 		GameObject* FindGameObject(uint64_t _id) const;
 
 		void UpdateWorldMatrix(GameObject* _startObject);
-		void UpdateAllWorldMatrices();															// done
+		void UpdateAllWorldMatrices();															
 
-		bool SetParent(GameObject* _parent, GameObject* child); // Manages all the logic of change of parenting.
+		// Manages all the logic of change of parenting.
+		bool SetParent(GameObject* _parent, GameObject* child);
 
-		void ObjectPicking(float _mouseX, float _mouseY); // Porjects a raycast to select an object
+		// Projects a raycast to select an object
+		void ObjectPicking(float _mouseX, float _mouseY);
 
 		void SetSelectedObject(GameObject* _obj) { m_SelectedObject = _obj; }
 		GameObject* GetSelectedObject() { return m_SelectedObject; }
@@ -52,5 +54,7 @@ namespace MirageEngine
 	protected:
 	private:
 		void WorldMatrixRecursive(GameObject* _obj, Core::Math::Matrix4& _parentMatrix, bool _forceUpdate);
+		GameObject* CreateCube(const std::string& _name = "Cube", GameObject* _parent = nullptr);
+		GameObject* CreateCamera(const std::string& _name = "Camera", GameObject* _parent = nullptr);
 	};
 }
