@@ -5,6 +5,7 @@
 #include <Resources/mesh.h>
 #include <Resources/texture.h>
 
+
 DEFINE_LOG_CATEGORY(LogMaterial)
 
 using namespace MirageEngine::Core::Resources;
@@ -69,7 +70,7 @@ void Material::Bind()
     {
         if (_texture)
         {
-            _texture->GetTextureBuffer()->Bind();
+            _texture->Bind();
             m_Shader->SetInt(_name, textureUnit);
             textureUnit++;
         }

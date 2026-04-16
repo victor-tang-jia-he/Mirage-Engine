@@ -10,53 +10,50 @@
 
 #include <Components/input_mapping.h>
 
-namespace MirageEngine
+namespace MirageEngine::Core
 {
-    namespace Core
-    {
-        namespace Components
-        {
-            class Component; // forward declaration
-        }
+	namespace Components
+	{
+		class Component; // forward declaration
+	}
 
-        namespace Input
-        {
-            struct InputBind;
-            class InputMapping;
+	namespace Input
+	{
+		struct InputBind;
+		class InputMapping;
 
-            class InputSystem
-            {
-                public:
-                protected:
-                private:
+		class InputSystem
+		{
+		public:
+		protected:
+		private:
 
-                    static InputMapping*                       _currentMap;
-                    static std::unordered_map<int, InputBind*> m_heldButton;
+			static InputMapping* _currentMap;
+			static std::unordered_map<int, InputBind*> m_heldButton;
 
-                    InputSystem& operator=(const InputSystem&) = delete;
+			InputSystem& operator=(const InputSystem&) = delete;
 
-                public:
+		public:
 
-                    InputSystem()                   = delete;
-                    ~InputSystem()                  = delete;
-                    InputSystem(const InputSystem&) = delete;
+			InputSystem() = delete;
+			~InputSystem() = delete;
+			InputSystem(const InputSystem&) = delete;
 
-                    static void Initialize(InputMapping* map = nullptr);
+			static void Initialize(InputMapping* map = nullptr);
 
-                    static void Shutdown();
+			static void Shutdown();
 
-                    static void UpdateHeldInput();
+			static void UpdateHeldInput();
 
-                    static void KeyCallback(GLFWwindow*, int key, int, int action, int);
+			static void KeyCallback(GLFWwindow*, int key, int, int action, int);
 
-                    static CallbackInputInfo* GetKeyStats(int key);
+			static CallbackInputInfo* GetKeyStats(int key);
 
-                    static InputMapping* GetCurrentMapping() { return _currentMap; }
+			static InputMapping* GetCurrentMapping() { return _currentMap; }
 
-                    static void SetCurrentMapping(InputMapping* map);
+			static void SetCurrentMapping(InputMapping* map);
 
-                    static void Add(int _key, EventSystem::IEvent* _event);
-            };
-        } // namespace Input
-    } // namespace Core
+			static void Add(int _key, EventSystem::IEvent* _event);
+		};
+	} // namespace Input
 } // namespace MirageEngine

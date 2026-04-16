@@ -111,6 +111,7 @@ Texture* ResourceManager::CreateTexture(const std::string& _name, const std::str
 	Texture* texture = new Texture(rm->m_Rhi->InstantiateTexture(), width, height, channel, format, data);
 
 	texture->p_Name = newAssetName;
+	texture->p_Path = _path;
 	rm->m_Resources.emplace(newAssetName, texture);
 	LOG(logTemp, LogResourceManager, "Finish loading Texture : ", _path);
 	return texture;
@@ -128,6 +129,14 @@ Shader* ResourceManager::CreateShader(const std::string& _name, const std::strin
 		LOG(logError, LogResourceManager, "Resource Manager RHI isn't init");
 		return nullptr;
 	}
+	auto shaderCacheIt = rm->m_ShaderCache.find(_path);
+
+	if( shaderCacheIt != rm->m_ShaderCache.end())
+	{
+		LOG(logTemp, LogResourceManager, "Shader already loaded in cache : ", _path);
+		return shaderCacheIt->second.get();
+	}
+
 	LOG(logTemp, LogResourceManager, "Loading Shader : ", _path);
 	std::string newAssetName = _name;
 	auto        it = rm->m_Resources.find(_name);
@@ -137,10 +146,11 @@ Shader* ResourceManager::CreateShader(const std::string& _name, const std::strin
 
 	Shader* shader = new Shader();
 	shader->p_Name = newAssetName;
+	shader->p_Path = _path;
 	shader->ShaderBind = rhiShader;
 
 	rm->m_Resources.emplace(newAssetName, shader); // global resource
-	rm->m_ShaderCache.emplace(_path, rhiShader);   // local cache
+	rm->m_ShaderCache.emplace(_path, shader);   // local cache
 	LOG(logTemp, LogResourceManager, "Finish loading Shader : ", _path);
 	return shader;
 }
@@ -170,6 +180,7 @@ Mesh* ResourceManager::CreateMesh(const std::string& _name, const std::string& _
 	Mesh* mesh = new Mesh(rm->m_Rhi->InstantiateBuffer(), rm->m_Rhi->InstantiateBuffer(), vertices, indices, indices.size());
 
 	mesh->p_Name = newAssetName;
+	mesh->p_Path = _path;
 	rm->m_Resources.emplace(newAssetName, mesh);
 	LOG(logTemp, LogResourceManager, "Finish loading Mesh : ", _path);
 	return mesh;
@@ -187,6 +198,7 @@ Material* ResourceManager::CreateMaterial(const std::string& _name)
 	if (resourceIt != rm->m_Resources.end()) { newAssetName = rm->GenerateUniqueAssetName(_name); }
 	Material* material = new Material();
 	material->p_Name = newAssetName;
+	material->p_Path = ""; // No path for material as it's created empty
 	rm->m_Resources.emplace(newAssetName, material);
 	return material;
 }
@@ -211,8 +223,8 @@ Pipeline* ResourceManager::CreatePipeline(const std::string& _name, const char* 
 	}
 
 	// pre define ptr
-	Shader* frag = new Shader();
-	Shader* vert = new Shader();
+	Shader* frag{};
+	Shader* vert{};
 
 	// search in cache
 	auto shaderFragIt = rm->m_ShaderCache.find(_pathFrag);
@@ -220,21 +232,18 @@ Pipeline* ResourceManager::CreatePipeline(const std::string& _name, const char* 
 
 	// If find get, else, load
 	if (shaderFragIt != rm->m_ShaderCache.end())
-		if (MirageRHI::IShader* ref = shaderFragIt->second.get())
-			frag->ShaderBind = ref;
+			frag = shaderFragIt->second.get();
 	if (shaderVertIt != rm->m_ShaderCache.end())
-		if (MirageRHI::IShader* ref = shaderVertIt->second.get())
-			vert->ShaderBind = ref;
+			vert= shaderVertIt->second.get();
 
 	if (!frag)
 		frag = ResourceManager::CreateShader("ShaderFragment", _pathFrag, MirageRHI::IShader::ShaderType::Fragment);
 	if (!vert)
 		vert = ResourceManager::CreateShader("ShaderVertex", _pathVertex, MirageRHI::IShader::ShaderType::Vertex);
 
-	Pipeline* pipeline = new Pipeline();
-	pipeline->BindPipeline = rm->m_Rhi->InstantiatePipeline();
-	pipeline->BindPipeline->Create(frag->ShaderBind, vert->ShaderBind, _pipelineParamter);
+	Pipeline* pipeline = new Pipeline(rm->m_Rhi->InstantiatePipeline(), _pipelineParamter, vert, frag);
 	pipeline->p_Name = newAssetName;
+	pipeline->p_Path = ""; // No path for pipeline as it's created from shaders
 	rm->m_Resources.emplace(newAssetName, pipeline);
 	return pipeline;
 }

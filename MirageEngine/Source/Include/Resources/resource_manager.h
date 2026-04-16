@@ -38,7 +38,7 @@ namespace MirageEngine::Core::Resources
 	private:
 
 		std::unordered_map<std::string, std::shared_ptr<IResource>>          m_Resources;
-		std::unordered_map<std::string, std::shared_ptr<MirageRHI::IShader>> m_ShaderCache;
+		std::unordered_map<std::string, std::shared_ptr<Shader>> m_ShaderCache;
 
 		static ResourceManager* m_Instance;
 		MirageRHI::IRenderInterface* m_Rhi = nullptr;

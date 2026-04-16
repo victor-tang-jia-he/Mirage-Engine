@@ -34,8 +34,7 @@ void Application::InitApp()
 
     m_Renderer.InitRenderer();
 
-    ResourceManager* resManager = ResourceManager::Instance();
-    resManager->Init(m_Renderer.GetRenderInterfaceHandle());
+    MirageEngine::Core::Resources::ResourceManager::Instance()->Init(m_Renderer.GetRenderInterfaceHandle());
     MirageEngine::Core::Resources::ResourceManager::Instance()->PreLoadResources();
     MirageEngine::Core::Physics::PhysicsManager::Instance()->Initialize();
 
@@ -110,10 +109,6 @@ void Application::InitGameObject()
     InputMapping* inputMapping = obj1->GetComponent<InputMapping>();
     meshRenderer               = obj1->GetComponent<MeshRenderer>();
     meshRenderer2              = obj2->GetComponent<MeshRenderer>();
-
-    std::cout << obj1->GetName().c_str() << " -> " << camera->GetName().c_str() << std::endl;
-    std::cout << obj1->GetName().c_str() << " -> " << inputMapping->GetName().c_str() << std::endl;
-    std::cout << obj1->GetName().c_str() << " -> " << meshRenderer->GetName().c_str() << std::endl;
     camera->BindInput(inputMapping);
     camera->SetFar(100);
     camera->SetHeight(1080);
@@ -121,12 +116,15 @@ void Application::InitGameObject()
     camera->SetNear(0.1);
     camera->SetFov(60.f);
     Texture*  texture  = ResourceManager::Instance()->GetTexture("cat");
+    Texture*  mirageTexture  = ResourceManager::Instance()->GetTexture("Mirage");
     Material* material = ResourceManager::Instance()->CreateMaterial("TestMaterial");
-    texture->Bind();
+    Material* material2 = ResourceManager::Instance()->CreateMaterial("Test2Material");
     material->SetShader(m_Renderer.m_Pipeline);
+    material2->SetShader(m_Renderer.m_Pipeline);
     material->SetTexture("cat", texture);
+    material2->SetTexture("Mirage", mirageTexture);
     meshRenderer->SetMaterial(material);
-    meshRenderer2->SetMaterial(material);
+    meshRenderer2->SetMaterial(material2);
     ResourceManager::Instance()->GetMesh("cube")->Bind();
     meshRenderer->SetMesh(ResourceManager::Instance()->GetMesh("cube"));
     meshRenderer2->SetMesh(ResourceManager::Instance()->GetMesh("cube"));

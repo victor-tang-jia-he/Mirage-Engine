@@ -9,7 +9,7 @@ namespace MirageEngine::Core::Resources
 		friend class ResourceManager;
 	protected:
 		std::string p_Name;
-
+		std::string p_Path;
 	public:
 		virtual ~IResource() = default;
 
