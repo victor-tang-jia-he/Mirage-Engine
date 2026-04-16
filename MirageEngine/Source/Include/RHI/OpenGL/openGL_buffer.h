@@ -13,6 +13,7 @@ namespace MirageRHI
     private:
         uint32_t m_Buffer = 0;
         BufferType m_Type = BufferType::None;
+        uint32_t m_Vao = 0;
 
     public:
         // Creates and stores buffer data (vertexes, indices)

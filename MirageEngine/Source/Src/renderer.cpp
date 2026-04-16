@@ -87,8 +87,7 @@ void Renderer::RenderObjectRecursive(GameObject* _obj)
 {
 	if (!_obj) return;
 
-	Core::Components::MeshRenderer* meshRenderer = _obj->GetComponent<Core::Components::MeshRenderer>();
-	if (meshRenderer)
+	if (Core::Components::MeshRenderer* meshRenderer = _obj->GetComponent<Core::Components::MeshRenderer>())
 	{
 		DrawMesh(meshRenderer, &_obj->Transform);
 	}
@@ -231,6 +230,7 @@ void Renderer::DrawMesh(MirageEngine::Core::Components::MeshRenderer* _meshRende
 {
 	if (!_meshRenderer->GetMesh() || !_meshRenderer->GetMaterial())
 		return;
+
 
 	_meshRenderer->GetMaterial()->Bind();
 	m_UniformBuffer->UpdateUniformBuffer(m_Pipeline, _meshTransform->GetWorldMatrix());

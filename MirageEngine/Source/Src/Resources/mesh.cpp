@@ -23,6 +23,6 @@ void Mesh::Bind()
         m_Index.clear();
     }
 
-    m_VertexBuffer->Bind();
-    m_IndexBuffer->Bind();
+    /*m_VertexBuffer->Bind();
+    m_IndexBuffer->Bind();*/
 }
