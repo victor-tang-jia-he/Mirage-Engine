@@ -21,7 +21,7 @@ namespace MirageEngine::Core::Physics
 		ERigidBodyType m_Type;
 		ECollisionGroup		m_CollisionGroup = ECollisionGroup::Default;
 		ECollisionGroup		m_CollisionMask = ECollisionGroup::All;
-
+		ECollisionResponse m_CollisionRespond = ECollisionResponse::Block;
 		bool m_bIsDirty = true;
 
 		std::vector<ICollider*> m_CurrentRigidBodyShapesBind;
@@ -47,6 +47,12 @@ namespace MirageEngine::Core::Physics
 		void SetCollisionMask(ECollisionGroup _mask)
 		{
 			m_CollisionMask = _mask;
+			m_bIsDirty = true;
+		}
+		
+		void SetCollisionResponse(ECollisionResponse response)
+		{
+			m_CollisionRespond = response;
 			m_bIsDirty = true;
 		}
 

@@ -88,6 +88,7 @@ void Application::InitGameObject()
 
     rb->SetCollisionGroup(ECollisionGroup::Group1);
     rb->SetCollisionMask(ECollisionGroup::Group1 | ECollisionGroup::Group2 | ECollisionGroup::Group3);
+    rb->SetCollisionResponse(ECollisionResponse::Block);
 
     rb2->SetCollisionGroup(ECollisionGroup::Group2);
     rb2->SetCollisionMask(ECollisionGroup::All);
