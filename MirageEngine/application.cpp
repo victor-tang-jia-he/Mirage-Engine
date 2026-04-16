@@ -15,6 +15,7 @@
 // GameObject & Components
 #include <GameObject/game_object.h>
 #include <Components/input_system.h>
+#include <Components/box_collider.h>
 #include <Components/camera.h>
 #include <Components/mesh_renderer.h>
 
@@ -29,124 +30,167 @@ using namespace MirageEngine::Core::Resources;
 
 void Application::InitApp()
 {
-    Loggers::LogBuffer::GetInstance().EnableImmediateFlush(true); // Enable immediate flushing of log messages for real-time output during initialization
-    Loggers::LogBuffer::GetInstance().EnableFileWriting(true);    // Enable writing logs to file during initialization to capture any issues that may occur before the main loop starts.
+	Loggers::LogBuffer::GetInstance().EnableImmediateFlush(true); // Enable immediate flushing of log messages for real-time output during initialization
+	Loggers::LogBuffer::GetInstance().EnableFileWriting(true);    // Enable writing logs to file during initialization to capture any issues that may occur before the main loop starts.
 
-    m_Renderer.InitRenderer();
+	m_Renderer.InitRenderer();
 
-    MirageEngine::Core::Resources::ResourceManager::Instance()->Init(m_Renderer.GetRenderInterfaceHandle());
-    MirageEngine::Core::Resources::ResourceManager::Instance()->PreLoadResources();
-    MirageEngine::Core::Physics::PhysicsManager::Instance()->Initialize();
+	MirageEngine::Core::Resources::ResourceManager::Instance()->Init(m_Renderer.GetRenderInterfaceHandle());
+	MirageEngine::Core::Resources::ResourceManager::Instance()->PreLoadResources();
+	MirageEngine::Core::Physics::PhysicsManager::Instance()->Initialize();
 
-    InitScene();
-    InitInput();
-    InitGameObject();
+	InitScene();
+	InitInput();
+	InitGameObject();
 }
 
 void Application::InitScene()
 {
-    m_EngineCamera = new Camera(1920, 1080, 90.f, 0.1f, 100.f, Vector3(0.f, 0.f, -3.f));
-    m_SceneGraph.SetEditorCamera(m_EngineCamera);
+	m_EngineCamera = new Camera(1920, 1080, 90.f, 0.1f, 100.f, Vector3(0.f, 0.f, -3.f));
+	m_SceneGraph.SetEditorCamera(m_EngineCamera);
 }
 
 void Application::InitInput()
 {
-    // creating editorMapping
-    m_EditorMapping = new InputMapping();
+	// creating editorMapping
+	m_EditorMapping = new InputMapping();
 
-    // add random function test member of current class
-    // m_EditorMapping->Add(GLFW_KEY_W, this, &Application::EditorPrintInput); // template
+	// add random function test member of current class
+	// m_EditorMapping->Add(GLFW_KEY_W, this, &Application::EditorPrintInput); // template
 
-    // init with previous created map
-    InputSystem::Initialize(m_EditorMapping);
-    // get and set callback
-    GLFWwindow* window = glfwGetCurrentContext();
-    glfwSetKeyCallback(window, InputSystem::KeyCallback);
+	// init with previous created map
+	InputSystem::Initialize(m_EditorMapping);
+	// get and set callback
+	GLFWwindow* window = glfwGetCurrentContext();
+	glfwSetKeyCallback(window, InputSystem::KeyCallback);
 
-    // bind camera
-    m_EngineCamera->BindInput(m_EditorMapping);
+	// bind camera
+	m_EngineCamera->BindInput(m_EditorMapping);
 }
 
 using namespace MirageEngine::Core::Resources;
 MeshRenderer* meshRenderer;
 MeshRenderer* meshRenderer2;
-Camera*       camera;
+Camera* camera;
 
 void Application::InitGameObject()
 {
-    using namespace MirageEngine::Core::Physics;
-    PhysicsManager* pManager      = PhysicsManager::Instance();
-    ICollider*      collider      = pManager->CreateCollider(ECollisionShapeType::Box);
-    IRigidBody*     rb            = pManager->CreateRigidBody(collider, ERigidBodyType::Dynamic);
+	using namespace MirageEngine;
+	using namespace MirageEngine::Core::Physics;
 
+	PhysicsManager* physics = PhysicsManager::Instance();
 
-    ICollider*      colliderPlane = pManager->CreateCollider(ECollisionShapeType::Box);
-    //if (auto* box = colliderPlane->As<IBoxCollider>()) box->SetHalfExtents(Vector3(1, 1, 1));
-    Vector3     rotation = Vector3(1.f, 0.f, 0.f);
-    Quaternion  rotationQ(rotation, PI / 12.f);
-    IRigidBody* rb2 = pManager->CreateRigidBody(colliderPlane, ERigidBodyType::Static);
+	// =========================
+	//  Physics setup
+	// =========================
+	BoxCollider* dynamicCollider = new BoxCollider();
+	IRigidBody* dynamicRB = physics->CreateRigidBody(dynamicCollider->GetCollision(), ERigidBodyType::Dynamic);
 
-    rb->SetCollisionGroup(ECollisionGroup::Group1);
-    rb->SetCollisionMask(ECollisionGroup::Group1 | ECollisionGroup::Group2 | ECollisionGroup::Group3);
-    rb->SetCollisionResponse(ECollisionResponse::Block);
+	dynamicRB->SetCollisionGroup(ECollisionGroup::Group1);
+	dynamicRB->SetCollisionMask(
+		ECollisionGroup::Group1 |
+		ECollisionGroup::Group2 |
+		ECollisionGroup::Group3
+	);
+	dynamicRB->SetCollisionResponse(ECollisionResponse::Block);
 
-    rb2->SetCollisionGroup(ECollisionGroup::Group2);
-    rb2->SetCollisionMask(ECollisionGroup::All);
+	ICollider* staticCollider = physics->CreateCollider(ECollisionShapeType::Box);
+	IRigidBody* staticRB = physics->CreateRigidBody(staticCollider, ERigidBodyType::Static);
 
-    MirageEngine::GameObject* root = m_SceneGraph.CreateGameObject("Root", nullptr);
-    MirageEngine::GameObject* obj1 = m_SceneGraph.CreateGameObject("Commelin", root);
-    MirageEngine::GameObject* obj2 = m_SceneGraph.CreateGameObject("Lin", root);
-    MirageEngine::GameObject* obj3 = m_SceneGraph.CreateGameObject("Monin", obj2);
-    MirageEngine::GameObject* obj4 = m_SceneGraph.CreateGameObject("Tang", obj3);
+	staticRB->SetCollisionGroup(ECollisionGroup::Group2);
+	staticRB->SetCollisionMask(ECollisionGroup::All);
 
-    obj1->AddComponent<Camera>();
-    obj1->AddComponent<InputMapping>();
-    obj1->AddComponent<MeshRenderer>();
-    obj1->AddComponent(collider);
-    obj1->AddComponent(rb);
+	// =========================
+	//  Scene graph
+	// =========================
+	GameObject* root = m_SceneGraph.CreateGameObject("Root", nullptr);
+	GameObject* cameraGO = m_SceneGraph.CreateGameObject("Commelin", root);
+	GameObject* floorGO = m_SceneGraph.CreateGameObject("Lin", root);
+	GameObject* child1 = m_SceneGraph.CreateGameObject("Monin", floorGO);
+	GameObject* child2 = m_SceneGraph.CreateGameObject("Tang", child1);
 
+	// =========================
+	//  Camera object
+	// =========================
+	cameraGO->AddComponent<Camera>();
+	cameraGO->AddComponent<InputMapping>();
+	cameraGO->AddComponent<MeshRenderer>();
+	cameraGO->AddComponent(dynamicCollider);
+	cameraGO->AddComponent(dynamicRB);
 
-    obj2->AddComponent(colliderPlane);
-    obj2->AddComponent(rb2);
-    obj2->AddComponent<MeshRenderer>();
-    obj2->SetPosition(Vector3(0, -3, 0));
-    obj2->SetRotation(rotationQ);
-    obj2->SetScale(Vector3(10, 1, 10));
+	Camera* cam = cameraGO->GetComponent<Camera>();
+	InputMapping* input = cameraGO->GetComponent<InputMapping>();
+	MeshRenderer* renderer1 = cameraGO->GetComponent<MeshRenderer>();
 
-    camera = obj1->GetComponent<Camera>();
-    m_SceneGraph.SetEditorCamera(camera);
-    InputMapping* inputMapping = obj1->GetComponent<InputMapping>();
-    meshRenderer               = obj1->GetComponent<MeshRenderer>();
-    meshRenderer2              = obj2->GetComponent<MeshRenderer>();
-    camera->BindInput(inputMapping);
-    camera->SetFar(100);
-    camera->SetHeight(1080);
-    camera->SetWidth(1920);
-    camera->SetNear(0.1);
-    camera->SetFov(60.f);
-    Texture*  texture  = ResourceManager::Instance()->GetTexture("cat");
-    Texture*  mirageTexture  = ResourceManager::Instance()->GetTexture("Mirage");
-    Material* material = ResourceManager::Instance()->CreateMaterial("TestMaterial");
-    Material* material2 = ResourceManager::Instance()->CreateMaterial("Test2Material");
-    material->SetShader(m_Renderer.m_Pipeline);
-    material2->SetShader(m_Renderer.m_Pipeline);
-    material->SetTexture("cat", texture);
-    material2->SetTexture("Mirage", mirageTexture);
-    meshRenderer->SetMaterial(material);
-    meshRenderer2->SetMaterial(material2);
-    ResourceManager::Instance()->GetMesh("cube")->Bind();
-    meshRenderer->SetMesh(ResourceManager::Instance()->GetMesh("cube"));
-    meshRenderer2->SetMesh(ResourceManager::Instance()->GetMesh("cube"));
+	m_SceneGraph.SetEditorCamera(cam);
 
-    InputSystem::SetCurrentMapping(inputMapping);
+	cam->BindInput(input);
+	cam->SetNear(0.1f);
+	cam->SetFar(100.f);
+	cam->SetFov(60.f);
+	cam->SetWidth(1920);
+	cam->SetHeight(1080);
 
-    root->Transform.SetPosition(Vector3(0, 0, -10));
+	InputSystem::SetCurrentMapping(input);
+
+	// =========================
+	//  Floor object
+	// =========================
+	floorGO->AddComponent(staticCollider);
+	floorGO->AddComponent(staticRB);
+	floorGO->AddComponent<MeshRenderer>();
+
+	MeshRenderer* renderer2 = floorGO->GetComponent<MeshRenderer>();
+
+	Quaternion rotationQ(Vector3(1.f, 0.f, 0.f), PI / 12.f);
+
+	floorGO->SetPosition(Vector3(0, -3, 0));
+	floorGO->SetRotation(rotationQ);
+	floorGO->SetScale(Vector3(10, 0, 10));
+
+	// =========================
+	//  Resources
+	// =========================
+	ResourceManager* rm = ResourceManager::Instance();
+
+	Texture* texCat = rm->GetTexture("cat");
+	Texture* texMirage = rm->GetTexture("Mirage");
+
+	Material* mat1 = rm->CreateMaterial("TestMaterial");
+	Material* mat2 = rm->CreateMaterial("Test2Material");
+
+	mat1->SetShader(m_Renderer.m_Pipeline);
+	mat2->SetShader(m_Renderer.m_Pipeline);
+
+	mat1->SetTexture("cat", texCat);
+	mat2->SetTexture("Mirage", texMirage);
+
+	renderer1->SetMaterial(mat1);
+	renderer2->SetMaterial(mat2);
+
+	Mesh* cubeMesh = rm->GetMesh("cube");
+	cubeMesh->Bind();
+
+	renderer1->SetMesh(cubeMesh);
+	renderer2->SetMesh(cubeMesh);
+
+	// =========================
+	//  Root transform
+	// =========================
+	root->Transform.SetPosition(Vector3(0, 0, -10));
+
+	// =========================
+	//  Cache members
+	// =========================
+	camera = cam;
+	meshRenderer = renderer1;
+	meshRenderer2 = renderer2;
 }
 
 void Application::ShutDown()
 {
-    m_Renderer.Shutdown();
-    delete m_EditorMapping;
-    delete m_PlayMapping;
-    delete m_EngineCamera;
+	m_Renderer.Shutdown();
+	delete m_EditorMapping;
+	delete m_PlayMapping;
+	delete m_EngineCamera;
 }
