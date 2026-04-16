@@ -16,7 +16,7 @@ namespace Mirage
 	class EditorApp
 	{
 	private:
-		MirageEngine::GameObject* m_SelectedObject = nullptr;
+		std::shared_ptr<MirageEngine::GameObject> m_SelectedObject = nullptr;
 		std::vector<std::unique_ptr<IPanel>> m_PanelList;
 		void* m_WindowHandle = nullptr;
 		MainMenuBar m_MainMenuBar;
@@ -27,7 +27,7 @@ namespace Mirage
 		void Update(uint32_t _textureID);
 		void Shutdown();
 
-		void SetSelectedObject(MirageEngine::GameObject* _object) { m_SelectedObject = _object; };
-		MirageEngine::GameObject* GetSelectedObject() const { return m_SelectedObject; };
+		void SetSelectedObject(std::shared_ptr<MirageEngine::GameObject> _object) { m_SelectedObject = _object; };
+		std::shared_ptr<MirageEngine::GameObject> GetSelectedObject() const { return m_SelectedObject; };
 	};
 }

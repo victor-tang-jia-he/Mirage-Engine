@@ -3,6 +3,7 @@
 #include <functional>
 #include <map>
 #include <string>
+#include <memory>
 
 namespace MirageEngine
 {
@@ -42,16 +43,9 @@ namespace MirageEngine
 			{
 			public:
 				EventDispatcher() {}
-				~EventDispatcher()
-				{
-					for (auto& el : _eventList)
-					{
-						for (auto* e : el.second) 
-							delete e;
-					}
-				}
+				~EventDispatcher() { _eventList.clear(); }
 
-				void Add(IEvent* event)
+				void Add(std::shared_ptr<IEvent> event)
 				{
 					if (event)
 						_eventList[event->GetName()].push_back(event);
@@ -63,15 +57,15 @@ namespace MirageEngine
 					auto it_eventList = _eventList.find(eventName);
 					if (it_eventList == _eventList.end())
 						return;
-					for (auto ie : it_eventList->second)
+					for (auto& ie : it_eventList->second)
 					{
-						if (Event<_args...>* event = dynamic_cast<Event<_args...>*>(ie))
+						if (std::shared_ptr<Event<_args...>> event = std::dynamic_pointer_cast<Event<_args...>>(ie))
 							event->trigger(a...);
 					}
 				}
 
 			private:
-				std::map<std::string, std::vector<IEvent*>> _eventList;
+				std::map<std::string, std::vector<std::shared_ptr<IEvent>>> _eventList;
 			};
 		}
 	}

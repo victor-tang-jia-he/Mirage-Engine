@@ -35,9 +35,9 @@ void Application::InitApp()
 
 	m_Renderer.InitRenderer();
 
-	MirageEngine::Core::Resources::ResourceManager::Instance()->Init(m_Renderer.GetRenderInterfaceHandle());
-	MirageEngine::Core::Resources::ResourceManager::Instance()->PreLoadResources();
-	MirageEngine::Core::Physics::PhysicsManager::Instance()->Initialize();
+	MirageEngine::Core::Resources::ResourceManager::Instance().Init(m_Renderer.GetRenderInterfaceHandle());
+	MirageEngine::Core::Resources::ResourceManager::Instance().PreLoadResources();
+	MirageEngine::Core::Physics::PhysicsManager::Instance().Initialize();
 
 	InitScene();
 	InitInput();
@@ -46,14 +46,14 @@ void Application::InitApp()
 
 void Application::InitScene()
 {
-	m_EngineCamera = new Camera(1920, 1080, 90.f, 0.1f, 100.f, Vector3(0.f, 0.f, -3.f));
+	m_EngineCamera = std::make_shared<Camera>(1920, 1080, 90.f, 0.1f, 100.f, Vector3(0.f, 0.f, -3.f));
 	m_SceneGraph.SetEditorCamera(m_EngineCamera);
 }
 
 void Application::InitInput()
 {
 	// creating editorMapping
-	m_EditorMapping = new InputMapping();
+	m_EditorMapping = std::make_shared<InputMapping>();
 
 	// add random function test member of current class
 	// m_EditorMapping->Add(GLFW_KEY_W, this, &Application::EditorPrintInput); // template
@@ -78,13 +78,13 @@ void Application::InitGameObject()
 	using namespace MirageEngine;
 	using namespace MirageEngine::Core::Physics;
 
-	PhysicsManager* physics = PhysicsManager::Instance();
+	PhysicsManager& physics = PhysicsManager::Instance();
 
 	// =========================
 	//  Physics setup
 	// =========================
-	BoxCollider* dynamicCollider = new BoxCollider();
-	IRigidBody* dynamicRB = physics->CreateRigidBody(dynamicCollider->GetCollision(), ERigidBodyType::Dynamic);
+	std::shared_ptr<BoxCollider> dynamicCollider = std::make_shared<BoxCollider>();
+	std::shared_ptr <IRigidBody> dynamicRB = physics.CreateRigidBody(dynamicCollider->GetCollision(), ERigidBodyType::Dynamic);
 
 	dynamicRB->SetCollisionGroup(ECollisionGroup::Group1);
 	dynamicRB->SetCollisionMask(
@@ -94,8 +94,8 @@ void Application::InitGameObject()
 	);
 	dynamicRB->SetCollisionResponse(ECollisionResponse::Block);
 
-	ICollider* staticCollider = physics->CreateCollider(ECollisionShapeType::Box);
-	IRigidBody* staticRB = physics->CreateRigidBody(staticCollider, ERigidBodyType::Static);
+	std::shared_ptr<ICollider> staticCollider = physics.CreateCollider(ECollisionShapeType::Box);
+	std::shared_ptr <IRigidBody> staticRB = physics.CreateRigidBody(staticCollider.get(), ERigidBodyType::Static);
 
 	staticRB->SetCollisionGroup(ECollisionGroup::Group2);
 	staticRB->SetCollisionMask(ECollisionGroup::All);
@@ -103,11 +103,11 @@ void Application::InitGameObject()
 	// =========================
 	//  Scene graph
 	// =========================
-	GameObject* root = m_SceneGraph.CreateGameObject("Root", nullptr);
-	GameObject* cameraGO = m_SceneGraph.CreateGameObject("Commelin", root);
-	GameObject* floorGO = m_SceneGraph.CreateGameObject("Lin", root);
-	GameObject* child1 = m_SceneGraph.CreateGameObject("Monin", floorGO);
-	GameObject* child2 = m_SceneGraph.CreateGameObject("Tang", child1);
+	std::shared_ptr<GameObject> root = m_SceneGraph.CreateGameObject("Root", nullptr);
+	std::shared_ptr<GameObject> cameraGO = m_SceneGraph.CreateGameObject("Commelin", root);
+	std::shared_ptr<GameObject> floorGO = m_SceneGraph.CreateGameObject("Lin", root);
+	std::shared_ptr<GameObject> child1 = m_SceneGraph.CreateGameObject("Monin", floorGO);
+	std::shared_ptr<GameObject> child2 = m_SceneGraph.CreateGameObject("Tang", child1);
 
 	// =========================
 	//  Camera object
@@ -118,9 +118,9 @@ void Application::InitGameObject()
 	cameraGO->AddComponent(dynamicCollider);
 	cameraGO->AddComponent(dynamicRB);
 
-	Camera* cam = cameraGO->GetComponent<Camera>();
-	InputMapping* input = cameraGO->GetComponent<InputMapping>();
-	MeshRenderer* renderer1 = cameraGO->GetComponent<MeshRenderer>();
+	std::shared_ptr<Camera> cam = cameraGO->GetComponent<Camera>();
+	std::shared_ptr<InputMapping> input = cameraGO->GetComponent<InputMapping>();
+	std::shared_ptr<MeshRenderer> renderer1 = cameraGO->GetComponent<MeshRenderer>();
 
 	m_SceneGraph.SetEditorCamera(cam);
 
@@ -140,7 +140,7 @@ void Application::InitGameObject()
 	floorGO->AddComponent(staticRB);
 	floorGO->AddComponent<MeshRenderer>();
 
-	MeshRenderer* renderer2 = floorGO->GetComponent<MeshRenderer>();
+	std::shared_ptr<MeshRenderer> renderer2 = floorGO->GetComponent<MeshRenderer>();
 
 	Quaternion rotationQ(Vector3(1.f, 0.f, 0.f), PI / 12.f);
 
@@ -151,13 +151,13 @@ void Application::InitGameObject()
 	// =========================
 	//  Resources
 	// =========================
-	ResourceManager* rm = ResourceManager::Instance();
+	ResourceManager& rm = ResourceManager::Instance();
 
-	Texture* texCat = rm->GetTexture("cat");
-	Texture* texMirage = rm->GetTexture("Mirage");
+	std::shared_ptr<Texture> texCat = rm.GetTexture("cat");
+	std::shared_ptr<Texture> texMirage = rm.GetTexture("Mirage");
 
-	Material* mat1 = rm->CreateMaterial("TestMaterial");
-	Material* mat2 = rm->CreateMaterial("Test2Material");
+	std::shared_ptr<Material> mat1 = rm.CreateMaterial("TestMaterial");
+	std::shared_ptr<Material> mat2 = rm.CreateMaterial("Test2Material");
 
 	mat1->SetShader(m_Renderer.m_Pipeline);
 	mat2->SetShader(m_Renderer.m_Pipeline);
@@ -168,7 +168,7 @@ void Application::InitGameObject()
 	renderer1->SetMaterial(mat1);
 	renderer2->SetMaterial(mat2);
 
-	Mesh* cubeMesh = rm->GetMesh("cube");
+	std::shared_ptr<Mesh> cubeMesh = rm.GetMesh("cube");
 	cubeMesh->Bind();
 
 	renderer1->SetMesh(cubeMesh);
@@ -182,15 +182,20 @@ void Application::InitGameObject()
 	// =========================
 	//  Cache members
 	// =========================
-	camera = cam;
-	meshRenderer = renderer1;
-	meshRenderer2 = renderer2;
+	camera = cam.get();
+	meshRenderer = renderer1.get();
+	meshRenderer2 = renderer2.get();
 }
 
 void Application::ShutDown()
 {
+	MirageEngine::Core::Input::InputSystem::Shutdown();
+	MirageEngine::Core::Resources::ResourceManager::Instance().Shutdown();
+	MirageEngine::Core::Physics::PhysicsManager::Instance().Shutdown();
+
 	m_Renderer.Shutdown();
-	delete m_EditorMapping;
-	delete m_PlayMapping;
-	delete m_EngineCamera;
+    m_SceneGraph.Clean();
+	m_EditorMapping.reset();
+	m_PlayMapping.reset();
+	m_EngineCamera.reset();
 }

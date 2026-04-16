@@ -6,15 +6,14 @@ Bullet3BoxCollider::~Bullet3BoxCollider()
 {
     if (m_CollisionShape)
     {
-        delete m_CollisionShape;
-        m_CollisionShape = nullptr;
+        m_CollisionShape.reset();
     }
 }
 
 void Bullet3BoxCollider::Create()
 {
     m_bIsDirty       = false;
-    m_CollisionShape = new btBoxShape(btVector3(m_HalfExtents.X, m_HalfExtents.Y, m_HalfExtents.Z));
+    m_CollisionShape = std::make_shared<btBoxShape>(btVector3(m_HalfExtents.X, m_HalfExtents.Y, m_HalfExtents.Z));
     if (m_Offset.IsNull() && m_Rot.IsNull()) return;
 
     m_LocalTransform.setIdentity();

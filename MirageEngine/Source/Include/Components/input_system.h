@@ -12,11 +12,6 @@
 
 namespace MirageEngine::Core
 {
-	namespace Components
-	{
-		class Component; // forward declaration
-	}
-
 	namespace Input
 	{
 		struct InputBind;
@@ -28,8 +23,8 @@ namespace MirageEngine::Core
 		protected:
 		private:
 
-			static InputMapping* _currentMap;
-			static std::unordered_map<int, InputBind*> m_heldButton;
+			static std::shared_ptr<InputMapping> _currentMap;
+			static std::unordered_map<int, std::weak_ptr<InputBind>> m_heldButton;
 
 			InputSystem& operator=(const InputSystem&) = delete;
 
@@ -39,7 +34,7 @@ namespace MirageEngine::Core
 			~InputSystem() = delete;
 			InputSystem(const InputSystem&) = delete;
 
-			static void Initialize(InputMapping* map = nullptr);
+			static void Initialize(std::shared_ptr<InputMapping> map = nullptr);
 
 			static void Shutdown();
 
@@ -49,11 +44,11 @@ namespace MirageEngine::Core
 
 			static CallbackInputInfo* GetKeyStats(int key);
 
-			static InputMapping* GetCurrentMapping() { return _currentMap; }
+			static InputMapping* GetCurrentMapping() { return _currentMap.get(); }
 
-			static void SetCurrentMapping(InputMapping* map);
+			static void SetCurrentMapping(std::shared_ptr<InputMapping> map);
 
-			static void Add(int _key, EventSystem::IEvent* _event);
+			static void Add(int _key, std::shared_ptr<EventSystem::IEvent> _event);
 		};
 	} // namespace Input
 } // namespace MirageEngine

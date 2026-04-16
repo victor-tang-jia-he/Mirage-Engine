@@ -3,152 +3,134 @@
 
 namespace MirageEngine
 {
-	GameObject* SceneGraph::CreateGameObject(const std::string& _name, GameObject* _parent)
-	{
-		GameObject* newObject = new GameObject(nullptr, _name);
-		uint64_t objectID = newObject->GetID();
-		auto [it, success] = m_Registry.try_emplace(objectID, newObject);
+    std::shared_ptr<GameObject> SceneGraph::CreateGameObject(const std::string& _name, std::shared_ptr<GameObject> _parent)
+    {
+        std::shared_ptr<GameObject> newObject = std::make_shared<GameObject>(nullptr, _name);
+        uint64_t                    objectID  = newObject->GetID();
+        auto [it, success]                    = m_Registry.try_emplace(objectID, newObject);
 
-		if (!success) {
-		}
+        if (!success) {}
 
-		this->SetParent(_parent, newObject);
-		return newObject;
-	}
+        this->SetParent(_parent, newObject);
+        return newObject;
+    }
 
-	void SceneGraph::RemoveGameObject(GameObject* _obj)
-	{
-		if (!_obj) return;
+    void SceneGraph::RemoveGameObject(std::shared_ptr<GameObject> _obj)
+    {
+        if (!_obj) return;
 
-		std::vector<GameObject*> childrenCopy = _obj->GetChildren();
-		for (GameObject* child : childrenCopy)
-			RemoveGameObject(child);
+        std::vector<std::shared_ptr<GameObject>> childrenCopy = _obj->GetChildren();
+        for (std::shared_ptr<GameObject> child : childrenCopy) RemoveGameObject(child);
 
-		if (_obj->GetParent() == nullptr)
-			std::erase(m_RootsList, _obj);
-		else
-			_obj->GetParent()->RemoveChild(_obj);
+        if (_obj->GetParent() == nullptr) std::erase(m_RootsList, _obj);
+        else _obj->GetParent()->RemoveChild(_obj);
 
-		m_Registry.erase(_obj->GetID());
+        m_Registry.erase(_obj->GetID());
 
-		if (m_SelectedObject == _obj)
-			m_SelectedObject = nullptr;
+        if (m_SelectedObject == _obj) m_SelectedObject = nullptr;
 
-		delete _obj;
-	}
+        _obj.reset();
+    }
 
-	void SceneGraph::ClearScene()
-	{
-		std::vector<GameObject*> rootsCopy = m_RootsList;
-		for (GameObject* obj : rootsCopy)
-		{
-			RemoveGameObject(obj);
-		}
-		m_Registry.clear();
-		m_RootsList.clear();
-	}
+    void SceneGraph::ClearScene()
+    {
+        std::vector<std::shared_ptr<GameObject>> rootsCopy = m_RootsList;
+        for (std::shared_ptr<GameObject> obj : rootsCopy) { RemoveGameObject(obj); }
+        m_Registry.clear();
+        m_RootsList.clear();
+    }
 
-	void SceneGraph::UpdateAllWorldMatrices()
-	{
-		MirageEngine::Core::Math::Matrix4 Identity = Core::Math::Matrix4::Identity();
+    void SceneGraph::UpdateAllWorldMatrices()
+    {
+        MirageEngine::Core::Math::Matrix4 Identity = Core::Math::Matrix4::Identity();
 
-		for (GameObject* root : m_RootsList)
-		{
-			WorldMatrixRecursive(root, Identity, false);
-		}
-	}
+        for (std::shared_ptr<GameObject> root : m_RootsList) { WorldMatrixRecursive(root, Identity, false); }
+    }
 
-	std::vector<GameObject*> SceneGraph::GetChildren(GameObject* _parent) const
-	{
-		if (_parent == nullptr)
-			return m_RootsList;
-		return _parent->GetChildren();
-	}
+    std::vector<std::shared_ptr<GameObject>> SceneGraph::GetChildren(std::shared_ptr<GameObject> _parent) const
+    {
+        if (_parent == nullptr) return m_RootsList;
+        return _parent->GetChildren();
+    }
 
-	bool SceneGraph::SetParent(GameObject* _parent, GameObject* _child)
-	{
-		if (!_child) return false;
-		if (_child == _parent) return false;
+    bool SceneGraph::SetParent(std::shared_ptr<GameObject> _parent, std::shared_ptr<GameObject> _child)
+    {
+        if (!_child) return false;
+        if (_child == _parent) return false;
 
-		std::cout << "\n--- DEBUT SET PARENT ---" << std::endl;
-		std::cout << "Enfant: " << _child->GetName() << " | Parent: " << (_parent ? _parent->GetName() : "Root") << std::endl;
+        std::cout << "\n--- DEBUT SET PARENT ---" << std::endl;
+        std::cout << "Enfant: " << _child->GetName() << " | Parent: " << (_parent ? _parent->GetName() : "Root") << std::endl;
 
-		Core::Math::Matrix4 childWorldBefore = _child->Transform.GetWorldMatrix();
+        Core::Math::Matrix4 childWorldBefore = _child->Transform.GetWorldMatrix();
 
-		GameObject* current = _parent;
-		while (current != nullptr)
-		{
-			if (current == _child)
-			{
-				std::cout << "Error: Circular dependency detected!" << std::endl;
-				return false;
-			}
-			current = current->GetParent();
-		}
+        std::shared_ptr<GameObject> current = _parent;
 
-		if (_child->GetParent() == nullptr)
-			std::erase(m_RootsList, _child);
-		else
-		{
-			_child->GetParent()->RemoveChild(_child);
-		}
+        while (current != nullptr)
+        {
+            auto currentShared = current;
 
-		if (_parent == nullptr)
-		{
-			m_RootsList.push_back(_child);
-			_child->SetParent(nullptr);
-		}
-		else
-		{
-			_parent->AddChild(_child);
-			_child->SetParent(_parent);
-		}
+            if (currentShared == _child)
+            {
+                std::cout << "Error: Circular dependency detected!" << std::endl;
+                return false;
+            }
 
-		if (_parent != nullptr)
-		{
-			Core::Math::Matrix4 invParent = _parent->Transform.GetWorldMatrix().Inverse();
-			Core::Math::Matrix4 newLoc = invParent * childWorldBefore;
+            current = currentShared->GetParent();
+        }
 
-			//_child->Transform.SetLocalMatrix(newLoc);
-			_child->SetPosition(newLoc.GetTranslation());
-			_child->SetRotation(newLoc.GetRotation());
-			std::cout << "New Local calculated. Scale: " << newLoc.GetScale().X << std::endl;
-		}
-		else
-		{
-			std::cout << "Root" << std::endl;
-			//_child->Transform.SetLocalMatrix(childWorldBefore);
-			_child->SetPosition(childWorldBefore.GetTranslation());
-			_child->SetRotation(childWorldBefore.GetRotation());
-		}
+        if (_child->GetParent() == nullptr) std::erase(m_RootsList, _child);
+        else { _child->GetParent()->RemoveChild(_child); }
 
-		_child->SetDirty(true);
+        if (_parent == nullptr)
+        {
+            m_RootsList.push_back(_child);
+            _child->SetParent(nullptr);
+        }
+        else
+        {
+            _parent->AddChild(_child);
+            _child->SetParent(_parent);
+        }
 
-		return true;
-	}
+        if (_parent != nullptr)
+        {
+            Core::Math::Matrix4 invParent = _parent->Transform.GetWorldMatrix().Inverse();
+            Core::Math::Matrix4 newLoc    = invParent * childWorldBefore;
 
-	void SceneGraph::WorldMatrixRecursive(GameObject* _obj, Core::Math::Matrix4& _parentMatrix, bool _forceUpdate)
-	{
-		bool mustUpdate = _obj->Transform.GetIsDirty() || _forceUpdate;
+            //_child->Transform.SetLocalMatrix(newLoc);
+            _child->SetPosition(newLoc.GetTranslation());
+            _child->SetRotation(newLoc.GetRotation());
+            std::cout << "New Local calculated. Scale: " << newLoc.GetScale().X << std::endl;
+        }
+        else
+        {
+            std::cout << "Root" << std::endl;
+            //_child->Transform.SetLocalMatrix(childWorldBefore);
+            _child->SetPosition(childWorldBefore.GetTranslation());
+            _child->SetRotation(childWorldBefore.GetRotation());
+        }
 
-		Core::Math::Matrix4 worldMatrix;
+        _child->SetDirty(true);
 
-		if (mustUpdate)
-		{
-			const Core::Math::Matrix4 localMat = _obj->Transform.GetMatrix();
+        return true;
+    }
 
-			worldMatrix = _parentMatrix * localMat;
+    void SceneGraph::WorldMatrixRecursive(std::shared_ptr<GameObject> _obj, Core::Math::Matrix4& _parentMatrix, bool _forceUpdate)
+    {
+        bool mustUpdate = _obj->Transform.GetIsDirty() || _forceUpdate;
 
-			_obj->Transform.SetWorldMatrix(worldMatrix);
-		}
-		else
-		{
-			worldMatrix = _obj->Transform.GetWorldMatrix();
-		}
+        Core::Math::Matrix4 worldMatrix;
 
-		for (GameObject* child : _obj->GetChildren())
-		{
-			WorldMatrixRecursive(child, worldMatrix, mustUpdate);
-		}
-	}
-}
+        if (mustUpdate)
+        {
+            const Core::Math::Matrix4 localMat = _obj->Transform.GetMatrix();
+
+            worldMatrix = _parentMatrix * localMat;
+
+            _obj->Transform.SetWorldMatrix(worldMatrix);
+        }
+        else { worldMatrix = _obj->Transform.GetWorldMatrix(); }
+
+        for (std::shared_ptr<GameObject> child : _obj->GetChildren()) { WorldMatrixRecursive(child, worldMatrix, mustUpdate); }
+    }
+} // namespace MirageEngine

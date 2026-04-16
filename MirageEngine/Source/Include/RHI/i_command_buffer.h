@@ -25,13 +25,13 @@ namespace MirageRHI
 
 		virtual OpenGLCommandBuffer& API_OpenGL() { throw std::runtime_error("Bad API Call : object is not an OpenGLCommandBuffer"); }
 
-		virtual void BeginDraw(IRenderPass* _renderPass, uint32_t _FBO) = 0;
+		virtual void BeginDraw(std::shared_ptr<IRenderPass> _renderPass, uint32_t _FBO) = 0;
 		virtual void EndDraw() = 0;
-		virtual void BindPipeline(IPipeline* _pipeline) = 0;
-		virtual void BindBuffer(IBuffer* _buffer) = 0;
+		virtual void BindPipeline(std::shared_ptr<IPipeline> _pipeline) = 0;
+		virtual void BindBuffer(std::shared_ptr<IBuffer> _buffer) = 0;
 		virtual void BindTextureFromID(uint32_t _ID) = 0;
-		virtual void ApplyPipelineParameters(IPipeline* _pipeline) = 0;
+		virtual void ApplyPipelineParameters(std::shared_ptr<IPipeline> _pipeline) = 0;
 		virtual void Draw(uint32_t _indexCount) = 0;
-		virtual void SubmitAndPresent(ISwapChain* _swapChain, ISurface* _surface) = 0;
+		virtual void SubmitAndPresent(std::shared_ptr<ISwapChain> _swapChain, std::shared_ptr<ISurface> _surface) = 0;
 	};
 }

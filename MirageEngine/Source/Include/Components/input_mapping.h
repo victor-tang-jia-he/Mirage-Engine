@@ -4,6 +4,9 @@
 
 #include <Events/event.h>
 #include "component.h"
+#include <Logs/log_macro.h>
+
+DECLARE_LOG_CATEGORY_EXTERN(logInputMapping)
 
 namespace MirageEngine
 {
@@ -30,25 +33,25 @@ namespace MirageEngine
 				CallbackInputInfo            InputInfo;
 			};
 
-			struct InputMapping : public Components::Component
+			struct InputMapping : public Components::Component, public std::enable_shared_from_this<InputMapping>
 			{
-				std::unordered_map<int, InputBind> Map;
+				std::unordered_map<int, std::shared_ptr<InputBind>> Map;
 
-				InputMapping() = default;
+				InputMapping() = default;	
 
-				~InputMapping() override { Map.clear(); }
+				~InputMapping() override;
 
 				entt::id_type GetType() const override { return entt::type_id<InputMapping>().hash(); }
 
 				template <typename... Args> void Add(int key, std::function<void(Args...)> func)
 				{
-					EventSystem::Event<Args...>* event = new EventSystem::Event<Args...>("InputSystem", func);
+					std::shared_ptr<EventSystem::Event<Args...>> event = std::make_shared<EventSystem::Event<Args...>>("InputSystem", func);
 
-					if (Map.find(key) != Map.end()) { Map[key].Dispatcher.Add(event); }
+					if (Map.find(key) != Map.end()) { Map[key]->Dispatcher.Add(event); }
 					else
 					{
-						Map[key] = InputBind{};
-						Map[key].Dispatcher.Add(event);
+						Map[key] = std::make_shared<InputBind>();
+						Map[key]->Dispatcher.Add(event);
 					}
 				}
 
@@ -59,18 +62,7 @@ namespace MirageEngine
 					Add<Args...>(key, func);
 				}
 
-				void Add(int key, EventSystem::IEvent* event)
-				{
-					if (event)
-					{
-						if (Map.find(key) != Map.end()) { Map[key].Dispatcher.Add(event); }
-						else
-						{
-							Map[key] = InputBind{};
-							Map[key].Dispatcher.Add(event);
-						}
-					}
-				}
+				void Add(int key, std::shared_ptr<EventSystem::IEvent> event);
 
 				void Remove(int key) { Map.erase(key); }
 

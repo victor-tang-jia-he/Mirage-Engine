@@ -51,7 +51,7 @@ namespace MirageEngine
 				unsigned int GetWidth() const { return m_Width; }
 				unsigned int GetHeight() const { return m_Height; }
 				// debug
-				void BindInput(MirageEngine::Core::Input::InputMapping* map);
+				void BindInput(std::shared_ptr<MirageEngine::Core::Input::InputMapping> map);
 			};
 		}
 	}

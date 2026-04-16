@@ -15,7 +15,7 @@ namespace MirageEngine::Core::Physics
 
         private:
 
-            btCollisionShape* m_CollisionShape = nullptr;
+            std::shared_ptr<btCollisionShape> m_CollisionShape = nullptr;
             Vector3           m_HalfExtents    = Vector3(1.f);
             btTransform       m_LocalTransform;
 
@@ -34,7 +34,7 @@ namespace MirageEngine::Core::Physics
             Vector3     GetHalfExtents() const override;
             btTransform GetTransform() override;
 
-            btCollisionShape* GetShape() override { return m_CollisionShape; }
+            btCollisionShape* GetShape() override { return m_CollisionShape.get(); }
 
             IBulletColliderData* AsBullet3Collider() override { return this; }
     };

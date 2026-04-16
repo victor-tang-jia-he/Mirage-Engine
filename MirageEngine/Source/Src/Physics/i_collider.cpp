@@ -3,7 +3,7 @@
 
 using namespace MirageEngine::Core::Physics;
 
-bool ICollider::SetRigidbody(IRigidBody* _rigidbody)
+bool ICollider::SetRigidbody(std::shared_ptr<IRigidBody> _rigidbody)
 {
     if (m_RigidBody == _rigidbody)
     {

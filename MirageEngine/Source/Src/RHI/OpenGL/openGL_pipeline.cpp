@@ -6,7 +6,7 @@ DEFINE_LOG_CATEGORY(LogRHIPipeline)
 
 using namespace MirageEngine::Core::Math;
 
-void MirageRHI::OpenGLPipeline::Create(IShader* _vertShader, IShader* _fragShader, IPipelineParameters* _pipelineParameters)
+void MirageRHI::OpenGLPipeline::Create(std::shared_ptr<IShader> _vertShader, std::shared_ptr<IShader> _fragShader, std::shared_ptr<IPipelineParameters> _pipelineParameters)
 {
     m_Parameters = _pipelineParameters;
     m_VertexShader = _vertShader;

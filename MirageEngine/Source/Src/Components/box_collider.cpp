@@ -8,12 +8,12 @@ using namespace MirageEngine::Core;
 
 MirageEngine::Core::Components::BoxCollider::BoxCollider()
 {
-	m_Collider = ::PhysicsManager::Instance()->CreateCollider(ECollisionShapeType::Box);
+	m_Collider = PhysicsManager::Instance().CreateCollider(ECollisionShapeType::Box);
 }
 
 MirageEngine::Core::Components::BoxCollider::~BoxCollider()
 {
-	delete m_Collider;
+	m_Collider.reset();
 }
 
 void BoxCollider::SetOffset(MirageEngine::Core::Math::Vector3 _offset, MirageEngine::Core::Math::Quaternion _rotation)

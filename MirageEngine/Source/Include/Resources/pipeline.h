@@ -7,38 +7,48 @@ DECLARE_LOG_CATEGORY_EXTERN(LogPipeline)
 
 namespace MirageRHI
 {
-	class IPipeline;
+    class IPipeline;
 }
 
 namespace MirageEngine::Core::Resources
 {
-	class Shader;
-	struct Pipeline : public IResource
-	{
-	private:
-		MirageRHI::IPipeline* PipelineBind = nullptr;
-		MirageRHI::IPipelineParameters* PipelineParameters = nullptr;
-		Shader* AttachedVertexShader = nullptr;
-		Shader* AttachedFragmentShader = nullptr;
+    class Shader;
 
-		bool m_bUploaded = false;
-	public:
+    struct Pipeline : public IResource
+    {
+        private:
 
-		Pipeline(MirageRHI::IPipeline* _pipelineBind, MirageRHI::IPipelineParameters* _pipelineParameters, Shader* _vertexShader, Shader* _fragmentShader)
-			: PipelineBind(_pipelineBind), PipelineParameters(_pipelineParameters), AttachedVertexShader(_vertexShader), AttachedFragmentShader(_fragmentShader) {}
+            std::shared_ptr<MirageRHI::IPipeline> PipelineBind           = nullptr;
+            std::shared_ptr<MirageRHI::IPipelineParameters> PipelineParameters     = nullptr;
+            std::shared_ptr<Shader>         AttachedVertexShader   = nullptr;
+            std::shared_ptr<Shader>         AttachedFragmentShader = nullptr;
 
-		void Bind();
+            bool m_bUploaded = false;
 
-		void SetNewVertexShader(Shader* _newVertexShader)
-		{
-			AttachedVertexShader = _newVertexShader;
-			m_bUploaded = false; // Mark for re-upload
-		}
-		void SetNewFragmentShader(Shader* _newFragmentShader)
-		{
-			AttachedFragmentShader = _newFragmentShader;
-			m_bUploaded = false; // Mark for re-upload
-		}
+        public:
 
-	};
-}
+            Pipeline(std::shared_ptr<MirageRHI::IPipeline> _pipelineBind, std::shared_ptr<MirageRHI::IPipelineParameters> _pipelineParameters, std::shared_ptr<Shader> _vertexShader, std::shared_ptr<Shader> _fragmentShader)
+                : PipelineBind(_pipelineBind)
+                , PipelineParameters(_pipelineParameters)
+                , AttachedVertexShader(_vertexShader)
+                , AttachedFragmentShader(_fragmentShader)
+            {
+            }
+
+            ~Pipeline() override = default;
+
+            void Bind();
+
+            void SetNewVertexShader(std::shared_ptr<Shader> _newVertexShader)
+            {
+                AttachedVertexShader = _newVertexShader;
+                m_bUploaded          = false; // Mark for re-upload
+            }
+
+            void SetNewFragmentShader(std::shared_ptr<Shader> _newFragmentShader)
+            {
+                AttachedFragmentShader = _newFragmentShader;
+                m_bUploaded            = false; // Mark for re-upload
+            }
+    };
+} // namespace MirageEngine::Core::Resources

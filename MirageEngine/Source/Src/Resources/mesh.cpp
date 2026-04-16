@@ -6,6 +6,14 @@ DEFINE_LOG_CATEGORY(LogMesh)
 
 using namespace MirageEngine::Core::Resources;
 
+Mesh::~Mesh()
+{
+    m_IndexCount = 0;
+    m_VertexBuffer = nullptr;
+    m_IndexBuffer  = nullptr;
+    LOG(logTemp, LogMesh, "Mesh ", p_Name, " destroyed !");
+}
+
 void Mesh::Bind()
 {
     if (!m_VertexBuffer || !m_IndexBuffer)
@@ -22,7 +30,4 @@ void Mesh::Bind()
         m_Vertex.clear();
         m_Index.clear();
     }
-
-    m_VertexBuffer->Bind();
-    m_IndexBuffer->Bind();
 }

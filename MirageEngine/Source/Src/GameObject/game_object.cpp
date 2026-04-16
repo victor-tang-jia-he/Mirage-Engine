@@ -13,7 +13,7 @@ uint64_t GenerateUniqueID() {
 	return s_NextID++;
 }
 
-MirageEngine::GameObject::GameObject(GameObject* _parent, std::string _name, bool _isStatic, bool _isActive)
+MirageEngine::GameObject::GameObject(std::shared_ptr<GameObject> _parent, std::string _name, bool _isStatic, bool _isActive)
 	: m_Parent(_parent),
 	m_Name(_name),
 	m_bIsStatic(_isStatic),
@@ -22,7 +22,9 @@ MirageEngine::GameObject::GameObject(GameObject* _parent, std::string _name, boo
 	m_ID = GenerateUniqueID();
 }
 
-void MirageEngine::GameObject::AddChild(GameObject* _child, bool _isStatic, bool _isActive)
+MirageEngine::GameObject::~GameObject() { m_Components.clear(); }
+
+void MirageEngine::GameObject::AddChild(std::shared_ptr<GameObject> _child, bool _isStatic, bool _isActive)
 {
 	//if (_child->GetParent() != nullptr)
 	//	_child->GetParent()->RemoveChild(_child);
@@ -62,12 +64,12 @@ void MirageEngine::GameObject::SetActive(bool _isActive)
 	}
 }
 
-void MirageEngine::GameObject::RemoveComponent(MirageEngine::Core::Components::Component* _component)
+void MirageEngine::GameObject::RemoveComponent(std::shared_ptr<MirageEngine::Core::Components::Component> _component)
 {
 	m_Components.erase(std::remove(m_Components.begin(), m_Components.end(), _component), m_Components.end());
 }
 
-void MirageEngine::GameObject::RemoveChild(GameObject* _child)
+void MirageEngine::GameObject::RemoveChild(std::shared_ptr<GameObject> _child)
 {
 	m_Children.erase(std::remove(m_Children.begin(), m_Children.end(), _child), m_Children.end());
 }

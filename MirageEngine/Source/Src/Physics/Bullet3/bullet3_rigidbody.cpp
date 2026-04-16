@@ -10,14 +10,13 @@ using namespace MirageEngine::Core::Physics;
 
 Bullet3RigidBody::~Bullet3RigidBody()
 {
-	PhysicsManager::Instance()->UnregisterRigidBody(this);
 	if (m_rigidBody)
 	{
 		delete m_rigidBody->getMotionState();
-		delete m_rigidBody;
+		m_rigidBody.reset();
 		m_rigidBody = nullptr;
 	}
-	if (m_Compound) delete m_Compound;
+	if (m_Compound) m_Compound.reset();
 }
 
 bool Bullet3RigidBody::Create(ICollider* _shape, ERigidBodyType _type)
@@ -38,13 +37,13 @@ bool Bullet3RigidBody::Create(ICollider* _shape, ERigidBodyType _type)
 
 	btCollisionShape* collisionShape = _shape->AsBullet3Collider()->GetShape();
 
-	_shape->SetRigidbody(this);
+	_shape->SetRigidbody(shared_from_this());
 	if (!collisionShape)
 	{
 		LOG(logError, LogBullet3Rigidbody, "Cannot create rigid body : collision shape is null.");
 		return false;
 	}
-	m_Compound = new btCompoundShape;
+	m_Compound = std::make_shared<btCompoundShape>();
 
 	MirageEngine::Core::Math::Vector3 shapeScale = _shape->GetScale();
 	collisionShape->setLocalScaling(btVector3(shapeScale.X, shapeScale.Y, shapeScale.Z));
@@ -68,12 +67,12 @@ bool Bullet3RigidBody::Create(ICollider* _shape, ERigidBodyType _type)
 	btDefaultMotionState* motionState = new btDefaultMotionState(btTransform::getIdentity());
 	btRigidBody::btRigidBodyConstructionInfo rigidBodyCI(mass, motionState, collisionShape, inertia);
 
-	m_rigidBody = new btRigidBody(rigidBodyCI);
+	m_rigidBody = std::make_shared<btRigidBody>(rigidBodyCI);
 
 	if (_type == ERigidBodyType::Static) m_rigidBody->setCollisionFlags(m_rigidBody->getCollisionFlags() | btCollisionObject::CF_STATIC_OBJECT);
 	else if (_type == ERigidBodyType::Kinematic) m_rigidBody->setCollisionFlags(m_rigidBody->getCollisionFlags() | btCollisionObject::CF_KINEMATIC_OBJECT);
 
-	PhysicsManager::Instance()->RegisterRigidBody(this, m_CollisionMask, m_CollisionGroup);
+	PhysicsManager::Instance().RegisterRigidBody(shared_from_this(), m_CollisionMask, m_CollisionGroup);
 	return true;
 }
 
@@ -110,16 +109,16 @@ void Bullet3RigidBody::OnTransformChanged(MirageEngine::Core::Components::Transf
 	m_rigidBody->setWorldTransform(btTrans);
 	m_rigidBody->getMotionState()->setWorldTransform(btTrans);
 
-	int numManifolds = PhysicsManager::Instance()->m_worldPhysics->API_Bullet3().m_World->getDispatcher()->getNumManifolds();
+	int numManifolds = PhysicsManager::Instance().m_worldPhysics->API_Bullet3().m_World->getDispatcher()->getNumManifolds();
 	for (int i = 0; i < numManifolds; i++)
 	{
-		btPersistentManifold* manifold = PhysicsManager::Instance()->m_worldPhysics->API_Bullet3().m_World->getDispatcher()->getManifoldByIndexInternal(i);
+		btPersistentManifold* manifold = PhysicsManager::Instance().m_worldPhysics->API_Bullet3().m_World->getDispatcher()->getManifoldByIndexInternal(i);
 		const btCollisionObject* objA = manifold->getBody0();
 		const btCollisionObject* objB = manifold->getBody1();
 
-		if (objA == m_rigidBody || objB == m_rigidBody)
+		if (objA == m_rigidBody.get() || objB == m_rigidBody.get())
 		{
-			const btCollisionObject* other = (objA == m_rigidBody) ? objB : objA;
+			const btCollisionObject* other = (objA == m_rigidBody.get()) ? objB : objA;
 			const_cast<btCollisionObject*>(other)->activate(true);
 		}
 	}
@@ -182,7 +181,7 @@ void Bullet3RigidBody::SetMass(float _mass)
 void Bullet3RigidBody::AddCollider(ICollider* _newShape)
 {
 	if (!_newShape) return;
-	if (!_newShape->SetRigidbody(this)) return;
+    if (!_newShape->SetRigidbody(shared_from_this())) return;
 	m_CurrentRigidBodyShapesBind.push_back(_newShape);
 	m_bIsDirty = true;
 }
@@ -201,10 +200,10 @@ void Bullet3RigidBody::UpdateCompound()
 	using namespace MirageEngine::Core::Math;
 	if (!m_rigidBody || !m_Compound) return;
 
-	PhysicsManager::Instance()->UnregisterRigidBody(this); // Un register the current rigidbody from the world
+	PhysicsManager::Instance().UnregisterRigidBody(shared_from_this()); // Un register the current rigidbody from the world
 
-	delete m_Compound;                                     // Destroy old one
-	m_Compound = new btCompoundShape;                      // Create a new one
+	m_Compound.reset();                                     // Destroy old one
+	m_Compound = std::make_shared<btCompoundShape>();                      // Create a new one
 
 	for (ICollider* collider : m_CurrentRigidBodyShapesBind)
 	{
@@ -224,6 +223,7 @@ void Bullet3RigidBody::UpdateCompound()
 	}
 	float mass = (m_rigidBody->getInvMass() == 0.0f) ? 0.0f : 1.0f / m_rigidBody->getInvMass();
 
+	// Reset collision flags
 	int flags = m_rigidBody->getCollisionFlags();
 	flags &= ~btCollisionObject::CF_NO_CONTACT_RESPONSE;
 	m_rigidBody->setCollisionFlags(flags);
@@ -246,11 +246,11 @@ void Bullet3RigidBody::UpdateCompound()
 		m_rigidBody->setMassProps(mass, inertia);
 		m_rigidBody->updateInertiaTensor();
 	}
-	m_rigidBody->setCollisionShape(m_Compound);          // Set new compound to the rigidbody
+	m_rigidBody->setCollisionShape(m_Compound.get());          // Set new compound to the rigidbody
 	m_rigidBody->activate(true);
 	if (m_CollisionRespond == ECollisionResponse::Ignore)
-		PhysicsManager::Instance()->RegisterRigidBody(this, m_CollisionMask, ECollisionGroup::None); // Register back to the world
+		PhysicsManager::Instance().RegisterRigidBody(shared_from_this(), m_CollisionMask, ECollisionGroup::None); // Register back to the world
 	else
-		PhysicsManager::Instance()->RegisterRigidBody(this, m_CollisionMask, m_CollisionGroup); // Register back to the world
+		PhysicsManager::Instance().RegisterRigidBody(shared_from_this(), m_CollisionMask, m_CollisionGroup); // Register back to the world
 	m_bIsDirty = false;
 }

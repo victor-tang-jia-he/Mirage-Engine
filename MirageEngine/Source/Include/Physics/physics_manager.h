@@ -22,25 +22,27 @@ namespace MirageEngine::Core::Physics
 
             EPhysicsEngine m_physicsEngine = EPhysicsEngine::Bullet3;
 
-            std::vector<IRigidBody*> m_WorldRigidbodys;
+            std::vector<std::shared_ptr<IRigidBody>> m_WorldRigidbodys;
 
         public:
 
-            IWorldPhysics* m_worldPhysics = nullptr;
+            std::shared_ptr<IWorldPhysics> m_worldPhysics = nullptr;
 
-            static PhysicsManager* Instance();
+            static PhysicsManager& Instance();
+
+            void Shutdown();
 
             PhysicsManager()  = default;
             ~PhysicsManager() = default;
             void Initialize(EPhysicsEngine _physicsEngine = EPhysicsEngine::Bullet3);
             void Update(float _deltaTime);
 
-            IRigidBody* CreateRigidBody(ICollider* _shape, ERigidBodyType _type);
+            std::shared_ptr<IRigidBody> CreateRigidBody(ICollider* _shape, ERigidBodyType _type);
 
-            ICollider* CreateCollider(ECollisionShapeType _shapeType);
+            std::shared_ptr<ICollider> CreateCollider(ECollisionShapeType _shapeType);
 
-            void RegisterRigidBody(IRigidBody* _body, ECollisionGroup _group, ECollisionGroup _mask);
+            void RegisterRigidBody(std::shared_ptr<IRigidBody> _body, ECollisionGroup _group, ECollisionGroup _mask);
 
-            void UnregisterRigidBody(IRigidBody* _body);
+            void UnregisterRigidBody(std::shared_ptr<IRigidBody> _body);
     };
 } // namespace MirageEngine::Core::Physics

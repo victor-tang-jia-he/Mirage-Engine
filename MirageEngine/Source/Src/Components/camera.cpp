@@ -12,72 +12,82 @@ using namespace MirageEngine::Core::EventSystem;
 using namespace MirageEngine::Core::Input;
 using namespace MirageEngine::Core::Math;
 
-Camera::Camera(unsigned int _width, unsigned int _height,
-	float _fov, float _near, float _far, const Vector3 _position)
-	:m_Width(_width), m_Height(_height), m_Fov(_fov), m_Near(_near), m_Far(_far)
+Camera::Camera(unsigned int _width, unsigned int _height, float _fov, float _near, float _far, const Vector3 _position)
+    : m_Width(_width)
+    , m_Height(_height)
+    , m_Fov(_fov)
+    , m_Near(_near)
+    , m_Far(_far)
 {
-	m_transform.SetPosition(_position);
+    m_transform.SetPosition(_position);
 }
 
-void Camera::BindInput(InputMapping* map)
+void Camera::BindInput(std::shared_ptr<InputMapping> map)
 {
-	if (map == nullptr) return;
-	map->Map[GLFW_KEY_W].Dispatcher.Add(new Event<CallbackInputInfo>("InputSystem", [this](CallbackInputInfo info) 
-		{
-			if (info.Held)
-			{
-				this->Transform().SetPosition(this->Transform().GetPosition() + this->Transform().Forward() * 5.f * TimeManager::GetDeltaTime());
-			}
-		}));
-	map->Map[GLFW_KEY_A].Dispatcher.Add(new Event<CallbackInputInfo>("InputSystem", [this](CallbackInputInfo info) 
-		{
-			if (info.Held)
-			{
-				this->Transform().SetPosition(this->Transform().GetPosition() + this->Transform().Right() * 5.f * TimeManager::GetDeltaTime());
-			}
-		}));
-	map->Map[GLFW_KEY_S].Dispatcher.Add(new Event<CallbackInputInfo>("InputSystem", [this](CallbackInputInfo info)
-		{
-			if (info.Held)
-			{
-				this->Transform().SetPosition(this->Transform().GetPosition() - this->Transform().Forward() * 5.f * TimeManager::GetDeltaTime());
-			}
-		}));
-	map->Map[GLFW_KEY_D].Dispatcher.Add(new Event<CallbackInputInfo>("InputSystem", [this](CallbackInputInfo info) 
-		{
-			if (info.Held)
-			{
-				this->Transform().SetPosition(this->Transform().GetPosition() - this->Transform().Right() * 5.f * TimeManager::GetDeltaTime());
-			}
-		}));
-	map->Map[GLFW_KEY_Q].Dispatcher.Add(new Event<CallbackInputInfo>("InputSystem", [this](CallbackInputInfo info) 
-		{
-			if (info.Held)
-			{
-				Vector3 vec = this->Transform().Up();
-				this->Transform().SetRotation(this->Transform().GetRotation() * Quaternion(vec,5.f * TimeManager::GetDeltaTime()));
-			}
-		}));
-	map->Map[GLFW_KEY_E].Dispatcher.Add(new Event<CallbackInputInfo>("InputSystem", [this](CallbackInputInfo info) 
-		{
-			if (info.Held)
-			{
-				Vector3 vec = this->Transform().Up();
-				this->Transform().SetRotation(this->Transform().GetRotation() * Quaternion(vec, -5.f * TimeManager::GetDeltaTime()));
-			}
-		}));
-	map->Map[GLFW_KEY_SPACE].Dispatcher.Add(new Event<CallbackInputInfo>("InputSystem", [this](CallbackInputInfo info)
-		{
-			if (info.Held)
-			{
-				this->Transform().SetPosition(this->Transform().GetPosition() + this->Transform().Up() * 1.f * TimeManager::GetDeltaTime());
-			}
-		}));
-	map->Map[GLFW_KEY_LEFT_CONTROL].Dispatcher.Add(new Event<CallbackInputInfo>("InputSystem", [this](CallbackInputInfo info)
-		{
-			if (info.Held)
-			{
-				this->Transform().SetPosition(this->Transform().GetPosition() - this->Transform().Up() * 1.f * TimeManager::GetDeltaTime());
-			}
-		}));
+    if (map == nullptr) return;
+    map->Add(
+        GLFW_KEY_W, std::make_shared<Event<CallbackInputInfo>>(
+                        "InputSystem",
+                        [this](CallbackInputInfo info)
+                        {
+                            if (info.Held) Transform().SetPosition(Transform().GetPosition() + Transform().Forward() * 5.f * TimeManager::GetDeltaTime());
+                        }));
+
+    map->Add(
+        GLFW_KEY_A, std::make_shared<Event<CallbackInputInfo>>(
+                        "InputSystem",
+                        [this](CallbackInputInfo info)
+                        {
+                            if (info.Held) Transform().SetPosition(Transform().GetPosition() + Transform().Right() * 5.f * TimeManager::GetDeltaTime());
+                        }));
+    map->Add(
+        GLFW_KEY_S, std::make_shared<Event<CallbackInputInfo>>(
+                        "InputSystem",
+                        [this](CallbackInputInfo info)
+                        {
+                            if (info.Held) Transform().SetPosition(Transform().GetPosition() - Transform().Forward() * 5.f * TimeManager::GetDeltaTime());
+                        }));
+    map->Add(
+        GLFW_KEY_D, std::make_shared<Event<CallbackInputInfo>>(
+                        "InputSystem",
+                        [this](CallbackInputInfo info)
+                        {
+                            if (info.Held) Transform().SetPosition(Transform().GetPosition() - Transform().Right() * 5.f * TimeManager::GetDeltaTime());
+                        }));
+    map->Add(
+        GLFW_KEY_Q, std::make_shared<Event<CallbackInputInfo>>(
+                        "InputSystem",
+                        [this](CallbackInputInfo info)
+                        {
+                            if (info.Held)
+                            {
+                                Vector3 axis = Transform().Up();
+                                Transform().SetRotation(Transform().GetRotation() * Quaternion(axis, 5.f * TimeManager::GetDeltaTime()));
+                            }
+                        }));
+    map->Add(
+        GLFW_KEY_E, std::make_shared<Event<CallbackInputInfo>>(
+                        "InputSystem",
+                        [this](CallbackInputInfo info)
+                        {
+                            if (info.Held)
+                            {
+                                Vector3 axis = Transform().Up();
+                                Transform().SetRotation(Transform().GetRotation() * Quaternion(axis, -5.f * TimeManager::GetDeltaTime()));
+                            }
+                        }));
+    map->Add(
+        GLFW_KEY_SPACE, std::make_shared<Event<CallbackInputInfo>>(
+                            "InputSystem",
+                            [this](CallbackInputInfo info)
+                            {
+                                if (info.Held) Transform().SetPosition(Transform().GetPosition() + Transform().Up() * 1.f * TimeManager::GetDeltaTime());
+                            }));
+    map->Add(
+        GLFW_KEY_LEFT_CONTROL, std::make_shared<Event<CallbackInputInfo>>(
+                                   "InputSystem",
+                                   [this](CallbackInputInfo info)
+                                   {
+                                       if (info.Held) Transform().SetPosition(Transform().GetPosition() - Transform().Up() * 1.f * TimeManager::GetDeltaTime());
+                                   }));
 }

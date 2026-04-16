@@ -15,7 +15,7 @@ namespace MirageEngine::Core::Resources
 	{
 	private:
 
-		MirageRHI::ITexture* m_TextureBuffer = nullptr;
+		std::shared_ptr<MirageRHI::ITexture> m_TextureBuffer = nullptr;
 
 		int m_Width = 0;
 		int m_Height = 0;
@@ -26,7 +26,7 @@ namespace MirageEngine::Core::Resources
 
 	public:
 
-		Texture(MirageRHI::ITexture* _textureBuffer, int& _width, int& _height, int& _channel, int& _format, unsigned char* _data)
+		Texture(std::shared_ptr<MirageRHI::ITexture> _textureBuffer, int& _width, int& _height, int& _channel, int& _format, unsigned char* _data)
 			: m_TextureBuffer(_textureBuffer),  
 			m_Width(_width),  
 			m_Height(_height),  
@@ -39,6 +39,6 @@ namespace MirageEngine::Core::Resources
 		~Texture();
 		void Bind();
 
-		MirageRHI::ITexture* GetTextureBuffer() const { return m_TextureBuffer; }
+		std::shared_ptr<MirageRHI::ITexture> GetTextureBuffer() const { return m_TextureBuffer; }
 	};
 } // namespace MirageEngine

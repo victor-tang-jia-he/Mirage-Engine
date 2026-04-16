@@ -44,7 +44,7 @@ void RegisterMeta::RegisterGameObjectMeta()
 
 	gameObject.type("GameObject"_hs);
 
-	gameObject.ctor<GameObject*, std::string, bool, bool>();
+	gameObject.ctor<std::shared_ptr<GameObject>, std::string, bool, bool>();
 
 	gameObject.data<&GameObject::SetName, &GameObject::GetName>("Name");
 	gameObject.data<&GameObject::SetIsActive, &GameObject::GetIsActive>("IsActive");

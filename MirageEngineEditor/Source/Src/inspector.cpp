@@ -18,7 +18,7 @@ namespace Mirage
 	{
 		UIWrapper::BeginWindow("Inspector");
 
-		GameObject* selectedObj = m_Context->GetSelectedObject();
+		std::shared_ptr<GameObject> selectedObj = m_Context->GetSelectedObject();
 		if (selectedObj == nullptr) 
 		{
 			ImGui::TextDisabled("No object selected in Hierarchy");
@@ -39,7 +39,7 @@ namespace Mirage
 					auto data = goType.data(entt::hashed_string{propName});
 					if (data) 
 					{
-						DrawPropertyDirect(goType, data, (void*)selectedObj);
+						DrawPropertyDirect(goType, data, (void*)selectedObj.get());
 					}
 				}
 			}
@@ -57,7 +57,7 @@ namespace Mirage
 		}
 
 		// Components
-		for (auto* comp : selectedObj->GetComponents()) 
+		for (std::shared_ptr<MirageEngine::Core::Components::Component> comp : selectedObj->GetComponents())
 		{
 			auto type = entt::resolve(comp->GetType());
 			if (type) {
@@ -66,7 +66,7 @@ namespace Mirage
 					ImGui::PushID(static_cast<int>(comp->GetType()));
 					for (auto [id, data] : type.data()) 
 					{
-						DrawPropertyDirect(type, data, (void*)comp);
+						DrawPropertyDirect(type, data, (void*)comp.get());
 					}
 					ImGui::PopID();
 				}

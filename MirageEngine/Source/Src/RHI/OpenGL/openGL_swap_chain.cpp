@@ -34,7 +34,7 @@ void MirageRHI::OpenGLSwapChain::Destroy()
 	LOG(logTemp, LogRHISwapChain, "SwapChain Destroyed and all framebuffers released.");
 }
 
-void MirageRHI::OpenGLSwapChain::IsScreenResized(ISurface* _surface)
+void MirageRHI::OpenGLSwapChain::IsScreenResized(std::shared_ptr<ISurface> _surface)
 {
     int displayWidth, displayHeight;
     glfwGetFramebufferSize(_surface->API_OpenGL().GetContextGLHandle(), &displayWidth, &displayHeight);
@@ -44,7 +44,7 @@ void MirageRHI::OpenGLSwapChain::IsScreenResized(ISurface* _surface)
     }
 }
 
-void MirageRHI::OpenGLSwapChain::RecreateSwapchain(ISurface* _surface, int _newWidth, int _newHeight)
+void MirageRHI::OpenGLSwapChain::RecreateSwapchain(std::shared_ptr<ISurface> _surface, int _newWidth, int _newHeight)
 {
     _surface->API_OpenGL().SetSize(_newWidth, _newHeight);
     for (OpenGLFramebuffer* frameBuffer : m_FrameBuffers)

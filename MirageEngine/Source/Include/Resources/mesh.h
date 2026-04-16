@@ -20,8 +20,8 @@ namespace MirageEngine::Core::Resources
 		using IBuffer = MirageRHI::IBuffer;
 		using LitVertex = MirageRHI::LitVertex;
 
-		IBuffer* m_VertexBuffer = nullptr;
-		IBuffer* m_IndexBuffer = nullptr;
+		std::shared_ptr<IBuffer> m_VertexBuffer = nullptr;
+		std::shared_ptr<IBuffer> m_IndexBuffer = nullptr;
 
 		std::vector<uint32_t>  m_Index;
 		std::vector<LitVertex> m_Vertex;
@@ -31,22 +31,25 @@ namespace MirageEngine::Core::Resources
 
 	public:
 
-		Mesh(IBuffer* _vertexBuffer, IBuffer* _indiceBuffer, std::vector<LitVertex> _vertex, std::vector<uint32_t> _indice, size_t _IndexCount)
-			: m_VertexBuffer(_vertexBuffer)
-			, m_IndexBuffer(_indiceBuffer)
-			, m_Vertex(_vertex)
-			, m_Index(_indice)
-			, m_IndexCount(_IndexCount)
+		Mesh(std::shared_ptr<IBuffer> vb, std::shared_ptr<IBuffer> ib,
+			std::vector<LitVertex>&& vertices,
+			std::vector<uint32_t>&& indices,
+			size_t count)
+			: m_VertexBuffer(vb)
+			, m_IndexBuffer(ib)
+			, m_Vertex(std::move(vertices))
+			, m_Index(std::move(indices))
+			, m_IndexCount(count)
 		{
 		}
 
-		~Mesh() = default;
+		~Mesh() override;
 
 		void Bind();
 
-		MirageRHI::IBuffer* GetVertexBuffer() const { return m_VertexBuffer; }
+		std::shared_ptr<MirageRHI::IBuffer> GetVertexBuffer() const { return m_VertexBuffer; }
 
-		MirageRHI::IBuffer* GetIndexBuffer() const { return m_IndexBuffer; }
+		std::shared_ptr<MirageRHI::IBuffer> GetIndexBuffer() const { return m_IndexBuffer; }
 
 		size_t GetIndicesCount() const { return m_IndexCount; }
 	};

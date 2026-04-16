@@ -11,7 +11,9 @@ DEFINE_LOG_CATEGORY(LogMaterial)
 using namespace MirageEngine::Core::Resources;
 using namespace MirageRHI;
 
-void Material::SetShader(MirageRHI::IPipeline* _shader)
+Material::~Material() { m_Shader.reset(); }
+
+void Material::SetShader(std::shared_ptr<MirageRHI::IPipeline> _shader)
 {
     if (!_shader) { LOG(logError, LogMaterial, "Undefine Shader"); }
     this->m_Shader = _shader;
@@ -31,7 +33,7 @@ Material& Material::SetVec3(const std::string& _name, const MirageEngine::Core::
 
 Material& Material::SetColor(const std::string& _name, const MirageEngine::Core::Math::Vector3& _color) { return SetVec3(_name, _color); }
 
-Material& Material::SetTexture(const std::string& _name, Texture* _texture)
+Material& Material::SetTexture(const std::string& _name, std::shared_ptr<Texture> _texture)
 {
     if (!_texture) { LOG(logError, LogMaterial, "Undefine Texture for ", _name.c_str()); }
     m_Data.Textures[_name] = _texture;
@@ -50,10 +52,10 @@ MirageEngine::Core::Math::Vector3 Material::GetVec3(const std::string& _name, co
     return (it != m_Data.Vec3s.end()) ? it->second : _defaultValue;
 }
 
-Texture* Material::GetTexture(const std::string& _name) const
+std::shared_ptr<Texture> Material::GetTexture(const std::string& _name) const
 {
     auto it = m_Data.Textures.find(_name);
-    return (it != m_Data.Textures.end()) ? it->second : nullptr;
+    return (it != m_Data.Textures.end()) ? it->second.lock() : nullptr;
 }
 
 void Material::Bind()
@@ -68,9 +70,9 @@ void Material::Bind()
     int textureUnit = 0;
     for (const auto& [_name, _texture] : m_Data.Textures)
     {
-        if (_texture)
+        if (!_texture.expired())
         {
-            _texture->Bind();
+            _texture.lock()->Bind();
             m_Shader->SetInt(_name, textureUnit);
             textureUnit++;
         }

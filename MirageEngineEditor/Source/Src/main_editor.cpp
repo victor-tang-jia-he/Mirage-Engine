@@ -22,7 +22,7 @@ int main()
 	{
 		MirageEngine::TimeManager::Update();
 		MirageEngine::Core::Input::InputSystem::UpdateHeldInput();
-		MirageEngine::Core::Physics::PhysicsManager::Instance()->Update(MirageEngine::TimeManager::GetDeltaTime());
+		MirageEngine::Core::Physics::PhysicsManager::Instance().Update(MirageEngine::TimeManager::GetDeltaTime());
 		application.GetSceneGraph()->UpdateAllWorldMatrices();
 		application.m_Renderer.BeginFrame();
 		application.m_Renderer.RenderScene(application.m_SceneGraph);

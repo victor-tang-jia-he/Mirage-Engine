@@ -8,14 +8,14 @@ namespace MirageEngine::Core::Physics
 {
     class Bullet3BoxCollider;
 
-    class Bullet3RigidBody : public IRigidBody
+    class Bullet3RigidBody : public IRigidBody, public std::enable_shared_from_this<Bullet3RigidBody> 
     {
             friend class Bullet3BoxCollider;
 
         private:
 
-            btRigidBody*     m_rigidBody = nullptr;
-            btCompoundShape* m_Compound     = nullptr;
+            std::shared_ptr<btRigidBody> m_rigidBody = nullptr;
+            std::shared_ptr<btCompoundShape> m_Compound     = nullptr;
             Vector3          m_CurrentScale = { 1, 1, 1 };
 
         public:
@@ -40,7 +40,7 @@ namespace MirageEngine::Core::Physics
 
             void UpdateCompound();
 
-            btRigidBody* GetBullet3RigidBody() const { return m_rigidBody; }
+            btRigidBody* GetBullet3RigidBody() const { return m_rigidBody.get(); }
 
             Bullet3RigidBody& API_Bullet3() override { return *this; }
     };

@@ -3,10 +3,10 @@
 namespace MirageEngine
 {
 	template <typename T>
-	T* GameObject::AddComponent()
+	std::shared_ptr<T> GameObject::AddComponent()
 	{
 		// std::unique_ptr<T> component = std::make_unique<T>();
-		T* component = new T();
+		std::shared_ptr<T> component = std::make_shared<T>();
 		component->m_Owner = this;
 
 		// Name of the type ID
@@ -16,11 +16,11 @@ namespace MirageEngine
 	}
 
 	template <typename T>
-	T* GameObject::GetComponent()
+	std::shared_ptr<T> GameObject::GetComponent()
 	{
-		for (auto& component : m_Components)
+		for (std::shared_ptr<MirageEngine::Core::Components::Component> component : m_Components)
 		{
-			if (auto casted = dynamic_cast<T*>(component))
+			if (auto casted = std::dynamic_pointer_cast<T>(component))
 			{
 				return casted;
 			}

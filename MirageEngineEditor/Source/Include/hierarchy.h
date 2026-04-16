@@ -1,5 +1,6 @@
 #pragma once
 #include "i_panel.h"
+#include <memory>
 
 namespace MirageEngine {
 	class SceneGraph;
@@ -22,7 +23,7 @@ namespace Mirage
 
 	private:
 		void DrawHierarchyTree();
-		void RenderRecursiveNode(MirageEngine::GameObject* _obj);
+		void RenderRecursiveNode(std::shared_ptr<MirageEngine::GameObject> _obj);
 		void RenderHierarchyItemMenu();
 		void RenderHierarchyEmptyMenu();
 	};

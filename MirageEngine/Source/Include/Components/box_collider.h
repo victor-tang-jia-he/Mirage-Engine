@@ -20,7 +20,7 @@ namespace MirageEngine
 		{
 			class BoxCollider : public Component
 			{
-				Physics::ICollider* m_Collider;
+				std::shared_ptr<Physics::ICollider> m_Collider;
 
 			public:
 				BoxCollider();
@@ -35,7 +35,7 @@ namespace MirageEngine
 				void SetOffset(MirageEngine::Core::Math::Vector3 _offset, MirageEngine::Core::Math::Quaternion _rotation);
 				void SetHalfExtents(const MirageEngine::Core::Math::Vector3& _halfExtents);
 
-				Physics::ICollider* GetCollision() const { return m_Collider; }
+				Physics::ICollider* GetCollision() const { return m_Collider.get(); }
 			};
 		}
 	}
