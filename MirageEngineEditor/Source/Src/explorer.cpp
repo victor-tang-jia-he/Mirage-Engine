@@ -10,9 +10,48 @@ namespace Mirage
 {
 	void Explorer::InitPanel()
 	{
-		m_RootPath = std::filesystem::absolute(std::filesystem::current_path() += ("/Assets"));
+		std::filesystem::path current = std::filesystem::current_path();
+		bool found = false;
+
+		for (int i = 0; i < 5; ++i)
+		{
+			if (std::filesystem::exists(current / "MirageEngine" / "Assets"))
+			{
+				m_RootPath = std::filesystem::absolute(current / "MirageEngine" / "Assets");
+				found = true;
+				break;
+			}
+
+			if (current.filename() == "MirageEngine" && std::filesystem::exists(current / "Assets"))
+			{
+				m_RootPath = std::filesystem::absolute(current / "Assets");
+				found = true;
+				break;
+			}
+			if (current.has_parent_path()) {
+				current = current.parent_path();
+			}
+			else {
+				break;
+			}
+		}
+		if (!found)
+		{
+			current = std::filesystem::current_path();
+			for (int i = 0; i < 3; ++i) {
+				if (std::filesystem::exists(current / "Assets")) {
+					m_RootPath = std::filesystem::absolute(current / "Assets");
+					found = true;
+					break;
+				}
+				current = current.parent_path();
+			}
+		}
+
 		m_CurrentPath = m_RootPath;
 		ScanProjectDirectory(m_CurrentPath);
+
+		std::cout << "[Explorer] Root Path detecte : " << m_RootPath << std::endl;
 	}
 
 	void Explorer::DrawPanel(uint32_t _textureID)
