@@ -31,8 +31,8 @@ namespace Mirage
 		static void EndFolderNode();
 		static bool IsItemClicked();
 
-		static void RequestModal(const char* _modalName);
-		static void UpdateModalRequests();
+		/*static void RequestModal(const char* _modalName);
+		static void UpdateModalRequests();*/
 
 		static bool BeginAssetGrid(float _cellSize, float _windowSize);
 		static WidgetAction DrawAssetTile(const char* _name, bool _isSelected, void* _icon = nullptr);

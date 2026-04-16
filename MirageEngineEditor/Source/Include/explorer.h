@@ -35,6 +35,8 @@ namespace Mirage
 		bool m_ShouldOpenAssetPopup = false;
 		bool m_AnItemWasRightClicked = false;
 
+		std::string m_NextModalToOpen;
+
 	public:
 		Explorer(const char* _name) : IPanel(_name) {};
 		

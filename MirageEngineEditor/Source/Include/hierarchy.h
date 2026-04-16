@@ -1,5 +1,6 @@
 #pragma once
 #include "i_panel.h"
+#include <string>
 
 namespace MirageEngine {
 	class SceneGraph;
@@ -13,6 +14,8 @@ namespace Mirage
 		MirageEngine::SceneGraph* m_Context;
 		bool m_AnItemWasRightClicked;
 
+		std::string m_NextModalToOpen;
+
 	public:
 		Hierarchy(const char* _name, MirageEngine::SceneGraph* _context) : IPanel(_name), m_Context(_context) {};
 
@@ -25,5 +28,7 @@ namespace Mirage
 		void RenderRecursiveNode(MirageEngine::GameObject* _obj);
 		void RenderHierarchyItemMenu();
 		void RenderHierarchyEmptyMenu();
+
+		void RenderDeleteModal();
 	};
 }

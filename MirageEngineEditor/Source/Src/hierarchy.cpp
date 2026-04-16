@@ -25,7 +25,7 @@ namespace Mirage
 		{
 			m_Context->SetSelectedObject(nullptr);
 
-			UIWrapper::RequestModal("HierarchyEmptyMenu");
+			m_NextModalToOpen = "HierarchyEmptyMenu";
 		}
 
 		if (ImGui::BeginDragDropTarget())
@@ -39,10 +39,14 @@ namespace Mirage
 			ImGui::EndDragDropTarget();
 		}
 
-		UIWrapper::UpdateModalRequests();
+		if (!m_NextModalToOpen.empty()) {
+			ImGui::OpenPopup(m_NextModalToOpen.c_str());
+			m_NextModalToOpen = "";
+		}
 
 		RenderHierarchyEmptyMenu();
 		RenderHierarchyItemMenu();
+		RenderDeleteModal();
 		UIWrapper::EndWindow();
 	}
 
@@ -100,7 +104,7 @@ namespace Mirage
 			if (ImGui::IsItemClicked(1))
 			{
 				m_Context->SetSelectedObject(_obj);
-				UIWrapper::RequestModal("HierarchyItemMenu");
+				m_NextModalToOpen = "HierarchyItemMenu";
 				m_AnItemWasRightClicked = true;
 			}
 
@@ -131,7 +135,8 @@ namespace Mirage
 				}
 				ImGui::Separator();
 				if (ImGui::MenuItem("Delete", "Del")) {
-					m_Context->RemoveGameObject(selected);
+					//m_Context->RemoveGameObject(selected);
+					m_NextModalToOpen = "Delete OBJ";
 					ImGui::CloseCurrentPopup();
 				}
 			}
@@ -150,6 +155,38 @@ namespace Mirage
 				}
 				ImGui::EndPopup();
 			}
+		}
+	}
+
+	void Hierarchy::RenderDeleteModal()
+	{
+		std::error_code ec;
+		if (ImGui::BeginPopupModal("Delete OBJ", nullptr, ImGuiWindowFlags_AlwaysAutoResize))
+		{
+			ImGui::Text("Are you sure you want to delete?");
+
+			ImGui::Separator();
+
+			if (ImGui::Button("OK", ImVec2(120, 0)))
+			{
+				std::cout << "YEP:" << m_Context->GetSelectedObject()->GetName() << std::endl;
+				if (m_Context->GetSelectedObject())
+				{
+					m_Context->RemoveGameObject(m_Context->GetSelectedObject());
+					std::cout << "Deleted" << std::endl;
+					m_Context->SetSelectedObject(nullptr);
+				}
+				ImGui::CloseCurrentPopup();
+			}
+
+			ImGui::SameLine();
+
+			if (ImGui::Button("Cancel", ImVec2(120, 0)))
+			{
+				ImGui::CloseCurrentPopup();
+			}
+
+			ImGui::EndPopup();
 		}
 	}
 }
