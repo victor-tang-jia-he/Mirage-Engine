@@ -139,6 +139,10 @@ namespace Mirage
 					{
 						m_Context->CreateCube("New Cube", selected, m_Renderer);
 					}
+					if (ImGui::MenuItem("Create Sphere"))
+					{
+						m_Context->CreateSphere("New Sphere", selected, m_Renderer);
+					}
 					ImGui::EndMenu();
 				}
 				if(ImGui::MenuItem("Create Camera"))
@@ -170,6 +174,10 @@ namespace Mirage
 					if (ImGui::MenuItem("Create Cube"))
 					{
 						m_Context->CreateCube("New Cube", nullptr, m_Renderer);
+					}
+					if (ImGui::MenuItem("Create Sphere"))
+					{
+						m_Context->CreateSphere("New Sphere", nullptr, m_Renderer);
 					}
 					ImGui::EndMenu();
 				}

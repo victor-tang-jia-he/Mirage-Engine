@@ -34,6 +34,7 @@ namespace MirageEngine
 
 		GameObject* CreateGameObject(const std::string& _name, GameObject* _parent = nullptr); 
 		GameObject* CreateCube(const std::string& _name = "Cube", GameObject* _parent = nullptr, MirageEngine::Renderer* _renderer = nullptr);
+		GameObject* CreateSphere(const std::string& _name = "Sphere", GameObject* _parent = nullptr, MirageEngine::Renderer* _renderer = nullptr);
 		GameObject* CreateCamera(const std::string& _name = "Camera", GameObject* _parent = nullptr);
 
 		void RemoveGameObject(GameObject* _obj);											
