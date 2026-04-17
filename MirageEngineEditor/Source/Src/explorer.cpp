@@ -369,6 +369,11 @@ namespace Mirage
 				{
 					m_NextModalToOpen = "DeleteModal";
 				}
+				if (ImGui::MenuItem("Show in Explorer"))
+				{
+					EditorActions::ShowInExplorer(m_EntryToProcess->Path);
+					ImGui::CloseCurrentPopup();
+				}
 			}
 			ImGui::EndPopup();
 		}
