@@ -46,6 +46,7 @@ namespace Mirage
 
 		RenderHierarchyEmptyMenu();
 		RenderHierarchyItemMenu();
+		RenderCreateObjectModal();
 		RenderRenameModal();
 		RenderDeleteModal();
 		UIWrapper::EndWindow();
@@ -138,35 +139,42 @@ namespace Mirage
 				}
 				ImGui::Separator();
 				if (ImGui::MenuItem("Create Empty")) {
-					m_Context->CreateGameObject("New Child", selected);
+					m_Context->CreateGameObject("New GameObject", selected);
+					m_NextModalToOpen = "CreateObjectModal";
 				}
 				if (ImGui::BeginMenu("3D Object"))
 				{
 					if (ImGui::MenuItem("Create Cube"))
 					{
 						m_Context->CreateObject3D("New Cube", "cube", selected, m_Renderer);
+						m_NextModalToOpen = "CreateObjectModal";
 					}
 					if (ImGui::MenuItem("Create Sphere"))
 					{
 						m_Context->CreateObject3D("New Sphere", "sphere", selected, m_Renderer);
+						m_NextModalToOpen = "CreateObjectModal";
 					}
 					if (ImGui::MenuItem("Create Cylinder"))
 					{
 						m_Context->CreateObject3D("New Cylinder", "cylinder", selected, m_Renderer);
+						m_NextModalToOpen = "CreateObjectModal";
 					}
 					if (ImGui::MenuItem("Create Plane"))
 					{
 						m_Context->CreateObject3D("New Plane", "plane", selected, m_Renderer);
+						m_NextModalToOpen = "CreateObjectModal";
 					}
 					if (ImGui::MenuItem("Create Cone"))
 					{
 						m_Context->CreateObject3D("New Cone", "cone", selected, m_Renderer);
+						m_NextModalToOpen = "CreateObjectModal";
 					}
 					ImGui::EndMenu();
 				}
 				if(ImGui::MenuItem("Create Camera"))
 				{
 					m_Context->CreateCamera("New Camera", selected);
+					m_NextModalToOpen = "CreateObjectModal";
 				}
 				ImGui::Separator();
 				if (ImGui::MenuItem("Delete", "Del")) 
@@ -187,37 +195,72 @@ namespace Mirage
 			{
 				if (ImGui::MenuItem("Create Empty")) {
 					m_Context->CreateGameObject("New GameObject", nullptr);
+					m_NextModalToOpen = "CreateObjectModal";
 				}
 				if (ImGui::BeginMenu("3D Object"))
 				{
 					if (ImGui::MenuItem("Create Cube"))
 					{
 						m_Context->CreateObject3D("New Cube", "cube", nullptr, m_Renderer);
+						m_NextModalToOpen = "CreateObjectModal";
 					}
 					if (ImGui::MenuItem("Create Sphere"))
 					{
 						m_Context->CreateObject3D("New Sphere", "sphere", nullptr, m_Renderer);
+						m_NextModalToOpen = "CreateObjectModal";
 					}
 					if (ImGui::MenuItem("Create Cylinder"))
 					{
 						m_Context->CreateObject3D("New Cylinder", "cylinder", nullptr, m_Renderer);
+						m_NextModalToOpen = "CreateObjectModal";
 					}
 					if (ImGui::MenuItem("Create Plane"))
 					{
 						m_Context->CreateObject3D("New Plane", "plane", nullptr, m_Renderer);
+						m_NextModalToOpen = "CreateObjectModal";
 					}
 					if (ImGui::MenuItem("Create Cone"))
 					{
 						m_Context->CreateObject3D("New Cone", "cone", nullptr, m_Renderer);
+						m_NextModalToOpen = "CreateObjectModal";
 					}
 					ImGui::EndMenu();
 				}
 				if (ImGui::MenuItem("Create Camera"))
 				{
 					m_Context->CreateCamera("New Camera", nullptr);
+					m_NextModalToOpen = "CreateObjectModal";
 				}
 				ImGui::EndPopup();
 			}
+		}
+	}
+
+	void Hierarchy::RenderCreateObjectModal()
+	{
+		if (ImGui::BeginPopupModal("CreateObjectModal", nullptr, ImGuiWindowFlags_AlwaysAutoResize))
+		{
+			ImGui::Text("Enter object name:");
+			ImGui::InputText("##objectName", m_RenameBuffer, sizeof(m_RenameBuffer));
+
+			ImGui::Separator();
+
+			if (ImGui::Button("OK", ImVec2(120, 0)))
+			{
+				m_Context->GetLastCreatedObject()->SetName(m_RenameBuffer);
+				m_RenameBuffer[0] = '\0';
+				ImGui::CloseCurrentPopup();
+			}
+
+			ImGui::SameLine();
+
+			if (ImGui::Button("Cancel", ImVec2(120, 0)))
+			{
+				m_RenameBuffer[0] = '\0';
+				ImGui::CloseCurrentPopup();
+			}
+
+			ImGui::EndPopup();
 		}
 	}
 
@@ -262,7 +305,6 @@ namespace Mirage
 				if (m_Context->GetSelectedObject())
 				{
 					m_Context->RemoveGameObject(m_Context->GetSelectedObject());
-					std::cout << "Deleted" << std::endl;
 					m_Context->SetSelectedObject(nullptr);
 				}
 				ImGui::CloseCurrentPopup();

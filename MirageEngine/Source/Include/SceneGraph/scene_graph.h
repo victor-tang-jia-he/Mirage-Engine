@@ -25,6 +25,7 @@ namespace MirageEngine
 		std::unordered_map<uint64_t, GameObject*> m_Registry;
 
 		GameObject* m_SelectedObject = nullptr;
+		GameObject* m_LastCreatedObject = nullptr;
 		MirageEngine::Core::Components::Camera* m_EditorCamera = nullptr;
 		MirageEngine::Core::Components::Camera* m_ActiveCamera = nullptr;
 
@@ -49,13 +50,14 @@ namespace MirageEngine
 		// Projects a raycast to select an object
 		void ObjectPicking(float _mouseX, float _mouseY);
 
+		void SetEditorCamera(MirageEngine::Core::Components::Camera* _cam) { m_EditorCamera = _cam; m_ActiveCamera = _cam; }
 		void SetSelectedObject(GameObject* _obj) { m_SelectedObject = _obj; }
+
 		GameObject* GetSelectedObject() { return m_SelectedObject; }
 		const std::vector<GameObject*>& GetRootObjects() const { return m_RootsList; }
 		std::vector<GameObject*> GetChildren(GameObject* _parent) const;
-
-		void SetEditorCamera(MirageEngine::Core::Components::Camera* _cam) { m_EditorCamera = _cam; m_ActiveCamera = _cam; }
 		MirageEngine::Core::Components::Camera* GetActiveCamera() const { return m_ActiveCamera; }
+		GameObject* GetLastCreatedObject() const { return m_LastCreatedObject; }
 	protected:
 	private:
 		void WorldMatrixRecursive(GameObject* _obj, Core::Math::Matrix4& _parentMatrix, bool _forceUpdate);

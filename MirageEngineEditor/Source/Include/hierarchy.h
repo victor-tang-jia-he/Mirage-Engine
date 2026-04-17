@@ -33,6 +33,7 @@ namespace Mirage
 		void RenderHierarchyItemMenu();
 		void RenderHierarchyEmptyMenu();
 
+		void RenderCreateObjectModal();
 		void RenderRenameModal();
 		void RenderDeleteModal();
 	};
