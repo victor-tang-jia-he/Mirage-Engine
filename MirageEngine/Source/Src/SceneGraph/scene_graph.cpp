@@ -217,6 +217,58 @@ namespace MirageEngine
 		return newObject;
 	}
 
+	GameObject* SceneGraph::CreateCylinder(const std::string& _name, GameObject* _parent, MirageEngine::Renderer* _renderer)
+	{
+		GameObject* newObject = CreateGameObject(_name, _parent);
+		Core::Components::MeshRenderer* meshRenderer = newObject->AddComponent<Core::Components::MeshRenderer>();
+		ResourceManager* rm = ResourceManager::Instance();
+
+		Mesh* cylinderMesh = rm->GetMesh("cylinder");
+		meshRenderer->SetMesh(cylinderMesh);
+
+		Texture* texture = rm->GetTexture("White");
+		Material* material = rm->CreateMaterial("TestMaterial_Sphere");
+		if (texture)
+		{
+			texture->Bind();
+			material->SetTexture("White", texture);
+		}
+		if (_renderer)
+		{
+			material->SetShader(_renderer->m_Pipeline);
+		}
+
+		meshRenderer->SetMaterial(material);
+		newObject->Transform.SetPosition(Vector3(0, 0, -10));
+		return newObject;
+	}
+
+	GameObject* SceneGraph::CreatePlane(const std::string& _name, GameObject* _parent, MirageEngine::Renderer* _renderer)
+	{
+		GameObject* newObject = CreateGameObject(_name, _parent);
+		Core::Components::MeshRenderer* meshRenderer = newObject->AddComponent<Core::Components::MeshRenderer>();
+		ResourceManager* rm = ResourceManager::Instance();
+
+		Mesh* planeMesh = rm->GetMesh("plane");
+		meshRenderer->SetMesh(planeMesh);
+
+		Texture* texture = rm->GetTexture("White");
+		Material* material = rm->CreateMaterial("TestMaterial_Sphere");
+		if (texture)
+		{
+			texture->Bind();
+			material->SetTexture("White", texture);
+		}
+		if (_renderer)
+		{
+			material->SetShader(_renderer->m_Pipeline);
+		}
+
+		meshRenderer->SetMaterial(material);
+		newObject->Transform.SetPosition(Vector3(0, 0, -10));
+		return newObject;
+	}
+
 	GameObject* SceneGraph::CreateCamera(const std::string& _name, GameObject* _parent)
 	{
 		GameObject* newObject = CreateGameObject(_name, _parent);

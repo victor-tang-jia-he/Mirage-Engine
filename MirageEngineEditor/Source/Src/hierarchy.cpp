@@ -179,6 +179,14 @@ namespace Mirage
 					{
 						m_Context->CreateSphere("New Sphere", nullptr, m_Renderer);
 					}
+					if (ImGui::MenuItem("Create Cylinder"))
+					{
+						m_Context->CreateCylinder("New Cylinder", nullptr, m_Renderer);
+					}
+					if (ImGui::MenuItem("Create Plane"))
+					{
+						m_Context->CreatePlane("New Plane", nullptr, m_Renderer);
+					}
 					ImGui::EndMenu();
 				}
 				if (ImGui::MenuItem("Create Camera"))

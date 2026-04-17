@@ -129,6 +129,8 @@ void Application::InitGameObject()
     meshRenderer2->SetMaterial(material);
     ResourceManager::Instance()->GetMesh("cube")->Bind();
     ResourceManager::Instance()->GetMesh("sphere")->Bind();
+    ResourceManager::Instance()->GetMesh("cylinder")->Bind();
+    ResourceManager::Instance()->GetMesh("plane")->Bind();
     meshRenderer->SetMesh(ResourceManager::Instance()->GetMesh("cube"));
     meshRenderer2->SetMesh(ResourceManager::Instance()->GetMesh("sphere"));
 
