@@ -6,10 +6,11 @@
 #include "explorer.h"
 #include "UI_wrapper.h"
 #include "gizmo.h"
+#include "renderer.h"
 
 namespace Mirage
 {
-	void Mirage::EditorApp::Init(void* _windowHandle, MirageEngine::SceneGraph* _engineSceneGraph)
+	void Mirage::EditorApp::Init(void* _windowHandle, MirageEngine::Renderer* _renderer, MirageEngine::SceneGraph* _engineSceneGraph)
 	{
 		m_WindowHandle = _windowHandle;;
 		UIWrapper::Init(m_WindowHandle);
@@ -17,7 +18,7 @@ namespace Mirage
 		m_SceneGraph = _engineSceneGraph;
 
 		m_PanelList.push_back(std::make_unique<Viewport>("Viewport"));
-		m_PanelList.push_back(std::make_unique<Hierarchy>("Hierarchy", m_SceneGraph));
+		m_PanelList.push_back(std::make_unique<Hierarchy>("Hierarchy", m_SceneGraph, _renderer));
 		m_PanelList.push_back(std::make_unique<Inspector>("Inspector", m_SceneGraph));
 		m_PanelList.push_back(std::make_unique<Console>("Console"));
 		m_PanelList.push_back(std::make_unique<Explorer>("Explorer"));

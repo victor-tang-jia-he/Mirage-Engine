@@ -57,16 +57,37 @@ namespace Mirage
 		}
 
 		// Components
+		// 1. Loop through all components attached to the selected object
 		for (std::shared_ptr<MirageEngine::Core::Components::Component> comp : selectedObj->GetComponents())
 		{
+			// 2. Ask EnTT if it has meta-data for this component's Type ID
 			auto type = entt::resolve(comp->GetType());
-			if (type) {
-				if (ImGui::CollapsingHeader(type.info().name().data(), ImGuiTreeNodeFlags_DefaultOpen)) 
+			if (type) 
+			{
+				// Create a CollapsingHeader using the class name registered in Meta
+				if (ImGui::CollapsingHeader(type.info().name().data(), ImGuiTreeNodeFlags_DefaultOpen))
 				{
 					ImGui::PushID(static_cast<int>(comp->GetType()));
-					for (auto [id, data] : type.data()) 
+
+					if (ImGui::BeginTable("CompTable", 2, ImGuiTableFlags_SizingStretchProp)) 
 					{
-						DrawPropertyDirect(type, data, (void*)comp.get());
+						ImGui::TableSetupColumn("Label", ImGuiTableColumnFlags_WidthFixed, 80.0f);
+						ImGui::TableSetupColumn("Field", ImGuiTableColumnFlags_WidthStretch);
+
+						// 3. Loop through every variable (.data()) registered for this type
+						for (auto [id, data] : type.data()) 
+						{
+							ImGui::TableNextRow();
+							ImGui::TableNextColumn();
+							ImGui::TextUnformatted(data.name());
+
+							ImGui::TableNextColumn();
+							ImGui::PushItemWidth(-1);
+							// 4. Call our "Dispatcher" to draw the appropriate ImGui widget
+							DrawPropertyDirect(type, data, (void*)comp.get());
+							ImGui::PopItemWidth();
+						}
+						ImGui::EndTable();
 					}
 					ImGui::PopID();
 				}
@@ -77,54 +98,100 @@ namespace Mirage
 
 	void Inspector::ShutdownPanel() {}
 
-	//void Inspector::DrawProperty(entt::meta_data _data, entt::meta_any _instance)
-	//{
-	//	entt::meta_any value = _data.get(_instance);
-	//	if (!value) return;
-	//	
-	//	auto actualType = value.type();
-	//	const char* label = _data.name();
-	//	if (!label) label = "Property";
-
-	//	if (actualType == entt::resolve<Math::Vector3>()) {
-	//		Math::Vector3 vec = value.cast<Math::Vector3>();
-	//		if (ImGui::DragFloat3(label, &vec.X, 0.1f)) {
-	//			_data.set(_instance, vec);
-	//		}
-	//	}
-	//	else if (actualType == entt::resolve<Math::Quaternion>()) {
-	//		auto quat = value.cast<Math::Quaternion>();
-	//		auto euler = quat.ToEulerAngle();
-	//		if (ImGui::DragFloat3(label, &euler.X, 0.1f)) {
-	//			_data.set(_instance, Math::Quaternion(euler));
-	//		}
-	//	}
-	//}
-
 	void Inspector::DrawPropertyDirect(entt::meta_type _type, entt::meta_data _data, void* _instancePtr)
 	{
+		// entt::meta_any is a generic container (like a smart void*). 
+		// from_void() links our raw memory pointer to the EnTT reflection logic and creates a handle that lets EnTT know which object to modify.
 		entt::meta_any instance = _type.from_void(_instancePtr);
+
+		// _data.get(instance) invokes the registered "Getter" function automatically
 		entt::meta_any value = _data.get(instance);
 
 		if (!value) return;
-		
+
 		auto actualType = value.type();
-		const char* label = _data.name();
+
+		const char* label = _data.name(); // The string name we gave in .data("Name")
 		if (!label) label = "Property";
 
-		if (actualType == entt::resolve<Math::Vector3>()) 
+		// Dispatcher: Choose the ImGui widget based on the Data Type
+		if (actualType == entt::resolve<std::string>())
+		{
+			if (auto* s = value.try_cast<std::string>()) {
+				char buffer[256];
+				strncpy(buffer, s->c_str(), sizeof(buffer) - 1);
+				if (ImGui::InputText(label, buffer, sizeof(buffer))) {
+					_data.set(instance, std::string(buffer));
+				}
+			}
+		}
+		else if (actualType == entt::resolve<Math::Vector3>())
 		{
 			Math::Vector3 vec = value.cast<Math::Vector3>();
 			if (ImGui::DragFloat3(label, &vec.X, 0.1f)) {
 				_data.set(instance, vec);
 			}
 		}
-		else if (actualType == entt::resolve<Math::Quaternion>()) 
+		else if (actualType == entt::resolve<Math::Quaternion>())
 		{
-			auto quat = value.cast<Math::Quaternion>();
-			auto euler = quat.ToEulerAngle();
+			Math::Quaternion quat = value.cast<Math::Quaternion>();
+			Math::Vector3 euler = quat.ToEulerAngle();
 			if (ImGui::DragFloat3(label, &euler.X, 0.1f)) {
 				_data.set(instance, Math::Quaternion(euler));
+			}
+		}
+		else if (actualType == entt::resolve<float>())
+		{
+			float val = value.cast<float>();
+			if (ImGui::DragFloat(label, &val, 0.1f)) {
+				_data.set(instance, val);
+			}
+		}
+		else if (actualType == entt::resolve<int>())
+		{
+			int val = value.cast<int>();
+			if (ImGui::DragInt(label, &val, 1)) {
+				_data.set(instance, val);
+			}
+		}
+		else if (actualType == entt::resolve<bool>())
+		{
+			bool val = value.cast<bool>();
+			if (ImGui::Checkbox(label, &val)) {
+				_data.set(instance, val);
+			}
+		}
+		else if (actualType == entt::resolve<std::string>())
+		{
+			std::string val = value.cast<std::string>();
+			char buffer[256];
+			memset(buffer, 0, sizeof(buffer));
+			std::strncpy(buffer, val.c_str(), sizeof(buffer) - 1);
+			if (ImGui::InputText(label, buffer, sizeof(buffer))) {
+				_data.set(instance, std::string(buffer));
+			}
+		}
+		else if (actualType.is_pointer())
+		{
+			/*void* ptr = value.cast<void*>();*/
+			//std::string label = ptr ? "Assigned" : "None";
+
+			void* rawPtr = nullptr;
+			if (value) {
+				rawPtr = value.cast<void*>();
+			}
+
+			const char* labelPtr = rawPtr ? "Assigned" : "None";
+			ImGui::TextUnformatted(labelPtr);
+			ImGui::SameLine();
+			if (ImGui::Button(labelPtr, ImVec2(-1, 0)))
+			{
+			}
+			if (ImGui::BeginDragDropTarget()) {
+				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM"))
+				{
+				}
+				ImGui::EndDragDropTarget();
 			}
 		}
 	}

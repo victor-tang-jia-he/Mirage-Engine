@@ -25,7 +25,7 @@ namespace Mirage
 		{
 			m_Context->SetSelectedObject(nullptr);
 
-			UIWrapper::RequestModal("HierarchyEmptyMenu");
+			m_NextModalToOpen = "HierarchyEmptyMenu";
 		}
 
 		if (ImGui::BeginDragDropTarget())
@@ -39,10 +39,18 @@ namespace Mirage
 			ImGui::EndDragDropTarget();
 		}
 
-		UIWrapper::UpdateModalRequests();
+		if (!m_NextModalToOpen.empty()) {
+			ImGui::OpenPopup(m_NextModalToOpen.c_str());
+			m_NextModalToOpen = "";
+		}
+
+		KeyBoardShortcuts();
 
 		RenderHierarchyEmptyMenu();
 		RenderHierarchyItemMenu();
+		RenderCreateObjectModal();
+		RenderRenameModal();
+		RenderDeleteModal();
 		UIWrapper::EndWindow();
 	}
 
@@ -100,7 +108,7 @@ namespace Mirage
 			if (ImGui::IsItemClicked(1))
 			{
 				m_Context->SetSelectedObject(_obj);
-				UIWrapper::RequestModal("HierarchyItemMenu");
+				m_NextModalToOpen = "HierarchyItemMenu";
 				m_AnItemWasRightClicked = true;
 			}
 
@@ -126,12 +134,54 @@ namespace Mirage
 		{
 			std::shared_ptr<MirageEngine::GameObject> selected = m_Context->GetSelectedObject();
 			if (selected) {
-				if (ImGui::MenuItem("Create Child")) {
-					m_Context->CreateGameObject("New Child", selected);
+				if (ImGui::MenuItem("Rename", "F2"))
+				{
+					m_NextModalToOpen = "RenameModal";
+					ImGui::CloseCurrentPopup();
 				}
 				ImGui::Separator();
-				if (ImGui::MenuItem("Delete", "Del")) {
-					m_Context->RemoveGameObject(selected);
+				if (ImGui::MenuItem("Create Empty")) {
+					m_Context->CreateGameObject("New GameObject", selected);
+					m_NextModalToOpen = "CreateObjectModal";
+				}
+				if (ImGui::BeginMenu("3D Object"))
+				{
+					if (ImGui::MenuItem("Create Cube"))
+					{
+						m_Context->CreateObject3D("New Cube", "cube", selected, m_Renderer);
+						m_NextModalToOpen = "CreateObjectModal";
+					}
+					if (ImGui::MenuItem("Create Sphere"))
+					{
+						m_Context->CreateObject3D("New Sphere", "sphere", selected, m_Renderer);
+						m_NextModalToOpen = "CreateObjectModal";
+					}
+					if (ImGui::MenuItem("Create Cylinder"))
+					{
+						m_Context->CreateObject3D("New Cylinder", "cylinder", selected, m_Renderer);
+						m_NextModalToOpen = "CreateObjectModal";
+					}
+					if (ImGui::MenuItem("Create Plane"))
+					{
+						m_Context->CreateObject3D("New Plane", "plane", selected, m_Renderer);
+						m_NextModalToOpen = "CreateObjectModal";
+					}
+					if (ImGui::MenuItem("Create Cone"))
+					{
+						m_Context->CreateObject3D("New Cone", "cone", selected, m_Renderer);
+						m_NextModalToOpen = "CreateObjectModal";
+					}
+					ImGui::EndMenu();
+				}
+				if(ImGui::MenuItem("Create Camera"))
+				{
+					m_Context->CreateCamera("New Camera", selected);
+					m_NextModalToOpen = "CreateObjectModal";
+				}
+				ImGui::Separator();
+				if (ImGui::MenuItem("Delete", "Del")) 
+				{
+					m_NextModalToOpen = "DeleteModal";
 					ImGui::CloseCurrentPopup();
 				}
 			}
@@ -145,11 +195,149 @@ namespace Mirage
 		{
 			if (ImGui::BeginPopup("HierarchyEmptyMenu"))
 			{
-				if (ImGui::MenuItem("Create Empty Object")) {
+				if (ImGui::MenuItem("Create Empty")) {
 					m_Context->CreateGameObject("New GameObject", nullptr);
+					m_NextModalToOpen = "CreateObjectModal";
+				}
+				if (ImGui::BeginMenu("3D Object"))
+				{
+					if (ImGui::MenuItem("Create Cube"))
+					{
+						m_Context->CreateObject3D("New Cube", "cube", nullptr, m_Renderer);
+						m_NextModalToOpen = "CreateObjectModal";
+					}
+					if (ImGui::MenuItem("Create Sphere"))
+					{
+						m_Context->CreateObject3D("New Sphere", "sphere", nullptr, m_Renderer);
+						m_NextModalToOpen = "CreateObjectModal";
+					}
+					if (ImGui::MenuItem("Create Cylinder"))
+					{
+						m_Context->CreateObject3D("New Cylinder", "cylinder", nullptr, m_Renderer);
+						m_NextModalToOpen = "CreateObjectModal";
+					}
+					if (ImGui::MenuItem("Create Plane"))
+					{
+						m_Context->CreateObject3D("New Plane", "plane", nullptr, m_Renderer);
+						m_NextModalToOpen = "CreateObjectModal";
+					}
+					if (ImGui::MenuItem("Create Cone"))
+					{
+						m_Context->CreateObject3D("New Cone", "cone", nullptr, m_Renderer);
+						m_NextModalToOpen = "CreateObjectModal";
+					}
+					ImGui::EndMenu();
+				}
+				if (ImGui::MenuItem("Create Camera"))
+				{
+					m_Context->CreateCamera("New Camera", nullptr);
+					m_NextModalToOpen = "CreateObjectModal";
 				}
 				ImGui::EndPopup();
 			}
+		}
+	}
+
+	void Hierarchy::KeyBoardShortcuts()
+	{
+		if (ImGui::IsWindowFocused())
+		{
+			if (m_Context->GetSelectedObject() != nullptr)
+			{
+				if (ImGui::IsKeyPressed(ImGuiKey_Delete))
+				{
+					m_NextModalToOpen = "DeleteModal";
+				}
+				else if (ImGui::IsKeyPressed(ImGuiKey_F2))
+				{
+					m_NextModalToOpen = "RenameModal";
+				}
+			}
+		}
+	}
+
+	void Hierarchy::RenderCreateObjectModal()
+	{
+		if (ImGui::BeginPopupModal("CreateObjectModal", nullptr, ImGuiWindowFlags_AlwaysAutoResize))
+		{
+			ImGui::Text("Enter object name:");
+			ImGui::InputText("##objectName", m_RenameBuffer, sizeof(m_RenameBuffer));
+
+			ImGui::Separator();
+
+			if (ImGui::Button("OK", ImVec2(120, 0)))
+			{
+				m_Context->GetLastCreatedObject()->SetName(m_RenameBuffer);
+				m_RenameBuffer[0] = '\0';
+				ImGui::CloseCurrentPopup();
+			}
+
+			ImGui::SameLine();
+
+			if (ImGui::Button("Cancel", ImVec2(120, 0)))
+			{
+				m_RenameBuffer[0] = '\0';
+				ImGui::CloseCurrentPopup();
+			}
+
+			ImGui::EndPopup();
+		}
+	}
+
+	void Hierarchy::RenderRenameModal()
+	{
+		if (ImGui::BeginPopupModal("RenameModal", nullptr, ImGuiWindowFlags_AlwaysAutoResize))
+		{
+			ImGui::Text("Enter new name:");
+			ImGui::InputText("##newName", m_RenameBuffer, sizeof(m_RenameBuffer));
+
+			ImGui::Separator();
+
+			if (ImGui::Button("OK", ImVec2(120, 0)))
+			{
+				m_Context->GetSelectedObject()->SetName(m_RenameBuffer);
+				m_RenameBuffer[0] = '\0';
+				ImGui::CloseCurrentPopup();
+			}
+
+			ImGui::SameLine();
+
+			if (ImGui::Button("Cancel", ImVec2(120, 0)))
+			{
+				ImGui::CloseCurrentPopup();
+			}
+
+			ImGui::EndPopup();
+		}
+	}
+
+	void Hierarchy::RenderDeleteModal()
+	{
+		std::error_code ec;
+		if (ImGui::BeginPopupModal("DeleteModal", nullptr, ImGuiWindowFlags_AlwaysAutoResize))
+		{
+			ImGui::Text("Are you sure you want to delete?");
+
+			ImGui::Separator();
+
+			if (ImGui::Button("OK", ImVec2(120, 0)))
+			{
+				if (m_Context->GetSelectedObject())
+				{
+					m_Context->RemoveGameObject(m_Context->GetSelectedObject());
+					m_Context->SetSelectedObject(nullptr);
+				}
+				ImGui::CloseCurrentPopup();
+			}
+
+			ImGui::SameLine();
+
+			if (ImGui::Button("Cancel", ImVec2(120, 0)))
+			{
+				ImGui::CloseCurrentPopup();
+			}
+
+			ImGui::EndPopup();
 		}
 	}
 }

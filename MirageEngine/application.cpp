@@ -108,7 +108,11 @@ void Application::InitGameObject()
 	std::shared_ptr<GameObject> floorGO = m_SceneGraph.CreateGameObject("Lin", root);
 	std::shared_ptr<GameObject> child1 = m_SceneGraph.CreateGameObject("Monin", floorGO);
 	std::shared_ptr<GameObject> child2 = m_SceneGraph.CreateGameObject("Tang", child1);
-
+    ResourceManager::Instance().GetMesh("cube")->Bind();
+    ResourceManager::Instance().GetMesh("sphere")->Bind();
+    ResourceManager::Instance().GetMesh("cylinder")->Bind();
+    ResourceManager::Instance().GetMesh("plane")->Bind();
+    ResourceManager::Instance().GetMesh("cone")->Bind();
 	// =========================
 	//  Camera object
 	// =========================
@@ -146,7 +150,7 @@ void Application::InitGameObject()
 
 	floorGO->SetPosition(Vector3(0, -3, 0));
 	floorGO->SetRotation(rotationQ);
-	floorGO->SetScale(Vector3(10, 0, 10));
+	floorGO->SetScale(Vector3(10, 1, 10));
 
 	// =========================
 	//  Resources

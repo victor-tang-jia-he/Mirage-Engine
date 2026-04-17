@@ -10,9 +10,48 @@ namespace Mirage
 {
 	void Explorer::InitPanel()
 	{
-		m_RootPath = "Assets";
+		std::filesystem::path current = std::filesystem::current_path();
+		bool found = false;
+
+		for (int i = 0; i < 5; ++i)
+		{
+			if (std::filesystem::exists(current / "MirageEngine" / "Assets"))
+			{
+				m_RootPath = std::filesystem::absolute(current / "MirageEngine" / "Assets");
+				found = true;
+				break;
+			}
+
+			if (current.filename() == "MirageEngine" && std::filesystem::exists(current / "Assets"))
+			{
+				m_RootPath = std::filesystem::absolute(current / "Assets");
+				found = true;
+				break;
+			}
+			if (current.has_parent_path()) {
+				current = current.parent_path();
+			}
+			else {
+				break;
+			}
+		}
+		if (!found)
+		{
+			current = std::filesystem::current_path();
+			for (int i = 0; i < 3; ++i) {
+				if (std::filesystem::exists(current / "Assets")) {
+					m_RootPath = std::filesystem::absolute(current / "Assets");
+					found = true;
+					break;
+				}
+				current = current.parent_path();
+			}
+		}
+
 		m_CurrentPath = m_RootPath;
 		ScanProjectDirectory(m_CurrentPath);
+
+		std::cout << "[Explorer] Root Path detecte : " << m_RootPath << std::endl;
 	}
 
 	void Explorer::DrawPanel(uint32_t _textureID)
@@ -190,11 +229,15 @@ namespace Mirage
 		{
 			RenderAssetGrid();
 			if (ImGui::IsWindowHovered() && !m_AnItemWasRightClicked && ImGui::IsMouseClicked(1))
-				UIWrapper::RequestModal("EmptySpaceMenu");
+				m_NextModalToOpen = "EmptySpaceMenu";
 		}
 		ImGui::EndChild();
 
-		UIWrapper::UpdateModalRequests();
+		if (!m_NextModalToOpen.empty()) {
+			ImGui::OpenPopup(m_NextModalToOpen.c_str());
+			m_NextModalToOpen = "";
+		}
+
 		RenderAssetContextMenu();
 		RenderEmptySpaceContextMenu();
 		RenderRenameModal();
@@ -269,7 +312,7 @@ namespace Mirage
 				if (action == WidgetAction::RightClicked)
 				{
 					m_EntryToProcess = const_cast<AssetEntry*>(&entry);
-					UIWrapper::RequestModal("AssetContextMenu");
+					m_NextModalToOpen = "AssetContextMenu";
 					m_AnItemWasRightClicked = true;
 				}
 
@@ -319,12 +362,12 @@ namespace Mirage
 				if (ImGui::MenuItem("Rename"))
 				{
 					strncpy_s(m_RenameBuffer, m_EntryToProcess->Name.c_str(), sizeof(m_RenameBuffer));
-					UIWrapper::RequestModal("RenameModal");
+					m_NextModalToOpen = "RenameModal";
 				}
 
 				if (ImGui::MenuItem("Delete"))
 				{
-					UIWrapper::RequestModal("DeleteModal");
+					m_NextModalToOpen = "DeleteModal";
 				}
 			}
 			ImGui::EndPopup();
@@ -356,6 +399,7 @@ namespace Mirage
 					outfile.close();
 					ScanProjectDirectory(m_CurrentPath);
 				}
+				ImGui::Separator();
 				if (ImGui::MenuItem("Cancel"))
 				{
 					ImGui::CloseCurrentPopup();

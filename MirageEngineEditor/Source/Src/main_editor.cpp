@@ -16,7 +16,7 @@ int main()
 
 	application.InitApp();
 	MirageEngine::RegisterMeta().RegisterAllMeta();
-	editor.Init(application.m_Renderer.GetWindowHandle(), application.GetSceneGraph());
+	editor.Init(application.m_Renderer.GetWindowHandle(), &application.m_Renderer, application.GetSceneGraph());
 	MirageEngine::TimeManager::Init();
 	while (application.m_Renderer.IsRunning())
 	{

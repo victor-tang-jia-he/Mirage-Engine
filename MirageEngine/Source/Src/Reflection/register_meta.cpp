@@ -42,6 +42,8 @@ void RegisterMeta::RegisterGameObjectMeta()
 {
 	entt::meta_factory<GameObject> gameObject{};
 
+	// Assign a unique ID to the class. 
+	// "_hs" transforms the string into a unique integer at compile time.
 	gameObject.type("GameObject"_hs);
 
 	gameObject.ctor<std::shared_ptr<GameObject>, std::string, bool, bool>();
@@ -55,38 +57,32 @@ void RegisterMeta::RegisterGameObjectMeta()
 }
 
 void RegisterMeta::RegisterTransformMeta()
-{
-	std::cout << "[DEBUG REGISTER] Registering Transform metadata\n" << std::flush;
-	
+{	
 	entt::meta_factory<Components::Transform> transform{};
 
 	transform.type("Transform"_hs);
 	transform.ctor<Math::Vector3, Math::Quaternion, Math::Vector3>();
 
-	std::cout << "[DEBUG REGISTER] Setting Position property with setter/getter\n" << std::flush;
 	transform.data<&Components::Transform::SetPosition, &Components::Transform::GetPosition>("Position");
-	
-	std::cout << "[DEBUG REGISTER] Setting Rotation property with setter/getter\n" << std::flush;
 	transform.data<&Components::Transform::SetRotation, &Components::Transform::GetRotation>("Rotation");
-	
-	std::cout << "[DEBUG REGISTER] Setting Scale property with setter/getter\n" << std::flush;
 	transform.data<&Components::Transform::SetScale, &Components::Transform::GetScale>("Scale");
 	
 	auto transType = entt::resolve("Transform"_hs);
 	if (transType) {
-		std::cout << "[DEBUG REGISTER] Transform type resolved successfully\n" << std::flush;
 		for (auto [id, data] : transType.data()) {
-			std::cout << "[DEBUG REGISTER]   - Property: " << data.name() << "\n" << std::flush;
 		}
-	} else {
-		std::cout << "[DEBUG REGISTER] ERREUR: Transform type could not be resolved\n" << std::flush;
 	}
 }
 
 void RegisterMeta::RegisterMeshRendererMeta()
 {
 	entt::meta_factory<MeshRenderer> meshRenderer{};
+
+	// IMPORTANT: We use entt::type_id<T>().hash() as the ID because components are stored as base "Component*" pointers. 
+	// When we call comp->GetType(), it returns the native C++ hash. By using the same hash here, the Inspector can "resolve" the correct meta-data.
+	// Right now it causes a crash.
 	meshRenderer.type("MeshRendererReflection"_hs);
+	//meshRenderer.type(entt::type_id<MeshRenderer>().hash());
 
 	meshRenderer.base<Component>();
 
@@ -97,7 +93,9 @@ void RegisterMeta::RegisterMeshRendererMeta()
 void RegisterMeta::RegisterCameraMeta()
 {
 	entt::meta_factory<Camera> camera{};
-	camera.type("CameraReflection"_hs);
+	//camera.type("CameraReflection"_hs);
+	camera.type(entt::type_id<Camera>().hash());
+
 
 	camera.base<Component>();
 
@@ -113,7 +111,8 @@ void RegisterMeta::RegisterInputMappingMeta()
 	using namespace MirageEngine::Core::Input;
 
 	entt::meta_factory<CallbackInputInfo> callbackInputInfo{};
-	callbackInputInfo.type("InputInfo"_hs);
+	//callbackInputInfo.type("InputInfo"_hs);
+	callbackInputInfo.type(entt::type_id<CallbackInputInfo>().hash());
 
 	callbackInputInfo.data<&CallbackInputInfo::Pressed>("Pressed");
 	callbackInputInfo.data<&CallbackInputInfo::Held>("Held");
@@ -121,6 +120,7 @@ void RegisterMeta::RegisterInputMappingMeta()
 
 	entt::meta_factory<InputMapping> inputMapping{};
 	inputMapping.type("InputMappingReflection"_hs);
+	//inputMapping.type(entt::type_id<InputMapping>().hash());
 
 	inputMapping.base<Component>();
 

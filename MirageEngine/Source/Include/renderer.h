@@ -85,7 +85,7 @@ namespace MirageEngine
 		// --- Rendering Internal ---
 		// Renders a GameObject and all its children recursively
 		void RenderObjectRecursive(std::shared_ptr<MirageEngine::GameObject> _obj);
-		// Draws a mesh with the given MeshRenderer and Transform components
-		void DrawMesh(MirageEngine::Core::Components::MeshRenderer* _meshRenderer, MirageEngine::Core::Components::Transform* _meshTransform);
+		// Draws a mesh with the given MeshRenderer and Transform
+		void DrawMesh(std::shared_ptr<MirageEngine::Core::Components::MeshRenderer> _meshRenderer, const MirageEngine::Core::Components::Transform& _meshTransform);
 	};
 }

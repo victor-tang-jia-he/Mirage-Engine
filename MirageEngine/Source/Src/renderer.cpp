@@ -6,6 +6,7 @@
 #include <OpenGL/openGL_render_interface.h>
 #include <SceneGraph/scene_graph.h>
 #include <Components/mesh_renderer.h>
+#include <Components/transform.h> // needed because DrawMesh now receives a Transform reference
 // #include "GameObject/game_object.h"
 
 DEFINE_LOG_CATEGORY(MirageRenderer)
@@ -76,7 +77,10 @@ void Renderer::RenderScene(SceneGraph _sceneGraph)
         m_UniformBuffer->SetProjection(_sceneGraph.GetActiveCamera()->GetPerspective());
     }
 
-    for (std::shared_ptr<MirageEngine::GameObject> root : _sceneGraph.GetRootObjects()) { RenderObjectRecursive(root); }
+	for (std::shared_ptr<GameObject> root : _sceneGraph.GetRootObjects())
+	{
+		RenderObjectRecursive(root);
+	}
 }
 
 void Renderer::RenderScreen()
@@ -225,21 +229,31 @@ void MirageEngine::Renderer::TEMP_PIPELINE_PLACEHOLDER()
 
 void Renderer::RenderObjectRecursive(std::shared_ptr<MirageEngine::GameObject> _obj)
 {
-    if (!_obj) return;
+    if (!_obj)
+        return;
 
     std::shared_ptr<Core::Components::MeshRenderer> meshRenderer = _obj->GetComponent<Core::Components::MeshRenderer>();
-    if (meshRenderer) { DrawMesh(meshRenderer.get(), &_obj->Transform); }
+    if (meshRenderer)
+    {
+        // GameObject stores Transform as a value member `Transform` (not as a component in m_Components).
+        // Use that value directly.
+        DrawMesh(meshRenderer, _obj->Transform);
+    }
 
-    for (std::shared_ptr<MirageEngine::GameObject> child : _obj->GetChildren()) { RenderObjectRecursive(child); }
+    for (std::shared_ptr<MirageEngine::GameObject> child : _obj->GetChildren())
+    {
+        RenderObjectRecursive(child);
+    }
 }
 
-void Renderer::DrawMesh(MirageEngine::Core::Components::MeshRenderer* _meshRenderer, MirageEngine::Core::Components::Transform* _meshTransform)
+void Renderer::DrawMesh(std::shared_ptr<MirageEngine::Core::Components::MeshRenderer> _meshRenderer, const MirageEngine::Core::Components::Transform& _meshTransform)
 {
-    if (!_meshRenderer->GetMesh() || !_meshRenderer->GetMaterial()) return;
+    if (!_meshRenderer->GetMesh() || !_meshRenderer->GetMaterial())
+        return;
 
-    _meshRenderer->GetMaterial()->Bind();
-    m_UniformBuffer->UpdateUniformBuffer(m_Pipeline, _meshTransform->GetWorldMatrix());
-    m_CommandBuffer->BindBuffer(_meshRenderer->GetMesh()->GetVertexBuffer());
-    m_CommandBuffer->BindBuffer(_meshRenderer->GetMesh()->GetIndexBuffer());
-    m_CommandBuffer->Draw((uint32_t)_meshRenderer->GetMesh()->GetIndicesCount());
+	_meshRenderer->GetMaterial()->Bind();
+	m_UniformBuffer->UpdateUniformBuffer(m_Pipeline, _meshTransform.GetWorldMatrix());
+	m_CommandBuffer->BindBuffer(_meshRenderer->GetMesh()->GetVertexBuffer());
+	m_CommandBuffer->BindBuffer(_meshRenderer->GetMesh()->GetIndexBuffer());
+	m_CommandBuffer->Draw((uint32_t)_meshRenderer->GetMesh()->GetIndicesCount());
 }

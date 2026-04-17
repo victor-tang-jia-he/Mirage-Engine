@@ -46,7 +46,7 @@ if(NOT EXISTS "${GLFW_SOURCE}/CMakeLists.txt")
     message(STATUS "Fetching GLFW...")
     FetchContent_Declare(
         glfw
-        GIT_REPOSITORY https://github.com/glfw/glfw.git
+        GIT_REPOSITORY https://github.com/glfw/glfw
         GIT_TAG 3.4
         SOURCE_DIR ${GLFW_SOURCE}
     )
@@ -109,7 +109,7 @@ if(NOT EXISTS ${IMGUI_DIR} OR IMGUI_CONTENT_COUNT EQUAL 0)
     message(STATUS "Fetching ImGui...")
     FetchContent_Declare(
         imgui
-        GIT_REPOSITORY https://github.com/ocornut/imgui.git
+        GIT_REPOSITORY https://github.com/ocornut/imgui
         GIT_TAG docking
         SOURCE_DIR ${IMGUI_DIR}
     )
@@ -364,7 +364,7 @@ if(NOT EXISTS ${ENTT_DIR}/CMakeLists.txt)
     FetchContent_MakeAvailable(entt)
 else()
     message(STATUS "Using local EnTT")
-    add_subdirectory(${CMAKE_SOURCE_DIR}/Libraries/EnTT ${CMAKE_BINARY_DIR}/EnTT EXCLUDE_FROM_ALL)
+    add_subdirectory(${CMAKE_SOURCE_DIR}/Libraries/EnTT ${CMAKE_BINARY_DIR}/EnTT)
 endif()
 
 message(STATUS "EnTT target created successfully")
