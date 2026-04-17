@@ -131,6 +131,7 @@ void Application::InitGameObject()
     ResourceManager::Instance()->GetMesh("sphere")->Bind();
     ResourceManager::Instance()->GetMesh("cylinder")->Bind();
     ResourceManager::Instance()->GetMesh("plane")->Bind();
+    ResourceManager::Instance()->GetMesh("cone")->Bind();
     meshRenderer->SetMesh(ResourceManager::Instance()->GetMesh("cube"));
     meshRenderer2->SetMesh(ResourceManager::Instance()->GetMesh("sphere"));
 

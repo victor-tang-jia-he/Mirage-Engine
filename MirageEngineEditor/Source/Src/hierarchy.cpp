@@ -187,6 +187,10 @@ namespace Mirage
 					{
 						m_Context->CreatePlane("New Plane", nullptr, m_Renderer);
 					}
+					if (ImGui::MenuItem("Create Cone"))
+					{
+						m_Context->CreateCone("New Cone", nullptr, m_Renderer);
+					}
 					ImGui::EndMenu();
 				}
 				if (ImGui::MenuItem("Create Camera"))
