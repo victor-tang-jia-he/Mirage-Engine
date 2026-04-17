@@ -137,11 +137,23 @@ namespace Mirage
 				{
 					if (ImGui::MenuItem("Create Cube"))
 					{
-						m_Context->CreateCube("New Cube", selected, m_Renderer);
+						m_Context->CreateObject3D("New Cube", "cube", selected, m_Renderer);
 					}
 					if (ImGui::MenuItem("Create Sphere"))
 					{
-						m_Context->CreateSphere("New Sphere", selected, m_Renderer);
+						m_Context->CreateObject3D("New Sphere", "sphere", selected, m_Renderer);
+					}
+					if (ImGui::MenuItem("Create Cylinder"))
+					{
+						m_Context->CreateObject3D("New Cylinder", "cylinder", selected, m_Renderer);
+					}
+					if (ImGui::MenuItem("Create Plane"))
+					{
+						m_Context->CreateObject3D("New Plane", "plane", selected, m_Renderer);
+					}
+					if (ImGui::MenuItem("Create Cone"))
+					{
+						m_Context->CreateObject3D("New Cone", "cone", selected, m_Renderer);
 					}
 					ImGui::EndMenu();
 				}
@@ -173,23 +185,23 @@ namespace Mirage
 				{
 					if (ImGui::MenuItem("Create Cube"))
 					{
-						m_Context->CreateCube("New Cube", nullptr, m_Renderer);
+						m_Context->CreateObject3D("New Cube", "cube", nullptr, m_Renderer);
 					}
 					if (ImGui::MenuItem("Create Sphere"))
 					{
-						m_Context->CreateSphere("New Sphere", nullptr, m_Renderer);
+						m_Context->CreateObject3D("New Sphere", "sphere", nullptr, m_Renderer);
 					}
 					if (ImGui::MenuItem("Create Cylinder"))
 					{
-						m_Context->CreateCylinder("New Cylinder", nullptr, m_Renderer);
+						m_Context->CreateObject3D("New Cylinder", "cylinder", nullptr, m_Renderer);
 					}
 					if (ImGui::MenuItem("Create Plane"))
 					{
-						m_Context->CreatePlane("New Plane", nullptr, m_Renderer);
+						m_Context->CreateObject3D("New Plane", "plane", nullptr, m_Renderer);
 					}
 					if (ImGui::MenuItem("Create Cone"))
 					{
-						m_Context->CreateCone("New Cone", nullptr, m_Renderer);
+						m_Context->CreateObject3D("New Cone", "cone", nullptr, m_Renderer);
 					}
 					ImGui::EndMenu();
 				}
