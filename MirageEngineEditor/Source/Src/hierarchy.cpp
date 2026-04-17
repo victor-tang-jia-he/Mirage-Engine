@@ -44,6 +44,8 @@ namespace Mirage
 			m_NextModalToOpen = "";
 		}
 
+		KeyBoardShortcuts();
+
 		RenderHierarchyEmptyMenu();
 		RenderHierarchyItemMenu();
 		RenderCreateObjectModal();
@@ -132,7 +134,7 @@ namespace Mirage
 		{
 			MirageEngine::GameObject* selected = m_Context->GetSelectedObject();
 			if (selected) {
-				if (ImGui::MenuItem("Rename"))
+				if (ImGui::MenuItem("Rename", "F2"))
 				{
 					m_NextModalToOpen = "RenameModal";
 					ImGui::CloseCurrentPopup();
@@ -232,6 +234,24 @@ namespace Mirage
 					m_NextModalToOpen = "CreateObjectModal";
 				}
 				ImGui::EndPopup();
+			}
+		}
+	}
+
+	void Hierarchy::KeyBoardShortcuts()
+	{
+		if (ImGui::IsWindowFocused())
+		{
+			if (m_Context->GetSelectedObject() != nullptr)
+			{
+				if (ImGui::IsKeyPressed(ImGuiKey_Delete))
+				{
+					m_NextModalToOpen = "DeleteModal";
+				}
+				else if (ImGui::IsKeyPressed(ImGuiKey_F2))
+				{
+					m_NextModalToOpen = "RenameModal";
+				}
 			}
 		}
 	}

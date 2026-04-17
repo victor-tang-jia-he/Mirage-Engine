@@ -15,9 +15,7 @@ namespace Mirage
 		MirageEngine::SceneGraph* m_Context;
 		MirageEngine::Renderer* m_Renderer;
 		bool m_AnItemWasRightClicked;
-
 		char m_RenameBuffer[256] = "";
-
 		std::string m_NextModalToOpen;
 
 	public:
@@ -32,6 +30,8 @@ namespace Mirage
 		void RenderRecursiveNode(MirageEngine::GameObject* _obj);
 		void RenderHierarchyItemMenu();
 		void RenderHierarchyEmptyMenu();
+
+		void KeyBoardShortcuts();
 
 		void RenderCreateObjectModal();
 		void RenderRenameModal();
