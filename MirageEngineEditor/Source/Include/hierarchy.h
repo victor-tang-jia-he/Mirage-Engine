@@ -16,6 +16,8 @@ namespace Mirage
 		MirageEngine::Renderer* m_Renderer;
 		bool m_AnItemWasRightClicked;
 
+		char m_RenameBuffer[256] = "";
+
 		std::string m_NextModalToOpen;
 
 	public:
@@ -31,6 +33,7 @@ namespace Mirage
 		void RenderHierarchyItemMenu();
 		void RenderHierarchyEmptyMenu();
 
+		void RenderRenameModal();
 		void RenderDeleteModal();
 	};
 }

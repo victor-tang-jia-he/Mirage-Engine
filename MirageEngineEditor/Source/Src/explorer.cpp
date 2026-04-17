@@ -399,6 +399,7 @@ namespace Mirage
 					outfile.close();
 					ScanProjectDirectory(m_CurrentPath);
 				}
+				ImGui::Separator();
 				if (ImGui::MenuItem("Cancel"))
 				{
 					ImGui::CloseCurrentPopup();

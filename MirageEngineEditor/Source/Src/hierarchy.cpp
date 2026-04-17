@@ -46,6 +46,7 @@ namespace Mirage
 
 		RenderHierarchyEmptyMenu();
 		RenderHierarchyItemMenu();
+		RenderRenameModal();
 		RenderDeleteModal();
 		UIWrapper::EndWindow();
 	}
@@ -130,6 +131,12 @@ namespace Mirage
 		{
 			MirageEngine::GameObject* selected = m_Context->GetSelectedObject();
 			if (selected) {
+				if (ImGui::MenuItem("Rename"))
+				{
+					m_NextModalToOpen = "RenameModal";
+					ImGui::CloseCurrentPopup();
+				}
+				ImGui::Separator();
 				if (ImGui::MenuItem("Create Empty")) {
 					m_Context->CreateGameObject("New Child", selected);
 				}
@@ -162,9 +169,9 @@ namespace Mirage
 					m_Context->CreateCamera("New Camera", selected);
 				}
 				ImGui::Separator();
-				if (ImGui::MenuItem("Delete", "Del")) {
-					//m_Context->RemoveGameObject(selected);
-					m_NextModalToOpen = "Delete OBJ";
+				if (ImGui::MenuItem("Delete", "Del")) 
+				{
+					m_NextModalToOpen = "DeleteModal";
 					ImGui::CloseCurrentPopup();
 				}
 			}
@@ -214,10 +221,37 @@ namespace Mirage
 		}
 	}
 
+	void Hierarchy::RenderRenameModal()
+	{
+		if (ImGui::BeginPopupModal("RenameModal", nullptr, ImGuiWindowFlags_AlwaysAutoResize))
+		{
+			ImGui::Text("Enter new name:");
+			ImGui::InputText("##newName", m_RenameBuffer, sizeof(m_RenameBuffer));
+
+			ImGui::Separator();
+
+			if (ImGui::Button("OK", ImVec2(120, 0)))
+			{
+				m_Context->GetSelectedObject()->SetName(m_RenameBuffer);
+				m_RenameBuffer[0] = '\0';
+				ImGui::CloseCurrentPopup();
+			}
+
+			ImGui::SameLine();
+
+			if (ImGui::Button("Cancel", ImVec2(120, 0)))
+			{
+				ImGui::CloseCurrentPopup();
+			}
+
+			ImGui::EndPopup();
+		}
+	}
+
 	void Hierarchy::RenderDeleteModal()
 	{
 		std::error_code ec;
-		if (ImGui::BeginPopupModal("Delete OBJ", nullptr, ImGuiWindowFlags_AlwaysAutoResize))
+		if (ImGui::BeginPopupModal("DeleteModal", nullptr, ImGuiWindowFlags_AlwaysAutoResize))
 		{
 			ImGui::Text("Are you sure you want to delete?");
 
@@ -225,7 +259,6 @@ namespace Mirage
 
 			if (ImGui::Button("OK", ImVec2(120, 0)))
 			{
-				std::cout << "YEP:" << m_Context->GetSelectedObject()->GetName() << std::endl;
 				if (m_Context->GetSelectedObject())
 				{
 					m_Context->RemoveGameObject(m_Context->GetSelectedObject());
