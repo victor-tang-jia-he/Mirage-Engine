@@ -171,7 +171,7 @@ namespace MirageEngine
 
     void SceneGraph::WorldMatrixRecursive(std::shared_ptr<GameObject> _obj, Core::Math::Matrix4& _parentMatrix, bool _forceUpdate)
     {
-        bool mustUpdate = _obj->Transform.GetIsDirty() || _forceUpdate;
+        bool mustUpdate = _obj->GetIsDirty() || _forceUpdate;
 
         Core::Math::Matrix4 worldMatrix;
 

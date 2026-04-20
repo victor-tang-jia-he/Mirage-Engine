@@ -135,9 +135,14 @@ namespace Mirage
 		else if (actualType == entt::resolve<Math::Quaternion>())
 		{
 			Math::Quaternion quat = value.cast<Math::Quaternion>();
-			Math::Vector3 euler = quat.ToEulerAngle();
+			Math::Vector3 euler = quat.ToEulerAngle() * 180.0f / PI;
 			if (ImGui::DragFloat3(label, &euler.X, 0.1f)) {
-				_data.set(instance, Math::Quaternion(euler));
+				euler = euler * PI / 180.0f;
+				Math::Quaternion qx = Math::Quaternion(euler.X, 0, 0);
+				Math::Quaternion qy = Math::Quaternion(0, euler.Y, 0);
+				Math::Quaternion qz = Math::Quaternion(0, 0, euler.Z);
+				Math::Quaternion eulerQuat = qx * qy * qz;
+				_data.set(instance, eulerQuat);
 			}
 		}
 		else if (actualType == entt::resolve<float>())

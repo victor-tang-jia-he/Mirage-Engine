@@ -73,6 +73,7 @@ namespace MirageEngine
 		uint64_t GetID() const { return m_ID; }
 		bool GetIsStatic() const { return m_bIsStatic; }
 		bool GetIsActive() const { return m_bIsActive; }
+		bool GetIsDirty() const { return m_bIsDirty; }
 		std::vector<std::shared_ptr<MirageEngine::Core::Components::Component>> GetComponents() const { return m_Components; }
 		MirageEngine::Core::Math::Vector3 GetPosition() const { return Transform.GetPosition(); }
 		MirageEngine::Core::Math::Quaternion GetRotation() const { return Transform.GetRotation(); }

@@ -351,7 +351,7 @@ Vector3 Quaternion::ToEulerAngle() const
 
 void Quaternion::Print() const
 {
-	printf("X = %g\nY = %g\nZ = %g\nW = %g\n", W, X, Y, Z);
+	printf("X = %g\nY = %g\nZ = %g\nW = %g\n", X, Y, Z, W);
 }
 
 
