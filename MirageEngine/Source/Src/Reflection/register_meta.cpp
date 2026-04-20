@@ -94,16 +94,14 @@ void RegisterMeta::RegisterMeshRendererMeta()
 void RegisterMeta::RegisterCameraMeta()
 {
 	entt::meta_factory<Camera> camera{};
-	camera.type(entt::type_id<Camera>().hash());
 
+	camera.type(entt::type_id<Camera>().hash());
 
 	camera.base<Component>();
 
-	camera.data<&Camera::SetFov, &Camera::GetFov>("Field of View");
-	camera.data<&Camera::SetNear, &Camera::GetNear>("Near Plane");
-	camera.data<&Camera::SetFar, &Camera::GetFar>("Far Plane");
-	camera.data<&Camera::SetWidth, &Camera::GetWidth>("Width");
-	camera.data<&Camera::SetHeight, &Camera::GetHeight>("Height");
+	camera.data<&Camera::SetFov, &Camera::GetFov>("FOV");
+	camera.data<&Camera::SetNear, &Camera::GetNear>("Near");
+	camera.data<&Camera::SetFar, &Camera::GetFar>("Far");
 }
 
 void RegisterMeta::RegisterInputMappingMeta()
@@ -111,7 +109,7 @@ void RegisterMeta::RegisterInputMappingMeta()
 	using namespace MirageEngine::Core::Input;
 
 	entt::meta_factory<CallbackInputInfo> callbackInputInfo{};
-	// callbackInputInfo.type("InputInfo"_hs);
+
 	callbackInputInfo.type(entt::type_id<CallbackInputInfo>().hash());
 
 	callbackInputInfo.data<&CallbackInputInfo::Pressed>("Pressed");
@@ -119,6 +117,7 @@ void RegisterMeta::RegisterInputMappingMeta()
 	callbackInputInfo.data<&CallbackInputInfo::Released>("Released");;
 
 	entt::meta_factory<InputMapping> inputMapping{};
+
 	inputMapping.type(entt::type_id<InputMapping>().hash());
 
 	inputMapping.base<Component>();
@@ -127,6 +126,5 @@ void RegisterMeta::RegisterInputMappingMeta()
 
 	inputMapping.func<&InputMapping::Clear>("ClearAll");
 
-	// inputMapping.func<(void(InputMapping::*)(int))& InputMapping::Remove>("RemoveKey");
 	inputMapping.func<&InputMapping::Remove>("RemoveKey");
 }

@@ -164,6 +164,14 @@ namespace Mirage
 				_data.set(instance, val);
 			}
 		}
+		else if (actualType == entt::resolve<unsigned int>())
+		{
+			unsigned int val = value.cast<unsigned int>();
+			if (ImGui::DragScalar(label, ImGuiDataType_U32, &val, 1.0f))
+			{
+				_data.set(instance, val);
+			}
+		}
 		else if (actualType == entt::resolve<bool>())
 		{
 			bool val = value.cast<bool>();
