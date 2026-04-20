@@ -279,6 +279,35 @@ namespace Mirage
 		
 	}
 
+	void Explorer::DuplicateItem(const std::filesystem::path& _source, const std::filesystem::path& _target)
+	{
+		std::error_code ec;
+
+		std::filesystem::copy(_source, _target, std::filesystem::copy_options::recursive, ec);
+
+		if (ec)
+			std::cout << "Error during duplication: " << ec.message() << std::endl;
+
+		ScanProjectDirectory(m_CurrentPath);
+	}
+
+	std::filesystem::path Explorer::GenerateUniquePath(const std::filesystem::path& _basePath)
+	{
+		std::filesystem::path folder = _basePath.parent_path();
+		std::string name = _basePath.stem().string();
+		std::string extension = _basePath.extension().string();
+
+		std::filesystem::path newPath = folder / (name + "_Copy" + extension);
+
+		int counter = 1;
+		while (std::filesystem::exists(newPath))
+		{
+			newPath = folder / (name + "_Copy (" + std::to_string(counter) + ")" + extension);
+			counter++;
+		}
+		return newPath;
+	}
+
 	void Explorer::RenderAssetGrid()
 	{
 		float windowSize = ImGui::GetContentRegionAvail().x;
@@ -359,20 +388,30 @@ namespace Mirage
 				ImGui::TextDisabled("Options: %s", m_EntryToProcess->Name.c_str());
 				ImGui::Separator();
 
-				if (ImGui::MenuItem("Rename"))
-				{
-					strncpy_s(m_RenameBuffer, m_EntryToProcess->Name.c_str(), sizeof(m_RenameBuffer));
-					m_NextModalToOpen = "RenameModal";
-				}
-
-				if (ImGui::MenuItem("Delete"))
-				{
-					m_NextModalToOpen = "DeleteModal";
-				}
 				if (ImGui::MenuItem("Show in Explorer"))
 				{
 					EditorActions::ShowInExplorer(m_EntryToProcess->Path);
 					ImGui::CloseCurrentPopup();
+				}
+				if (ImGui::MenuItem("Duplicate"))
+				{
+					if (m_EntryToProcess)
+					{
+						std::filesystem::path sourcePath = m_EntryToProcess->Path;
+						std::filesystem::path uniquePath = GenerateUniquePath(sourcePath);
+						DuplicateItem(m_EntryToProcess->Path, uniquePath);
+						m_EntryToProcess = nullptr;
+						ImGui::CloseCurrentPopup();
+					}
+				}
+				if (ImGui::MenuItem("Delete"))
+				{
+					m_NextModalToOpen = "DeleteModal";
+				}
+				if (ImGui::MenuItem("Rename"))
+				{
+					//strncpy_s(m_RenameBuffer, m_EntryToProcess->Name.c_str(), sizeof(m_RenameBuffer));
+					m_NextModalToOpen = "RenameModal";
 				}
 			}
 			ImGui::EndPopup();
