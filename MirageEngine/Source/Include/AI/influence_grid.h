@@ -36,21 +36,21 @@ namespace MirageEngine
 
 		std::vector<InfluenceCell> m_Cells;
 
-		Vector3 m_Origin;
+		Core::Math::Vector3 m_Origin;
 
 	public:
-		void Initialize(float _gridWidth, float _gridHeight, float _cellsize, Vector3 _origin);
+		void Initialize(float _gridWidth, float _gridHeight, float _cellsize, Core::Math::Vector3 _origin);
 
-		void WorldToGrid(Vector3 _pos, int& _x, int& _y);
+		void WorldToGrid(Core::Math::Vector3 _pos, int& _x, int& _y);
 
 		bool IsInBounds(int _x, int _y) const;
 		void Update(float _deltaTime);
 
 		void AddInfluence(int _x, int _y, InfluenceType _type, float _value);
-		void AddInfluenceArea(Vector3 pos, float radius, float value, InfluenceType type);
+		void AddInfluenceArea(Core::Math::Vector3 pos, float radius, float value, InfluenceType type);
 
 		// Getters
 		int GetIndex(int x, int y) const { return y * m_ResolutionX + x; }
-		Vector3 GetCellWorldPosition(int x, int y) const;
+		Core::Math::Vector3 GetCellWorldPosition(int x, int y) const;
 	};
 }
