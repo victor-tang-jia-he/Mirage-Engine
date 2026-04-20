@@ -17,7 +17,7 @@ namespace MirageEngine
 
 	struct InfluenceCell
 	{
-		static constexpr int MAX_CHANNELS = 4;
+		static constexpr int MAX_CHANNELS = (int)InfluenceType::COUNT;
 		float channels[MAX_CHANNELS] = { 0.0f };
 	};
 
@@ -34,9 +34,9 @@ namespace MirageEngine
 		int m_ResolutionX;
 		int m_ResolutionY;
 
-		std::vector<InfluenceCell> m_cells;
+		std::vector<InfluenceCell> m_Cells;
 
-		Core::Components::Vector3 m_Origin;
+		Vector3 m_Origin;
 
 	public:
 		void Initialize(float _gridWidth, float _gridHeight, float _cellsize, Vector3 _origin);
@@ -51,6 +51,6 @@ namespace MirageEngine
 
 		// Getters
 		int GetIndex(int x, int y) const { return y * m_ResolutionX + x; }
-		Core::Components::Vector3 GetCellWorldPosition(int x, int y)
+		Vector3 GetCellWorldPosition(int x, int y) const;
 	};
 }

@@ -17,7 +17,7 @@ namespace MirageEngine
 		m_ResolutionX = static_cast<int>(m_GridWidth / m_CellSize);
 		m_ResolutionY = static_cast<int>(m_GridHeight / m_CellSize);
 
-		m_cells.resize(m_ResolutionX * m_ResolutionY);
+		m_Cells.resize(m_ResolutionX * m_ResolutionY);
 	}
 
 	void InfluenceGrid::WorldToGrid(Vector3 _pos, int& _x, int& _y)
@@ -28,21 +28,38 @@ namespace MirageEngine
 
 	bool InfluenceGrid::IsInBounds(int _x, int _y) const
 	{
-
+		return _x >= 0 && _x < m_ResolutionX && _y >= 0 && _y < m_ResolutionY;
 	}
 
 	void InfluenceGrid::Update(float _deltaTime)
 	{
-
+		for (auto& cell : m_Cells)
+		{
+			for (int i = 0; i < InfluenceCell::MAX_CHANNELS; i++)
+			{
+				cell.channels[i] *= m_DecayRate * _deltaTime;
+				if (cell.channels[i] < 0.01f)
+					cell.channels[i] = 0.0f;
+			}
+		}
 	}
 
 	void InfluenceGrid::AddInfluence(int _x, int _y, InfluenceType _type, float _value)
 	{
-
+		if (IsInBounds(_x, _y))
+		{
+			int index = GetIndex(_x, _y);
+			m_Cells[index].channels[static_cast<int>(_type)] += _value;
+		}
 	}
 
 	void InfluenceGrid::AddInfluenceArea(Vector3 pos, float radius, float value, InfluenceType type)
 	{
 
+	}
+
+	Vector3 InfluenceGrid::GetCellWorldPosition(int _x, int _y) const
+	{
+		return Vector3(m_Origin.X + _x * m_CellSize + m_CellSize * 0.5f, m_Origin.Y, m_Origin.Z + _y * m_CellSize + m_CellSize * 0.5f);
 	}
 }
