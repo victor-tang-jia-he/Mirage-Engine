@@ -61,6 +61,8 @@ namespace Mirage
 		void DuplicateItem(const std::filesystem::path& _source, const std::filesystem::path& _target);
 		std::filesystem::path GenerateUniquePath(const std::filesystem::path& _basePath);
 
+		void CreateItem(const std::filesystem::path& _path, std::string _name, std::string _extension, std::string _content);
+
 		void RenderAssetGrid();
 		void RenderAssetContextMenu();
 		void RenderEmptySpaceContextMenu();
