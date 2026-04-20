@@ -2,17 +2,10 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <vector3.h>
 
 namespace MirageEngine
 {
-	namespace Core
-	{
-		namespace Components
-		{
-			class Vector3;
-		}
-	}
-
 	enum class InfluenceType
 	{
 		CHANNEL_DANGER = 0,
@@ -46,9 +39,9 @@ namespace MirageEngine
 		Core::Components::Vector3 m_Origin;
 
 	public:
-		void Initialize(float _gridWidth, float _gridHeight, float _cellsize, Core::Components::Vector3 _origin);
+		void Initialize(float _gridWidth, float _gridHeight, float _cellsize, Vector3 _origin);
 
-		void WorldToGrid(Core::Components::Vector3 _pos, int& _x, int& _y);
+		void WorldToGrid(Vector3 _pos, int& _x, int& _y);
 
 		bool IsInBounds(int _x, int _y) const;
 		void Update(float _deltaTime);
