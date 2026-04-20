@@ -5,6 +5,8 @@
 #include "GameObject/game_object.h"
 #include "SceneGraph/scene_graph.h"
 #include <cstring>
+#include <cmath>
+#include <limits>
 
 using namespace MirageEngine::Core::Math;
 using namespace MirageEngine;
@@ -34,24 +36,13 @@ namespace Mirage
 			auto goType = entt::resolve("GameObject"_hs);
 			if (goType) {
 				// Position and Rotation from GameObject (physics-aware)
-				for (const char* propName : {"Position", "Rotation"}) 
+				for (const char* propName : {"Position", "Rotation", "Scale"})
 				{
 					auto data = goType.data(entt::hashed_string{propName});
 					if (data) 
 					{
 						DrawPropertyDirect(goType, data, (void*)selectedObj.get());
 					}
-				}
-			}
-
-			// Scale from Transform
-			auto transType = entt::resolve("Transform"_hs);
-			if (transType) 
-			{
-				auto data = transType.data(entt::hashed_string{"Scale"});
-				if (data) 
-				{
-					DrawPropertyDirect(transType, data, (void*)&selectedObj->Transform);
 				}
 			}
 		}
@@ -117,10 +108,12 @@ namespace Mirage
 		// Dispatcher: Choose the ImGui widget based on the Data Type
 		if (actualType == entt::resolve<std::string>())
 		{
-			if (auto* s = value.try_cast<std::string>()) {
+			if (auto* s = value.try_cast<std::string>())
+			{
 				char buffer[256];
 				strncpy(buffer, s->c_str(), sizeof(buffer) - 1);
-				if (ImGui::InputText(label, buffer, sizeof(buffer))) {
+				if (ImGui::InputText(label, buffer, sizeof(buffer))) 
+				{
 					_data.set(instance, std::string(buffer));
 				}
 			}
@@ -128,7 +121,16 @@ namespace Mirage
 		else if (actualType == entt::resolve<Math::Vector3>())
 		{
 			Math::Vector3 vec = value.cast<Math::Vector3>();
-			if (ImGui::DragFloat3(label, &vec.X, 0.1f)) {
+			if (ImGui::DragFloat3(label, &vec.X, 0.1f))
+			{
+				// Only enforce non-zero for the Scale property; leave Position/Rotation unchanged.
+				if (label && std::strcmp(label, "Scale") == 0)
+				{
+					const float minAbs = 1e-4f; // Small epsilon to avoid exact zero scale
+					if (std::fabs(vec.X) < minAbs) vec.X = (vec.X >= 0.0f) ? minAbs : -minAbs;
+					if (std::fabs(vec.Y) < minAbs) vec.Y = (vec.Y >= 0.0f) ? minAbs : -minAbs;
+					if (std::fabs(vec.Z) < minAbs) vec.Z = (vec.Z >= 0.0f) ? minAbs : -minAbs;
+				}
 				_data.set(instance, vec);
 			}
 		}
@@ -136,7 +138,8 @@ namespace Mirage
 		{
 			Math::Quaternion quat = value.cast<Math::Quaternion>();
 			Math::Vector3 euler = quat.ToEulerAngle() * 180.0f / PI;
-			if (ImGui::DragFloat3(label, &euler.X, 0.1f)) {
+			if (ImGui::DragFloat3(label, &euler.X, 0.1f))
+			{
 				euler = euler * PI / 180.0f;
 				Math::Quaternion qx = Math::Quaternion(euler.X, 0, 0);
 				Math::Quaternion qy = Math::Quaternion(0, euler.Y, 0);
@@ -148,21 +151,24 @@ namespace Mirage
 		else if (actualType == entt::resolve<float>())
 		{
 			float val = value.cast<float>();
-			if (ImGui::DragFloat(label, &val, 0.1f)) {
+			if (ImGui::DragFloat(label, &val, 0.1f))
+			{
 				_data.set(instance, val);
 			}
 		}
 		else if (actualType == entt::resolve<int>())
 		{
 			int val = value.cast<int>();
-			if (ImGui::DragInt(label, &val, 1)) {
+			if (ImGui::DragInt(label, &val, 1))
+			{
 				_data.set(instance, val);
 			}
 		}
 		else if (actualType == entt::resolve<bool>())
 		{
 			bool val = value.cast<bool>();
-			if (ImGui::Checkbox(label, &val)) {
+			if (ImGui::Checkbox(label, &val))
+			{
 				_data.set(instance, val);
 			}
 		}
