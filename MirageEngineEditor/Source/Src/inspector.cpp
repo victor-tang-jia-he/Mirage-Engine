@@ -33,7 +33,7 @@ namespace Mirage
 
 		if (ImGui::CollapsingHeader("Transform", ImGuiTreeNodeFlags_DefaultOpen)) 
 		{
-			auto goType = entt::resolve("GameObject"_hs);
+			auto goType = entt::resolve(entt::type_id<GameObject>().hash());
 			if (goType) {
 				// Position and Rotation from GameObject (physics-aware)
 				for (const char* propName : {"Position", "Rotation", "Scale"})

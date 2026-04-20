@@ -11,7 +11,7 @@
 
 int main()
 {
-    Application       application;
+    Application application;
     Mirage::EditorApp editor;
 
 	application.InitApp();

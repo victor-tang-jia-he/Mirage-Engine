@@ -44,8 +44,6 @@ void RegisterMeta::RegisterGameObjectMeta()
 
 	// Assign a unique ID to the class. 
 	// "_hs" transforms the string into a unique integer at compile time.
-	// 
-	// gameObject.type("GameObject"_hs);
 	gameObject.type(entt::type_id<GameObject>().hash());
 
 	gameObject.ctor<std::shared_ptr<GameObject>, std::string, bool, bool>();
@@ -63,9 +61,7 @@ void RegisterMeta::RegisterTransformMeta()
 {	
 	entt::meta_factory<Components::Transform> transform{};
 
-	transform.type(entt::type_id<Components::Transform>().hash());
-	transform.type("Transform"_hs);
-
+	transform.type(entt::type_id<Transform>().hash());
 	transform.ctor<Math::Vector3, Math::Quaternion, Math::Vector3>();
 
 	transform.data<&Components::Transform::SetPosition, &Components::Transform::GetPosition>("Position");
@@ -87,9 +83,6 @@ void RegisterMeta::RegisterMeshRendererMeta()
 
 	// IMPORTANT: We use entt::type_id<T>().hash() as the ID because components are stored as base "Component*" pointers. 
 	// When we call comp->GetType(), it returns the native C++ hash. By using the same hash here, the Inspector can "resolve" the correct meta-data.
-	// Right now it causes a crash.
-	// 
-	// meshRenderer.type("MeshRendererReflection"_hs);
 	meshRenderer.type(entt::type_id<MeshRenderer>().hash());
 
 	meshRenderer.base<Component>();
@@ -101,7 +94,6 @@ void RegisterMeta::RegisterMeshRendererMeta()
 void RegisterMeta::RegisterCameraMeta()
 {
 	entt::meta_factory<Camera> camera{};
-	// camera.type("CameraReflection"_hs);
 	camera.type(entt::type_id<Camera>().hash());
 
 
@@ -127,7 +119,6 @@ void RegisterMeta::RegisterInputMappingMeta()
 	callbackInputInfo.data<&CallbackInputInfo::Released>("Released");;
 
 	entt::meta_factory<InputMapping> inputMapping{};
-	// inputMapping.type("InputMappingReflection"_hs);
 	inputMapping.type(entt::type_id<InputMapping>().hash());
 
 	inputMapping.base<Component>();
