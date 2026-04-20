@@ -279,6 +279,54 @@ namespace Mirage
 		
 	}
 
+	void Explorer::DuplicateItem(const std::filesystem::path& _source, const std::filesystem::path& _target)
+	{
+		std::error_code ec;
+
+		std::filesystem::copy(_source, _target, std::filesystem::copy_options::recursive, ec);
+
+		if (ec)
+			std::cout << "Error during duplication: " << ec.message() << std::endl;
+
+		ScanProjectDirectory(m_CurrentPath);
+	}
+
+	std::filesystem::path Explorer::GenerateUniquePath(const std::filesystem::path& _basePath)
+	{
+		std::filesystem::path folder = _basePath.parent_path();
+		std::string name = _basePath.stem().string();
+		std::string extension = _basePath.extension().string();
+
+		std::filesystem::path newPath = folder / (name + "_Copy" + extension);
+
+		int counter = 1;
+		while (std::filesystem::exists(newPath))
+		{
+			newPath = folder / (name + "_Copy (" + std::to_string(counter) + ")" + extension);
+			counter++;
+		}
+		return newPath;
+	}
+
+	void Explorer::CreateItem(const std::filesystem::path& _path, std::string _name, std::string _extension, std::string _content)
+	{
+		std::filesystem::path newFilePath = _path / (_name + _extension);
+		int counter = 1;
+		while (std::filesystem::exists(newFilePath))
+		{
+			newFilePath = _path / (_name + " (" + std::to_string(counter) + ")" + _extension);
+			counter++;
+		}
+		std::ofstream outfile(newFilePath);
+		if (outfile.is_open())
+		{
+			outfile << _content;
+			outfile.close();
+		}
+		outfile.close();
+		ScanProjectDirectory(m_CurrentPath);
+	}
+
 	void Explorer::RenderAssetGrid()
 	{
 		float windowSize = ImGui::GetContentRegionAvail().x;
@@ -359,15 +407,30 @@ namespace Mirage
 				ImGui::TextDisabled("Options: %s", m_EntryToProcess->Name.c_str());
 				ImGui::Separator();
 
-				if (ImGui::MenuItem("Rename"))
+				if (ImGui::MenuItem("Show in Explorer"))
 				{
-					strncpy_s(m_RenameBuffer, m_EntryToProcess->Name.c_str(), sizeof(m_RenameBuffer));
-					m_NextModalToOpen = "RenameModal";
+					EditorActions::ShowInExplorer(m_EntryToProcess->Path);
+					ImGui::CloseCurrentPopup();
 				}
-
+				if (ImGui::MenuItem("Duplicate"))
+				{
+					if (m_EntryToProcess)
+					{
+						std::filesystem::path sourcePath = m_EntryToProcess->Path;
+						std::filesystem::path uniquePath = GenerateUniquePath(sourcePath);
+						DuplicateItem(m_EntryToProcess->Path, uniquePath);
+						m_EntryToProcess = nullptr;
+						ImGui::CloseCurrentPopup();
+					}
+				}
 				if (ImGui::MenuItem("Delete"))
 				{
 					m_NextModalToOpen = "DeleteModal";
+				}
+				if (ImGui::MenuItem("Rename"))
+				{
+					//strncpy_s(m_RenameBuffer, m_EntryToProcess->Name.c_str(), sizeof(m_RenameBuffer));
+					m_NextModalToOpen = "RenameModal";
 				}
 			}
 			ImGui::EndPopup();
@@ -380,24 +443,56 @@ namespace Mirage
 		{
 			if (ImGui::BeginPopup("EmptySpaceMenu"))
 			{
-				if (ImGui::MenuItem("New Folder"))
+				if (ImGui::BeginMenu("Create"))
 				{
-					std::error_code ec;
-					std::filesystem::create_directory(m_CurrentPath / "NewFolder", ec);
-					ScanProjectDirectory(m_CurrentPath);
-				}
-				if (ImGui::MenuItem("New Text"))
-				{
-					std::filesystem::path newFilePath = m_CurrentPath / "NewFile.json";
-					int counter = 1;
-					while (std::filesystem::exists(newFilePath))
+					if (ImGui::MenuItem("New Folder"))
 					{
-						newFilePath = m_CurrentPath / ("NewFile (" + std::to_string(counter) + ").json");
-						counter++;
+						std::error_code ec;
+						std::filesystem::create_directory(m_CurrentPath / "NewFolder", ec);
+						ScanProjectDirectory(m_CurrentPath);
 					}
-					std::ofstream outfile(newFilePath);
-					outfile.close();
-					ScanProjectDirectory(m_CurrentPath);
+
+					ImGui::Separator();
+
+					if (ImGui::MenuItem("Scripts")) {}
+
+					ImGui::Separator();
+
+					if (ImGui::BeginMenu("Shaders")) {
+						if (ImGui::MenuItem("Simple GLSL"))
+						{
+							CreateItem(m_CurrentPath, "NewShader", ".glsl", "// Shader Code\n");
+						}
+						if (ImGui::MenuItem("Vertex Shader (.vert)")) {
+							std::string tmp = "#version 330 core\nlayout (location = 0) in vec3 aPos;\nvoid main() {\n    gl_Position = vec4(aPos, 1.0);\n}";
+							CreateItem(m_CurrentPath, "NewVertex", ".vert", tmp);
+						}
+						if (ImGui::MenuItem("Fragment Shader (.frag)")) {
+							std::string tmp = "#version 330 core\nout vec4 FragColor;\nvoid main() {\n    FragColor = vec4(1.0, 1.0, 1.0, 1.0);\n}";
+							CreateItem(m_CurrentPath, "NewFragment", ".frag", tmp);
+						}
+						ImGui::EndMenu();
+					}
+
+					ImGui::Separator();
+
+					if (ImGui::BeginMenu("Document"))
+					{
+						if (ImGui::MenuItem("Text File (.txt)")) 
+						{
+							CreateItem(m_CurrentPath, "NewText", ".txt", "");
+						}
+						if (ImGui::MenuItem("JSON File (.json)")) 
+						{
+							CreateItem(m_CurrentPath, "NewJSON", ".json", "{\n\t\"version\": 1\n}");
+						}
+						if (ImGui::MenuItem("Readme (.md)")) 
+						{
+							CreateItem(m_CurrentPath, "README", ".md", "# Project Notes\n");
+						}
+						ImGui::EndMenu();
+					}
+					ImGui::EndMenu();
 				}
 				ImGui::Separator();
 				if (ImGui::MenuItem("Cancel"))
