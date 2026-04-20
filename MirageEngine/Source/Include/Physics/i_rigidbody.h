@@ -39,6 +39,7 @@ namespace MirageEngine::Core::Physics
 		virtual void AddCollider(ICollider* _newCollider) = 0;
 		virtual void RemoveCollider(ICollider* _collider) = 0;
 
+		virtual void SetMass(float _mass) = 0;
 		void SetCollisionGroup(ECollisionGroup _group)
 		{
 			m_CollisionGroup = _group;
@@ -49,7 +50,7 @@ namespace MirageEngine::Core::Physics
 			m_CollisionMask = _mask;
 			m_bIsDirty = true;
 		}
-		
+
 		void SetCollisionResponse(ECollisionResponse response)
 		{
 			m_CollisionRespond = response;
@@ -58,10 +59,8 @@ namespace MirageEngine::Core::Physics
 
 		ECollisionGroup GetCollisionGroup() const { return m_CollisionGroup; }
 		ECollisionGroup GetCollisionMask() const { return m_CollisionMask; }
-
 		entt::id_type GetType() const override { return 0; }
 
-		virtual void SetMass(float _mass) = 0;
 
 		virtual Bullet3RigidBody& API_Bullet3() { throw std::runtime_error("Bad API Call : object is not a Bullet3RigidBody"); }
 	};

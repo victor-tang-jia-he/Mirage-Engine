@@ -146,7 +146,7 @@ void Application::InitGameObject()
 
 	floorGO->SetPosition(Vector3(0, -3, 0));
 	floorGO->SetRotation(rotationQ);
-	floorGO->SetScale(Vector3(10, 0, 10));
+	floorGO->SetScale(Vector3(10, 1, 10));
 
 	// =========================
 	//  Resources

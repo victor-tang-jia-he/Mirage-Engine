@@ -13,7 +13,7 @@ Bullet3RigidBody::~Bullet3RigidBody()
 	if (m_rigidBody)
 	{
 		delete m_rigidBody->getMotionState();
-		m_rigidBody.reset();
+		delete m_rigidBody;
 		m_rigidBody = nullptr;
 	}
 	if (m_Compound) m_Compound.reset();
@@ -67,7 +67,7 @@ bool Bullet3RigidBody::Create(ICollider* _shape, ERigidBodyType _type)
 	btDefaultMotionState* motionState = new btDefaultMotionState(btTransform::getIdentity());
 	btRigidBody::btRigidBodyConstructionInfo rigidBodyCI(mass, motionState, collisionShape, inertia);
 
-	m_rigidBody = std::make_shared<btRigidBody>(rigidBodyCI);
+	m_rigidBody = new btRigidBody(rigidBodyCI);
 
 	if (_type == ERigidBodyType::Static) m_rigidBody->setCollisionFlags(m_rigidBody->getCollisionFlags() | btCollisionObject::CF_STATIC_OBJECT);
 	else if (_type == ERigidBodyType::Kinematic) m_rigidBody->setCollisionFlags(m_rigidBody->getCollisionFlags() | btCollisionObject::CF_KINEMATIC_OBJECT);
@@ -109,16 +109,16 @@ void Bullet3RigidBody::OnTransformChanged(MirageEngine::Core::Components::Transf
 	m_rigidBody->setWorldTransform(btTrans);
 	m_rigidBody->getMotionState()->setWorldTransform(btTrans);
 
-	int numManifolds = PhysicsManager::Instance().m_worldPhysics->API_Bullet3().m_World->getDispatcher()->getNumManifolds();
+	int numManifolds = PhysicsManager::Instance().GetWorldPhysics().lock()->API_Bullet3().GetWorld()->getDispatcher()->getNumManifolds();
 	for (int i = 0; i < numManifolds; i++)
 	{
-		btPersistentManifold* manifold = PhysicsManager::Instance().m_worldPhysics->API_Bullet3().m_World->getDispatcher()->getManifoldByIndexInternal(i);
+		btPersistentManifold* manifold = PhysicsManager::Instance().GetWorldPhysics().lock()->API_Bullet3().GetWorld()->getDispatcher()->getManifoldByIndexInternal(i);
 		const btCollisionObject* objA = manifold->getBody0();
 		const btCollisionObject* objB = manifold->getBody1();
 
-		if (objA == m_rigidBody.get() || objB == m_rigidBody.get())
+		if (objA == m_rigidBody || objB == m_rigidBody)
 		{
-			const btCollisionObject* other = (objA == m_rigidBody.get()) ? objB : objA;
+			const btCollisionObject* other = (objA == m_rigidBody) ? objB : objA;
 			const_cast<btCollisionObject*>(other)->activate(true);
 		}
 	}

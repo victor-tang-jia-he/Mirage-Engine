@@ -69,7 +69,7 @@ namespace MirageEngine::Core::Physics
 		Quaternion          m_Rot = Quaternion(0.f, 0.f, 0.f, 1.f);
 		ECollisionShapeType m_Type;
 
-		std::shared_ptr<IRigidBody> m_RigidBody = nullptr;
+		std::weak_ptr<IRigidBody> m_RigidBody;
 
 		bool m_bIsDirty = true;
 
@@ -80,8 +80,9 @@ namespace MirageEngine::Core::Physics
 		virtual void Create() = 0;
 		virtual void Init() = 0;
 		virtual void Update() = 0;
-		virtual void SetOffset(Vector3 _offset, Quaternion _rotation) = 0;
 
+
+		virtual void SetOffset(Vector3 _offset, Quaternion _rotation) = 0;
 		bool SetRigidbody(std::shared_ptr<IRigidBody> _rigidbody);
 		void SetScale(Vector3 _scale)
 		{

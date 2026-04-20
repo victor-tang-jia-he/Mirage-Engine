@@ -11,13 +11,13 @@ namespace MirageEngine::Core::Physics
 	{
 		using Vector3 = MirageEngine::Core::Math::Vector3;
 
-	public:
-
 		btDefaultCollisionConfiguration* m_CollisionConfig;
 		btCollisionDispatcher* m_Dispatcher;
 		btBroadphaseInterface* m_Broadphase;
 		btSequentialImpulseConstraintSolver* m_Solver;
 		btDiscreteDynamicsWorld* m_World;
+
+	public:
 
 		Bullet3WorldPhysics()
 		{
@@ -43,6 +43,8 @@ namespace MirageEngine::Core::Physics
 		void RemoveRigidBody(std::shared_ptr<IRigidBody> _body) override;
 
 		void Update(float _deltaTime) override { m_World->stepSimulation(_deltaTime); }
+
+		btDiscreteDynamicsWorld* GetWorld() const { return m_World; }
 
 		void SetGravity(float _x, float _y, float _z) override { m_World->setGravity(btVector3(_x, _y, _z)); }
 
