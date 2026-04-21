@@ -60,7 +60,7 @@ namespace MirageEngine::Core::Physics
 	//=========================================================================
 	// ICollider - Base collider interface
 	//=========================================================================
-	class ICollider : public MirageEngine::Core::Components::Component
+	class ICollider
 	{
 	protected:
 
@@ -103,7 +103,6 @@ namespace MirageEngine::Core::Physics
 		Vector3 GetTranslate() const { return m_Offset; }
 		Quaternion GetRotation() const { return m_Rot; }
 		bool GetIsDirty() const { return m_bIsDirty; }
-		entt::id_type GetType() const override { return 0; }
 		ECollisionShapeType GetColliderType() const { return m_Type; }
 
 		virtual IBulletColliderData* AsBullet3Collider() { throw std::runtime_error("Bad API Call : object is not an Bullet3 Collider"); }
