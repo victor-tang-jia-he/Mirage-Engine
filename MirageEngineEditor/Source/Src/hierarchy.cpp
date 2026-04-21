@@ -33,7 +33,8 @@ namespace Mirage
 			void* droppedPointer = DragDrop::GetPointerPayload(DragDropTag::HIERARCHY_ITEM);
 			if (droppedPointer != nullptr)
 			{
-				std::shared_ptr<MirageEngine::GameObject> draggedChild = *static_cast<std::shared_ptr<MirageEngine::GameObject>*>(droppedPointer);
+				MirageEngine::GameObject* raw = static_cast<MirageEngine::GameObject*>(droppedPointer);
+				std::shared_ptr<MirageEngine::GameObject> draggedChild = raw->shared_from_this();
 				m_Context->SetParent(nullptr, draggedChild);
 			}
 			ImGui::EndDragDropTarget();
@@ -82,7 +83,7 @@ namespace Mirage
 			bool bHierarchyDirty = false;
 			if (ImGui::BeginDragDropSource())
 			{
-				DragDrop::SetPointerPayload(DragDropTag::HIERARCHY_ITEM, &_obj);
+				DragDrop::SetPointerPayload(DragDropTag::HIERARCHY_ITEM, _obj.get());
 				ImGui::Text("Moving Object: %s", name.c_str());
 				ImGui::EndDragDropSource();
 			}

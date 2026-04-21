@@ -17,7 +17,7 @@ namespace MirageEngine
 	// Static : Transform matrix doesn't update every frame
 	// Dynamic : Transform matrix updates every frame
 
-	class GameObject
+	class GameObject  : public std::enable_shared_from_this<GameObject>
 	{
 	private:
 		// Game Object variables
