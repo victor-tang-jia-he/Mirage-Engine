@@ -9,25 +9,25 @@
 #include <Components/transform.h> // needed because DrawMesh now receives a Transform reference
 // #include "GameObject/game_object.h"
 
-DEFINE_LOG_CATEGORY(MirageRenderer)
+DEFINE_LOG_CATEGORY(LogMirageRenderer)
 
 using namespace MirageEngine;
 using namespace MirageEngine::Core::Math;
 
 void Renderer::InitRenderer(MirageRHI::IRenderInterface::API _api)
 {
-    LOG(logInfo, MirageRenderer, "Initiating Renderer...");
+    LOG(logInfo, LogMirageRenderer, "Initiating Renderer...");
 
     m_API = _api;
     InitWindow();
     InitRHI();
 
-    LOG(logTemp, MirageRenderer, "Renderer successfully Initialized\n");
+    LOG(logTemp, LogMirageRenderer, "Renderer successfully Initialized\n");
 }
 
 void Renderer::Shutdown()
 {
-    LOG(logInfo, MirageRenderer, "Shutting down Renderer...");
+    LOG(logInfo, LogMirageRenderer, "Shutting down Renderer...");
 
     m_CommandBuffer->Destroy();
     m_UniformBuffer->Destroy();
@@ -53,7 +53,7 @@ void Renderer::Shutdown()
     m_RenderInterface.reset();
 
     glfwTerminate();
-    LOG(logTemp, MirageRenderer, "Renderer successfully Shutdown\n");
+    LOG(logTemp, LogMirageRenderer, "Renderer successfully Shutdown\n");
 }
 
 bool Renderer::IsRunning() const { return !glfwWindowShouldClose(m_Window); }
@@ -110,7 +110,7 @@ uint32_t Renderer::GetFramebufferTextureID() const
 
 void Renderer::InitWindow()
 {
-    if (!glfwInit()) { LOG(logFatal, MirageRenderer, "Failed to init GLFW!"); }
+    if (!glfwInit()) { LOG(logFatal, LogMirageRenderer, "Failed to init GLFW!"); }
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
@@ -122,15 +122,15 @@ void Renderer::InitWindow()
     if (!m_Window)
     {
         glfwTerminate();
-        LOG(logFatal, MirageRenderer, "Failed to create window!");
+        LOG(logFatal, LogMirageRenderer, "Failed to create window!");
     }
 
     glfwMakeContextCurrent(m_Window);
-    if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) { LOG(logFatal, MirageRenderer, "Failed to init GLAD!"); }
+    if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) { LOG(logFatal, LogMirageRenderer, "Failed to init GLAD!"); }
 
     glViewport(0, 0, m_Width, m_Height);
 
-    LOG(logTemp, MirageRenderer, "Window Created");
+    LOG(logTemp, LogMirageRenderer, "Window Created");
 }
 
 void Renderer::InitRHI()
@@ -154,9 +154,9 @@ void MirageEngine::Renderer::APISelection()
     {
         case MirageRHI::IRenderInterface::API::OPENGL:
             m_RenderInterface = std::make_shared<MirageRHI::OpenGLRenderInterface>();
-            LOG(logInfo, MirageRenderer, "Selected RHI API : OpenGL");
+            LOG(logInfo, LogMirageRenderer, "Selected RHI API : OpenGL");
             break;
-        default: LOG(logFatal, MirageRenderer, "Unsupported API");
+        default: LOG(logFatal, LogMirageRenderer, "Unsupported API");
     }
 }
 
@@ -172,7 +172,7 @@ void MirageEngine::Renderer::ClassInstantiation()
     m_UniformBuffer            = m_RenderInterface->InstantiateUniformBuffer();
     m_CommandBuffer            = m_RenderInterface->InstantiateCommandBuffer();
 
-    LOG(logTemp, MirageRenderer, "All Classes successfully Instantiated");
+    LOG(logTemp, LogMirageRenderer, "All Classes successfully Instantiated");
 }
 
 void MirageEngine::Renderer::ClassCreation()
@@ -186,7 +186,7 @@ void MirageEngine::Renderer::ClassCreation()
     m_UniformBuffer->Create();
     m_CommandBuffer->Create();
 
-    LOG(logTemp, MirageRenderer, "All Classes successfully Created");
+    LOG(logTemp, LogMirageRenderer, "All Classes successfully Created");
 }
 
 void MirageEngine::Renderer::ScreenPipelineCreation()
