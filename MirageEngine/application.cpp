@@ -19,6 +19,7 @@
 #include <Components/box_collider.h>
 #include <Components/capsule_collider.h>
 #include <Components/sphere_collider.h>
+#include <Components/rigidbody.h>
 #include <Components/camera.h>
 #include <Components/mesh_renderer.h>
 
@@ -87,14 +88,14 @@ void Application::InitGameObject()
     //  Physics setup
     // =========================
     std::shared_ptr<SphereCollider> dynamicCollider = std::make_shared<SphereCollider>();
-    std::shared_ptr<IRigidBody>     dynamicRB       = physics.CreateRigidBody(dynamicCollider->GetCollision(), ERigidBodyType::Dynamic);
+    std::shared_ptr<Rigidbody>      dynamicRB       = std::make_shared<Rigidbody>(dynamicCollider.get(), ERigidBodyType::Dynamic);
 
     dynamicRB->SetCollisionGroup(ECollisionGroup::Group1);
     dynamicRB->SetCollisionMask(ECollisionGroup::Group1 | ECollisionGroup::Group2 | ECollisionGroup::Group3);
     dynamicRB->SetCollisionResponse(ECollisionResponse::Block);
 
     std::shared_ptr<BoxCollider> staticCollider = std::make_shared<BoxCollider>();
-    std::shared_ptr<IRigidBody>  staticRB       = physics.CreateRigidBody(staticCollider->GetCollision(), ERigidBodyType::Static);
+    std::shared_ptr<Rigidbody>   staticRB       = std::make_shared<Rigidbody>(staticCollider.get(), ERigidBodyType::Static);
 
     staticRB->SetCollisionGroup(ECollisionGroup::Group2);
     staticRB->SetCollisionMask(ECollisionGroup::All);

@@ -38,9 +38,9 @@ namespace MirageEngine::Core::Physics
 			delete m_CollisionConfig;
 		}
 
-		void AddRigidBody(std::shared_ptr<IRigidBody> _body, ECollisionGroup _group, ECollisionGroup _mask) override;
+		void AddRigidBody(IRigidBody* _body, ECollisionGroup _group, ECollisionGroup _mask) override;
 
-		void RemoveRigidBody(std::shared_ptr<IRigidBody> _body) override;
+		void RemoveRigidBody(IRigidBody* _body) override;
 
 		void Update(float _deltaTime) override { m_World->stepSimulation(_deltaTime); }
 

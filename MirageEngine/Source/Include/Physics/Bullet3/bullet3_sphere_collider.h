@@ -23,9 +23,6 @@ namespace MirageEngine::Core::Physics
 
             void Create() override;
 
-            void Init() override {};
-            void Update() override {};
-
             void SetOffset(Vector3 _offset, Quaternion _rotation) override;
 
             void SetRadius(float _radius) override;

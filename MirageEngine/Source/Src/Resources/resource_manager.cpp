@@ -264,9 +264,9 @@ std::shared_ptr<Pipeline>
     std::shared_ptr<Shader> vert
         = rm.m_ShaderCache.contains(_pathVertex) ? rm.m_ShaderCache[_pathVertex] : ResourceManager::CreateShader("ShaderVertex", _pathVertex, MirageRHI::IShader::ShaderType::Vertex);
 
-    auto pipeline    = std::make_shared<Pipeline>(rm.m_Rhi->InstantiatePipeline(), _pipelineParamter, vert, frag);
-    pipeline->p_Name = newAssetName;
-    pipeline->p_Path = ""; // No path for pipeline as it's created from shaders
+    std::shared_ptr<Pipeline> pipeline = std::make_shared<Pipeline>(rm.m_Rhi->InstantiatePipeline(), _pipelineParamter, vert, frag);
+    pipeline->p_Name                   = newAssetName;
+    pipeline->p_Path                   = ""; // No path for pipeline as it's created from shaders
     rm.m_Resources.emplace(newAssetName, pipeline);
     return pipeline;
 }
@@ -440,7 +440,7 @@ std::shared_ptr<Shader> ResourceManager::GetFragmentShader(const std::string& _n
     }
     else
     {
-        LOG(logWarning, LogResourceManager, "Resource not found: ", _name);
+        LOG(logWarning, LogResourceManager, "Resource not found: ", _name, ", Using default Shader");
         return resourceManager.PrivateGet<Shader>("DefaultFragment"); // Return default fragment shader if not found
     }
     return nullptr;                                                   // Should never reach here, but added to avoid compiler warning

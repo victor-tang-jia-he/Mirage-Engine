@@ -1,6 +1,5 @@
 #pragma once
 #include "common_enum.h"
-#include <Logs/log_macro.h>
 #include <Physics/i_world_physics.h>
 #include <Physics/Bullet3/bullet3_world_physics.h>
 #include <Physics/Bullet3/bullet3_rigidbody.h>
@@ -22,7 +21,7 @@ namespace MirageEngine::Core::Physics
 
             EPhysicsEngine m_physicsEngine = EPhysicsEngine::Bullet3;
 
-            std::vector<std::shared_ptr<IRigidBody>> m_WorldRigidbodys;
+            std::vector<IRigidBody*> m_WorldRigidbodys;
 
             std::shared_ptr<IWorldPhysics> m_worldPhysics = nullptr;
         public:
@@ -39,12 +38,12 @@ namespace MirageEngine::Core::Physics
 
 			std::weak_ptr<IWorldPhysics> GetWorldPhysics() const { return m_worldPhysics; }
 
-            std::shared_ptr<IRigidBody> CreateRigidBody(ICollider* _shape, ERigidBodyType _type);
+            IRigidBody* CreateRigidBody(ICollider* _shape, ERigidBodyType _type);
 
-            std::shared_ptr<ICollider> CreateCollider(ECollisionShapeType _shapeType);
+            ICollider* CreateCollider(ECollisionShapeType _shapeType);
 
-            void RegisterRigidBody(std::shared_ptr<IRigidBody> _body, ECollisionGroup _group, ECollisionGroup _mask);
+            void RegisterRigidBody(IRigidBody* _body, ECollisionGroup _group, ECollisionGroup _mask);
 
-            void UnregisterRigidBody(std::shared_ptr<IRigidBody> _body);
+            void UnregisterRigidBody(IRigidBody* _body);
     };
 } // namespace MirageEngine::Core::Physics
