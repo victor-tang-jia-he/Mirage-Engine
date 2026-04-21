@@ -22,9 +22,9 @@ namespace MirageEngine
 	private:
 		// Game Object variables
 		std::string m_Name = "";
-		std::vector<MirageEngine::Core::Components::Component*> m_Components;
-		std::vector<GameObject*> m_Children;
-		GameObject* m_Parent = nullptr;
+		std::vector<std::shared_ptr<MirageEngine::Core::Components::Component>> m_Components;
+		std::vector<std::shared_ptr<GameObject>> m_Children;
+		std::weak_ptr<GameObject> m_Parent;
 		uint64_t m_ID;
 
 		// Editor parameters
@@ -38,78 +38,61 @@ namespace MirageEngine
 
 		MirageEngine::Core::Components::Transform Transform;
 
-		//~GameObject();
+		template <typename T>
+		std::shared_ptr<T> AddComponent();
+
+		template <typename T>
+		std::shared_ptr<T> GetComponent();
 
 			// Game Object Constructor.
-		GameObject(GameObject* _parent, std::string _name, bool _isStatic = false, bool _isActive = true);
+		GameObject(std::shared_ptr<GameObject> _parent, std::string _name, bool _isStatic = false, bool _isActive = true);
+		~GameObject();
 
 		// Game Object Custom Methods
-		void AddChild(GameObject* _child, bool _isStatic = false, bool _isActive = true);
+		void AddChild(std::shared_ptr<GameObject> _child, bool _isStatic = false, bool _isActive = true);
 		void SetActive(bool _isActive);
 
-
-		// Components Methods
-		template <typename T> T* AddComponent()
-		{
-			// std::unique_ptr<T> component = std::make_unique<T>();
-			T* component = new T();
-			component->m_Owner = this;
-			// Name of the type ID
-			component->m_ComponentName = typeid(T).name();
-			m_Components.push_back(component);
-			return component;
-		}
-
-		void AddComponent(MirageEngine::Core::Components::Component* _component)
+		void AddComponent(std::shared_ptr<MirageEngine::Core::Components::Component> _component)
 		{
 			_component->m_Owner = this;
 			m_Components.push_back(_component);
 		}
 
-		template <typename T>
-		T* GetComponent()
-		{
-			for (auto& component : m_Components)
-			{
-				if (auto casted = dynamic_cast<T*>(component))
-				{
-					return casted;
-				}
-			}
-
-			return nullptr;
-		}
-
-		void RemoveComponent(MirageEngine::Core::Components::Component* _component);
+		void RemoveComponent(std::shared_ptr<MirageEngine::Core::Components::Component> _component);
 
 		// Game Object Public Methods
-		bool IsRoot() const { return m_Parent == nullptr; };
-		void RemoveChild(GameObject* _child);
+		bool IsRoot() const { return m_Parent.expired(); };
+		void RemoveChild(std::shared_ptr<GameObject> _child);
 		void SetDirty(bool _isDirty);
 
 
 		// Getters
 		std::string GetName() const { return m_Name; }
-		std::vector<GameObject*> GetChildren() const { return m_Children; }
-		GameObject* GetParent() const { return m_Parent; }
+		std::vector<std::shared_ptr<GameObject>> GetChildren() const { return m_Children; }
+		std::shared_ptr<GameObject> GetParent() const { return m_Parent.lock(); }
 		uint64_t GetID() const { return m_ID; }
 		bool GetIsStatic() const { return m_bIsStatic; }
 		bool GetIsActive() const { return m_bIsActive; }
-		std::vector<MirageEngine::Core::Components::Component*> GetComponents() const { return m_Components; }
+		bool GetIsDirty() const { return m_bIsDirty; }
+		std::vector<std::shared_ptr<MirageEngine::Core::Components::Component>> GetComponents() const { return m_Components; }
 		MirageEngine::Core::Math::Vector3 GetPosition() const { return Transform.GetPosition(); }
 		MirageEngine::Core::Math::Quaternion GetRotation() const { return Transform.GetRotation(); }
 		MirageEngine::Core::Math::Vector3 GetScale() const { return Transform.GetScale(); }
 
 		// Setters
 		void SetName(std::string _name) { m_Name = _name; }
-		void SetChildren(std::vector<GameObject*> _children) { m_Children = _children; }
-		void SetParent(GameObject* _parent) { m_Parent = _parent; }
+		void SetChildren(std::vector<std::shared_ptr<GameObject>> _children) { m_Children = _children; }
+		void SetParent(const std::shared_ptr<GameObject>& parent) {  m_Parent = parent; }
 		void SetID(uint64_t _id) { m_ID = _id; }
 		void SetIsStatic(bool _isStatic) { m_bIsStatic = _isStatic; }
 		void SetIsActive(bool _isActive) { m_bIsActive = _isActive; }
 		void SetRotation(MirageEngine::Core::Math::Quaternion _rotation);
-		void SetPosition(float _x, float _y, float _z);
 		void SetPosition(MirageEngine::Core::Math::Vector3 _position);
+		void SetScale(MirageEngine::Core::Math::Vector3 _scale);
+		void SetPosition(float _x, float _y, float _z);
+		void SetScale(float _x, float _y, float _z);
 		
 	}; // namespace MirageEngine
 }
+
+#include "game_object.inl"

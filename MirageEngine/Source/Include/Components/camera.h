@@ -20,6 +20,7 @@ namespace MirageEngine
 				float m_Near, m_Far = 0.f;
 				unsigned int m_Width, m_Height = 0;
 				float m_Fov = 90.f;
+				float m_CameraVelocity = 1.f;
 
 				MirageEngine::Core::Components::Transform m_transform;
 			public:
@@ -51,7 +52,7 @@ namespace MirageEngine
 				unsigned int GetWidth() const { return m_Width; }
 				unsigned int GetHeight() const { return m_Height; }
 				// debug
-				void BindInput(MirageEngine::Core::Input::InputMapping* map);
+				void BindInput(std::shared_ptr<MirageEngine::Core::Input::InputMapping> map);
 			};
 		}
 	}

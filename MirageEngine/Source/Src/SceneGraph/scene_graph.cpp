@@ -17,192 +17,172 @@ using namespace MirageEngine::Core::Resources;
 
 namespace MirageEngine
 {
-	GameObject* SceneGraph::CreateGameObject(const std::string& _name, GameObject* _parent)
-	{
-		GameObject* newObject = new GameObject(nullptr, _name);
-		uint64_t objectID = newObject->GetID();
-		auto [it, success] = m_Registry.try_emplace(objectID, newObject);
+    std::shared_ptr<GameObject> SceneGraph::CreateGameObject(const std::string& _name, std::shared_ptr<GameObject> _parent)
+    {
+        std::shared_ptr<GameObject> newObject = std::make_shared<GameObject>(nullptr, _name);
+        uint64_t                    objectID  = newObject->GetID();
+        auto [it, success]                    = m_Registry.try_emplace(objectID, newObject);
 
-		if (!success) {
-		}
+        if (!success) {}
 
-		this->SetParent(_parent, newObject);
-		m_LastCreatedObject = newObject;
-		return newObject;
-	}
+        this->SetParent(_parent, newObject);
+        m_LastCreatedObject = newObject;
+        return newObject;
+    }
 
-	GameObject* SceneGraph::CreateObject3D(const std::string& _name, const std::string& _mesh, GameObject* _parent, MirageEngine::Renderer* _renderer)
-	{
-		GameObject* newObject = CreateGameObject(_name, _parent);
-		Core::Components::MeshRenderer* meshRenderer = newObject->AddComponent<Core::Components::MeshRenderer>();
-		ResourceManager* rm = ResourceManager::Instance();
+    std::shared_ptr<GameObject> SceneGraph::CreateObject3D(const std::string& _name, const std::string& _mesh, std::shared_ptr<GameObject> _parent, MirageEngine::Renderer* _renderer)
+    {
+        std::shared_ptr<GameObject>                     newObject    = CreateGameObject(_name, _parent);
+        std::shared_ptr<Core::Components::MeshRenderer> meshRenderer = newObject->AddComponent<Core::Components::MeshRenderer>();
+        ResourceManager&                                rm           = ResourceManager::Instance();
 
-		meshRenderer->SetMesh(MirageEngine::Core::Resources::ResourceManager::Instance()->GetMesh(_mesh));
+        meshRenderer->SetMesh(rm.GetMesh(_mesh));
 
-		Texture* texture = rm->GetTexture("White");
-		Material* material = rm->CreateMaterial("TestMaterial");
-		if (texture)
-		{
-			texture->Bind();
-			material->SetTexture("White", texture);
-		}
-		if (_renderer)
-		{
-			material->SetShader(_renderer->m_Pipeline);
-		}
+        std::shared_ptr<Texture>  texture  = rm.GetTexture("White");
+        std::shared_ptr<Material> material = rm.CreateMaterial("TestMaterial", "default", "default", 0); // using default shader (fallback)
+        std::shared_ptr<MaterialInstance> matInstance = rm.CreateMaterialInstance("WhiteInstance", material);
 
-		meshRenderer->SetMaterial(material);
-		newObject->Transform.SetPosition(Vector3(0, 0, -10));
-		m_LastCreatedObject = newObject;
-		return newObject;
-	}
+        if (texture)
+        {
+            texture->Bind();
+            matInstance->SetTexture("White", texture);
+        }
 
-	GameObject* SceneGraph::CreateCamera(const std::string& _name, GameObject* _parent)
-	{
-		GameObject* newObject = CreateGameObject(_name, _parent);
-		Core::Components::Camera* camera = newObject->AddComponent<Core::Components::Camera>();
-		camera->SetFar(100);
-		camera->SetHeight(1080);
-		camera->SetWidth(1920);
-		camera->SetNear(0.1);
-		camera->SetFov(60.f);
-		m_LastCreatedObject = newObject;
-		return newObject;
-	}
+        meshRenderer->SetMaterial(matInstance);
+        newObject->Transform.SetPosition(Vector3(0, 0, -10));
+        m_LastCreatedObject = newObject;
+        return newObject;
+    }
 
-	void SceneGraph::RemoveGameObject(GameObject* _obj)
-	{
-		if (!_obj) return;
+    std::shared_ptr<GameObject> SceneGraph::CreateCamera(const std::string& _name, std::shared_ptr<GameObject> _parent)
+    {
+        std::shared_ptr<GameObject>               newObject = CreateGameObject(_name, _parent);
+        std::shared_ptr<Core::Components::Camera> camera    = newObject->AddComponent<Core::Components::Camera>();
+        camera->SetFar(100);
+        camera->SetHeight(1080);
+        camera->SetWidth(1920);
+        camera->SetNear(0.1);
+        camera->SetFov(60.f);
+        m_LastCreatedObject = newObject;
+        return newObject;
+    }
 
-		std::vector<GameObject*> childrenCopy = _obj->GetChildren();
-		for (GameObject* child : childrenCopy)
-			RemoveGameObject(child);
+    void SceneGraph::RemoveGameObject(std::shared_ptr<GameObject> _obj)
+    {
+        if (!_obj) return;
 
-		if (_obj->GetParent() == nullptr)
-			std::erase(m_RootsList, _obj);
-		else
-			_obj->GetParent()->RemoveChild(_obj);
+        std::vector<std::shared_ptr<GameObject>> childrenCopy = _obj->GetChildren();
+        for (std::shared_ptr<GameObject> child : childrenCopy) RemoveGameObject(child);
 
-		m_Registry.erase(_obj->GetID());
+        if (_obj->GetParent() == nullptr) std::erase(m_RootsList, _obj);
+        else _obj->GetParent()->RemoveChild(_obj);
 
-		if (m_SelectedObject == _obj)
-			m_SelectedObject = nullptr;
+        m_Registry.erase(_obj->GetID());
 
-		delete _obj;
-	}
+        if (m_SelectedObject == _obj) m_SelectedObject = nullptr;
 
-	void SceneGraph::ClearScene()
-	{
-		std::vector<GameObject*> rootsCopy = m_RootsList;
-		for (GameObject* obj : rootsCopy)
-		{
-			RemoveGameObject(obj);
-		}
-		m_Registry.clear();
-		m_RootsList.clear();
-	}
+        _obj.reset();
+    }
 
-	void SceneGraph::UpdateAllWorldMatrices()
-	{
-		Matrix4 Identity = Matrix4::Identity();
+    void SceneGraph::ClearScene()
+    {
+        std::vector<std::shared_ptr<GameObject>> rootsCopy = m_RootsList;
+        for (std::shared_ptr<GameObject> obj : rootsCopy) { RemoveGameObject(obj); }
+        m_Registry.clear();
+        m_RootsList.clear();
+    }
 
-		for (GameObject* root : m_RootsList)
-		{
-			WorldMatrixRecursive(root, Identity, false);
-		}
-	}
+    void SceneGraph::UpdateAllWorldMatrices()
+    {
+        MirageEngine::Core::Math::Matrix4 Identity = Core::Math::Matrix4::Identity();
 
-	std::vector<GameObject*> SceneGraph::GetChildren(GameObject* _parent) const
-	{
-		if (_parent == nullptr)
-			return m_RootsList;
-		return _parent->GetChildren();
-	}
+        for (std::shared_ptr<GameObject> root : m_RootsList) { WorldMatrixRecursive(root, Identity, false); }
+    }
 
-	bool SceneGraph::SetParent(GameObject* _parent, GameObject* _child)
-	{
-		if (!_child) return false;
-		if (_child == _parent) return false;
+    std::vector<std::shared_ptr<GameObject>> SceneGraph::GetChildren(std::shared_ptr<GameObject> _parent) const
+    {
+        if (_parent == nullptr) return m_RootsList;
+        return _parent->GetChildren();
+    }
 
-		std::cout << "\n--- DEBUT SET PARENT ---" << std::endl;
-		std::cout << "Enfant: " << _child->GetName() << " | Parent: " << (_parent ? _parent->GetName() : "Root") << std::endl;
+    bool SceneGraph::SetParent(std::shared_ptr<GameObject> _parent, std::shared_ptr<GameObject> _child)
+    {
+        if (!_child) return false;
+        if (_child == _parent) return false;
 
-		Core::Math::Matrix4 childWorldBefore = _child->Transform.GetWorldMatrix();
+        std::cout << "\n--- DEBUT SET PARENT ---" << std::endl;
+        std::cout << "Enfant: " << _child->GetName() << " | Parent: " << (_parent ? _parent->GetName() : "Root") << std::endl;
 
-		GameObject* current = _parent;
-		while (current != nullptr)
-		{
-			if (current == _child)
-			{
-				std::cout << "Error: Circular dependency detected!" << std::endl;
-				return false;
-			}
-			current = current->GetParent();
-		}
+        Core::Math::Matrix4 childWorldBefore = _child->Transform.GetWorldMatrix();
 
-		if (_child->GetParent() == nullptr)
-			std::erase(m_RootsList, _child);
-		else
-		{
-			_child->GetParent()->RemoveChild(_child);
-		}
+        std::shared_ptr<GameObject> current = _parent;
 
-		if (_parent == nullptr)
-		{
-			m_RootsList.push_back(_child);
-			_child->SetParent(nullptr);
-		}
-		else
-		{
-			_parent->AddChild(_child);
-			_child->SetParent(_parent);
-		}
+        while (current != nullptr)
+        {
+            auto currentShared = current;
 
-		if (_parent != nullptr)
-		{
-			Core::Math::Matrix4 invParent = _parent->Transform.GetWorldMatrix().Inverse();
-			Core::Math::Matrix4 newLoc = invParent * childWorldBefore;
+            if (currentShared == _child)
+            {
+                std::cout << "Error: Circular dependency detected!" << std::endl;
+                return false;
+            }
 
-			//_child->Transform.SetLocalMatrix(newLoc);
-			_child->SetPosition(newLoc.GetTranslation());
-			_child->SetRotation(newLoc.GetRotation());
-			std::cout << "New Local calculated. Scale: " << newLoc.GetScale().X << std::endl;
-		}
-		else
-		{
-			std::cout << "Root" << std::endl;
-			//_child->Transform.SetLocalMatrix(childWorldBefore);
-			_child->SetPosition(childWorldBefore.GetTranslation());
-			_child->SetRotation(childWorldBefore.GetRotation());
-		}
+            current = currentShared->GetParent();
+        }
 
-		_child->SetDirty(true);
+        if (_child->GetParent() == nullptr) std::erase(m_RootsList, _child);
+        else { _child->GetParent()->RemoveChild(_child); }
 
-		return true;
-	}
+        if (_parent == nullptr)
+        {
+            m_RootsList.push_back(_child);
+            _child->SetParent(nullptr);
+        }
+        else
+        {
+            _parent->AddChild(_child);
+            _child->SetParent(_parent);
+        }
 
-	void SceneGraph::WorldMatrixRecursive(GameObject* _obj, Matrix4& _parentMatrix, bool _forceUpdate)
-	{
-		bool mustUpdate = _obj->Transform.GetIsDirty() || _forceUpdate;
+        if (_parent != nullptr)
+        {
+            Core::Math::Matrix4 invParent = _parent->Transform.GetWorldMatrix().Inverse();
+            Core::Math::Matrix4 newLoc    = invParent * childWorldBefore;
 
-		Matrix4 worldMatrix;
+            //_child->Transform.SetLocalMatrix(newLoc);
+            _child->SetPosition(newLoc.GetTranslation());
+            _child->SetRotation(newLoc.GetRotation());
+            std::cout << "New Local calculated. Scale: " << newLoc.GetScale().X << std::endl;
+        }
+        else
+        {
+            std::cout << "Root" << std::endl;
+            //_child->Transform.SetLocalMatrix(childWorldBefore);
+            _child->SetPosition(childWorldBefore.GetTranslation());
+            _child->SetRotation(childWorldBefore.GetRotation());
+        }
 
-		if (mustUpdate)
-		{
-			const Matrix4 localMat = _obj->Transform.GetMatrix();
+        _child->SetDirty(true);
 
-			worldMatrix = _parentMatrix * localMat;
+        return true;
+    }
 
-			_obj->Transform.SetWorldMatrix(worldMatrix);
-		}
-		else
-		{
-			worldMatrix = _obj->Transform.GetWorldMatrix();
-		}
+    void SceneGraph::WorldMatrixRecursive(std::shared_ptr<GameObject> _obj, Core::Math::Matrix4& _parentMatrix, bool _forceUpdate)
+    {
+        bool mustUpdate = _obj->GetIsDirty() || _forceUpdate;
 
-		for (GameObject* child : _obj->GetChildren())
-		{
-			WorldMatrixRecursive(child, worldMatrix, mustUpdate);
-		}
-	}
-}
+        Core::Math::Matrix4 worldMatrix;
+
+        if (mustUpdate)
+        {
+            const Core::Math::Matrix4 localMat = _obj->Transform.GetMatrix();
+
+            worldMatrix = _parentMatrix * localMat;
+
+            _obj->Transform.SetWorldMatrix(worldMatrix);
+        }
+        else { worldMatrix = _obj->Transform.GetWorldMatrix(); }
+
+        for (std::shared_ptr<GameObject> child : _obj->GetChildren()) { WorldMatrixRecursive(child, worldMatrix, mustUpdate); }
+    }
+} // namespace MirageEngine

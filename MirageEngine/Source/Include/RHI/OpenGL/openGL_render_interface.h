@@ -23,19 +23,19 @@ namespace MirageRHI
 	class OpenGLRenderInterface : public IRenderInterface
 	{
 	public:
-		IInstance* InstantiateInstance() override { return new OpenGLInstance(); }
-		ISurface* InstantiateSurface() override { return new OpenGLSurface(); }
-		IDevice* InstantiateDevice() override { return new OpenGLDevice(); }
-		ISwapChain* InstantiateSwapChain() override { return new OpenGLSwapChain(); }
-		IRenderPass* InstantiateRenderPass() override { return new OpenGLRenderPass(); }
-		IPipeline* InstantiatePipeline() override { return new OpenGLPipeline(); }
-		IPipelineParameters* InstantiatePipelineParameters() override { return new OpenGLPipelineParameters(); }
-		IShader* InstantiateShader() override { return new OpenGLShader(); }
-		IFramebuffer* InstantiateFramebuffer() override { return new OpenGLFramebuffer(); }
-		IBuffer* InstantiateBuffer() override { return new OpenGLBuffer(); }
-		ITexture* InstantiateTexture() override { return new OpenGLTexture(); }
-		IUniformBuffer* InstantiateUniformBuffer() override { return new OpenGLUniformBuffer(); }
-		ICommandBuffer* InstantiateCommandBuffer() override { return new OpenGLCommandBuffer(); }
+		std::shared_ptr<IInstance> InstantiateInstance() override { return std::make_shared<OpenGLInstance>(); }
+		std::shared_ptr<ISurface> InstantiateSurface() override { return std::make_shared< OpenGLSurface>(); }
+		std::shared_ptr<IDevice> InstantiateDevice() override { return std::make_shared< OpenGLDevice>(); }
+		std::shared_ptr<ISwapChain> InstantiateSwapChain() override { return std::make_shared< OpenGLSwapChain>(); }
+		std::shared_ptr<IRenderPass> InstantiateRenderPass() override { return std::make_shared< OpenGLRenderPass>(); }
+		std::shared_ptr<IPipeline> InstantiatePipeline() override { return std::make_shared< OpenGLPipeline>(); }
+		std::shared_ptr<IPipelineParameters> InstantiatePipelineParameters() override { return std::make_shared< OpenGLPipelineParameters>(); }
+		std::shared_ptr<IShader> InstantiateShader() override { return std::make_shared< OpenGLShader>(); }
+		std::shared_ptr<IFramebuffer> InstantiateFramebuffer() override { return std::make_shared< OpenGLFramebuffer>(); }
+		std::shared_ptr<IBuffer> InstantiateBuffer() override { return std::make_shared< OpenGLBuffer>(); }
+		std::shared_ptr<ITexture> InstantiateTexture() override { return std::make_shared< OpenGLTexture>(); }
+		std::shared_ptr<IUniformBuffer> InstantiateUniformBuffer() override { return std::make_shared< OpenGLUniformBuffer>(); }
+		std::shared_ptr<ICommandBuffer> InstantiateCommandBuffer() override { return std::make_shared< OpenGLCommandBuffer>(); }
 
 		OpenGLRenderInterface& API_OpenGL() override { return *this; }
 	};

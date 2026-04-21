@@ -1,4 +1,4 @@
-#include "Include/Matrix4.h"
+#include "Matrix4.h"
 #include "Quaternion.h"
 #include <iostream>
 
@@ -37,15 +37,15 @@ Quaternion::Quaternion(Quaternion&& _q) noexcept
 	_q.W = _q.X = _q.Y = _q.Z = 0.f;
 }
 
-Quaternion::Quaternion(Vector3& _axis, float _angle)
+Quaternion::Quaternion(Vector3 _axis, float _angle)
 {
-	if (_axis.IsNull())
-	{
-		W = NAN;
-		X = NAN;
-		Y = NAN;
-		Z = NAN;
-	}
+    if (_axis.IsNull())
+    {
+        W = 1.0f;
+        X = 0.0f;
+        Y = 0.0f;
+        Z = 0.0f;
+    }
 
 	else
 	{
@@ -351,7 +351,7 @@ Vector3 Quaternion::ToEulerAngle() const
 
 void Quaternion::Print() const
 {
-	printf("X = %g\nY = %g\nZ = %g\nW = %g\n", W, X, Y, Z);
+	printf("X = %g\nY = %g\nZ = %g\nW = %g\n", X, Y, Z, W);
 }
 
 

@@ -22,25 +22,29 @@ namespace MirageEngine::Core::Physics
 
             EPhysicsEngine m_physicsEngine = EPhysicsEngine::Bullet3;
 
-            std::vector<IRigidBody*> m_WorldRigidbodys;
+            std::vector<std::shared_ptr<IRigidBody>> m_WorldRigidbodys;
 
+            std::shared_ptr<IWorldPhysics> m_worldPhysics = nullptr;
         public:
 
-            IWorldPhysics* m_worldPhysics = nullptr;
 
-            static PhysicsManager* Instance();
+            static PhysicsManager& Instance();
+
+            void Shutdown();
 
             PhysicsManager()  = default;
             ~PhysicsManager() = default;
             void Initialize(EPhysicsEngine _physicsEngine = EPhysicsEngine::Bullet3);
             void Update(float _deltaTime);
 
-            IRigidBody* CreateRigidBody(ICollider* _shape, ERigidBodyType _type);
+			std::weak_ptr<IWorldPhysics> GetWorldPhysics() const { return m_worldPhysics; }
 
-            ICollider* CreateCollider(ECollisionShapeType _shapeType);
+            std::shared_ptr<IRigidBody> CreateRigidBody(ICollider* _shape, ERigidBodyType _type);
 
-            void RegisterRigidBody(IRigidBody* _body);
+            std::shared_ptr<ICollider> CreateCollider(ECollisionShapeType _shapeType);
 
-            void UnregisterRigidBody(IRigidBody* _body);
+            void RegisterRigidBody(std::shared_ptr<IRigidBody> _body, ECollisionGroup _group, ECollisionGroup _mask);
+
+            void UnregisterRigidBody(std::shared_ptr<IRigidBody> _body);
     };
 } // namespace MirageEngine::Core::Physics

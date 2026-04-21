@@ -47,8 +47,7 @@ void RegisterMeta::RegisterGameObjectMeta()
 	// "_hs" transforms the string into a unique integer at compile time.
 	gameObject.type("GameObject"_hs);
 
-	// Register a constructor so the engine can spawn this object by name later (Serialization/Prefabs)
-	gameObject.ctor<GameObject*, std::string, bool, bool>();
+	gameObject.ctor<std::shared_ptr<GameObject>, std::string, bool, bool>();
 
 	gameObject.data<&GameObject::SetName, &GameObject::GetName>("Name");
 	gameObject.data<&GameObject::SetIsActive, &GameObject::GetIsActive>("IsActive");

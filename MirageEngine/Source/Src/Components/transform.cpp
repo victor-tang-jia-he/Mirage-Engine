@@ -16,7 +16,6 @@ Transform::Transform(Vector3 _position, Quaternion _rotation, Vector3 _scale)
 
 void Transform::Init()
 {
-    // GetParent()->GetComponent("Transform");
 }
 
 void Transform::Update()
@@ -36,6 +35,7 @@ Matrix4 Transform::GetMatrix()
 
 Vector3 Transform::Rotate(const Quaternion& q, const Vector3& v) const
 {
+	//Quaternion qRad = q * PI / 180.f; // Convert to radians
     Quaternion qv(0.f,v.X, v.Y, v.Z);
     Quaternion res = q * qv * q.Conjugation();
     return Vector3(res.X, res.Y, res.Z);

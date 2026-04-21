@@ -1,13 +1,14 @@
 #include "UI_wrapper.h"
-#include "vector3.h"
 
+#include "GLFW/glfw3.h"
+
+#include "vector3.h"
 #include <string>
 
 #include "imgui.h"
+#include "ImGuizmo.h"
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_opengl3.h"
-#include "ImGuizmo.h"
-#include "GLFW/glfw3.h"
 
 namespace Math = MirageEngine::Core::Math;
 

@@ -5,7 +5,7 @@
 #include "console.h"
 #include "explorer.h"
 #include "UI_wrapper.h"
-#include "guizmo.h"
+#include "gizmo.h"
 #include "renderer.h"
 
 namespace Mirage
@@ -42,7 +42,8 @@ namespace Mirage
 			}
 		}
 
-		MirageEditor::Guizmo::EditTransform(m_SceneGraph);
+		MirageEditor::Gizmo::EditView(m_SceneGraph);
+		MirageEditor::Gizmo::EditTransform(m_SceneGraph);
 
 		UIWrapper::EndFrame();
 	}

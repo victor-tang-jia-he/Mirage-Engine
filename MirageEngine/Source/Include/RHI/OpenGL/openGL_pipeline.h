@@ -1,6 +1,6 @@
 #pragma once
 
-#include <glad/glad.h>
+#include <Glad/glad.h>
 #include <GLFW/glfw3.h>
 
 #include <i_pipeline.h>
@@ -14,12 +14,12 @@ namespace MirageRHI
 	{
 	private:
 		GLuint m_Program = 0;
-		IPipelineParameters* m_Parameters = nullptr;
-		IShader* m_VertexShader = nullptr;
-		IShader* m_FragmentShader = nullptr;
+		std::shared_ptr<IPipelineParameters> m_Parameters = nullptr;
+		std::shared_ptr<IShader> m_VertexShader = nullptr;
+		std::shared_ptr<IShader> m_FragmentShader = nullptr;
 
 	public:
-		void Create(IShader* _vertShader, IShader* _fragShader, IPipelineParameters* _pipelineParameters) override;
+		void Create(std::shared_ptr<IShader> _vertShader, std::shared_ptr<IShader> _fragShader, std::shared_ptr<IPipelineParameters> _pipelineParameters) override;
 		void Destroy() override;
 
 		OpenGLPipeline& API_OpenGL() override { return *this; }

@@ -18,7 +18,7 @@ namespace MirageRHI
 		ShaderType m_Type = ShaderType::None;
 
 	public:
-		void Create(const char* _shaderPath, ShaderType _type) override;
+		bool Create(const char* _shaderPath, ShaderType _type) override;
 		void Destroy() override;
 
 		OpenGLShader& API_OpenGL() override { return *this; }

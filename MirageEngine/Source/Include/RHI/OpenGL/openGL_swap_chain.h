@@ -21,8 +21,8 @@ namespace MirageRHI
 
         OpenGLSwapChain& API_OpenGL() override { return *this; }
 
-        void IsScreenResized(ISurface* _surface) override;
-        void RecreateSwapchain(ISurface* _surface, int _newWidth, int _newHeight) override;
+        void IsScreenResized(std::shared_ptr<ISurface> _surface) override;
+        void RecreateSwapchain(std::shared_ptr<ISurface> _surface, int _newWidth, int _newHeight) override;
 
         uint32_t AcquireCurrentFBO() override;
         uint32_t AcquireCurrentImage() override;

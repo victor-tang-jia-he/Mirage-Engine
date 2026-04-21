@@ -4,22 +4,19 @@
 
 namespace MirageRHI
 {
-	class IShader;
+    class IShader;
 }
 
-namespace MirageEngine
+namespace MirageEngine::Core::Resources
 {
-	namespace Core
-	{
-		namespace Resources
-		{
-			struct Shader : public IResource
-			{
-			public:
-				MirageRHI::IShader* ShaderBind = nullptr;
+    struct Shader : public IResource
+    {
+        public:
 
-				Shader() = default;
-			};
-		}
-	}
-}
+            std::shared_ptr<MirageRHI::IShader> ShaderBind = nullptr;
+
+            Shader() = default;
+
+            ~Shader() { ShaderBind.reset(); }
+    };
+} // namespace MirageEngine::Core::Resources

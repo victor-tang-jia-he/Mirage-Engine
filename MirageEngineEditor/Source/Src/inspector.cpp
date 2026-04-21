@@ -18,7 +18,7 @@ namespace Mirage
 	{
 		UIWrapper::BeginWindow("Inspector");
 
-		GameObject* selectedObj = m_Context->GetSelectedObject();
+		std::shared_ptr<GameObject> selectedObj = m_Context->GetSelectedObject();
 		if (selectedObj == nullptr) 
 		{
 			ImGui::TextDisabled("No object selected in Hierarchy");
@@ -39,7 +39,7 @@ namespace Mirage
 					auto data = goType.data(entt::hashed_string{propName});
 					if (data) 
 					{
-						DrawPropertyDirect(goType, data, (void*)selectedObj);
+						DrawPropertyDirect(goType, data, (void*)selectedObj.get());
 					}
 				}
 			}
@@ -58,7 +58,7 @@ namespace Mirage
 
 		// Components
 		// 1. Loop through all components attached to the selected object
-		for (auto* comp : selectedObj->GetComponents())
+		for (std::shared_ptr<MirageEngine::Core::Components::Component> comp : selectedObj->GetComponents())
 		{
 			// 2. Ask EnTT if it has meta-data for this component's Type ID
 			auto type = entt::resolve(comp->GetType());
@@ -84,7 +84,7 @@ namespace Mirage
 							ImGui::TableNextColumn();
 							ImGui::PushItemWidth(-1);
 							// 4. Call our "Dispatcher" to draw the appropriate ImGui widget
-							DrawPropertyDirect(type, data, (void*)comp);
+							DrawPropertyDirect(type, data, (void*)comp.get());
 							ImGui::PopItemWidth();
 						}
 						ImGui::EndTable();
@@ -135,9 +135,14 @@ namespace Mirage
 		else if (actualType == entt::resolve<Math::Quaternion>())
 		{
 			Math::Quaternion quat = value.cast<Math::Quaternion>();
-			Math::Vector3 euler = quat.ToEulerAngle();
+			Math::Vector3 euler = quat.ToEulerAngle() * 180.0f / PI;
 			if (ImGui::DragFloat3(label, &euler.X, 0.1f)) {
-				_data.set(instance, Math::Quaternion(euler));
+				euler = euler * PI / 180.0f;
+				Math::Quaternion qx = Math::Quaternion(euler.X, 0, 0);
+				Math::Quaternion qy = Math::Quaternion(0, euler.Y, 0);
+				Math::Quaternion qz = Math::Quaternion(0, 0, euler.Z);
+				Math::Quaternion eulerQuat = qx * qy * qz;
+				_data.set(instance, eulerQuat);
 			}
 		}
 		else if (actualType == entt::resolve<float>())

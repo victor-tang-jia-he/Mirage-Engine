@@ -22,7 +22,7 @@ namespace MirageEngine
 				Quaternion(float _a, float _b, float _c, float _d) noexcept;
 				Quaternion(const Quaternion& _q) noexcept;
 				Quaternion(Quaternion&& _q) noexcept;
-				Quaternion(Vector3& _axis, float _angle);
+				Quaternion(Vector3 _axis, float _angle);
 				Quaternion(float _angleX, float _angleY, float _angleZ);
 				Quaternion(Vector3& angles);
 				Quaternion(float _x1, float _x2, float _x3, float _x4,
