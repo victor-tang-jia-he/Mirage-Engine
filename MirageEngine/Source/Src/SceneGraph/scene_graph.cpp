@@ -25,49 +25,47 @@ namespace MirageEngine
 
         if (!success) {}
 
-		this->SetParent(_parent, newObject);
-		m_LastCreatedObject = newObject;
-		return newObject;
-	}
+        this->SetParent(_parent, newObject);
+        m_LastCreatedObject = newObject;
+        return newObject;
+    }
 
-	std::shared_ptr<GameObject> SceneGraph::CreateObject3D(const std::string& _name, const std::string& _mesh, std::shared_ptr<GameObject> _parent, MirageEngine::Renderer* _renderer)
-	{
-		std::shared_ptr<GameObject> newObject = CreateGameObject(_name, _parent);
-		std::shared_ptr<Core::Components::MeshRenderer> meshRenderer = newObject->AddComponent<Core::Components::MeshRenderer>();
-		ResourceManager& rm = ResourceManager::Instance();
+    std::shared_ptr<GameObject> SceneGraph::CreateObject3D(const std::string& _name, const std::string& _mesh, std::shared_ptr<GameObject> _parent, MirageEngine::Renderer* _renderer)
+    {
+        std::shared_ptr<GameObject>                     newObject    = CreateGameObject(_name, _parent);
+        std::shared_ptr<Core::Components::MeshRenderer> meshRenderer = newObject->AddComponent<Core::Components::MeshRenderer>();
+        ResourceManager&                                rm           = ResourceManager::Instance();
 
-		meshRenderer->SetMesh(rm.GetMesh(_mesh));
+        meshRenderer->SetMesh(rm.GetMesh(_mesh));
 
-		std::shared_ptr<Texture> texture = rm.GetTexture("White");
-		std::shared_ptr<Material> material = rm.CreateMaterial("TestMaterial");
-		if (texture)
-		{
-			texture->Bind();
-			material->SetTexture("White", texture);
-		}
-		if (_renderer)
-		{
-			material->SetShader(_renderer->m_Pipeline);
-		}
+        std::shared_ptr<Texture>  texture  = rm.GetTexture("White");
+        std::shared_ptr<Material> material = rm.CreateMaterial("TestMaterial", "default", "default", 0); // using default shader (fallback)
+        std::shared_ptr<MaterialInstance> matInstance = rm.CreateMaterialInstance("WhiteInstance", material);
 
-		meshRenderer->SetMaterial(material);
-		newObject->Transform.SetPosition(Vector3(0, 0, -10));
-		m_LastCreatedObject = newObject;
-		return newObject;
-	}
+        if (texture)
+        {
+            texture->Bind();
+            matInstance->SetTexture("White", texture);
+        }
 
-	std::shared_ptr<GameObject> SceneGraph::CreateCamera(const std::string& _name, std::shared_ptr<GameObject> _parent)
-	{
-		std::shared_ptr<GameObject> newObject = CreateGameObject(_name, _parent);
-		std::shared_ptr<Core::Components::Camera> camera = newObject->AddComponent<Core::Components::Camera>();
-		camera->SetFar(100);
-		camera->SetHeight(1080);
-		camera->SetWidth(1920);
-		camera->SetNear(0.1);
-		camera->SetFov(60.f);
-		m_LastCreatedObject = newObject;
-		return newObject;
-	}
+        meshRenderer->SetMaterial(matInstance);
+        newObject->Transform.SetPosition(Vector3(0, 0, -10));
+        m_LastCreatedObject = newObject;
+        return newObject;
+    }
+
+    std::shared_ptr<GameObject> SceneGraph::CreateCamera(const std::string& _name, std::shared_ptr<GameObject> _parent)
+    {
+        std::shared_ptr<GameObject>               newObject = CreateGameObject(_name, _parent);
+        std::shared_ptr<Core::Components::Camera> camera    = newObject->AddComponent<Core::Components::Camera>();
+        camera->SetFar(100);
+        camera->SetHeight(1080);
+        camera->SetWidth(1920);
+        camera->SetNear(0.1);
+        camera->SetFov(60.f);
+        m_LastCreatedObject = newObject;
+        return newObject;
+    }
 
     void SceneGraph::RemoveGameObject(std::shared_ptr<GameObject> _obj)
     {

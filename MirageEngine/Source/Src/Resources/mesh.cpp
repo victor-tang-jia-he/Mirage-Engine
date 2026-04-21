@@ -1,10 +1,18 @@
 #include <Resources/mesh.h>
 #include <i_buffer.h>
-#include <i_pipeline_parameters.h>
 
 DEFINE_LOG_CATEGORY(LogMesh)
 
 using namespace MirageEngine::Core::Resources;
+
+Mesh::Mesh(std::shared_ptr<IBuffer> _vb, std::shared_ptr<IBuffer> _ib, std::vector<LitVertex>&& _vertices, std::vector<uint32_t>&& _indices, size_t _count)
+    : m_VertexBuffer(_vb)
+    , m_IndexBuffer(_ib)
+    , m_Vertex(std::move(_vertices))
+    , m_Index(std::move(_indices))
+    , m_IndexCount(_count)
+{
+}
 
 Mesh::~Mesh()
 {

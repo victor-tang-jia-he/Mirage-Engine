@@ -9,6 +9,9 @@
 #include <Components/transform.h> // needed because DrawMesh now receives a Transform reference
 // #include "GameObject/game_object.h"
 
+#include <Resources/material.h>
+#include <Resources/material_instance.h>
+
 DEFINE_LOG_CATEGORY(MirageRenderer)
 
 using namespace MirageEngine;
@@ -251,8 +254,10 @@ void Renderer::DrawMesh(std::shared_ptr<MirageEngine::Core::Components::MeshRend
     if (!_meshRenderer->GetMesh() || !_meshRenderer->GetMaterial())
         return;
 
+    m_CommandBuffer->BindPipeline(_meshRenderer->GetMaterial()->GetMaterial()->GetPipeline());
+    m_CommandBuffer->ApplyPipelineParameters(_meshRenderer->GetMaterial()->GetMaterial()->GetPipeline());
 	_meshRenderer->GetMaterial()->Bind();
-	m_UniformBuffer->UpdateUniformBuffer(m_Pipeline, _meshTransform.GetWorldMatrix());
+    m_UniformBuffer->UpdateUniformBuffer(_meshRenderer->GetMaterial()->GetMaterial()->GetPipeline(), _meshTransform.GetWorldMatrix());
 	m_CommandBuffer->BindBuffer(_meshRenderer->GetMesh()->GetVertexBuffer());
 	m_CommandBuffer->BindBuffer(_meshRenderer->GetMesh()->GetIndexBuffer());
 	m_CommandBuffer->Draw((uint32_t)_meshRenderer->GetMesh()->GetIndicesCount());

@@ -18,16 +18,18 @@ namespace MirageEngine::Core::Resources
     {
         private:
 
-            std::shared_ptr<MirageRHI::IPipeline> PipelineBind           = nullptr;
+            std::shared_ptr<MirageRHI::IPipeline>           PipelineBind           = nullptr;
             std::shared_ptr<MirageRHI::IPipelineParameters> PipelineParameters     = nullptr;
-            std::shared_ptr<Shader>         AttachedVertexShader   = nullptr;
-            std::shared_ptr<Shader>         AttachedFragmentShader = nullptr;
+            std::shared_ptr<Shader>                         AttachedVertexShader   = nullptr;
+            std::shared_ptr<Shader>                         AttachedFragmentShader = nullptr;
 
             bool m_bUploaded = false;
 
         public:
 
-            Pipeline(std::shared_ptr<MirageRHI::IPipeline> _pipelineBind, std::shared_ptr<MirageRHI::IPipelineParameters> _pipelineParameters, std::shared_ptr<Shader> _vertexShader, std::shared_ptr<Shader> _fragmentShader)
+            Pipeline(
+                std::shared_ptr<MirageRHI::IPipeline> _pipelineBind, std::shared_ptr<MirageRHI::IPipelineParameters> _pipelineParameters, std::shared_ptr<Shader> _vertexShader,
+                std::shared_ptr<Shader> _fragmentShader)
                 : PipelineBind(_pipelineBind)
                 , PipelineParameters(_pipelineParameters)
                 , AttachedVertexShader(_vertexShader)
