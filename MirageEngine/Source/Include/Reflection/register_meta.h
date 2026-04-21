@@ -1,5 +1,7 @@
 #pragma once
 
+#include <EnTT/meta/meta.hpp>
+
 namespace MirageEngine
 {
 	class RegisterMeta
@@ -20,12 +22,17 @@ namespace MirageEngine
 		void RegisterCameraMeta();
 		void RegisterInputMappingMeta();
 
+		template<typename T>
+		void RegisterSharedPtr();
+
 	protected:
 	private:
 		void RegisterGameObjectMeta();
 		void RegisterTransformMeta();
 
-		template<typename T>
-		void RegisterSharedPtr();
+		void RegisterMaterialMeta();
+		void RegisterShaderMeta();
 	};
 }
+
+#include "register_meta.inl"

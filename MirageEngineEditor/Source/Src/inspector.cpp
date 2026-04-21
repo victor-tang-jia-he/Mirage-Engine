@@ -252,7 +252,7 @@ namespace Mirage
 				_data.set(instance, val);
 			}
 		}
-		else if (actualType.is_pointer())
+		else if (actualType == entt::resolve<std::shared_ptr<Core::Resources::Material>>())
 		{
 			static bool printed = false;
 			if (!printed)
@@ -261,12 +261,11 @@ namespace Mirage
 				printed = true;
 			}
 
-			void* rawPtr = nullptr;
+			Core::Resources::Material* rawPtr = nullptr;
 			if (value)
 			{
-				// For std::shared_ptr, we need to extract the pointer
-				// EnTT stores it as the shared_ptr itself, not void*
-				rawPtr = value.try_cast<void*>();
+				std::shared_ptr<Core::Resources::Material> ptr = value.cast<std::shared_ptr<Core::Resources::Material>>();
+				rawPtr = ptr.get();
 			}
 
 			const char* labelPtr = rawPtr ? "Assigned" : "None";

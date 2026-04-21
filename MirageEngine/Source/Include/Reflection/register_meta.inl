@@ -2,12 +2,13 @@
 
 #include <EnTT/meta/meta.hpp>
 
+using namespace entt::literals;
+
 namespace MirageEngine
 {
     template<typename T>
-    void RegisterSharedPtr()
+    void RegisterMeta::RegisterSharedPtr()
     {
         entt::meta_factory<std::shared_ptr<T>> sharePTR{};
-            sharePTR.func<&std::shared_ptr<T>::get>("get"_hs);
     }
 }

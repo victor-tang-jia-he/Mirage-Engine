@@ -7,6 +7,10 @@
 #include <Components/camera.h>
 #include <Components/input_mapping.h>
 
+// Ressources includes
+#include <Resources/material.h>
+#include <Resources/shader.h>
+
 // EnTT includes
 #include <entt/entt.hpp>
 
@@ -36,6 +40,8 @@ void RegisterMeta::RegisterAllMeta()
 	RegisterMeshRendererMeta();
 	RegisterCameraMeta();
 	RegisterInputMappingMeta();
+
+	//RegisterMaterialMeta();
 }
 
 void RegisterMeta::RegisterGameObjectMeta()
@@ -127,4 +133,24 @@ void RegisterMeta::RegisterInputMappingMeta()
 	inputMapping.func<&InputMapping::Clear>("ClearAll");
 
 	inputMapping.func<&InputMapping::Remove>("RemoveKey");
+}
+
+void MirageEngine::RegisterMeta::RegisterMaterialMeta()
+{
+	entt::meta_factory<Resources::Material> material{};
+	material.type(entt::type_id<Resources::Material>().hash(), "Material");
+
+	material.base<Resources::IResource>();
+
+	material.data<nullptr, &Resources::Material::GetName>("Name");
+}
+
+void MirageEngine::RegisterMeta::RegisterShaderMeta()
+{
+	entt::meta_factory<Resources::Shader> material{};
+	material.type(entt::type_id<Resources::Shader>().hash(), "Shader");
+
+	material.base<Resources::IResource>();
+
+	material.data<nullptr, &Resources::Shader::GetName>("Name");
 }
