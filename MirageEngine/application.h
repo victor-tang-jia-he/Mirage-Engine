@@ -34,11 +34,14 @@ private:
 	std::shared_ptr < MirageEngine::Core::Components::Camera> m_EngineCamera = nullptr;
 	std::vector < std::shared_ptr < MirageEngine::Core::Components::MeshRenderer>> m_meshRenderer;
 
+	static Application* s_Instance;
+
 public:
 	void InitApp();
 	void ShutDown();
 
 	MirageEngine::SceneGraph* GetSceneGraph() { return &m_SceneGraph; }
+	static Application* Instance() { return s_Instance; }
 
 private:
 	void InitScene();

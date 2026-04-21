@@ -31,8 +31,11 @@ using namespace MirageEngine::Core::Math;
 using namespace MirageEngine::Core::Components;
 using namespace MirageEngine::Core::Resources;
 
+Application* Application::s_Instance = nullptr;
 void Application::InitApp()
 {
+    s_Instance = this;
+
     Loggers::LogBuffer::GetInstance().EnableImmediateFlush(true); // Enable immediate flushing of log messages for real-time output during initialization
     Loggers::LogBuffer::GetInstance().EnableFileWriting(true);    // Enable writing logs to file during initialization to capture any issues that may occur before the main loop starts.
 

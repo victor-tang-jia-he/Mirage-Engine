@@ -102,4 +102,9 @@ namespace MirageEngine::Core::Components
 	{
 		return Vector3(m_Origin.X + _x * m_CellSize + m_CellSize * 0.5f, m_Origin.Y, m_Origin.Z + _y * m_CellSize + m_CellSize * 0.5f);
 	}
+
+	void InfluenceGrid::RenderDebug()
+	{
+		// To implement 
+	}
 }

@@ -54,6 +54,8 @@ namespace MirageEngine::Core::Components
 		int GetIndex(int x, int y) const { return y * m_ResolutionX + x; }
 		Core::Math::Vector3 GetCellWorldPosition(int x, int y) const;
 
+		void RenderDebug();
+
 		// Getters
 		float GetWidth() const { return m_GridWidth; }
 		float GetHeight() const { return m_GridHeight; }

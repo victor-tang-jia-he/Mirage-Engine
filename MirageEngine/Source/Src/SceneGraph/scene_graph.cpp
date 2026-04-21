@@ -110,12 +110,19 @@ namespace MirageEngine
         if (!_child) return false;
         if (_child == _parent) return false;
 
-        std::cout << "\n--- DEBUT SET PARENT ---" << std::endl;
-        std::cout << "Enfant: " << _child->GetName() << " | Parent: " << (_parent ? _parent->GetName() : "Root") << std::endl;
-
         Core::Math::Matrix4 childWorldBefore = _child->Transform.GetWorldMatrix();
 
-        std::shared_ptr<GameObject> current = _parent;
+		std::shared_ptr<GameObject> current = _parent;
+		while (current != nullptr)
+		{
+			if (current == _child)
+			{
+				return false;
+			}
+			current = current->GetParent();
+		}
+
+
 
         while (current != nullptr)
         {

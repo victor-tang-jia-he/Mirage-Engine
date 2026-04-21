@@ -6,6 +6,7 @@
 #include <Components/transform.h>
 #include <Components/camera.h>
 #include <Components/input_mapping.h>
+#include <Components/influence_emitter.h>
 #include <AI/influence_grid.h>
 
 // EnTT includes
@@ -143,4 +144,18 @@ void RegisterMeta::RegisterInfluenceGridMeta()
 	influenceGrid.data<&InfluenceGrid::SetHeight, &InfluenceGrid::GetHeight>("Height");
 	influenceGrid.data<&InfluenceGrid::SetCellSize, &InfluenceGrid::GetCellSize>("Cell Size");
 	influenceGrid.data<&InfluenceGrid::SetDecayRate, &InfluenceGrid::GetDecayRate>("Decay Rate");
+}
+
+void RegisterMeta::RegisterInfluenceEmitterMeta()
+{
+	entt::meta_factory<InfluenceEmitter> influenceEmitter{};
+	influenceEmitter.type(entt::type_id<InfluenceEmitter>().hash());
+
+
+	influenceEmitter.base<Component>();
+
+	influenceEmitter.data<&InfluenceEmitter::SetInfluenceType, &InfluenceEmitter::GetInfluenceType>("Type");
+	influenceEmitter.data<&InfluenceEmitter::SetRadius, &InfluenceEmitter::GetRadius>("Radius");
+	influenceEmitter.data<&InfluenceEmitter::SetStrength, &InfluenceEmitter::GetStrength>("Strength");
+	influenceEmitter.data<&InfluenceEmitter::SetTargetGrid, &InfluenceEmitter::GetTargetGrid>("Grid");
 }
