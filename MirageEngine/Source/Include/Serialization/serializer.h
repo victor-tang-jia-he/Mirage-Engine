@@ -26,6 +26,10 @@ namespace MirageEngine
 			class Vector3;
 			class Quaternion;
 		}
+		namespace Resources
+		{
+			class IResource;
+		}
 	}
 
 	class Serializer
@@ -40,7 +44,12 @@ namespace MirageEngine
 		json SerializeTransform(Core::Components::Transform _transform);
 
 		json SerializeMetaData(entt::meta_type _type, entt::meta_data _data, void* _instancePtr);
+
 		json SerializeVector3(Core::Math::Vector3 _vector3);
 		json SerializeQuaternion(Core::Math::Quaternion _quaternion);
+
+		json SerializeResource(Core::Resources::IResource* _resource);
 	};
 }
+
+#include "serializer.inl"

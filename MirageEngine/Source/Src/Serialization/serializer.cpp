@@ -1,9 +1,14 @@
 #include "Serialization/serializer.h"
 
 #include <SceneGraph/scene_graph.h>
+
 #include <GameObject/game_object.h>
 #include <Components/component.h>
 #include <Components/transform.h>
+
+#include <Resources/mesh.h>
+#include <Resources/material.h>
+
 #include <vector3.h>
 #include <quaternion.h>
 
@@ -149,7 +154,25 @@ json MirageEngine::Serializer::SerializeMetaData(entt::meta_type _type, entt::me
             jMetaData[label] = *boolData;
         }
     }
-    // Add Pointers
+    else if (actualType == entt::resolve<std::shared_ptr<Resources::Mesh>>())
+    {
+        if (std::shared_ptr<Resources::Mesh>* meshPtrData = value.try_cast<std::shared_ptr<Resources::Mesh>>())
+        {
+            Resources::Mesh* rawMeshPtrData = meshPtrData->get();
+            jMetaData[label] = SerializeResource(rawMeshPtrData);
+        }
+    }
+    else if (actualType == entt::resolve<std::shared_ptr<Resources::Material>>())
+    {
+        if (std::shared_ptr<Resources::Material>* materialPtrData = value.try_cast<std::shared_ptr<Resources::Material>>())
+        {
+            Resources::Material* rawMaterialPtrData = materialPtrData->get();
+            jMetaData[label] = SerializeResource(rawMaterialPtrData);
+        }
+    }
+    // Add Unknown Pointers 
+    // (try using parent class with shared_ptr to detect type of variable ?)
+    // (try using void* to detect raw component ptr)
 
     return jMetaData;
 }
@@ -175,4 +198,13 @@ json MirageEngine::Serializer::SerializeQuaternion(Core::Math::Quaternion _quate
     jQuaternion["z"] = _quaternion.Z;
 
     return jQuaternion;
+}
+
+json MirageEngine::Serializer::SerializeResource(Core::Resources::IResource* _resource)
+{
+    json jResource;
+
+    jResource["name"] = _resource->GetName();
+
+    return jResource;
 }
