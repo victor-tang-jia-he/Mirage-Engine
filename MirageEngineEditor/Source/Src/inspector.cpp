@@ -1,12 +1,17 @@
+#include <dragdrop.h>
 #include "inspector.h"
 #include "UI_wrapper.h"
 #include "matrix4.h"
 #include "imgui.h"
 #include "GameObject/game_object.h"
 #include "SceneGraph/scene_graph.h"
-#include <cstring>
+#include <string>
 #include <cmath>
 #include <limits>
+#include <fstream>
+#include <Resources/resource_manager.h>
+
+DEFINE_LOG_CATEGORY_WITH_COLOR(LogInspector, Loggers::Color::CYAN);
 
 using namespace MirageEngine::Core::Math;
 using namespace MirageEngine;
@@ -21,7 +26,7 @@ namespace Mirage
 		UIWrapper::BeginWindow("Inspector");
 
 		std::shared_ptr<GameObject> selectedObj = m_Context->GetSelectedObject();
-		if (selectedObj == nullptr) 
+		if (selectedObj == nullptr)
 		{
 			ImGui::TextDisabled("No object selected in Hierarchy");
 			UIWrapper::EndWindow();
@@ -55,8 +60,9 @@ namespace Mirage
 			auto type = entt::resolve(comp->GetType());
 			if (type) 
 			{
+				const char* displayName = type.name();
 				// Create a CollapsingHeader using the class name registered in Meta
-				if (ImGui::CollapsingHeader(type.info().name().data(), ImGuiTreeNodeFlags_DefaultOpen))
+				if (ImGui::CollapsingHeader(displayName, ImGuiTreeNodeFlags_DefaultOpen))
 				{
 					ImGui::PushID(static_cast<int>(comp->GetType()));
 
@@ -108,6 +114,13 @@ namespace Mirage
 		// Dispatcher: Choose the ImGui widget based on the Data Type
 		if (actualType == entt::resolve<std::string>())
 		{
+			static bool printed = false;
+			if (!printed)
+			{
+				LOG(logTemp, LogInspector, "String detected in component");
+				printed = true;
+			}
+			
 			if (auto* s = value.try_cast<std::string>())
 			{
 				char buffer[256];
@@ -118,15 +131,39 @@ namespace Mirage
 				}
 			}
 		}
+		else if (actualType == entt::resolve<std::string>())
+		{
+			static bool printed = false;
+			if (!printed)
+			{
+				LOG(logTemp, LogInspector, "String detected in component");
+				printed = true;
+			}
+			std::string val = value.cast<std::string>();
+			char buffer[256];
+			memset(buffer, 0, sizeof(buffer));
+			std::strncpy(buffer, val.c_str(), sizeof(buffer) - 1);
+			if (ImGui::InputText(label, buffer, sizeof(buffer)))
+			{
+				_data.set(instance, std::string(buffer));
+			}
+		}
 		else if (actualType == entt::resolve<Math::Vector3>())
 		{
+			static bool printed = false;
+			if (!printed)
+			{
+				LOG(logTemp, LogInspector, "Vector 3 detected in component");
+				printed = true;
+			}
+
 			Math::Vector3 vec = value.cast<Math::Vector3>();
 			if (ImGui::DragFloat3(label, &vec.X, 0.1f))
 			{
-				// Only enforce non-zero for the Scale property; leave Position/Rotation unchanged.
+				// If label is Scale
 				if (label && std::strcmp(label, "Scale") == 0)
 				{
-					const float minAbs = 1e-4f; // Small epsilon to avoid exact zero scale
+					const float minAbs = EPSILON;
 					if (std::fabs(vec.X) < minAbs) vec.X = (vec.X >= 0.0f) ? minAbs : -minAbs;
 					if (std::fabs(vec.Y) < minAbs) vec.Y = (vec.Y >= 0.0f) ? minAbs : -minAbs;
 					if (std::fabs(vec.Z) < minAbs) vec.Z = (vec.Z >= 0.0f) ? minAbs : -minAbs;
@@ -136,6 +173,13 @@ namespace Mirage
 		}
 		else if (actualType == entt::resolve<Math::Quaternion>())
 		{
+			static bool printed = false;
+			if (!printed)
+			{
+				LOG(logTemp, LogInspector, "Quaternion detected in component");
+				printed = true;
+			}
+
 			Math::Quaternion quat = value.cast<Math::Quaternion>();
 			Math::Vector3 euler = quat.ToEulerAngle() * 180.0f / PI;
 			if (ImGui::DragFloat3(label, &euler.X, 0.1f))
@@ -150,6 +194,13 @@ namespace Mirage
 		}
 		else if (actualType == entt::resolve<float>())
 		{
+			static bool printed = false;
+			if (!printed)
+			{
+				LOG(logTemp, LogInspector, "Float detected in component");
+				printed = true;
+			}
+			
 			float val = value.cast<float>();
 			if (ImGui::DragFloat(label, &val, 0.1f))
 			{
@@ -158,6 +209,13 @@ namespace Mirage
 		}
 		else if (actualType == entt::resolve<int>())
 		{
+			static bool printed = false;
+			if (!printed)
+			{
+				LOG(logTemp, LogInspector, "Int detected in component");
+				printed = true;
+			}
+			
 			int val = value.cast<int>();
 			if (ImGui::DragInt(label, &val, 1))
 			{
@@ -166,6 +224,13 @@ namespace Mirage
 		}
 		else if (actualType == entt::resolve<unsigned int>())
 		{
+			static bool printed = false;
+			if (!printed)
+			{
+				LOG(logTemp, LogInspector, "Unsign Int detected in component");
+				printed = true;
+			}
+			
 			unsigned int val = value.cast<unsigned int>();
 			if (ImGui::DragScalar(label, ImGuiDataType_U32, &val, 1.0f))
 			{
@@ -174,30 +239,34 @@ namespace Mirage
 		}
 		else if (actualType == entt::resolve<bool>())
 		{
+			static bool printed = false;
+			if (!printed)
+			{
+				LOG(logTemp, LogInspector, "Bool detected in component");
+				printed = true;
+			}
+
 			bool val = value.cast<bool>();
 			if (ImGui::Checkbox(label, &val))
 			{
 				_data.set(instance, val);
 			}
 		}
-		else if (actualType == entt::resolve<std::string>())
-		{
-			std::string val = value.cast<std::string>();
-			char buffer[256];
-			memset(buffer, 0, sizeof(buffer));
-			std::strncpy(buffer, val.c_str(), sizeof(buffer) - 1);
-			if (ImGui::InputText(label, buffer, sizeof(buffer))) {
-				_data.set(instance, std::string(buffer));
-			}
-		}
 		else if (actualType.is_pointer())
 		{
-			/*void* ptr = value.cast<void*>();*/
-			//std::string label = ptr ? "Assigned" : "None";
+			static bool printed = false;
+			if (!printed)
+			{
+				LOG(logTemp, LogInspector, "Shared Pointer detected in component");
+				printed = true;
+			}
 
 			void* rawPtr = nullptr;
-			if (value) {
-				rawPtr = value.cast<void*>();
+			if (value)
+			{
+				// For std::shared_ptr, we need to extract the pointer
+				// EnTT stores it as the shared_ptr itself, not void*
+				rawPtr = value.try_cast<void*>();
 			}
 
 			const char* labelPtr = rawPtr ? "Assigned" : "None";
@@ -205,12 +274,15 @@ namespace Mirage
 			ImGui::SameLine();
 			if (ImGui::Button(labelPtr, ImVec2(-1, 0)))
 			{
-			}
-			if (ImGui::BeginDragDropTarget()) {
-				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM"))
+				if (ImGui::BeginDragDropTarget())
 				{
+					if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM"))
+					{
+						// TODO: Handle the dropped asset payload here
+						// Extract asset path from payload and assign it
+					}
+					ImGui::EndDragDropTarget();
 				}
-				ImGui::EndDragDropTarget();
 			}
 		}
 	}

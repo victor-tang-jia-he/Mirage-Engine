@@ -16,6 +16,7 @@ namespace MirageEngine
 
 		void RegisterAllMeta();
 		void RegisterMeshRendererMeta();
+		void RegisterMeshMeta();
 		void RegisterCameraMeta();
 		void RegisterInputMappingMeta();
 
@@ -23,5 +24,8 @@ namespace MirageEngine
 	private:
 		void RegisterGameObjectMeta();
 		void RegisterTransformMeta();
+
+		template<typename T>
+		void RegisterSharedPtr();
 	};
 }

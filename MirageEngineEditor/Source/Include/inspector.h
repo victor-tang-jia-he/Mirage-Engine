@@ -1,6 +1,10 @@
 #pragma once
+#include <Logs/log_macro.h>
+
 #include "i_panel.h"
 #include <entt/entt.hpp>
+
+DECLARE_LOG_CATEGORY_EXTERN(LogInspector)
 
 namespace MirageEngine
 {

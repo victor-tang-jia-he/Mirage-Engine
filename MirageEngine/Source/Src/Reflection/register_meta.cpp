@@ -44,7 +44,7 @@ void RegisterMeta::RegisterGameObjectMeta()
 
 	// Assign a unique ID to the class. 
 	// "_hs" transforms the string into a unique integer at compile time.
-	gameObject.type(entt::type_id<GameObject>().hash());
+	gameObject.type(entt::type_id<GameObject>().hash(), "GameObject");
 
 	gameObject.ctor<std::shared_ptr<GameObject>, std::string, bool, bool>();
 
@@ -61,7 +61,7 @@ void RegisterMeta::RegisterTransformMeta()
 {	
 	entt::meta_factory<Components::Transform> transform{};
 
-	transform.type(entt::type_id<Transform>().hash());
+	transform.type(entt::type_id<Transform>().hash(), "Transform");
 	transform.ctor<Math::Vector3, Math::Quaternion, Math::Vector3>();
 
 	transform.data<&Components::Transform::SetPosition, &Components::Transform::GetPosition>("Position");
@@ -83,7 +83,7 @@ void RegisterMeta::RegisterMeshRendererMeta()
 
 	// IMPORTANT: We use entt::type_id<T>().hash() as the ID because components are stored as base "Component*" pointers. 
 	// When we call comp->GetType(), it returns the native C++ hash. By using the same hash here, the Inspector can "resolve" the correct meta-data.
-	meshRenderer.type(entt::type_id<MeshRenderer>().hash());
+	meshRenderer.type(entt::type_id<MeshRenderer>().hash(), "MeshRenderer");
 
 	meshRenderer.base<Component>();
 
@@ -95,7 +95,7 @@ void RegisterMeta::RegisterCameraMeta()
 {
 	entt::meta_factory<Camera> camera{};
 
-	camera.type(entt::type_id<Camera>().hash());
+	camera.type(entt::type_id<Camera>().hash(), "Camera");
 
 	camera.base<Component>();
 
@@ -110,7 +110,7 @@ void RegisterMeta::RegisterInputMappingMeta()
 
 	entt::meta_factory<CallbackInputInfo> callbackInputInfo{};
 
-	callbackInputInfo.type(entt::type_id<CallbackInputInfo>().hash());
+	callbackInputInfo.type(entt::type_id<CallbackInputInfo>().hash(), "CallbackInputInfo");
 
 	callbackInputInfo.data<&CallbackInputInfo::Pressed>("Pressed");
 	callbackInputInfo.data<&CallbackInputInfo::Held>("Held");
@@ -118,7 +118,7 @@ void RegisterMeta::RegisterInputMappingMeta()
 
 	entt::meta_factory<InputMapping> inputMapping{};
 
-	inputMapping.type(entt::type_id<InputMapping>().hash());
+	inputMapping.type(entt::type_id<InputMapping>().hash(), "InputMapping");
 
 	inputMapping.base<Component>();
 
