@@ -6,6 +6,7 @@
 #include <Components/transform.h>
 #include <Components/camera.h>
 #include <Components/input_mapping.h>
+#include <AI/influence_grid.h>
 
 // EnTT includes
 #include <entt/entt.hpp>
@@ -129,4 +130,18 @@ void RegisterMeta::RegisterInputMappingMeta()
 
 	inputMapping.func<&InputMapping::Clear>("ClearAll");
 	inputMapping.func<(void(InputMapping::*)(int))& InputMapping::Remove>("RemoveKey");
+}
+
+void RegisterMeta::RegisterInfluenceGridMeta()
+{
+	entt::meta_factory<InfluenceGrid> influenceGrid{};
+	influenceGrid.type(entt::type_id<InfluenceGrid>().hash());
+
+
+	influenceGrid.base<Component>();
+
+	influenceGrid.data<&InfluenceGrid::SetWidth, &InfluenceGrid::GetWidth>("Width");
+	influenceGrid.data<&InfluenceGrid::SetHeight, &InfluenceGrid::GetHeight>("Height");
+	influenceGrid.data<&InfluenceGrid::SetCellSize, &InfluenceGrid::GetCellSize>("Cell Size");
+	influenceGrid.data<&InfluenceGrid::SetDecayRate, &InfluenceGrid::GetDecayRate>("Decay Rate");
 }

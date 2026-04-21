@@ -1,37 +1,40 @@
 #include "AI/influence_grid.h"
+#include "GameObject/game_object.h"
 #include "Components/transform.h"
 #include <matrix4.h>
+#include "time_manager.h"
 
 using namespace MirageEngine::Core::Math;
 
-namespace MirageEngine
+namespace MirageEngine::Core::Components
 {
-
-	void InfluenceGrid::Initialize(float _gridWidth, float _gridHeight, float _cellsize, Vector3 _origin)
+	void InfluenceGrid::Init()
 	{
-		m_GridWidth = _gridWidth;
-		m_GridHeight = _gridHeight;
-		m_CellSize = _cellsize;
-		m_Origin = _origin;
-
-		m_ResolutionX = static_cast<int>(m_GridWidth / m_CellSize);
-		m_ResolutionY = static_cast<int>(m_GridHeight / m_CellSize);
-
-		m_Cells.resize(m_ResolutionX * m_ResolutionY);
+		Bake();	
 	}
 
-	void InfluenceGrid::WorldToGrid(Vector3 _pos, int& _x, int& _y)
+	void InfluenceGrid::Update()
 	{
-		_x = static_cast<int>((_pos.X - m_Origin.X) / m_CellSize);
-		_y = static_cast<int>((_pos.Z - m_Origin.Z) / m_CellSize);
+		float dt = TimeManager::GetDeltaTime();
+		UpdateDecay(dt);
 	}
 
-	bool InfluenceGrid::IsInBounds(int _x, int _y) const
+	void InfluenceGrid::Bake()
 	{
-		return _x >= 0 && _x < m_ResolutionX && _y >= 0 && _y < m_ResolutionY;
+		if (GetOwner())
+		{
+			m_Origin = GetOwner()->GetPosition();
+			m_ResolutionX = static_cast<int>(m_GridWidth / m_CellSize);
+			m_ResolutionY = static_cast<int>(m_GridHeight / m_CellSize);
+
+			if (m_ResolutionX <= 0) m_ResolutionX = 1;
+			if (m_ResolutionY <= 0) m_ResolutionY = 1;
+
+			m_Cells.assign(m_ResolutionX * m_ResolutionY, InfluenceCell());
+		}
 	}
 
-	void InfluenceGrid::Update(float _deltaTime)
+	void InfluenceGrid::UpdateDecay(float _deltaTime)
 	{
 		float frameDecay = powf(m_DecayRate, _deltaTime);
 
@@ -44,6 +47,17 @@ namespace MirageEngine
 					cell.channels[i] = 0.0f;
 			}
 		}
+	}
+
+	void InfluenceGrid::WorldToGrid(Vector3 _pos, int& _x, int& _y)
+	{
+		_x = static_cast<int>((_pos.X - m_Origin.X) / m_CellSize);
+		_y = static_cast<int>((_pos.Z - m_Origin.Z) / m_CellSize);
+	}
+
+	bool InfluenceGrid::IsInBounds(int _x, int _y) const
+	{
+		return _x >= 0 && _x < m_ResolutionX && _y >= 0 && _y < m_ResolutionY;
 	}
 
 	void InfluenceGrid::AddInfluence(int _x, int _y, InfluenceType _type, float _value)
