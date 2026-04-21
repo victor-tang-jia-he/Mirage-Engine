@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Resources/material.h>
+#include <Resources/material_instance.h>
 #include <Resources/mesh.h>
 #include <Components/component.h>
 
@@ -14,11 +14,11 @@ namespace MirageEngine
 			{
 			private:
 				std::shared_ptr<MirageEngine::Core::Resources::Mesh> m_Mesh = nullptr;
-				std::shared_ptr<MirageEngine::Core::Resources::Material> m_Material = nullptr;
+				std::shared_ptr<MirageEngine::Core::Resources::MaterialInstance> m_Material = nullptr;
 
 			public:
 				MeshRenderer() = default;
-				MeshRenderer(std::shared_ptr<MirageEngine::Core::Resources::Mesh> _mesh, std::shared_ptr<MirageEngine::Core::Resources::Material> _material)
+				MeshRenderer(std::shared_ptr<MirageEngine::Core::Resources::Mesh> _mesh, std::shared_ptr<MirageEngine::Core::Resources::MaterialInstance> _material)
 					: m_Mesh(_mesh), m_Material(_material)
 				{
 				}
@@ -30,11 +30,11 @@ namespace MirageEngine
 
 				// Getters
 				std::shared_ptr<MirageEngine::Core::Resources::Mesh> GetMesh() const { return m_Mesh; }
-				std::shared_ptr<MirageEngine::Core::Resources::Material> GetMaterial() const { return m_Material; }
+				std::shared_ptr<MirageEngine::Core::Resources::MaterialInstance> GetMaterial() const { return m_Material; }
 
 				// Setters
 				void SetMesh(std::shared_ptr<MirageEngine::Core::Resources::Mesh> _mesh) { m_Mesh = _mesh; }
-				void SetMaterial(std::shared_ptr<MirageEngine::Core::Resources::Material> _material) { m_Material = _material; }
+				void SetMaterial(std::shared_ptr<MirageEngine::Core::Resources::MaterialInstance> _material) { m_Material = _material; }
 			};
 		}
 	}

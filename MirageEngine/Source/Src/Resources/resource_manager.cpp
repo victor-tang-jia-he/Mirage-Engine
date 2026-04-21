@@ -1,10 +1,9 @@
 #include <Resources/resource_manager.h>
-#include <RHI/i_pipeline_parameters.h>
-#include <RHI/i_texture.h>
-#include <RHI/i_render_interface.h>
+#include <RHI/OpenGL/openGL_render_interface.h>
 
 #include <Resources/mesh.h>
 #include <Resources/texture.h>
+#include <Resources/material_instance.h>
 #include <Resources/material.h>
 #include <Resources/shader.h>
 #include <Resources/pipeline.h>
@@ -13,8 +12,8 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
 
-constexpr auto OPENGL_RGBA = 0x1908;
-constexpr auto OPENGL_RGB  = 0x1907;
+constexpr int OPENGL_RGBA = 0x1908;
+constexpr int OPENGL_RGB  = 0x1907;
 
 #include <filesystem>
 namespace fs = std::filesystem;
@@ -34,9 +33,7 @@ void ResourceManager::Shutdown()
     m_Instance = nullptr;
 }
 
-ResourceManager::~ResourceManager()
-{
-}
+ResourceManager::~ResourceManager() {}
 
 void ResourceManager::Init(std::shared_ptr<MirageRHI::IRenderInterface> _rhi)
 {
@@ -138,12 +135,16 @@ std::shared_ptr<Shader> ResourceManager::CreateShader(const std::string& _name, 
     auto        it           = rm.m_Resources.find(_name);
     if (it != rm.m_Resources.end()) { newAssetName = rm.GenerateUniqueAssetName(_name); }
     std::shared_ptr<MirageRHI::IShader> rhiShader = rm.m_Rhi->InstantiateShader();
-    rhiShader->Create(_path.c_str(), _type);
+    if (!rhiShader->Create(_path.c_str(), _type))
+    {
+        rhiShader->Destroy();
+        return _type == MirageRHI::IShader::ShaderType::Fragment ? rm.GetFragmentShader("default") : rm.GetVertexShader("default");
+    }
 
-    auto shader        = std::make_shared<Shader>();
-    shader->p_Name     = newAssetName;
-    shader->p_Path     = _path;
-    shader->ShaderBind = rhiShader;
+    std::shared_ptr<Shader> shader = std::make_shared<Shader>();
+    shader->p_Name                 = newAssetName;
+    shader->p_Path                 = _path;
+    shader->ShaderBind             = rhiShader;
 
     rm.m_Resources.emplace(newAssetName, shader);
     rm.m_ShaderCache.emplace(_path, shader);
@@ -171,7 +172,7 @@ std::shared_ptr<Mesh> ResourceManager::CreateMesh(const std::string& _name, cons
     std::vector<MirageRHI::LitVertex> vertices;
 
     rm.LoadMeshUtility(_path, vertices, indices);
-    auto mesh = std::make_shared<Mesh>(rm.m_Rhi->InstantiateBuffer(), rm.m_Rhi->InstantiateBuffer(), std::move(vertices), std::move(indices), indices.size());
+    std::shared_ptr<Mesh> mesh = std::make_shared<Mesh>(rm.m_Rhi->InstantiateBuffer(), rm.m_Rhi->InstantiateBuffer(), std::move(vertices), std::move(indices), indices.size());
 
     mesh->p_Name = newAssetName;
     mesh->p_Path = _path;
@@ -180,21 +181,7 @@ std::shared_ptr<Mesh> ResourceManager::CreateMesh(const std::string& _name, cons
     return mesh;
 }
 
-std::shared_ptr<Material> ResourceManager::CreateMaterial(const std::string& _name)
-{
-    ResourceManager& rm = ResourceManager::Instance();
-
-    std::string newAssetName = _name;
-    auto        resourceIt   = rm.m_Resources.find(_name);
-    if (resourceIt != rm.m_Resources.end()) { newAssetName = rm.GenerateUniqueAssetName(_name); }
-    auto material    = std::make_shared<Material>();
-    material->p_Name = newAssetName;
-    material->p_Path = ""; // No path for material as it's created empty
-    rm.m_Resources.emplace(newAssetName, material);
-    return material;
-}
-
-std::shared_ptr<Pipeline> ResourceManager::CreatePipeline(const std::string& _name, const char* _pathFrag, const char* _pathVertex, std::shared_ptr<MirageRHI::IPipelineParameters> _pipelineParamter)
+std::shared_ptr<Material> ResourceManager::CreateMaterial(const std::string& _name, const std::string& _pathVertex, const std::string& _pathFrag, size_t _uniformBufferSize)
 {
     ResourceManager& rm = ResourceManager::Instance();
 
@@ -207,20 +194,75 @@ std::shared_ptr<Pipeline> ResourceManager::CreatePipeline(const std::string& _na
     auto        resourceIt   = rm.m_Resources.find(_name);
     if (resourceIt != rm.m_Resources.end()) { newAssetName = rm.GenerateUniqueAssetName(_name); }
 
-    // pre define ptr
-    std::shared_ptr<Shader> frag{};
-    std::shared_ptr<Shader> vert{};
+    LOG(logTemp, LogResourceManager, "Creating Material : ", newAssetName);
 
-    // search in cache
-    auto shaderFragIt = rm.m_ShaderCache.find(_pathFrag);
-    auto shaderVertIt = rm.m_ShaderCache.find(_pathVertex);
+    std::shared_ptr<Shader> frag
+        = rm.m_ShaderCache.contains(_pathFrag) ? rm.m_ShaderCache[_pathFrag] : ResourceManager::CreateShader("ShaderFragment", _pathFrag, MirageRHI::IShader::ShaderType::Fragment);
 
-    // If find get, else, load
-    if (shaderFragIt != rm.m_ShaderCache.end()) frag = shaderFragIt->second;
-    if (shaderVertIt != rm.m_ShaderCache.end()) vert = shaderVertIt->second;
+    std::shared_ptr<Shader> vert
+        = rm.m_ShaderCache.contains(_pathVertex) ? rm.m_ShaderCache[_pathVertex] : ResourceManager::CreateShader("ShaderVertex", _pathVertex, MirageRHI::IShader::ShaderType::Vertex);
 
-    if (!frag) frag = ResourceManager::CreateShader("ShaderFragment", _pathFrag, MirageRHI::IShader::ShaderType::Fragment);
-    if (!vert) vert = ResourceManager::CreateShader("ShaderVertex", _pathVertex, MirageRHI::IShader::ShaderType::Vertex);
+    std::shared_ptr<MirageRHI::IPipelineParameters> pipelineparameter = rm.m_Rhi->InstantiatePipelineParameters();
+    pipelineparameter->Create(MirageRHI::VertexType::PBR, MirageRHI::CullingType::None, true); // Default setting
+
+    std::shared_ptr<MirageRHI::IPipeline> pipeline = rm.m_Rhi->InstantiatePipeline();
+    pipeline->Create(vert->ShaderBind, frag->ShaderBind, pipelineparameter);
+
+    std::shared_ptr<Material> material = std::make_shared<Material>();
+    material->p_Name                   = newAssetName;
+    material->p_Path                   = ""; // No path for material as it's created empty
+    material->fragmentShader           = frag->ShaderBind;
+    material->vertexShader             = vert->ShaderBind;
+    material->uniformBufferSize        = _uniformBufferSize;
+    material->pipeline                 = pipeline;
+    rm.m_Resources.emplace(newAssetName, material);
+    return material;
+}
+
+std::shared_ptr<MaterialInstance> ResourceManager::CreateMaterialInstance(const std::string& _name, std::shared_ptr<Material> mat)
+{
+    ResourceManager& rm = ResourceManager::Instance();
+
+    if (!rm.m_Rhi)
+    {
+        LOG(logError, LogResourceManager, "Resource Manager RHI isn't init");
+        return nullptr;
+    }
+    LOG(logTemp, LogResourceManager, "Creating Material Instance from : ", mat->GetName());
+    std::string newAssetName = _name;
+    auto        resourceIt   = rm.m_Resources.find(_name);
+    if (resourceIt != rm.m_Resources.end()) { newAssetName = rm.GenerateUniqueAssetName(_name); }
+
+    std::shared_ptr<MirageRHI::IUniformBuffer> ubo = rm.m_Rhi->InstantiateUniformBuffer();
+    ubo->Create();
+
+    std::shared_ptr<MaterialInstance> matInstance = std::make_shared<MaterialInstance>(mat, std::move(ubo));
+
+    matInstance->p_Name = newAssetName;
+    matInstance->p_Path = ""; // No path for material instance as it's created from material
+    rm.m_Resources.emplace(newAssetName, matInstance);
+    return matInstance;
+}
+
+std::shared_ptr<Pipeline>
+    ResourceManager::CreatePipeline(const std::string& _name, const std::string& _pathFrag, const std::string& _pathVertex, std::shared_ptr<MirageRHI::IPipelineParameters> _pipelineParamter)
+{
+    ResourceManager& rm = ResourceManager::Instance();
+
+    if (!rm.m_Rhi)
+    {
+        LOG(logError, LogResourceManager, "Resource Manager RHI isn't init");
+        return nullptr;
+    }
+    std::string newAssetName = _name;
+    auto        resourceIt   = rm.m_Resources.find(_name);
+    if (resourceIt != rm.m_Resources.end()) { newAssetName = rm.GenerateUniqueAssetName(_name); }
+
+    std::shared_ptr<Shader> frag
+        = rm.m_ShaderCache.contains(_pathFrag) ? rm.m_ShaderCache[_pathFrag] : ResourceManager::CreateShader("ShaderFragment", _pathFrag, MirageRHI::IShader::ShaderType::Fragment);
+
+    std::shared_ptr<Shader> vert
+        = rm.m_ShaderCache.contains(_pathVertex) ? rm.m_ShaderCache[_pathVertex] : ResourceManager::CreateShader("ShaderVertex", _pathVertex, MirageRHI::IShader::ShaderType::Vertex);
 
     auto pipeline    = std::make_shared<Pipeline>(rm.m_Rhi->InstantiatePipeline(), _pipelineParamter, vert, frag);
     pipeline->p_Name = newAssetName;
@@ -367,7 +409,7 @@ std::shared_ptr<Texture> ResourceManager::GetTexture(const std::string& _name)
         LOG(logWarning, LogResourceManager, "Resource not found: ", _name);
         return resourceManager.PrivateGet<Texture>("DefaultTexture"); // Return default texture if not found
     }
-    return nullptr;                                                    // Should never reach here, but added to avoid compiler warning
+    return nullptr;                                                   // Should never reach here, but added to avoid compiler warning
 }
 
 std::shared_ptr<Shader> ResourceManager::GetVertexShader(const std::string& _name)
@@ -384,7 +426,7 @@ std::shared_ptr<Shader> ResourceManager::GetVertexShader(const std::string& _nam
         LOG(logWarning, LogResourceManager, "Resource not found: ", _name);
         return resourceManager.PrivateGet<Shader>("DefaultVertex"); // Return default vertex shader if not found
     }
-    return nullptr;                                                  // Should never reach here, but added to avoid compiler warning
+    return nullptr;                                                 // Should never reach here, but added to avoid compiler warning
 }
 
 std::shared_ptr<Shader> ResourceManager::GetFragmentShader(const std::string& _name)
@@ -401,7 +443,7 @@ std::shared_ptr<Shader> ResourceManager::GetFragmentShader(const std::string& _n
         LOG(logWarning, LogResourceManager, "Resource not found: ", _name);
         return resourceManager.PrivateGet<Shader>("DefaultFragment"); // Return default fragment shader if not found
     }
-    return nullptr;                                                    // Should never reach here, but added to avoid compiler warning
+    return nullptr;                                                   // Should never reach here, but added to avoid compiler warning
 }
 
 std::shared_ptr<Mesh> ResourceManager::GetMesh(const std::string& _name)
@@ -418,7 +460,7 @@ std::shared_ptr<Mesh> ResourceManager::GetMesh(const std::string& _name)
     //     LOG(logWarning, LogResourceManager, "Resource not found: ", _name);
     //     return resourceManager.PrivateGet<Mesh>("DefaultMesh"); // Return default mesh if not found
     // }
-    LOG(logWarning, LogResourceManager, "Resource not found: ", _name);
+    LOG(logFatal, LogResourceManager, "Resource not found: ", _name);
     return nullptr;
 }
 
@@ -431,6 +473,19 @@ std::shared_ptr<Material> ResourceManager::GetMaterial(const std::string& _name)
         if (std::shared_ptr<Material> resource = std::dynamic_pointer_cast<Material>(it->second)) return resource;
         LOG(logWarning, LogResourceManager, "Resource type mismatch for name: ", _name);
     }
-    LOG(logWarning, LogResourceManager, "Resource not found: ", _name);
+    LOG(logFatal, LogResourceManager, "Resource not found: ", _name);
+    return nullptr;
+}
+
+std::shared_ptr<MaterialInstance> ResourceManager::GetMaterialInstance(const std::string& _name)
+{
+    ResourceManager& resourceManager = ResourceManager::Instance();
+    auto             it              = resourceManager.m_Resources.find(_name);
+    if (it != resourceManager.m_Resources.end())
+    {
+        if (std::shared_ptr<MaterialInstance> resource = std::dynamic_pointer_cast<MaterialInstance>(it->second)) return resource;
+        LOG(logWarning, LogResourceManager, "Resource type mismatch for name: ", _name);
+    }
+    LOG(logFatal, LogResourceManager, "Resource not found: ", _name);
     return nullptr;
 }

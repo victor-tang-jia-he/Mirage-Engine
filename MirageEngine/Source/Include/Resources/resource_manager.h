@@ -28,6 +28,7 @@ namespace MirageEngine::Core::Resources
     class Texture;
     class Mesh;
     class Material;
+    class MaterialInstance;
     struct Shader;
     struct Pipeline;
 
@@ -107,15 +108,16 @@ namespace MirageEngine::Core::Resources
             /// </summary>
             /// <param name="_name">Unique identifier for the material.</param>
             /// <returns>Pointer to the created Material, or nullptr on failure.</returns>
-            static std::shared_ptr<Material> CreateMaterial(const std::string& _name);
+            static std::shared_ptr<Material> CreateMaterial(const std::string& _name, const std::string& _pathVertex, const std::string& _pathFrag, size_t _uniformBufferSize);
 
+            static std::shared_ptr<MaterialInstance> CreateMaterialInstance(const std::string& _name, std::shared_ptr<Material> mat);
             /// <summary>
             /// Creates an empty material and registers it.
             /// </summary>
             /// <param name="_name">Unique identifier for the material.</param>
             /// <returns>Pointer to the created Material, or nullptr on failure.</returns>
             static std::shared_ptr<Pipeline>
-                CreatePipeline(const std::string& _name, const char* _pathFrag, const char* _pathVertex, std::shared_ptr<MirageRHI::IPipelineParameters> _pipelineParamter);
+                CreatePipeline(const std::string& _name, const std::string& _pathFrag, const std::string& _pathVertex, std::shared_ptr<MirageRHI::IPipelineParameters> _pipelineParamter);
 
             // -------------------------------------------------------------------------
             // Resource access
@@ -126,6 +128,7 @@ namespace MirageEngine::Core::Resources
             std::shared_ptr<Shader>   GetFragmentShader(const std::string& _name);
             std::shared_ptr<Mesh>     GetMesh(const std::string& _name);
             std::shared_ptr<Material> GetMaterial(const std::string& _name);
+            std::shared_ptr<MaterialInstance> GetMaterialInstance(const std::string& _name);
 
             /// <summary>
             /// Retrieves a resource by name and casts it to the requested type.
