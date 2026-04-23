@@ -66,9 +66,9 @@ namespace MirageEngine
 			{
 				if (gameObject)
 				{
-					T* comp = gameObject->GetComponent<T>();
+					std::shared_ptr<T> comp = gameObject->GetComponent<T>();
 					if (comp)
-						return comp;
+						return comp.get();
 				}
 			}
 			return nullptr;

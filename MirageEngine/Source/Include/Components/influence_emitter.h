@@ -2,7 +2,6 @@
 #include <iostream>
 #include <vector>
 #include <vector3.h>
-#include "Components/component.h" 
 #include "AI/influence_grid.h"
 
 namespace MirageEngine::Core::Components
