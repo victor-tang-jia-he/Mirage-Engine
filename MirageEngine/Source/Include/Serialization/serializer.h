@@ -35,9 +35,11 @@ namespace MirageEngine
 	class Serializer
 	{
 	public:
-		json SerializeScene(SceneGraph _sceneGraph);
+		// Save SceneGraph as a Json file
+		void SaveScene(SceneGraph _sceneGraph);
 
 	private:
+		json SerializeScene(SceneGraph _sceneGraph);
 		json SerializeGameObject(std::shared_ptr<GameObject> _gameObject, json _jParent);
 
 		json SerializeComponent(std::shared_ptr<Core::Components::Component> _component, json _Owner);
@@ -48,8 +50,6 @@ namespace MirageEngine
 		json SerializeVector3(Core::Math::Vector3 _vector3);
 		json SerializeQuaternion(Core::Math::Quaternion _quaternion);
 
-		json SerializeResource(Core::Resources::IResource* _resource);
+		bool ConvertJsonToFile(json _jTarget);
 	};
 }
-
-#include "serializer.inl"

@@ -18,19 +18,26 @@ using namespace MirageEngine;
 using namespace MirageEngine::Core;
 using namespace entt::literals;
 
-json Serializer::SerializeScene(SceneGraph _sceneGraph)
+void MirageEngine::Serializer::SaveScene(SceneGraph _sceneGraph)
 {
     LOG(logInfo, LogSerializer, "Saving Scene...");
+    json jSceneGraph = SerializeScene(_sceneGraph);
 
+    if (ConvertJsonToFile(jSceneGraph))
+        LOG(logInfo, LogSerializer, "Scene saved successfully");
+    else
+        LOG(logError, LogSerializer, "Failed to save scene");
+}
+
+json Serializer::SerializeScene(SceneGraph _sceneGraph)
+{
     json jScene;
 
-    // Serialize all scene roots
+    // Serialize all GameObjects recursively from Roots
     for (std::shared_ptr<GameObject> root : _sceneGraph.GetRootObjects())
     {
-        jScene["children"].push_back(SerializeGameObject(root, nullptr));
+        jScene["registry"].push_back(SerializeGameObject(root, nullptr));
     }
-
-    LOG(logInfo, LogSerializer, "Scene saved successfully");
 
     return jScene;
 }
@@ -48,13 +55,15 @@ json Serializer::SerializeGameObject(std::shared_ptr<GameObject> _gameObject, js
 
     // Serialize all gameobjects components
     for (std::shared_ptr<Components::Component> component : _gameObject->GetComponents()) {
-        jGameObject["components"].push_back(SerializeComponent(component));
+        jGameObject["components"].push_back(SerializeComponent(component, jGameObject));
     }
 
     // Recursivly serialize all gameobjects children
     for (std::shared_ptr<GameObject> child : _gameObject->GetChildren()) {
         jGameObject["children"].push_back(SerializeGameObject(child, jGameObject));
     }
+
+    LOG(logTemp, LogSerializer, "Serialized : ", _gameObject->GetName());
 
     return jGameObject;
 }
@@ -72,7 +81,7 @@ json MirageEngine::Serializer::SerializeComponent(std::shared_ptr<Components::Co
     {
         for (auto [id, data] : type.data())
         {
-            jComponent[data.name()].push_back(SerializeMetaData(type, data, (void*)_component.get()));
+            jComponent[data.name()] = (SerializeMetaData(type, data, (void*)_component.get()));
         }
     }
 
@@ -154,25 +163,24 @@ json MirageEngine::Serializer::SerializeMetaData(entt::meta_type _type, entt::me
             jMetaData[label] = *boolData;
         }
     }
-    else if (actualType == entt::resolve<std::shared_ptr<Resources::Mesh>>())
+    else if (actualType.is_pointer_like())
     {
-        if (std::shared_ptr<Resources::Mesh>* meshPtrData = value.try_cast<std::shared_ptr<Resources::Mesh>>())
+        if (entt::meta_any ref = *value; ref) 
         {
-            Resources::Mesh* rawMeshPtrData = meshPtrData->get();
-            jMetaData[label] = SerializeResource(rawMeshPtrData);
+            if (Core::Components::Component* component = ref.try_cast<Core::Components::Component>())
+            {
+                jMetaData[label] = component->GetName();
+            }
+            else if (Core::Resources::IResource* resource = ref.try_cast<Core::Resources::IResource>())
+            {
+                jMetaData[label] = resource->GetName();
+            }
         }
     }
-    else if (actualType == entt::resolve<std::shared_ptr<Resources::Material>>())
+    else
     {
-        if (std::shared_ptr<Resources::Material>* materialPtrData = value.try_cast<std::shared_ptr<Resources::Material>>())
-        {
-            Resources::Material* rawMaterialPtrData = materialPtrData->get();
-            jMetaData[label] = SerializeResource(rawMaterialPtrData);
-        }
+        LOG(logTemp, LogSerializer, "Ignored Meta Data : ", actualType.name());
     }
-    // Add Unknown Pointers 
-    // (try using parent class with shared_ptr to detect type of variable ?)
-    // (try using void* to detect raw component ptr)
 
     return jMetaData;
 }
@@ -200,11 +208,15 @@ json MirageEngine::Serializer::SerializeQuaternion(Core::Math::Quaternion _quate
     return jQuaternion;
 }
 
-json MirageEngine::Serializer::SerializeResource(Core::Resources::IResource* _resource)
+bool MirageEngine::Serializer::ConvertJsonToFile(json _jTarget)
 {
-    json jResource;
-
-    jResource["name"] = _resource->GetName();
-
-    return jResource;
+    if (_jTarget)
+    {
+        std::fstream file("scene.json");
+        file.clear();
+        file << _jTarget;
+        file.flush();
+        return true;
+    }
+    return false;
 }

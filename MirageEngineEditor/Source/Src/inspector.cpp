@@ -141,17 +141,10 @@ namespace Mirage
 		{
 			ResolveBool(value, label, _data, instance);
 		}
-		else if (actualType == entt::resolve<std::shared_ptr<Core::Resources::Mesh>>())
+		else if (actualType.is_pointer_like())
 		{
-			ResolveMesh(value);
-		}
-		else if (actualType == entt::resolve<std::shared_ptr<Core::Resources::Material>>())
-		{
-			ResolveMaterial(value);
-		}
-		else if (actualType == entt::resolve<std::shared_ptr<Core::Resources::Texture>>())
-		{
-			ResolveTexture(value);
+			// Checks if the component contains refs to other components or ressources
+			ResolvePointer(value, label, _data, instance);
 		}
 	}
 
@@ -281,6 +274,63 @@ namespace Mirage
 		{
 			_data.set(_instance, val);
 		}
+	}
+
+	void Inspector::ResolvePointer(entt::meta_any _value, const char* _label, entt::meta_data _data, entt::meta_any _instance)
+	{
+		if (entt::meta_any ref = *_value; ref) 
+		{
+			if (ResolveComponent(ref))
+			{
+				return;
+			}
+			else if (ResolveResource(ref))
+			{
+				return;
+			}
+		}
+	}
+
+	bool Inspector::ResolveComponent(entt::meta_any _value)
+	{
+		if (Core::Components::Component* component = _value.try_cast<Core::Components::Component>())
+		{
+			const char* componentLabel = component ? "Assigned" : "None";
+
+			if (ImGui::Button((std::string(componentLabel) + "##" + _value.type().name()).c_str(), ImVec2(-1, 0)))
+			{
+				if (ImGui::BeginDragDropTarget())
+				{
+					if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM"))
+					{
+					}
+					ImGui::EndDragDropTarget();
+				}
+			}
+			return true;
+		}
+		return false;
+	}
+
+	bool Inspector::ResolveResource(entt::meta_any _value)
+	{
+		if (Core::Resources::IResource* resource = _value.try_cast<Core::Resources::IResource>())
+		{
+			const char* resourceLabel = resource ? "Assigned" : "None";
+
+			if (ImGui::Button((std::string(resourceLabel) + "##" + _value.type().name()).c_str(), ImVec2(-1, 0)))
+			{
+				if (ImGui::BeginDragDropTarget())
+				{
+					if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM"))
+					{
+					}
+					ImGui::EndDragDropTarget();
+				}
+			}
+			return true;
+		}
+		return false;
 	}
 
 	void Inspector::ResolveMesh(entt::meta_any _value)
