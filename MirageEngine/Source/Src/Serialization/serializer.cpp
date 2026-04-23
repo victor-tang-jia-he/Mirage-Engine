@@ -36,7 +36,7 @@ json Serializer::SerializeScene(SceneGraph _sceneGraph)
     // Serialize all GameObjects recursively from Roots
     for (std::shared_ptr<GameObject> root : _sceneGraph.GetRootObjects())
     {
-        jScene["registry"].push_back(SerializeGameObject(root, nullptr));
+        jScene["roots"].emplace_back(SerializeGameObject(root, nullptr));
     }
 
     return jScene;
@@ -46,24 +46,23 @@ json Serializer::SerializeGameObject(std::shared_ptr<GameObject> _gameObject, js
 {
     json jGameObject;
 
-    jGameObject["name"] = _gameObject->GetName();
+    jGameObject["ObjName"] = _gameObject->GetName();
     jGameObject["id"] = _gameObject->GetID();
     jGameObject["components"] = json::array();
     jGameObject["children"] = json::array();
-    jGameObject["parent"] = _jParent;
     jGameObject["transform"] = SerializeTransform(_gameObject->Transform);
-
-    // Serialize all gameobjects components
-    for (std::shared_ptr<Components::Component> component : _gameObject->GetComponents()) {
-        jGameObject["components"].push_back(SerializeComponent(component, jGameObject));
-    }
 
     // Recursivly serialize all gameobjects children
     for (std::shared_ptr<GameObject> child : _gameObject->GetChildren()) {
-        jGameObject["children"].push_back(SerializeGameObject(child, jGameObject));
+        jGameObject["children"].emplace_back(SerializeGameObject(child, jGameObject));
     }
 
-    LOG(logTemp, LogSerializer, "Serialized : ", _gameObject->GetName());
+    // Serialize all gameobjects components
+    for (std::shared_ptr<Components::Component> component : _gameObject->GetComponents()) {
+        jGameObject["components"].emplace_back(SerializeComponent(component, jGameObject));
+    }
+
+    LOG(logTemp, LogSerializer, "Serialized : GameObject ", _gameObject->GetName().c_str());
 
     return jGameObject;
 }
@@ -72,8 +71,7 @@ json MirageEngine::Serializer::SerializeComponent(std::shared_ptr<Components::Co
 {
     json jComponent;
 
-    jComponent["componentName"] = _component->GetName();
-    jComponent["owner"] = _Owner;
+    jComponent["CompName"] = _component->GetName();
 
     // Serializing other Component specifice variables
     auto type = entt::resolve(_component->GetType());
@@ -118,49 +116,49 @@ json MirageEngine::Serializer::SerializeMetaData(entt::meta_type _type, entt::me
     {
         if (std::string* stringData = value.try_cast<std::string>())
         {
-            jMetaData[label] = *stringData;
+            jMetaData = *stringData;
         }
     }
     else if (actualType == entt::resolve<Math::Vector3>())
     {
         if (Math::Vector3* vector3Data = value.try_cast<Math::Vector3>())
         {
-            jMetaData[label] = SerializeVector3(*vector3Data);
+            jMetaData = SerializeVector3(*vector3Data);
         }
     }
     else if (actualType == entt::resolve<Math::Quaternion>())
     {
         if (Math::Quaternion* quaternionData = value.try_cast<Math::Quaternion>())
         {
-            jMetaData[label] = SerializeQuaternion(*quaternionData);
+            jMetaData = SerializeQuaternion(*quaternionData);
         }
     }
     else if (actualType == entt::resolve<float>())
     {
         if (float* floatData = value.try_cast<float>())
         {
-            jMetaData[label] = *floatData;
+            jMetaData = *floatData;
         }
     }
     else if (actualType == entt::resolve<int>())
     {
         if (int* intData = value.try_cast<int>())
         {
-            jMetaData[label] = *intData;
+            jMetaData = *intData;
         }
     }
     else if (actualType == entt::resolve<unsigned int>())
     {
         if (unsigned int* unsignedIntData = value.try_cast<unsigned int>())
         {
-            jMetaData[label] = *unsignedIntData;
+            jMetaData = *unsignedIntData;
         }
     }
     else if (actualType == entt::resolve<bool>())
     {
         if (bool* boolData = value.try_cast<bool>())
         {
-            jMetaData[label] = *boolData;
+            jMetaData = *boolData;
         }
     }
     else if (actualType.is_pointer_like())
@@ -169,17 +167,17 @@ json MirageEngine::Serializer::SerializeMetaData(entt::meta_type _type, entt::me
         {
             if (Core::Components::Component* component = ref.try_cast<Core::Components::Component>())
             {
-                jMetaData[label] = component->GetName();
+                jMetaData = component->GetName();
             }
             else if (Core::Resources::IResource* resource = ref.try_cast<Core::Resources::IResource>())
             {
-                jMetaData[label] = resource->GetName();
+                jMetaData = resource->GetName();
             }
         }
     }
     else
-    {
-        LOG(logTemp, LogSerializer, "Ignored Meta Data : ", actualType.name());
+    {   
+        LOG(logTemp, LogSerializer, "Ignored Meta Data : ", label);
     }
 
     return jMetaData;
@@ -210,13 +208,9 @@ json MirageEngine::Serializer::SerializeQuaternion(Core::Math::Quaternion _quate
 
 bool MirageEngine::Serializer::ConvertJsonToFile(json _jTarget)
 {
-    if (_jTarget)
-    {
-        std::fstream file("scene.json");
-        file.clear();
-        file << _jTarget;
-        file.flush();
-        return true;
-    }
-    return false;
+    std::ofstream file("scene.json");
+    file.clear();
+    file << _jTarget.dump(4);
+    file.flush();
+    return true;
 }

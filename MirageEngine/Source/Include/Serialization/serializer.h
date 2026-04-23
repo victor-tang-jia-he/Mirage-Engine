@@ -36,20 +36,21 @@ namespace MirageEngine
 	{
 	public:
 		// Save SceneGraph as a Json file
-		void SaveScene(SceneGraph _sceneGraph);
+		static void SaveScene(SceneGraph _sceneGraph);
 
 	private:
-		json SerializeScene(SceneGraph _sceneGraph);
-		json SerializeGameObject(std::shared_ptr<GameObject> _gameObject, json _jParent);
+		static json SerializeScene(SceneGraph _sceneGraph);
+		static json SerializeGameObject(std::shared_ptr<GameObject> _gameObject, json _jParent);
 
-		json SerializeComponent(std::shared_ptr<Core::Components::Component> _component, json _Owner);
-		json SerializeTransform(Core::Components::Transform _transform);
+		static json SerializeComponent(std::shared_ptr<Core::Components::Component> _component, json _Owner);
+		static json SerializeTransform(Core::Components::Transform _transform);
 
-		json SerializeMetaData(entt::meta_type _type, entt::meta_data _data, void* _instancePtr);
+		// Serializes Components reflected meta data
+		static json SerializeMetaData(entt::meta_type _type, entt::meta_data _data, void* _instancePtr);
 
-		json SerializeVector3(Core::Math::Vector3 _vector3);
-		json SerializeQuaternion(Core::Math::Quaternion _quaternion);
+		static json SerializeVector3(Core::Math::Vector3 _vector3);
+		static json SerializeQuaternion(Core::Math::Quaternion _quaternion);
 
-		bool ConvertJsonToFile(json _jTarget);
+		static bool ConvertJsonToFile(json _jTarget);
 	};
 }

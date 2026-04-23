@@ -7,6 +7,7 @@
 #include "UI_wrapper.h"
 #include "gizmo.h"
 #include "renderer.h"
+#include "Serialization/serializer.h"
 
 namespace Mirage
 {
@@ -45,6 +46,8 @@ namespace Mirage
 		MirageEditor::Gizmo::EditView(m_SceneGraph);
 		MirageEditor::Gizmo::EditTransform(m_SceneGraph);
 
+		HandlePlayMode();
+
 		UIWrapper::EndFrame();
 	}
 
@@ -56,5 +59,28 @@ namespace Mirage
 		}
 
 		UIWrapper::Shutdown();
+	}
+	void EditorApp::HandlePlayMode()
+	{
+		if (ImGui::IsKeyPressed(ImGuiKey_K) && !m_IsPlaying)
+		{
+			MirageEngine::Serializer::SaveScene(*m_SceneGraph);
+			m_IsPlaying = true;
+		}
+		if (ImGui::IsKeyPressed(ImGuiKey_L))
+		{
+			m_IsPaused = !m_IsPaused;
+		}
+		if (ImGui::IsKeyPressed(ImGuiKey_M) && m_IsPlaying)
+		{
+			m_IsStoped = true;
+		}
+
+		if (m_IsStoped)
+		{
+			m_IsPlaying = false;
+			m_IsPaused = false;
+			m_IsStoped = false;
+		}
 	}
 }
