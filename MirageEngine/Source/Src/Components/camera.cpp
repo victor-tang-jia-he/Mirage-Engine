@@ -3,6 +3,7 @@
 #include <Input/input_mapping.h>
 #include <Events/event.h>
 #include <iostream>
+#include <algorithm>
 #include <time_manager.h>
 #include <GLFW/glfw3.h>
 
@@ -30,6 +31,7 @@ void Camera::BindInput(std::shared_ptr<InputMapping> map)
     map->RegisterAxis2D("Camera", GLFW_KEY_D, GLFW_KEY_A, GLFW_KEY_W, GLFW_KEY_S);
     map->RegisterAxis1D("Camera", GLFW_KEY_LEFT_CONTROL, GLFW_KEY_SPACE);
     map->RegisterInput("Run", GLFW_KEY_LEFT_SHIFT);
+    map->RegisterInput("CameraView", GLFW_MOUSE_BUTTON_2);
     std::function<void(CallbackInputInfo)> func = [this](CallbackInputInfo info)
     {
         if (info.Held) { m_CameraVelocity = 5.f; }
@@ -38,6 +40,7 @@ void Camera::BindInput(std::shared_ptr<InputMapping> map)
 
     map->RegisterAction("Run", func);
     map->RegisterAction("Camera", this, &Camera::Move);
+    map->RegisterAction("CameraView", this, &Camera::View);
 }
 
 void Camera::Move(Input::CallbackInputInfo info)
@@ -53,22 +56,18 @@ void Camera::Move(Input::CallbackInputInfo info)
 
 void Camera::View(Input::CallbackInputInfo info)
 {
+    if (!info.Held) return;
     Vector2 mouseDelta = InputSystem::GetMouseDelta();
+    float sensitivity = -0.1f;
 
-    // Sensibilit¨¦ r¨¦glable (par exemple 0.1f)
-    float sensitivity = 0.1f;
+    m_CameraPitch = m_CameraPitch + ToRad(mouseDelta.Y * sensitivity);
+    m_CameraYaw   = m_CameraYaw + ToRad(mouseDelta.X * sensitivity);
 
-    float yaw   = mouseDelta.X * sensitivity;
-    float pitch = -mouseDelta.Y * sensitivity;
+    const float maxPitch = ToRad(89);
+    m_CameraPitch        = std::clamp(m_CameraPitch, -maxPitch, maxPitch);
 
-    Vector3 euler = Transform().GetRotation().ToEulerAngle();
+    Quaternion rotationX = Quaternion({ 1.f, 0.f, 0 }, m_CameraPitch);
+    Quaternion rotationY = Quaternion({ 0.f, 1.f, 0 }, m_CameraYaw);
 
-    euler.Y += yaw;
-    euler.X += pitch;
-
-    // Clamp du pitch entre -89¡ã et +89¡ã (en radians si votre moteur utilise des radians)
-    const float maxPitch = 89.0f * (3.14159f / 180.0f);
-    euler.X              = std::clamp(euler.X, -maxPitch, maxPitch);
-
-    Transform().SetRotation(Quaternion(euler));
+    Transform().SetRotation(rotationY * rotationX);
 }

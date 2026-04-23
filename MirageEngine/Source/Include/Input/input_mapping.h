@@ -85,6 +85,8 @@ namespace MirageEngine::Core
 
                 template <typename T, typename... Args> void RegisterAction(const std::string& _name, T* _instance, void (T::*_method)(Args...));
 
+                template <typename T> void RegisterAction(const std::string& _name, T&& _func);
+
                 void Remove(const std::string& _name);
 
                 void Clear() { m_Map.clear(); }

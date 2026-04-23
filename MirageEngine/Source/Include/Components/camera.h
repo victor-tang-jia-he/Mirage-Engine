@@ -23,6 +23,7 @@ namespace MirageEngine
                     unsigned int m_Width, m_Height = 0;
                     float        m_Fov            = 90.f;
                     float        m_CameraVelocity = 1.f;
+                    float        m_CameraYaw, m_CameraPitch;
 
                     MirageEngine::Core::Components::Transform m_transform;
 

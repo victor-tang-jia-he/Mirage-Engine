@@ -20,4 +20,6 @@ namespace MirageEngine::Core::Input
 
         RegisterAction<Args...>(_name, func);
     }
+
+    template <typename T> void InputMapping::RegisterAction(const std::string& _name, T&& _func) { RegisterAction(_name, std::function(std::forward<T>(_func))); }
 }
