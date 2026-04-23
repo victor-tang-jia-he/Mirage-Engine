@@ -10,44 +10,7 @@ namespace Mirage
 {
 	void Explorer::InitPanel()
 	{
-		std::filesystem::path current = std::filesystem::current_path();
-		bool found = false;
-
-		for (int i = 0; i < 5; ++i)
-		{
-			if (std::filesystem::exists(current / "MirageEngine" / "Assets"))
-			{
-				m_RootPath = std::filesystem::absolute(current / "MirageEngine" / "Assets");
-				found = true;
-				break;
-			}
-
-			if (current.filename() == "MirageEngine" && std::filesystem::exists(current / "Assets"))
-			{
-				m_RootPath = std::filesystem::absolute(current / "Assets");
-				found = true;
-				break;
-			}
-			if (current.has_parent_path()) {
-				current = current.parent_path();
-			}
-			else {
-				break;
-			}
-		}
-		if (!found)
-		{
-			current = std::filesystem::current_path();
-			for (int i = 0; i < 3; ++i) {
-				if (std::filesystem::exists(current / "Assets")) {
-					m_RootPath = std::filesystem::absolute(current / "Assets");
-					found = true;
-					break;
-				}
-				current = current.parent_path();
-			}
-		}
-
+		ShowFolderContent();
 		m_CurrentPath = m_RootPath;
 		ScanProjectDirectory(m_CurrentPath);
 
@@ -215,6 +178,51 @@ namespace Mirage
 		ScanProjectDirectory(m_CurrentPath);
 	}
 
+	void Explorer::ShowFolderContent()
+	{
+		std::filesystem::path content = std::filesystem::current_path();
+		bool found = false;
+
+		for (int i = 0; i < 5; ++i)
+		{
+			if (std::filesystem::exists(content / "MirageEngine" / "Assets"))
+			{
+				m_RootPath = std::filesystem::absolute(content / "MirageEngine" / "Assets");
+				found = true;
+				break;
+			}
+
+			if (content.filename() == "MirageEngine" && std::filesystem::exists(content / "Assets"))
+			{
+				m_RootPath = std::filesystem::absolute(content / "Assets");
+				found = true;
+				break;
+			}
+			if (content.has_parent_path())
+			{
+				content = content.parent_path();
+			}
+			else
+			{
+				break;
+			}
+		}
+		if (!found)
+		{
+			content = std::filesystem::current_path();
+			for (int i = 0; i < 3; ++i)
+			{
+				if (std::filesystem::exists(content / "Assets"))
+				{
+					m_RootPath = std::filesystem::absolute(content / "Assets");
+					found = true;
+					break;
+				}
+				content = content.parent_path();
+			}
+		}
+	}
+
 	void Explorer::DrawDirectoryContent()
 	{
 		m_AnItemWasRightClicked = false;
@@ -233,7 +241,8 @@ namespace Mirage
 		}
 		ImGui::EndChild();
 
-		if (!m_NextModalToOpen.empty()) {
+		if (!m_NextModalToOpen.empty())
+		{
 			ImGui::OpenPopup(m_NextModalToOpen.c_str());
 			m_NextModalToOpen = "";
 		}
@@ -471,10 +480,10 @@ namespace Mirage
 		}
 	}
 
-	void Explorer::RenameItem(std::filesystem::path& _oldPath, std::filesystem::path& _newPath)
+	void Explorer::RenameItem(const std::filesystem::path& _oldPath, const std::filesystem::path& _newPath)
 	{
 		std::error_code ec;
-		std::filesystem::rename(_oldPath, _newPath);
+		std::filesystem::rename(_oldPath, _newPath, ec);
 
 		if (ec)
 		{

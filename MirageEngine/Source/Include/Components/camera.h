@@ -17,8 +17,10 @@ namespace MirageEngine
 			{
 			private:
 				// Clipping Planes
-				float m_Near, m_Far = 0.f;
-				unsigned int m_Width, m_Height = 0;
+				float m_Near = 0.f;
+				float m_Far = 0.f;
+				unsigned int m_Width = 0;
+				unsigned int m_Height = 0;
 				float m_Fov = 90.f;
 				float m_CameraVelocity = 1.f;
 
@@ -40,11 +42,11 @@ namespace MirageEngine
 				MirageEngine::Core::Math::Matrix4 GetView() const { return MirageEngine::Core::Math::Matrix4::LookAt(m_transform.GetPosition(), m_transform.GetPosition() + m_transform.Forward(), m_transform.Up()); }
 
 				// SetParameter
-				inline void SetNear(float _near) { m_Near = _near; }
-				inline void SetFar(float _far) { m_Far = _far; }
-				inline void SetWidth(unsigned int _width) { m_Width = _width; }
-				inline void SetHeight(unsigned int _height) { m_Height = _height; }
-				inline void SetFov(float _fov) { m_Fov = _fov; }
+				void SetNear(float _near) { m_Near = _near; }
+				void SetFar(float _far) { m_Far = _far; }
+				void SetWidth(unsigned int _width) { m_Width = _width; }
+				void SetHeight(unsigned int _height) { m_Height = _height; }
+				void SetFov(float _fov) { m_Fov = _fov; }
 				// Getters
 				float GetNear() const { return m_Near; }
 				float GetFar() const { return m_Far; }

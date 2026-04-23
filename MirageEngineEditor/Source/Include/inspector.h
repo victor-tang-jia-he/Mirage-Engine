@@ -1,6 +1,10 @@
 #pragma once
+#include <Logs/log_macro.h>
+
 #include "i_panel.h"
 #include <entt/entt.hpp>
+
+DECLARE_LOG_CATEGORY_EXTERN(LogInspector)
 
 namespace MirageEngine
 {
@@ -25,5 +29,20 @@ namespace Mirage
 
 		void DrawProperty(entt::meta_data _data, entt::meta_any _instance);
 		void DrawPropertyDirect(entt::meta_type _type, entt::meta_data _data, void* _instancePtr);
+
+	private:
+		void ResolveVec3(entt::meta_any _value, const char* _label, entt::meta_data _data, entt::meta_any _instance);
+		void ResolveQuaternion(entt::meta_any _value, const char* _label, entt::meta_data _data, entt::meta_any _instance);
+		void ResolveString(entt::meta_any _value, const char* _label, entt::meta_data _data, entt::meta_any _instance);
+		void ResolveInt(entt::meta_any _value, const char* _label, entt::meta_data _data, entt::meta_any _instance);
+		void ResolveFloat(entt::meta_any _value, const char* _label, entt::meta_data _data, entt::meta_any _instance);
+		void ResolveBool(entt::meta_any _value, const char* _label, entt::meta_data _data, entt::meta_any _instance);
+		void ResolveUnsignedInt(entt::meta_any _value, const char* _label, entt::meta_data _data, entt::meta_any _instance);
+
+		void ResolveMesh(entt::meta_any _value);
+		void ResolveMaterial(entt::meta_any _value);
+		void ResolveTexture(entt::meta_any _value);
+		void ResolveShader(entt::meta_any _value);
+
 	};
 }

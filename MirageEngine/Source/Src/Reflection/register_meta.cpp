@@ -1,11 +1,17 @@
 #include <Reflection/register_meta.h>
 #include "Components/mesh_renderer.h"
+#include <Resources/mesh.h>
+#include <Resources/texture.h>
 
 // Components includes
 #include <GameObject/game_object.h>
 #include <Components/transform.h>
 #include <Components/camera.h>
 #include <Components/input_mapping.h>
+
+// Ressources includes
+#include <Resources/material.h>
+#include <Resources/shader.h>
 
 // EnTT includes
 #include <entt/entt.hpp>
@@ -32,10 +38,17 @@ RegisterMeta::~RegisterMeta()
 void RegisterMeta::RegisterAllMeta()
 {
 	RegisterGameObjectMeta();
+
 	RegisterTransformMeta();
+
 	RegisterMeshRendererMeta();
 	RegisterCameraMeta();
 	RegisterInputMappingMeta();
+
+	RegisterMeshMeta();
+	RegisterTextureMeta();
+	RegisterMaterialMeta();
+	RegisterShaderMeta();
 }
 
 void RegisterMeta::RegisterGameObjectMeta()
@@ -44,7 +57,7 @@ void RegisterMeta::RegisterGameObjectMeta()
 
 	// Assign a unique ID to the class. 
 	// "_hs" transforms the string into a unique integer at compile time.
-	gameObject.type("GameObject"_hs);
+	gameObject.type(entt::type_id<GameObject>().hash(), "GameObject");
 
 	gameObject.ctor<std::shared_ptr<GameObject>, std::string, bool, bool>();
 
@@ -53,14 +66,15 @@ void RegisterMeta::RegisterGameObjectMeta()
 	gameObject.data<&GameObject::SetIsStatic, &GameObject::GetIsStatic>("IsStatic");
 
 	gameObject.data<static_cast<void(GameObject::*)(Math::Vector3)>(&GameObject::SetPosition), &GameObject::GetPosition>("Position");
-	gameObject.data<&GameObject::SetRotation, &GameObject::GetRotation>("Rotation");
+	gameObject.data<static_cast<void(GameObject::*)(Math::Quaternion)>(&GameObject::SetRotation), &GameObject::GetRotation>("Rotation");
+	gameObject.data<static_cast<void(GameObject::*)(Math::Vector3)>(&GameObject::SetScale), &GameObject::GetScale>("Scale");
 }
 
 void RegisterMeta::RegisterTransformMeta()
 {	
 	entt::meta_factory<Components::Transform> transform{};
 
-	transform.type("Transform"_hs);
+	transform.type(entt::type_id<Transform>().hash(), "Transform");
 	transform.ctor<Math::Vector3, Math::Quaternion, Math::Vector3>();
 
 	transform.data<&Components::Transform::SetPosition, &Components::Transform::GetPosition>("Position");
@@ -68,8 +82,10 @@ void RegisterMeta::RegisterTransformMeta()
 	transform.data<&Components::Transform::SetScale, &Components::Transform::GetScale>("Scale");
 	
 	auto transType = entt::resolve("Transform"_hs);
-	if (transType) {
-		for (auto [id, data] : transType.data()) {
+	if (transType)
+	{
+		for (auto [id, data] : transType.data())
+		{
 		}
 	}
 }
@@ -80,9 +96,7 @@ void RegisterMeta::RegisterMeshRendererMeta()
 
 	// IMPORTANT: We use entt::type_id<T>().hash() as the ID because components are stored as base "Component*" pointers. 
 	// When we call comp->GetType(), it returns the native C++ hash. By using the same hash here, the Inspector can "resolve" the correct meta-data.
-	// Right now it causes a crash.
-	meshRenderer.type("MeshRendererReflection"_hs);
-	//meshRenderer.type(entt::type_id<MeshRenderer>().hash());
+	meshRenderer.type(entt::type_id<MeshRenderer>().hash(), "MeshRenderer");
 
 	meshRenderer.base<Component>();
 
@@ -93,17 +107,14 @@ void RegisterMeta::RegisterMeshRendererMeta()
 void RegisterMeta::RegisterCameraMeta()
 {
 	entt::meta_factory<Camera> camera{};
-	//camera.type("CameraReflection"_hs);
-	camera.type(entt::type_id<Camera>().hash());
 
+	camera.type(entt::type_id<Camera>().hash(), "Camera");
 
 	camera.base<Component>();
 
-	camera.data<&Camera::SetFov, &Camera::GetFov>("Field of View");
-	camera.data<&Camera::SetNear, &Camera::GetNear>("Near Plane");
-	camera.data<&Camera::SetFar, &Camera::GetFar>("Far Plane");
-	camera.data<&Camera::SetWidth, &Camera::GetWidth>("Width");
-	camera.data<&Camera::SetHeight, &Camera::GetHeight>("Height");
+	camera.data<&Camera::SetFov, &Camera::GetFov>("FOV");
+	camera.data<&Camera::SetNear, &Camera::GetNear>("Near");
+	camera.data<&Camera::SetFar, &Camera::GetFar>("Far");
 }
 
 void RegisterMeta::RegisterInputMappingMeta()
@@ -111,21 +122,66 @@ void RegisterMeta::RegisterInputMappingMeta()
 	using namespace MirageEngine::Core::Input;
 
 	entt::meta_factory<CallbackInputInfo> callbackInputInfo{};
-	//callbackInputInfo.type("InputInfo"_hs);
-	callbackInputInfo.type(entt::type_id<CallbackInputInfo>().hash());
+
+	callbackInputInfo.type(entt::type_id<CallbackInputInfo>().hash(), "CallbackInputInfo");
 
 	callbackInputInfo.data<&CallbackInputInfo::Pressed>("Pressed");
 	callbackInputInfo.data<&CallbackInputInfo::Held>("Held");
 	callbackInputInfo.data<&CallbackInputInfo::Released>("Released");;
 
 	entt::meta_factory<InputMapping> inputMapping{};
-	inputMapping.type("InputMappingReflection"_hs);
-	//inputMapping.type(entt::type_id<InputMapping>().hash());
+
+	inputMapping.type(entt::type_id<InputMapping>().hash(), "InputMapping");
 
 	inputMapping.base<Component>();
 
 	inputMapping.data<&InputMapping::Map>("Bindings");
 
 	inputMapping.func<&InputMapping::Clear>("ClearAll");
-	inputMapping.func<(void(InputMapping::*)(int))& InputMapping::Remove>("RemoveKey");
+
+	inputMapping.func<&InputMapping::Remove>("RemoveKey");
+}
+
+void RegisterMeta::RegisterMeshMeta()
+{
+	using namespace MirageEngine::Core::Resources;
+	entt::meta_factory<Mesh> mesh{};
+
+	mesh.type(entt::type_id<Mesh>().hash(), "Mesh");
+
+	mesh.base<IResource>();
+
+	mesh.data<nullptr, &Mesh::GetName>("Name");
+}
+
+void RegisterMeta::RegisterTextureMeta()
+{
+	using namespace MirageEngine::Core::Resources;
+	entt::meta_factory<Texture> texture{};
+	
+	texture.type(entt::type_id<Texture>().hash(), "Texture");
+
+	texture.base<IResource>();
+
+	texture.data<nullptr, &Texture::GetName>("Name");
+}
+
+void MirageEngine::RegisterMeta::RegisterMaterialMeta()
+{
+	entt::meta_factory<Resources::Material> material{};
+	material.type(entt::type_id<Resources::Material>().hash(), "Material");
+
+	material.base<Resources::IResource>();
+
+	material.data<nullptr, &Resources::Material::GetName>("Name");
+}
+
+void MirageEngine::RegisterMeta::RegisterShaderMeta()
+{
+	entt::meta_factory<Resources::Shader> material{};
+	material.type(entt::type_id<Resources::Shader>().hash(), "Shader");
+
+	material.base<Resources::IResource>();
+
+	material.data<nullptr, &Resources::Shader::GetName>("Name");
 }
