@@ -6,32 +6,29 @@ namespace MirageEngine
 {
 	class RegisterMeta
 	{
-		// Variables
-	public:
-	protected:
-	private:
-
-		// Methods
 	public:
 		RegisterMeta();
 		~RegisterMeta();
 
 		void RegisterAllMeta();
+
+	private:
+		void RegisterGameObjectMeta();
+
+		void RegisterTransformMeta();
+
 		void RegisterMeshRendererMeta();
-		void RegisterMeshMeta();
 		void RegisterCameraMeta();
 		void RegisterInputMappingMeta();
+
+		void RegisterMeshMeta();
+		void RegisterTextureMeta();
+		void RegisterMaterialMeta();
+		void RegisterShaderMeta();
 
 		template<typename T>
 		void RegisterSharedPtr();
 
-	protected:
-	private:
-		void RegisterGameObjectMeta();
-		void RegisterTransformMeta();
-
-		void RegisterMaterialMeta();
-		void RegisterShaderMeta();
 	};
 }
 

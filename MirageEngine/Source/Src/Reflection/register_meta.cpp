@@ -1,5 +1,7 @@
 #include <Reflection/register_meta.h>
 #include "Components/mesh_renderer.h"
+#include <Resources/mesh.h>
+#include <Resources/texture.h>
 
 // Components includes
 #include <GameObject/game_object.h>
@@ -36,12 +38,17 @@ RegisterMeta::~RegisterMeta()
 void RegisterMeta::RegisterAllMeta()
 {
 	RegisterGameObjectMeta();
+
 	RegisterTransformMeta();
+
 	RegisterMeshRendererMeta();
 	RegisterCameraMeta();
 	RegisterInputMappingMeta();
 
-	//RegisterMaterialMeta();
+	RegisterMeshMeta();
+	RegisterTextureMeta();
+	RegisterMaterialMeta();
+	RegisterShaderMeta();
 }
 
 void RegisterMeta::RegisterGameObjectMeta()
@@ -133,6 +140,30 @@ void RegisterMeta::RegisterInputMappingMeta()
 	inputMapping.func<&InputMapping::Clear>("ClearAll");
 
 	inputMapping.func<&InputMapping::Remove>("RemoveKey");
+}
+
+void RegisterMeta::RegisterMeshMeta()
+{
+	using namespace MirageEngine::Core::Resources;
+	entt::meta_factory<Mesh> mesh{};
+
+	mesh.type(entt::type_id<Mesh>().hash(), "Mesh");
+
+	mesh.base<IResource>();
+
+	mesh.data<nullptr, &Mesh::GetName>("Name");
+}
+
+void RegisterMeta::RegisterTextureMeta()
+{
+	using namespace MirageEngine::Core::Resources;
+	entt::meta_factory<Texture> texture{};
+	
+	texture.type(entt::type_id<Texture>().hash(), "Texture");
+
+	texture.base<IResource>();
+
+	texture.data<nullptr, &Texture::GetName>("Name");
 }
 
 void MirageEngine::RegisterMeta::RegisterMaterialMeta()
