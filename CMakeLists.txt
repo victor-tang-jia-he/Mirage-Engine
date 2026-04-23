@@ -46,30 +46,17 @@ if(NOT EXISTS "${GLFW_SOURCE}/CMakeLists.txt")
     message(STATUS "Fetching GLFW...")
     FetchContent_Declare(
         glfw
-        GIT_REPOSITORY https://github.com/glfw/glfw.git
+        GIT_REPOSITORY https://github.com/glfw/glfw
         GIT_TAG 3.4
         SOURCE_DIR ${GLFW_SOURCE}
     )
     FetchContent_MakeAvailable(glfw)
-    add_subdirectory(${GLFW_SOURCE} ${CMAKE_BINARY_DIR}/GLFW)
 else()
     message(STATUS "Using local GLFW")
     add_subdirectory(${GLFW_SOURCE} ${CMAKE_BINARY_DIR}/GLFW)
 endif()
 
-if(TARGET glfw)
-    message(STATUS "GLFW target created successfully")
-    get_target_property(GLFW_TYPE glfw TYPE)
-    message(STATUS "GLFW target type: ${GLFW_TYPE}")
-else()
-    message(WARNING "GLFW target not found, checking for glfw::glfw...")
-    if(TARGET glfw::glfw)
-        message(STATUS "Found glfw::glfw target")
-    else()
-        message(FATAL_ERROR "No GLFW target found")
-    endif()
-endif()
-
+message(STATUS "GLFW created successfully")
 message(STATUS "================================================================================")
 message("")
 
@@ -79,12 +66,26 @@ message("")
 message(STATUS "================================================================================")
 message(STATUS "GLAD")
 
-if(EXISTS ${CMAKE_SOURCE_DIR}/Libraries/Glad/Src/Glad/glad.c)
-    add_library(glad STATIC ${CMAKE_SOURCE_DIR}/Libraries/Glad/Src/Glad/glad.c)
-    target_include_directories(glad PUBLIC ${CMAKE_SOURCE_DIR}/Libraries/Glad/Include)
+set(GLAD_DIR "${CMAKE_SOURCE_DIR}/Libraries/Glad")
+
+file(GLOB GLAD_CONTENTS ${GLAD_DIR}/*)
+list(LENGTH GLAD_CONTENTS GLAD_CONTENT_COUNT)
+
+if(NOT EXISTS ${GLAD_DIR}/Code/Src/Glad/glad.c OR GLAD_CONTENT_COUNT EQUAL 0)
+    message(STATUS "Fetching Glad...")
+    FetchContent_Declare(
+        glad
+        GIT_REPOSITORY https://github.com/Victor-Lin-Pro/glad
+        GIT_TAG main
+        SOURCE_DIR ${GLAD_DIR}
+    )
+    FetchContent_MakeAvailable(glad)
 else()
-    message(WARNING "glad.c not found! Please generate glad files first.")
+    message(STATUS "Using local Glad")
 endif()
+
+add_library(glad STATIC ${CMAKE_SOURCE_DIR}/Libraries/Glad/Code/Src/Glad/glad.c)
+target_include_directories(glad PUBLIC ${CMAKE_SOURCE_DIR}/Libraries/Glad/Code/Include)
 
 message(STATUS "GLAD target created successfully")
 
@@ -104,11 +105,11 @@ file(GLOB IMGUI_CONTENTS ${IMGUI_DIR}/*)
 list(LENGTH IMGUI_CONTENTS IMGUI_CONTENT_COUNT)
 
 # Check if ImGui folder is empty
-if(NOT EXISTS ${IMGUI_DIR} AND IMGUI_CONTENT_COUNT EQUAL 0)
+if(NOT EXISTS ${IMGUI_DIR} OR IMGUI_CONTENT_COUNT EQUAL 0)
     message(STATUS "Fetching ImGui...")
     FetchContent_Declare(
         imgui
-        GIT_REPOSITORY https://github.com/ocornut/imgui.git
+        GIT_REPOSITORY https://github.com/ocornut/imgui
         GIT_TAG docking
         SOURCE_DIR ${IMGUI_DIR}
     )
@@ -118,11 +119,8 @@ if(NOT EXISTS ${IMGUI_DIR} AND IMGUI_CONTENT_COUNT EQUAL 0)
         message(FATAL_ERROR "ImGui failed to populate")
     endif()
 else()
-    message(STATUS "Using local ImGui from ${IMGUI_DIR}")
+    message(STATUS "Using local ImGui")
 endif()
-
-set(imgui_SOURCE_DIR ${IMGUI_DIR})
-message(STATUS "ImGui fetched successfully")
 
 # Explicit list of ImGui core files (more reliable than GLOB)
 set(IMGUI_CORE_SOURCES
@@ -169,6 +167,7 @@ target_compile_definitions(imgui
         IMGUI_IMPL_OPENGL_LOADER_GLAD 
 )
 
+message(STATUS "ImGui created successfully")
 message(STATUS "================================================================================")
 message("")
 
@@ -183,7 +182,7 @@ set(IMGUIZMO_DIR "${CMAKE_SOURCE_DIR}/Libraries/ImGuizmo")
 file(GLOB IMGUIZMO_CONTENTS ${IMGUIZMO_DIR}/*)
 list(LENGTH IMGUIZMO_CONTENTS IMGUIZMO_CONTENT_COUNT)
 
-if(NOT EXISTS ${IMGUIZMO_DIR} AND IMGUIZMO_CONTENT_COUNT EQUAL 0)
+if(NOT EXISTS ${IMGUIZMO_DIR} OR IMGUIZMO_CONTENT_COUNT EQUAL 0)
     message(STATUS "Fetching ImGuizmo...")
     FetchContent_Declare(
         imguizmo
@@ -219,7 +218,7 @@ target_link_libraries(imguizmo
         imgui
 )
 
-message(STATUS "ImGuizmo configured successfully")
+message(STATUS "ImGuizmo created successfully")
 message(STATUS "================================================================================")
 message("")
 
@@ -242,30 +241,68 @@ if(NOT EXISTS ${TINYOBJLOADER_DIR}/CMakeLists.txt)
     message(STATUS "Fetching TinyObjLoader...")
     FetchContent_Declare(
         tinyobjloader
-        GIT_REPOSITORY https://github.com/tinyobjloader/tinyobjloader.git
+        GIT_REPOSITORY https://github.com/tinyobjloader/tinyobjloader
         GIT_TAG v1.0.6
-        SOURCE_DIR ${CMAKE_SOURCE_DIR}/Libraries/TinyObjLoader
+        SOURCE_DIR ${TINYOBJLOADER_DIR}
     )
     FetchContent_MakeAvailable(tinyobjloader)
-    add_subdirectory(${TINYOBJLOADER_DIR} ${CMAKE_BINARY_DIR}/TinyObjLoader EXCLUDE_FROM_ALL)
 else()
     message(STATUS "Using local TinyObjLoader")
     add_subdirectory(${TINYOBJLOADER_DIR} ${CMAKE_BINARY_DIR}/TinyObjLoader EXCLUDE_FROM_ALL)
 endif()
 
-if(TARGET tinyobjloader)
-    message(STATUS "TinyObjLoader target created successfully")
-    get_target_property(TINYOBJLOADER_TYPE tinyobjloader TYPE)
-    message(STATUS "TinyObjLoader target type: ${TINYOBJLOADER_TYPE}")
+message(STATUS "TinyObjLoader created successfully")
+message(STATUS "================================================================================")
+message("")
+
+# ============================================================================
+# STB Image
+# ============================================================================
+message(STATUS "================================================================================")
+message(STATUS "STB IMAGE")
+
+set(STB_IMAGE_DIR "${CMAKE_SOURCE_DIR}/Libraries/STBImage")
+
+file(GLOB STB_IMAGE_CONTENTS ${STB_IMAGE_DIR}/*)
+list(LENGTH STB_IMAGE_CONTENTS STB_IMAGE_CONTENT_COUNT)
+
+if(NOT EXISTS ${STB_IMAGE_DIR}/stb_image.h OR STB_IMAGE_CONTENT_COUNT EQUAL 0)
+    message(STATUS "Fetching STB Image...")
+    FetchContent_Declare(
+        stb_image
+        GIT_REPOSITORY https://github.com/nothings/stb
+        GIT_TAG master
+        SOURCE_DIR ${STB_IMAGE_DIR}
+    )
+    FetchContent_MakeAvailable(stb_image)
 else()
-    message(WARNING "TinyObjLoader target not found, checking for tinyobjloader::tinyobjloader...")
-    if(TARGET tinyobjloader::tinyobjloader)
-        message(STATUS "Found tinyobjloader::tinyobjloader target")
-    else()
-        message(FATAL_ERROR "No TinyObjLoader target found")
-    endif()
+    message(STATUS "Using local STB Image")
 endif()
 
+# Explicit list of STB Image core files (more reliable than GLOB)
+set(STB_IMAGE_CORE_SOURCES
+    ${STB_IMAGE_DIR}/deprecated/stb_image.c
+)
+
+set(STB_IMAGE_CORE_HEADERS
+    ${STB_IMAGE_DIR}/stb_image.h
+)
+
+# Combine all sources
+set(STB_IMAGE_ALL_SOURCES
+    ${STB_IMAGE_CORE_SOURCES}
+    ${STB_IMAGE_CORE_HEADERS}
+)
+
+# Create the STB Image library
+add_library(stb_image STATIC ${STB_IMAGE_ALL_SOURCES})
+
+target_include_directories(stb_image
+    PUBLIC
+        ${STB_IMAGE_DIR}
+)
+
+message(STATUS "STB Image created successfully")
 message(STATUS "================================================================================")
 message("")
 
@@ -293,12 +330,13 @@ else()
     message(STATUS "Fetching Bullet3...")
     FetchContent_Declare(
         bullet3
-        GIT_REPOSITORY https://github.com/bulletphysics/bullet3.git
+        GIT_REPOSITORY https://github.com/bulletphysics/bullet3
         SOURCE_DIR ${CMAKE_SOURCE_DIR}/Libraries/Bullet3
     )
     FetchContent_MakeAvailable(Bullet3)
 endif()
 
+message(STATUS "Bullet3 created successfully")
 message(STATUS "================================================================================")
 message("")
 
@@ -319,22 +357,17 @@ if(NOT EXISTS ${ENTT_DIR}/CMakeLists.txt)
     message(STATUS "Fetching EnTT...")
     FetchContent_Declare(
         entt
-        GIT_REPOSITORY https://github.com/skypjack/entt.git
+        GIT_REPOSITORY https://github.com/skypjack/entt
         GIT_TAG v3.16.0
         SOURCE_DIR ${CMAKE_SOURCE_DIR}/Libraries/EnTT
     )
     FetchContent_MakeAvailable(entt)
 else()
     message(STATUS "Using local EnTT")
-    add_subdirectory(${CMAKE_SOURCE_DIR}/Libraries/EnTT ${CMAKE_BINARY_DIR}/EnTT EXCLUDE_FROM_ALL)
+    add_subdirectory(${CMAKE_SOURCE_DIR}/Libraries/EnTT ${CMAKE_BINARY_DIR}/EnTT)
 endif()
 
-if(TARGET entt)
-    message(STATUS "EnTT target created successfully")
-    get_target_property(ENTT_TYPE entt TYPE)
-    message(STATUS "EnTT target type: ${ENTT_TYPE}")
-endif()
-
+message(STATUS "EnTT target created successfully")
 message(STATUS "================================================================================")
 message("")
 
@@ -355,7 +388,7 @@ if(NOT EXISTS ${CPP_TRACE}/CMakeLists.txt)
     message(STATUS "Fetching CPP Trace...")
     FetchContent_Declare(
         cpptrace
-        GIT_REPOSITORY https://github.com/jeremy-rifkin/cpptrace.git
+        GIT_REPOSITORY https://github.com/jeremy-rifkin/cpptrace
         GIT_TAG v1.0.4
         SOURCE_DIR ${CMAKE_SOURCE_DIR}/Libraries/CppTrace
     )
@@ -365,6 +398,7 @@ else()
     add_subdirectory(${CMAKE_SOURCE_DIR}/Libraries/CppTrace ${CMAKE_BINARY_DIR}/CppTrace EXCLUDE_FROM_ALL)
 endif()
 
+message(STATUS "CPP Trace created successfully")
 message(STATUS "================================================================================")
 message("")
 
@@ -377,7 +411,7 @@ add_subdirectory(${CMAKE_SOURCE_DIR}/MirageEngine/Tools/Toolbox)
 add_library(third_party INTERFACE)
 
 target_include_directories(third_party INTERFACE
-    ${CMAKE_SOURCE_DIR}/Libraries/Glad/include
+    ${CMAKE_SOURCE_DIR}/Libraries/Glad/Code/Include
     ${CMAKE_SOURCE_DIR}/Libraries/GLFW/include
     ${CMAKE_SOURCE_DIR}/Libraries/ImGui
     ${CMAKE_SOURCE_DIR}/Libraries/ImGuizmo
@@ -422,9 +456,8 @@ message(STATUS "================================================================
 message(STATUS "${PROJECT_NAME} Configuration Complete")
 message(STATUS "================================================================================")
 message(STATUS "Build Directory: ${MIRAGE_BIN_OUTPUT_DIR}")
-# message(STATUS "Build Engine: ${BUILD_ENGINE}")
-# message(STATUS "Build Editor: ${BUILD_EDITOR}")
 message(STATUS "Build Type: ${CMAKE_BUILD_TYPE}")
 message(STATUS "Compiler: ${CMAKE_CXX_COMPILER_ID}")
 message(STATUS "C++ Standard: ${CMAKE_CXX_STANDARD}")
 message(STATUS "================================================================================")
+message(STATUS "")

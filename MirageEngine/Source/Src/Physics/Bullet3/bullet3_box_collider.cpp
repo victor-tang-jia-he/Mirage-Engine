@@ -7,7 +7,6 @@ Bullet3BoxCollider::~Bullet3BoxCollider()
     if (m_CollisionShape)
     {
         delete m_CollisionShape;
-        m_CollisionShape = nullptr;
     }
 }
 

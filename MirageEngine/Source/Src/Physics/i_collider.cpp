@@ -10,7 +10,7 @@ bool ICollider::SetRigidbody(IRigidBody* _rigidbody)
         LOG(logWarning, LogCat::System, "Trying to set the rigidbody with the same rigidbody");
         return false;
     }
-    else if (m_RigidBody != nullptr) { m_RigidBody->RemoveCollider(this); }
+    else if (auto rigidbody = m_RigidBody) { rigidbody->RemoveCollider(this); }
     m_RigidBody = _rigidbody;
     return true;
 }

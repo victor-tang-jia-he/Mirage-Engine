@@ -12,4 +12,10 @@ namespace Mirage
 		std::wstring pathStr = _file.wstring();
 		ShellExecuteW(NULL, L"open", pathStr.c_str(), NULL, NULL, SW_SHOWNORMAL);
 	}
+
+	void EditorActions::ShowInExplorer(const std::filesystem::path& _file)
+	{
+		std::wstring pathStr = _file.wstring();
+		ShellExecuteW(NULL, L"open", L"explorer.exe", (L"/select,\"" + pathStr + L"\"").c_str(), NULL, SW_SHOWNORMAL);
+	}
 }

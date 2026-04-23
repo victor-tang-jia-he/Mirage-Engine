@@ -7,5 +7,6 @@ namespace Mirage
 	{
 	public:
 		static void OpenExternalEditor(const std::filesystem::path& _path);
+		static void ShowInExplorer(const std::filesystem::path& _path);
 	};
 }

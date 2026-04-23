@@ -23,8 +23,8 @@ namespace MirageEngine
 	{
 	public:
 		// Temp Default Pipeline, will be replaced when material system is done
-		MirageRHI::IPipeline* m_Pipeline = nullptr;
-		MirageRHI::IPipelineParameters* m_PipelineParameters = nullptr;
+        std::shared_ptr<MirageRHI::IPipeline> m_Pipeline           = nullptr;
+		std::shared_ptr<MirageRHI::IPipelineParameters> m_PipelineParameters = nullptr;
 
 	private:
 		GLFWwindow* m_Window = nullptr;
@@ -33,16 +33,16 @@ namespace MirageEngine
 
 		MirageRHI::IRenderInterface::API m_API = MirageRHI::IRenderInterface::API::OPENGL;
 
-		MirageRHI::IRenderInterface* m_RenderInterface = nullptr;
-		MirageRHI::IInstance* m_Instance = nullptr;
-		MirageRHI::ISurface* m_Surface = nullptr;
-		MirageRHI::IDevice* m_Device = nullptr;
-		MirageRHI::ISwapChain* m_SwapChain = nullptr;
-		MirageRHI::IRenderPass* m_RenderPass = nullptr;
-		MirageRHI::IPipelineParameters* m_ScreenPipelineParameters = nullptr;
-		MirageRHI::IPipeline* m_ScreenPipeline = nullptr;
-		MirageRHI::IUniformBuffer* m_UniformBuffer = nullptr;
-		MirageRHI::ICommandBuffer* m_CommandBuffer = nullptr;
+		std::shared_ptr<MirageRHI::IRenderInterface> m_RenderInterface = nullptr;
+		std::shared_ptr<MirageRHI::IInstance> m_Instance = nullptr;
+		std::shared_ptr<MirageRHI::ISurface> m_Surface = nullptr;
+		std::shared_ptr<MirageRHI::IDevice> m_Device = nullptr;
+		std::shared_ptr<MirageRHI::ISwapChain> m_SwapChain = nullptr;
+		std::shared_ptr<MirageRHI::IRenderPass> m_RenderPass = nullptr;
+		std::shared_ptr<MirageRHI::IPipelineParameters> m_ScreenPipelineParameters = nullptr;
+		std::shared_ptr<MirageRHI::IPipeline> m_ScreenPipeline = nullptr;
+		std::shared_ptr<MirageRHI::IUniformBuffer> m_UniformBuffer = nullptr;
+		std::shared_ptr<MirageRHI::ICommandBuffer> m_CommandBuffer = nullptr;
 
 	public:
 		// --- Initialization ---
@@ -65,7 +65,7 @@ namespace MirageEngine
 		uint32_t GetFramebufferTextureID() const;
 		void* GetWindowHandle() const { return static_cast<void*>(m_Window); }
 		// Used by the resource manager to create GPU resources with the correct RHI API
-		MirageRHI::IRenderInterface* GetRenderInterfaceHandle() const { return m_RenderInterface; }
+		std::shared_ptr<MirageRHI::IRenderInterface> GetRenderInterfaceHandle() const { return m_RenderInterface; }
 
 	private:
 		// --- Initialization Internal ---
@@ -84,8 +84,8 @@ namespace MirageEngine
 
 		// --- Rendering Internal ---
 		// Renders a GameObject and all its children recursively
-		void RenderObjectRecursive(GameObject* _obj);
-		// Draws a mesh with the given MeshRenderer and Transform components
-		void DrawMesh(MirageEngine::Core::Components::MeshRenderer* _meshRenderer, MirageEngine::Core::Components::Transform* _meshTransform);
+		void RenderObjectRecursive(std::shared_ptr<MirageEngine::GameObject> _obj);
+		// Draws a mesh with the given MeshRenderer and Transform
+		void DrawMesh(std::shared_ptr<MirageEngine::Core::Components::MeshRenderer> _meshRenderer, const MirageEngine::Core::Components::Transform& _meshTransform);
 	};
 }

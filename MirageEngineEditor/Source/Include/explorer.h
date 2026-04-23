@@ -35,6 +35,8 @@ namespace Mirage
 		bool m_ShouldOpenAssetPopup = false;
 		bool m_AnItemWasRightClicked = false;
 
+		std::string m_NextModalToOpen;
+
 	public:
 		Explorer(const char* _name) : IPanel(_name) {};
 		
@@ -52,12 +54,14 @@ namespace Mirage
 		//Display
 		void DrawDirectoryContent();
 		void DrawBreadcrumb();
-		void DrawFileIcon();
 
 		//Interaction
 		void HandleFileClick();
-		void BeginFileDrag();
-		void SyncWithOS(); //Watches if you add a file through Windows
+
+		void DuplicateItem(const std::filesystem::path& _source, const std::filesystem::path& _target);
+		std::filesystem::path GenerateUniquePath(const std::filesystem::path& _basePath);
+
+		void CreateItem(const std::filesystem::path& _path, std::string _name, std::string _extension, std::string _content);
 
 		void RenderAssetGrid();
 		void RenderAssetContextMenu();

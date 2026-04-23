@@ -103,19 +103,6 @@ namespace Mirage
 		return ImGui::IsItemClicked() && !ImGui::IsItemToggledOpen();
 	}
 
-	static std::string s_NextModalToOpen = "";
-
-	void UIWrapper::RequestModal(const char* _modalName) {
-		s_NextModalToOpen = _modalName;
-	}
-
-	void UIWrapper::UpdateModalRequests() {
-		if (!s_NextModalToOpen.empty()) {
-			ImGui::OpenPopup(s_NextModalToOpen.c_str());
-			s_NextModalToOpen = "";
-		}
-	}
-
 	void UIWrapper::CreateSeparatorText(const char* _separatorName)
 	{
 		ImGui::SeparatorText(_separatorName);

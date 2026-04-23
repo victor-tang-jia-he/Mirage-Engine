@@ -8,15 +8,16 @@ namespace MirageEngine::Core::Physics
 {
     class Bullet3BoxCollider;
 
-    class Bullet3RigidBody : public IRigidBody
+    class Bullet3RigidBody : public IRigidBody, public std::enable_shared_from_this<Bullet3RigidBody>
     {
             friend class Bullet3BoxCollider;
+            using Transform = MirageEngine::Core::Components::Transform;
 
         private:
 
-            btRigidBody*     m_rigidBody = nullptr;
-            btCompoundShape* m_Compound     = nullptr;
-            Vector3          m_CurrentScale = { 1, 1, 1 };
+            btRigidBody*                     m_rigidBody    = nullptr;
+            std::shared_ptr<btCompoundShape> m_Compound     = nullptr;
+            Vector3                          m_CurrentScale = { 1, 1, 1 };
 
         public:
 
@@ -25,15 +26,12 @@ namespace MirageEngine::Core::Physics
 
             bool Create(ICollider* _shape, ERigidBodyType _type) override;
 
-            void Init() override {};
-            void Update() override;
-
-            void OnTransformChanged(MirageEngine::Core::Components::Transform* _newTransform) override;
+            void UpdateTransform(Transform& _transform) override;
+            void OnTransformChanged(Transform& _newTransform) override;
             void SetType(ERigidBodyType _type) override;
             void SetMass(float _mass) override;
 
             void SetScale(const Vector3& scale);
-
 
             void AddCollider(ICollider* _newCollider) override;
             void RemoveCollider(ICollider* _collider) override;

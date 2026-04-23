@@ -9,7 +9,6 @@ namespace MirageEngine::Core::Physics
 
     class Bullet3BoxCollider : public ICollider, public IBulletColliderData, public IBoxCollider
     {
-            friend class Bullet3RigidBody;
             using Vector3    = MirageEngine::Core::Math::Vector3;
             using Quaternion = MirageEngine::Core::Math::Quaternion;
 
@@ -25,8 +24,6 @@ namespace MirageEngine::Core::Physics
             ~Bullet3BoxCollider() override;
 
             void Create() override;
-            void Init() override {};
-            void Update() override {};
 
             void SetOffset(Vector3 _offset, Quaternion _rotation) override;
             void SetHalfExtents(const Vector3& _halfExtents) override;

@@ -6,22 +6,29 @@ using namespace MirageEngine::Core::Physics;
 
 PhysicsManager* m_Instance = nullptr;
 
-PhysicsManager* PhysicsManager::Instance()
+PhysicsManager& PhysicsManager::Instance()
 {
     if (m_Instance == nullptr) { m_Instance = new PhysicsManager(); }
-    return m_Instance;
+    return *m_Instance;
+}
+
+void PhysicsManager::Shutdown()
+{
+    m_WorldRigidbodys.clear();
+    delete m_Instance;
+    m_Instance = nullptr;
 }
 
 void PhysicsManager::Initialize(EPhysicsEngine _physicsEngine)
 {
     // set up physics engine
     m_physicsEngine = _physicsEngine;
-    delete m_worldPhysics; // clean up previous physics engine if exists
+    m_worldPhysics.reset(); // clean up previous physics engine if exists
 
     LOG(logInfo, LogPhysics, "Physics Engine initialized : ", m_physicsEngine == EPhysicsEngine::Bullet3 ? "Bullet physics" : "Undefined physics Engine");
     switch (m_physicsEngine)
     {
-        case EPhysicsEngine::Bullet3: m_worldPhysics = new Bullet3WorldPhysics(); break;
+        case EPhysicsEngine::Bullet3: m_worldPhysics = std::make_shared<Bullet3WorldPhysics>(); break;
         default                     : break;
     }
 }
@@ -35,8 +42,6 @@ void PhysicsManager::Update(float _deltaTime)
     }
 
     m_worldPhysics->Update(_deltaTime);
-
-    for (IRigidBody* rb : m_WorldRigidbodys) { rb->Update(); };
 }
 
 IRigidBody* PhysicsManager::CreateRigidBody(ICollider* _shape, ERigidBodyType _type)
@@ -81,14 +86,14 @@ ICollider* PhysicsManager::CreateCollider(ECollisionShapeType _shapeType)
     return collider;
 }
 
-void PhysicsManager::RegisterRigidBody(IRigidBody* _body)
+void PhysicsManager::RegisterRigidBody(IRigidBody* _body, ECollisionGroup _group, ECollisionGroup _mask)
 {
     if (m_worldPhysics == nullptr)
     {
         LOG(logWarning, LogPhysics, "Cannot register rigid body : physics engine not initialized");
         return;
     }
-    m_worldPhysics->AddRigidBody(_body);
+    m_worldPhysics->AddRigidBody(_body, _group, _mask);
     m_WorldRigidbodys.push_back(_body);
 }
 

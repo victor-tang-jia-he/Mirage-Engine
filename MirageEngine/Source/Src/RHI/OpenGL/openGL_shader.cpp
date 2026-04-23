@@ -2,7 +2,7 @@
 
 DEFINE_LOG_CATEGORY(LogRHIShader)
 
-void MirageRHI::OpenGLShader::Create(const char* _shaderPath, ShaderType _type)
+bool MirageRHI::OpenGLShader::Create(const char* _shaderPath, ShaderType _type)
 {
 	m_Type = _type;
     unsigned int glType = 0;
@@ -12,9 +12,13 @@ void MirageRHI::OpenGLShader::Create(const char* _shaderPath, ShaderType _type)
         glType = GL_FRAGMENT_SHADER;
     else
         LOG(logError, LogRHIShader, "Unknown Shader Type Used!");
-    CompileShader(_shaderPath, glType, m_Shader);
+    if (!CompileShader(_shaderPath, glType, m_Shader))
+    {
+        return false;
+    }
 
 	LOG(logTemp, LogRHIShader, "Shader Created with ID: ", m_Shader);
+    return true;
 }
 
 void MirageRHI::OpenGLShader::Destroy()

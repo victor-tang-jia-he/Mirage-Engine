@@ -37,7 +37,7 @@ Quaternion::Quaternion(Quaternion&& _q) noexcept
 	_q.W = _q.X = _q.Y = _q.Z = 0.f;
 }
 
-Quaternion::Quaternion(Vector3& _axis, float _angle)
+Quaternion::Quaternion(Vector3 _axis, float _angle)
 {
     if (_axis.IsNull())
     {
@@ -351,7 +351,7 @@ Vector3 Quaternion::ToEulerAngle() const
 
 void Quaternion::Print() const
 {
-	printf("X = %g\nY = %g\nZ = %g\nW = %g\n", W, X, Y, Z);
+	printf("X = %g\nY = %g\nZ = %g\nW = %g\n", X, Y, Z, W);
 }
 
 

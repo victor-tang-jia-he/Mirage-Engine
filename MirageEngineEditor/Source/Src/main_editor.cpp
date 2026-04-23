@@ -16,23 +16,18 @@ int main()
 
 	application.InitApp();
 	MirageEngine::RegisterMeta().RegisterAllMeta();
-	editor.Init(application.m_Renderer.GetWindowHandle(), application.GetSceneGraph());
+	editor.Init(application.m_Renderer.GetWindowHandle(), &application.m_Renderer, application.GetSceneGraph());
 	MirageEngine::TimeManager::Init();
 	while (application.m_Renderer.IsRunning())
 	{
 		MirageEngine::TimeManager::Update();
 		MirageEngine::Core::Input::InputSystem::UpdateHeldInput();
-		MirageEngine::Core::Physics::PhysicsManager::Instance()->Update(MirageEngine::TimeManager::GetDeltaTime() / 2);
-		application.m_Renderer.BeginFrame();
-		uint32_t textureID = application.m_Renderer.GetFramebufferTextureID();
-
+		MirageEngine::Core::Physics::PhysicsManager::Instance().Update(MirageEngine::TimeManager::GetDeltaTime());
 		application.GetSceneGraph()->UpdateAllWorldMatrices();
-
+		application.m_Renderer.BeginFrame();
 		application.m_Renderer.RenderScene(application.m_SceneGraph);
 		application.m_Renderer.RenderScreen();
-
-		editor.Update(textureID);
-
+		editor.Update(application.m_Renderer.GetFramebufferTextureID());
 		application.m_Renderer.EndFrame();
 	}
 
