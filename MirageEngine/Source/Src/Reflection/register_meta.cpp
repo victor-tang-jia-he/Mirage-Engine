@@ -5,7 +5,7 @@
 #include <GameObject/game_object.h>
 #include <Components/transform.h>
 #include <Components/camera.h>
-#include <Components/input_mapping.h>
+#include <Input/input_mapping.h>
 
 // EnTT includes
 #include <entt/entt.hpp>
@@ -124,8 +124,8 @@ void RegisterMeta::RegisterInputMappingMeta()
 
 	inputMapping.base<Component>();
 
-	inputMapping.data<&InputMapping::Map>("Bindings");
+	inputMapping.data<&InputMapping::m_Map>("Bindings");
 
 	inputMapping.func<&InputMapping::Clear>("ClearAll");
-	inputMapping.func<(void(InputMapping::*)(int))& InputMapping::Remove>("RemoveKey");
+	inputMapping.func<(void(InputMapping::*)(std::string))& InputMapping::Remove>("RemoveKey");
 }

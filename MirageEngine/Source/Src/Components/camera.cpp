@@ -1,9 +1,10 @@
 #include <Components/camera.h>
-#include <Components/input_system.h>
-#include <Components/input_mapping.h>
+#include <Input/input_system.h>
+#include <Input/input_mapping.h>
 #include <Events/event.h>
 #include <iostream>
 #include <time_manager.h>
+#include <GLFW/glfw3.h>
 
 using namespace MirageEngine;
 using namespace MirageEngine::Core;
@@ -25,83 +26,58 @@ Camera::Camera(unsigned int _width, unsigned int _height, float _fov, float _nea
 void Camera::BindInput(std::shared_ptr<InputMapping> map)
 {
     if (map == nullptr) return;
-    map->Add(
-        GLFW_KEY_W, std::make_shared<Event<CallbackInputInfo>>(
-            "InputSystem",
-            [this](CallbackInputInfo info)
-            {
-                if (info.Held) Transform().SetPosition(Transform().GetPosition() + Transform().Forward() * m_CameraVelocity * TimeManager::GetDeltaTime());
-            }));
 
-    map->Add(
-        GLFW_KEY_A, std::make_shared<Event<CallbackInputInfo>>(
-            "InputSystem",
-            [this](CallbackInputInfo info)
-            {
-                if (info.Held) Transform().SetPosition(Transform().GetPosition() + Transform().Right() * m_CameraVelocity * TimeManager::GetDeltaTime());
-            }));
-    map->Add(
-        GLFW_KEY_S, std::make_shared<Event<CallbackInputInfo>>(
-            "InputSystem",
-            [this](CallbackInputInfo info)
-            {
-                if (info.Held) Transform().SetPosition(Transform().GetPosition() - Transform().Forward() * m_CameraVelocity * TimeManager::GetDeltaTime());
-            }));
-    map->Add(
-        GLFW_KEY_D, std::make_shared<Event<CallbackInputInfo>>(
-            "InputSystem",
-            [this](CallbackInputInfo info)
-            {
-                if (info.Held) Transform().SetPosition(Transform().GetPosition() - Transform().Right() * m_CameraVelocity * TimeManager::GetDeltaTime());
-            }));
-    map->Add(
-        GLFW_KEY_Q, std::make_shared<Event<CallbackInputInfo>>(
-            "InputSystem",
-            [this](CallbackInputInfo info)
-            {
-                if (info.Held)
-                {
-                    Vector3 axis = Transform().Up();
-                    Transform().SetRotation(Transform().GetRotation() * Quaternion(axis, m_CameraVelocity * TimeManager::GetDeltaTime()));
-                }
-            }));
-    map->Add(
-        GLFW_KEY_E, std::make_shared<Event<CallbackInputInfo>>(
-            "InputSystem",
-            [this](CallbackInputInfo info)
-            {
-                if (info.Held)
-                {
-                    Vector3 axis = Transform().Up();
-                    Transform().SetRotation(Transform().GetRotation() * Quaternion(axis, -m_CameraVelocity * TimeManager::GetDeltaTime()));
-                }
-            }));
-    map->Add(
-        GLFW_KEY_SPACE, std::make_shared<Event<CallbackInputInfo>>(
-            "InputSystem",
-            [this](CallbackInputInfo info)
-            {
-                if (info.Held) Transform().SetPosition(Transform().GetPosition() + Transform().Up() * m_CameraVelocity * TimeManager::GetDeltaTime());
-            }));
-    map->Add(
-        GLFW_KEY_LEFT_CONTROL, std::make_shared<Event<CallbackInputInfo>>(
-            "InputSystem",
-            [this](CallbackInputInfo info)
-            {
-                if (info.Held) Transform().SetPosition(Transform().GetPosition() - Transform().Up() * m_CameraVelocity * TimeManager::GetDeltaTime());
-            }));
-    map->Add(
-        GLFW_KEY_LEFT_SHIFT, std::make_shared<Event<CallbackInputInfo>>(
-            "InputSystem",
-            [this](CallbackInputInfo info)
-            {
-                if (info.Held)
-                {
-                    m_CameraVelocity = 5.f;
-                }
-                else
-                {
-                    m_CameraVelocity = 1.f;
-				}
-            }));
+    map->RegisterAxis2D("Camera", GLFW_KEY_D, GLFW_KEY_A, GLFW_KEY_W, GLFW_KEY_S);
+    map->RegisterAxis1D("Camera", GLFW_KEY_LEFT_CONTROL, GLFW_KEY_SPACE);
+
+    map->RegisterAction("Camera132", this, &Camera::Move);
+
+    // map->Add(GLFW_MOUSE_BUTTON_2, this, &Camera::View);
+    // map->Add(
+    //     GLFW_KEY_SPACE, std::make_shared<Event<CallbackInputInfo>>(
+    //                         "InputSystem",
+    //                         [this](CallbackInputInfo info)
+    //                         {
+    //                             if (info.Held) Transform().SetPosition(Transform().GetPosition() + Transform().Up() * m_CameraVelocity * TimeManager::GetDeltaTime());
+    //                         }));
+    //map->RegisterAction(
+    //    "CameraUp", this,
+    //    [this](CallbackInputInfo info)
+    //    {
+    //        if (info.Held) { m_CameraVelocity = 5.f; }
+    //        else { m_CameraVelocity = 1.f; }
+    //    });
+}
+
+void Camera::Move(Input::CallbackInputInfo info)
+{
+    if (info.Held)
+    {
+        Transform().SetPosition(Transform().GetPosition() - Transform().Up() * info.Axis1D * m_CameraVelocity * TimeManager::GetDeltaTime());
+
+        Vector3 dir = Transform().Forward() * info.Axis2D.Y + Transform().Left() * info.Axis2D.X;
+        Transform().SetPosition(Transform().GetPosition() + dir * m_CameraVelocity * TimeManager::GetDeltaTime());
+    }
+}
+
+void Camera::View(Input::CallbackInputInfo info)
+{
+    Vector2 mouseDelta = InputSystem::GetMouseDelta();
+
+    // Sensibilit¨¦ r¨¦glable (par exemple 0.1f)
+    float sensitivity = 0.1f;
+
+    float yaw   = mouseDelta.X * sensitivity;
+    float pitch = -mouseDelta.Y * sensitivity;
+
+    Vector3 euler = Transform().GetRotation().ToEulerAngle();
+
+    euler.Y += yaw;
+    euler.X += pitch;
+
+    // Clamp du pitch entre -89¡ã et +89¡ã (en radians si votre moteur utilise des radians)
+    const float maxPitch = 89.0f * (3.14159f / 180.0f);
+    euler.X              = std::clamp(euler.X, -maxPitch, maxPitch);
+
+    Transform().SetRotation(Quaternion(euler));
 }

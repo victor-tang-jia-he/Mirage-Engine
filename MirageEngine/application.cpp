@@ -1,3 +1,4 @@
+#include <GLFW/glfw3.h>
 #include <application.h>
 
 #include <renderer.h>
@@ -15,7 +16,7 @@
 
 // GameObject & Components
 #include <GameObject/game_object.h>
-#include <Components/input_system.h>
+#include <Input/input_system.h>
 #include <Components/box_collider.h>
 #include <Components/capsule_collider.h>
 #include <Components/sphere_collider.h>
@@ -67,7 +68,8 @@ void Application::InitInput()
     // get and set callback
     GLFWwindow* window = glfwGetCurrentContext();
     glfwSetKeyCallback(window, InputSystem::KeyCallback);
-
+    glfwSetMouseButtonCallback(window, InputSystem::MouseButtonCallback);
+    glfwSetCursorPosCallback(window, InputSystem::CursorPosCallback);
     // bind camera
     m_EngineCamera->BindInput(m_EditorMapping);
 }
