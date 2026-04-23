@@ -61,6 +61,7 @@ namespace MirageEngine::Core::Components
 		float GetHeight() const { return m_GridHeight; }
 		float GetCellSize() const { return m_CellSize; }
 		float GetDecayRate() const { return m_DecayRate; }
+		const std::vector<InfluenceCell>& GetCells() const{ return m_Cells; }
 
 		// Setters
 		void SetWidth(float _w) { m_GridWidth = _w; }

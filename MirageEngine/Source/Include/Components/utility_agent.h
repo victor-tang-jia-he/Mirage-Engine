@@ -6,13 +6,15 @@
 #include "Components/component.h" 
 #include "AI/influence_grid.h"
 
-namespace MirageEngine
+namespace MirageEngine::AI
 {
 	class AIAction;
 }
 	
 namespace MirageEngine::Core::Components
 {
+	using namespace MirageEngine::AI;
+
 	class UtilityAgent : public Component
 	{
 	private:
@@ -44,7 +46,7 @@ namespace MirageEngine::Core::Components
 
 	public:
 		UtilityAgent() = default;
-		virtual ~UtilityAgent() = default;
+		virtual ~UtilityAgent();
 
 		void Init() override;
 		void Update() override;
@@ -58,6 +60,7 @@ namespace MirageEngine::Core::Components
 		float GetInertia() const { return m_Inertia; }
 		std::vector<AIAction*> GetActions() { return m_actions; }
 		InfluenceGrid* GetInfluenceGrid() const { return m_Grid; }
+		float GetIntensity(InfluenceType _type) const { return m_CurrentCellIntensity[static_cast<int>(_type)]; }
 
 		// Setters
 		void SetDecisionInterval(float _newDecisionInterval) { m_DecisionInterval = _newDecisionInterval; }
