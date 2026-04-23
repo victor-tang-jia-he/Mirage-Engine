@@ -52,7 +52,7 @@ namespace MirageEngine::Core
         {
                 EventSystem::EventDispatcher Dispatcher;
                 CallbackInputInfo            InputInfo;
-                int                          HeldCount = 0; 
+                int                          HeldCount = 0;
         };
 
         struct InputMapping : public Components::Component, public std::enable_shared_from_this<InputMapping>
@@ -75,44 +75,17 @@ namespace MirageEngine::Core
 
                 entt::id_type GetType() const override { return entt::type_id<InputMapping>().hash(); }
 
-                void RegisterInput(const std::string& name, int actionInput)
-                {
-                    // Register all input to the list Key To String
-                    m_KeyToStrings[actionInput].push_back(name);
+                void RegisterInput(const std::string& _name, int _actionInput);
 
-                    if (m_Map.find(name) == m_Map.end()) { m_Map[name] = std::make_shared<InputBind>(); }
-                }
+                void RegisterAxis1D(const std::string& _name, int _posX, int _negX);
 
-                void RegisterAxis1D(const std::string& name, int posX, int negX)
-                {
-                    // Register all input to the list Key To String
-                    m_KeyToStrings[posX].push_back(name);
-                    m_KeyToStrings[negX].push_back(name);
-                    m_Axis1D[name] = { posX, negX, 0.f };
-                    if (m_Map.find(name) == m_Map.end()) { m_Map[name] = std::make_shared<InputBind>(); }
-                }
+                void RegisterAxis2D(const std::string& _name, int _posX, int _negX, int _posY, int _negY);
 
-                void RegisterAxis2D(const std::string& name, int posX, int negX, int posY, int negY)
-                {
-                    // Register all input to the list Key To String
-                    m_KeyToStrings[posX].push_back(name);
-                    m_KeyToStrings[negX].push_back(name);
-                    m_KeyToStrings[posY].push_back(name);
-                    m_KeyToStrings[negY].push_back(name);
-                    m_Axis2D[name] = { posX, negX, posY, negY };
-                    if (m_Map.find(name) == m_Map.end()) { m_Map[name] = std::make_shared<InputBind>(); }
-                }
+                template <typename... Args> void RegisterAction(const std::string& _name, std::function<void(Args...)> _func);
 
-                template <typename... Args> void RegisterAction(const std::string& name, std::function<void(Args...)> func);
+                template <typename T, typename... Args> void RegisterAction(const std::string& _name, T* _instance, void (T::*_method)(Args...));
 
-                template <typename T, typename... Args> void RegisterAction(const std::string& name, T* instance, void (T::*method)(Args...))
-                {
-                    auto func = [instance, method](Args... args) { (instance->*method)(args...); };
-
-                    RegisterAction<Args...>(name, func);
-                }
-
-                void Remove(const std::string& name);
+                void Remove(const std::string& _name);
 
                 void Clear() { m_Map.clear(); }
 

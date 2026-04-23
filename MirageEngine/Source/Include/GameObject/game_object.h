@@ -82,7 +82,7 @@ namespace MirageEngine
 		// Setters
 		void SetName(std::string _name) { m_Name = _name; }
 		void SetChildren(std::vector<std::shared_ptr<GameObject>> _children) { m_Children = _children; }
-		void SetParent(const std::shared_ptr<GameObject>& parent) {  m_Parent = parent; }
+		void SetParent(const std::shared_ptr<GameObject>& _parent) {  m_Parent = _parent; }
 		void SetID(uint64_t _id) { m_ID = _id; }
 		void SetIsStatic(bool _isStatic) { m_bIsStatic = _isStatic; }
 		void SetIsActive(bool _isActive) { m_bIsActive = _isActive; }

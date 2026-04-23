@@ -29,24 +29,15 @@ void Camera::BindInput(std::shared_ptr<InputMapping> map)
 
     map->RegisterAxis2D("Camera", GLFW_KEY_D, GLFW_KEY_A, GLFW_KEY_W, GLFW_KEY_S);
     map->RegisterAxis1D("Camera", GLFW_KEY_LEFT_CONTROL, GLFW_KEY_SPACE);
+    map->RegisterInput("Run", GLFW_KEY_LEFT_SHIFT);
+    std::function<void(CallbackInputInfo)> func = [this](CallbackInputInfo info)
+    {
+        if (info.Held) { m_CameraVelocity = 5.f; }
+        else { m_CameraVelocity = 1.f; }
+    };
 
-    map->RegisterAction("Camera132", this, &Camera::Move);
-
-    // map->Add(GLFW_MOUSE_BUTTON_2, this, &Camera::View);
-    // map->Add(
-    //     GLFW_KEY_SPACE, std::make_shared<Event<CallbackInputInfo>>(
-    //                         "InputSystem",
-    //                         [this](CallbackInputInfo info)
-    //                         {
-    //                             if (info.Held) Transform().SetPosition(Transform().GetPosition() + Transform().Up() * m_CameraVelocity * TimeManager::GetDeltaTime());
-    //                         }));
-    //map->RegisterAction(
-    //    "CameraUp", this,
-    //    [this](CallbackInputInfo info)
-    //    {
-    //        if (info.Held) { m_CameraVelocity = 5.f; }
-    //        else { m_CameraVelocity = 1.f; }
-    //    });
+    map->RegisterAction("Run", func);
+    map->RegisterAction("Camera", this, &Camera::Move);
 }
 
 void Camera::Move(Input::CallbackInputInfo info)
