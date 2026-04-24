@@ -52,6 +52,7 @@ namespace Mirage
 		void ChangeDirectory(const std::filesystem::path& _newPath);
 
 		//Display
+		void ShowFolderContent();
 		void DrawDirectoryContent();
 		void DrawBreadcrumb();
 
@@ -68,7 +69,7 @@ namespace Mirage
 		void RenderEmptySpaceContextMenu();
 		void RenderRenameModal();
 		void RenderDeleteModal();
-		void RenameItem(std::filesystem::path& _oldPath, std::filesystem::path& _newPath);
+		void RenameItem(const std::filesystem::path& _oldPath, const std::filesystem::path& _newPath);
 		void MoveItem(const std::filesystem::path& _source, const std::filesystem::path& _target);
 	};
 }
