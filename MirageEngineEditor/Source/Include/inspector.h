@@ -31,14 +31,14 @@ namespace Mirage
 		void DrawPropertyDirect(entt::meta_type _type, entt::meta_data _data, void* _instancePtr);
 
 	private:
-		void ResolveVec3(entt::meta_any _value, const char* _label, entt::meta_data _data, entt::meta_any _instance);
-		void ResolveQuaternion(entt::meta_any _value, const char* _label, entt::meta_data _data, entt::meta_any _instance);
-		void ResolveString(entt::meta_any _value, const char* _label, entt::meta_data _data, entt::meta_any _instance);
-		void ResolveInt(entt::meta_any _value, const char* _label, entt::meta_data _data, entt::meta_any _instance);
-		void ResolveFloat(entt::meta_any _value, const char* _label, entt::meta_data _data, entt::meta_any _instance);
-		void ResolveBool(entt::meta_any _value, const char* _label, entt::meta_data _data, entt::meta_any _instance);
-		void ResolveUnsignedInt(entt::meta_any _value, const char* _label, entt::meta_data _data, entt::meta_any _instance);
-		void ResolvePointer(entt::meta_any _value, const char* _label, entt::meta_data _data, entt::meta_any _instance);
+		void ResolveVec3(entt::meta_any _value, const char* _label, entt::meta_data _data, entt::meta_any &_instance);
+		void ResolveQuaternion(entt::meta_any _value, const char* _label, entt::meta_data _data, entt::meta_any &_instance);
+		void ResolveString(entt::meta_any _value, const char* _label, entt::meta_data _data, entt::meta_any &_instance);
+		void ResolveInt(entt::meta_any _value, const char* _label, entt::meta_data _data, entt::meta_any &_instance);
+		void ResolveFloat(entt::meta_any _value, const char* _label, entt::meta_data _data, entt::meta_any &_instance);
+		void ResolveBool(entt::meta_any _value, const char* _label, entt::meta_data _data, entt::meta_any &_instance);
+		void ResolveUnsignedInt(entt::meta_any _value, const char* _label, entt::meta_data _data, entt::meta_any &_instance);
+		void ResolvePointer(entt::meta_any _value, const char* _label, entt::meta_data _data, entt::meta_any &_instance);
 
 		bool ResolveComponent(entt::meta_any _value);
 		bool ResolveResource(entt::meta_any _value);

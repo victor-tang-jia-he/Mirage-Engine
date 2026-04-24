@@ -148,7 +148,7 @@ namespace Mirage
 		}
 	}
 
-	void Inspector::ResolveVec3(entt::meta_any _value, const char* _label, entt::meta_data _data, entt::meta_any _instance)
+	void Inspector::ResolveVec3(entt::meta_any _value, const char* _label, entt::meta_data _data, entt::meta_any &_instance)
 	{
 		static bool printed = false;
 		if (!printed)
@@ -172,7 +172,7 @@ namespace Mirage
 		}
 	}
 
-	void Inspector::ResolveQuaternion(entt::meta_any _value, const char* _label, entt::meta_data _data, entt::meta_any _instance)
+	void Inspector::ResolveQuaternion(entt::meta_any _value, const char* _label, entt::meta_data _data, entt::meta_any &_instance)
 	{
 		static bool printed = false;
 		if (!printed)
@@ -194,7 +194,7 @@ namespace Mirage
 		}
 	}
 
-	void Inspector::ResolveString(entt::meta_any _value, const char* _label, entt::meta_data _data, entt::meta_any _instance)
+	void Inspector::ResolveString(entt::meta_any _value, const char* _label, entt::meta_data _data, entt::meta_any &_instance)
 	{
 		static bool printed = false;
 		if (!printed)
@@ -212,7 +212,7 @@ namespace Mirage
 		}
 	}
 
-	void Inspector::ResolveInt(entt::meta_any _value, const char* _label, entt::meta_data _data, entt::meta_any _instance)
+	void Inspector::ResolveInt(entt::meta_any _value, const char* _label, entt::meta_data _data, entt::meta_any &_instance)
 	{
 		static bool printed = false;
 		if (!printed)
@@ -228,7 +228,7 @@ namespace Mirage
 		}
 	}
 
-	void Inspector::ResolveFloat(entt::meta_any _value, const char* _label, entt::meta_data _data, entt::meta_any _instance)
+	void Inspector::ResolveFloat(entt::meta_any _value, const char* _label, entt::meta_data _data, entt::meta_any &_instance)
 	{
 		static bool printed = false;
 		if (!printed)
@@ -244,7 +244,7 @@ namespace Mirage
 		}
 	}
 
-	void Inspector::ResolveBool(entt::meta_any _value, const char* _label, entt::meta_data _data, entt::meta_any _instance)
+	void Inspector::ResolveBool(entt::meta_any _value, const char* _label, entt::meta_data _data, entt::meta_any &_instance)
 	{
 		static bool printed = false;
 		if (!printed)
@@ -260,7 +260,7 @@ namespace Mirage
 		}
 	}
 
-	void Inspector::ResolveUnsignedInt(entt::meta_any _value, const char* _label, entt::meta_data _data, entt::meta_any _instance)
+	void Inspector::ResolveUnsignedInt(entt::meta_any _value, const char* _label, entt::meta_data _data, entt::meta_any &_instance)
 	{
 		static bool printed = false;
 		if (!printed)
@@ -276,7 +276,7 @@ namespace Mirage
 		}
 	}
 
-	void Inspector::ResolvePointer(entt::meta_any _value, const char* _label, entt::meta_data _data, entt::meta_any _instance)
+	void Inspector::ResolvePointer(entt::meta_any _value, const char* _label, entt::meta_data _data, entt::meta_any &_instance)
 	{
 		if (entt::meta_any ref = *_value; ref) 
 		{
