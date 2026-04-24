@@ -57,7 +57,7 @@ void MirageRHI::OpenGLPipelineParameters::SetLayout() const
 		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(UnlitVertex), (void*)offsetof(UnlitVertex, Position));
 
 		glEnableVertexAttribArray(1);
-		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(VertexType), (void*)offsetof(UnlitVertex, Color));
+		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(UnlitVertex), (void*)offsetof(UnlitVertex, Color));
 		break;
 
 	case MirageRHI::VertexType::PBR:
