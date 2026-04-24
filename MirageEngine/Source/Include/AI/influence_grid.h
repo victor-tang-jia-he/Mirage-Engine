@@ -6,19 +6,9 @@
 
 namespace MirageEngine::Core::Components
 {
-	enum class InfluenceType
-	{
-		CHANNEL_DANGER = 0,
-		CHANNEL_SAFETY = 1,
-		CHANNEL_RESOURCE = 2,
-		CHANNEL_COVER = 3,
-		COUNT
-	};
-
 	struct InfluenceCell
 	{
-		static constexpr int MAX_CHANNELS = (int)InfluenceType::COUNT;
-		float channels[MAX_CHANNELS] = { 0.0f };
+		std::vector<float>channels;
 	};
 
 	class InfluenceGrid : public Component
@@ -29,6 +19,7 @@ namespace MirageEngine::Core::Components
 		float m_GridHeight;
 		float m_CellSize;
 		float m_DecayRate = 0.95f;
+		std::vector<std::string> m_ChannelsNames;
 
 		// Internal data calculated from the other parameters
 		int m_ResolutionX;
@@ -49,8 +40,9 @@ namespace MirageEngine::Core::Components
 
 		void WorldToGrid(Core::Math::Vector3 _pos, int& _x, int& _y);
 		bool IsInBounds(int _x, int _y) const;
-		void AddInfluence(int _x, int _y, InfluenceType _type, float _value);
-		void AddInfluenceArea(Core::Math::Vector3 pos, float radius, float value, InfluenceType type);
+		void AddInfluence(int _x, int _y, int _channelIndex, float _value);
+		void AddInfluenceArea(Core::Math::Vector3 pos, float radius, float value, int _channelIndex);
+		void AddChannel(std::string _name);
 		int GetIndex(int x, int y) const { return y * m_ResolutionX + x; }
 		Core::Math::Vector3 GetCellWorldPosition(int x, int y) const;
 
@@ -62,6 +54,8 @@ namespace MirageEngine::Core::Components
 		float GetCellSize() const { return m_CellSize; }
 		float GetDecayRate() const { return m_DecayRate; }
 		const std::vector<InfluenceCell>& GetCells() const{ return m_Cells; }
+		int GetChannelsIndex(std::string _name) const;
+		std::vector<std::string> GetChannelsNames() const { return m_ChannelsNames; }
 
 		// Setters
 		void SetWidth(float _w) { m_GridWidth = _w; }

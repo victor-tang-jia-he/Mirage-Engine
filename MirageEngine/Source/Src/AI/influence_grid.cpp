@@ -31,6 +31,8 @@ namespace MirageEngine::Core::Components
 			if (m_ResolutionY <= 0) m_ResolutionY = 1;
 
 			m_Cells.assign(m_ResolutionX * m_ResolutionY, InfluenceCell());
+			for (InfluenceCell& cell : m_Cells)
+				cell.channels.resize(m_ChannelsNames.size(), 0.0f);
 		}
 	}
 
@@ -40,7 +42,7 @@ namespace MirageEngine::Core::Components
 
 		for (auto& cell : m_Cells)
 		{
-			for (int i = 0; i < InfluenceCell::MAX_CHANNELS; i++)
+			for (int i = 0; i < m_ChannelsNames.size(); i++)
 			{
 				cell.channels[i] *= frameDecay;
 				if (cell.channels[i] < 0.01f)
@@ -60,16 +62,16 @@ namespace MirageEngine::Core::Components
 		return _x >= 0 && _x < m_ResolutionX && _y >= 0 && _y < m_ResolutionY;
 	}
 
-	void InfluenceGrid::AddInfluence(int _x, int _y, InfluenceType _type, float _value)
+	void InfluenceGrid::AddInfluence(int _x, int _y, int _channelIndex, float _value)
 	{
-		if (IsInBounds(_x, _y))
+		if (IsInBounds(_x, _y) && _channelIndex >= 0 && _channelIndex < m_ChannelsNames.size())
 		{
 			int index = GetIndex(_x, _y);
-			m_Cells[index].channels[static_cast<int>(_type)] += _value;
+			m_Cells[index].channels[_channelIndex] += _value;
 		}
 	}
 
-	void InfluenceGrid::AddInfluenceArea(Vector3 pos, float radius, float value, InfluenceType type)
+	void InfluenceGrid::AddInfluenceArea(Vector3 pos, float radius, float value, int _channelIndex)
 	{
 		if(IsInBounds(pos.X, pos.Z))
 		{
@@ -90,7 +92,7 @@ namespace MirageEngine::Core::Components
 						if (distance <= radius)
 						{
 							float influenceValue = value * (1.0f - (distance / radius));
-							AddInfluence(cellX, cellY, type, influenceValue);
+							AddInfluence(cellX, cellY, _channelIndex, influenceValue);
 						}
 					}
 				}
@@ -98,9 +100,26 @@ namespace MirageEngine::Core::Components
 		}
 	}
 
+	void InfluenceGrid::AddChannel(std::string _name)
+	{
+		m_ChannelsNames.push_back(_name);
+		for (InfluenceCell& cell : m_Cells)
+			cell.channels.push_back(0.0f);
+	}
+
 	Vector3 InfluenceGrid::GetCellWorldPosition(int _x, int _y) const
 	{
 		return Vector3(m_Origin.X + _x * m_CellSize + m_CellSize * 0.5f, m_Origin.Y, m_Origin.Z + _y * m_CellSize + m_CellSize * 0.5f);
+	}
+
+	int InfluenceGrid::GetChannelsIndex(std::string _name) const
+	{
+		for (size_t i = 0; i < m_ChannelsNames.size(); i++)
+		{
+			if (m_ChannelsNames[i] == _name)
+				return static_cast<int>(i);
+		}
+		return -1; 
 	}
 
 	void InfluenceGrid::RenderGrid()

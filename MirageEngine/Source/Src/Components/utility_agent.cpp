@@ -60,7 +60,8 @@ namespace MirageEngine::Core::Components
 				int currentIndex = m_Grid->GetIndex(cellX, cellY);
 				const std::vector<InfluenceCell>& cells = m_Grid->GetCells();
 
-				for (int i = 0; i < InfluenceCell::MAX_CHANNELS; i++)
+				size_t numChannels = m_Grid->GetChannelsNames().size();
+				for (int i = 0; i < numChannels; i++)
 				{
 					m_CurrentCellIntensity[i] = cells[currentIndex].channels[i];
 				}

@@ -28,7 +28,8 @@ namespace MirageEngine::Core::Components
 		{
 			Vector3 pos = GetOwner()->GetPosition();
 			float strengthToApply = m_Strength * TimeManager::GetDeltaTime();
-			m_Grid->AddInfluenceArea(pos, m_Radius, strengthToApply, m_Type);
+			if(m_CachedChannelIndex == -1) m_CachedChannelIndex = m_Grid->GetChannelsIndex(m_ChannelName); 
+			m_Grid->AddInfluenceArea(pos, m_Radius, strengthToApply, m_CachedChannelIndex);
 		}
 	}
 }
