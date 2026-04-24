@@ -56,8 +56,8 @@ namespace MirageEngine
 
     std::shared_ptr<GameObject> SceneGraph::CreateCamera(const std::string& _name, std::shared_ptr<GameObject> _parent)
     {
-        std::shared_ptr<GameObject>               newObject = CreateGameObject(_name, _parent);
-        std::shared_ptr<Core::Components::Camera> camera    = newObject->AddComponent<Core::Components::Camera>();
+        std::shared_ptr<GameObject> newObject = CreateGameObject(_name, _parent);
+        std::shared_ptr<Core::Components::Camera> camera = newObject->AddComponent<Core::Components::Camera>();
         camera->SetFar(100);
         camera->SetHeight(1080);
         camera->SetWidth(1920);

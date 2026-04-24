@@ -61,6 +61,7 @@ namespace MirageEngine::Core::Components
 				const std::vector<InfluenceCell>& cells = m_Grid->GetCells();
 
 				size_t numChannels = m_Grid->GetChannelsNames().size();
+				m_CurrentCellIntensity.resize(numChannels);
 				for (int i = 0; i < numChannels; i++)
 				{
 					m_CurrentCellIntensity[i] = cells[currentIndex].channels[i];
@@ -94,5 +95,11 @@ namespace MirageEngine::Core::Components
 				}
 			}
 		}
+	}
+
+	float UtilityAgent::GetIntensity(int _channelIndex) const {
+		if (_channelIndex >= 0 && _channelIndex < m_CurrentCellIntensity.size())
+			return m_CurrentCellIntensity[_channelIndex];
+		return 0.0f;
 	}
 }

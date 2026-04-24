@@ -28,7 +28,7 @@ namespace MirageEngine::Core::Components
 
 		/* Perception*/
 		InfluenceGrid* m_Grid = nullptr;
-		float m_CurrentCellIntensity[InfluenceCell::MAX_CHANNELS] = { 0.0f };
+		std::vector<float> m_CurrentCellIntensity;
 
 		/* Internal state */
 		AIAction* m_CurrentAction = nullptr;
@@ -60,7 +60,8 @@ namespace MirageEngine::Core::Components
 		float GetInertia() const { return m_Inertia; }
 		std::vector<AIAction*> GetActions() { return m_actions; }
 		InfluenceGrid* GetInfluenceGrid() const { return m_Grid; }
-		float GetIntensity(InfluenceType _type) const { return m_CurrentCellIntensity[static_cast<int>(_type)]; }
+		float GetIntensity(int _channelIndex) const;
+
 
 		// Setters
 		void SetDecisionInterval(float _newDecisionInterval) { m_DecisionInterval = _newDecisionInterval; }
