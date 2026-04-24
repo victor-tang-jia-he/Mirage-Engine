@@ -28,7 +28,7 @@ void PhysicsManager::Initialize(EPhysicsEngine _physicsEngine)
     LOG(logInfo, LogPhysics, "Physics Engine initialized : ", m_physicsEngine == EPhysicsEngine::Bullet3 ? "Bullet physics" : "Undefined physics Engine");
     switch (m_physicsEngine)
     {
-    case EPhysicsEngine::Bullet3: m_worldPhysics = std::make_shared<Bullet3WorldPhysics>(); break;
+        case EPhysicsEngine::Bullet3: m_worldPhysics = std::make_shared<Bullet3WorldPhysics>(); break;
         default                     : break;
     }
 }
@@ -76,7 +76,7 @@ std::shared_ptr<ICollider> PhysicsManager::CreateCollider(ECollisionShapeType _s
         case EPhysicsEngine::Bullet3:
             switch (_shapeType)
             {
-            case ECollisionShapeType::Box    : collider = std::make_shared<Bullet3BoxCollider>(); break;
+                case ECollisionShapeType::Box    : collider = std::make_shared<Bullet3BoxCollider>(); break;
                 case ECollisionShapeType::Sphere : collider = std::make_shared<Bullet3SphereCollider>(); break;
                 case ECollisionShapeType::Capsule: collider = std::make_shared<Bullet3CapsuleCollider>(); break;
                 default                          : break;

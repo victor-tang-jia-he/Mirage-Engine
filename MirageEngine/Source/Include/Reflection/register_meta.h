@@ -18,6 +18,8 @@ namespace MirageEngine
 		void RegisterMeshRendererMeta();
 		void RegisterCameraMeta();
 		void RegisterInputMappingMeta();
+		void RegisterInfluenceGridMeta();
+		void RegisterInfluenceEmitterMeta();
 
 	protected:
 	private:

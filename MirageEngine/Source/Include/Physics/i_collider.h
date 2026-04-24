@@ -60,7 +60,7 @@ namespace MirageEngine::Core::Physics
 	//=========================================================================
 	// ICollider - Base collider interface
 	//=========================================================================
-	class ICollider : public MirageEngine::Core::Components::Component
+	class ICollider
 	{
 	protected:
 
@@ -69,7 +69,7 @@ namespace MirageEngine::Core::Physics
 		Quaternion          m_Rot = Quaternion(0.f, 0.f, 0.f, 1.f);
 		ECollisionShapeType m_Type;
 
-		std::shared_ptr<IRigidBody> m_RigidBody = nullptr;
+		std::weak_ptr<IRigidBody> m_RigidBody;
 
 		bool m_bIsDirty = true;
 
@@ -80,8 +80,9 @@ namespace MirageEngine::Core::Physics
 		virtual void Create() = 0;
 		virtual void Init() = 0;
 		virtual void Update() = 0;
-		virtual void SetOffset(Vector3 _offset, Quaternion _rotation) = 0;
 
+
+		virtual void SetOffset(Vector3 _offset, Quaternion _rotation) = 0;
 		bool SetRigidbody(std::shared_ptr<IRigidBody> _rigidbody);
 		void SetScale(Vector3 _scale)
 		{
@@ -102,7 +103,6 @@ namespace MirageEngine::Core::Physics
 		Vector3 GetTranslate() const { return m_Offset; }
 		Quaternion GetRotation() const { return m_Rot; }
 		bool GetIsDirty() const { return m_bIsDirty; }
-		entt::id_type GetType() const override { return 0; }
 		ECollisionShapeType GetColliderType() const { return m_Type; }
 
 		virtual IBulletColliderData* AsBullet3Collider() { throw std::runtime_error("Bad API Call : object is not an Bullet3 Collider"); }

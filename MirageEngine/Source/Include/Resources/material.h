@@ -2,48 +2,41 @@
 #include <vector3.h>
 #include <unordered_map>
 #include <Resources/resource_interface.h>
-#include <RHI/i_pipeline.h>
 #include <Logs/log_macro.h>
+#include <memory>
 
 DECLARE_LOG_CATEGORY_EXTERN(LogMaterial)
 
-namespace MirageEngine
+namespace MirageRHI
 {
-	namespace Core
-	{
-		namespace Resources
-		{
-            class Texture;
-            class IShader;
-            class Mesh;
+    class IPipeline;
+    class IShader;
+} // namespace MirageRHI
 
-            class Material : public IResource
-            {
-            public:
-				~Material() override;
-				void SetShader(std::shared_ptr<MirageRHI::IPipeline> _shader);
+namespace MirageEngine::Core::Resources
+{
+    class ResourceManager;
+    class Mesh;
 
-                Material& SetFloat(const std::string& _name, float _value);
-                Material& SetVec3(const std::string& _name, const MirageEngine::Core::Math::Vector3& _value);
-                Material& SetColor(const std::string& _name, const MirageEngine::Core::Math::Vector3& _color);
-                Material& SetTexture(const std::string& _name, std::shared_ptr<Texture> _texture);
+    class Material : public IResource
+    {
+            friend class ResourceManager;
 
-                float GetFloat(const std::string& _name, float _defaultValue = 0.0f) const;
-                MirageEngine::Core::Math::Vector3 GetVec3(const std::string& _name, const MirageEngine::Core::Math::Vector3& _defaultValue = MirageEngine::Core::Math::Vector3(0.f)) const;
-                std::shared_ptr<Texture>         GetTexture(const std::string& _name) const;
+            std::shared_ptr<MirageRHI::IPipeline> pipeline;
+            std::shared_ptr<MirageRHI::IShader>   vertexShader;
+            std::shared_ptr<MirageRHI::IShader>   fragmentShader;
+            size_t                                uniformBufferSize;
 
-                void Bind();
+        public:
 
-            private:
-                struct MaterialData 
-                {
-                    std::unordered_map<std::string, float> Floats;
-                    std::unordered_map<std::string, MirageEngine::Core::Math::Vector3> Vec3s;
-                    std::unordered_map<std::string, std::weak_ptr<Texture>> Textures;
-                } m_Data;
+            ~Material() override;
 
-                std::shared_ptr<MirageRHI::IPipeline> m_Shader;
-            };
-		}
-	}
-}
+            std::shared_ptr<MirageRHI::IPipeline> GetPipeline() { return pipeline; }
+
+            std::shared_ptr<MirageRHI::IShader> GetVertexShader() { return vertexShader; }
+
+            std::shared_ptr<MirageRHI::IShader> GetFragmentShader() { return fragmentShader; }
+
+            size_t GetUniformBufferSize() const { return uniformBufferSize; }
+    };
+} // namespace MirageEngine::Core::Resources

@@ -2,6 +2,7 @@
 #include <Resources/resource_interface.h>
 #include <vector>
 #include <Logs/log_macro.h>
+#include <i_pipeline_parameters.h>
 
 DECLARE_LOG_CATEGORY_EXTERN(LogMesh)
 
@@ -31,17 +32,7 @@ namespace MirageEngine::Core::Resources
 
 	public:
 
-		Mesh(std::shared_ptr<IBuffer> vb, std::shared_ptr<IBuffer> ib,
-			std::vector<LitVertex>&& vertices,
-			std::vector<uint32_t>&& indices,
-			size_t count)
-			: m_VertexBuffer(vb)
-			, m_IndexBuffer(ib)
-			, m_Vertex(std::move(vertices))
-			, m_Index(std::move(indices))
-			, m_IndexCount(count)
-		{
-		}
+		Mesh(std::shared_ptr<IBuffer> _vb, std::shared_ptr<IBuffer> _ib, std::vector<LitVertex>&& _vertices, std::vector<uint32_t>&& _indices, size_t _count);
 
 		~Mesh() override;
 

@@ -5,12 +5,12 @@ using namespace MirageEngine::Core::Physics;
 
 bool ICollider::SetRigidbody(std::shared_ptr<IRigidBody> _rigidbody)
 {
-    if (m_RigidBody == _rigidbody)
+    if (m_RigidBody.lock() == _rigidbody)
     {
         LOG(logWarning, LogCat::System, "Trying to set the rigidbody with the same rigidbody");
         return false;
     }
-    else if (m_RigidBody != nullptr) { m_RigidBody->RemoveCollider(this); }
+    else if (auto rigidbody = m_RigidBody.lock()) { rigidbody->RemoveCollider(this); }
     m_RigidBody = _rigidbody;
     return true;
 }

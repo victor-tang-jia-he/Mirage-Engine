@@ -9,13 +9,12 @@ namespace MirageEngine::Core::Physics
 
     class Bullet3BoxCollider : public ICollider, public IBulletColliderData, public IBoxCollider
     {
-            friend class Bullet3RigidBody;
             using Vector3    = MirageEngine::Core::Math::Vector3;
             using Quaternion = MirageEngine::Core::Math::Quaternion;
 
         private:
 
-            std::shared_ptr<btCollisionShape> m_CollisionShape = nullptr;
+            btCollisionShape* m_CollisionShape = nullptr;
             Vector3           m_HalfExtents    = Vector3(1.f);
             btTransform       m_LocalTransform;
 
@@ -34,7 +33,7 @@ namespace MirageEngine::Core::Physics
             Vector3     GetHalfExtents() const override;
             btTransform GetTransform() override;
 
-            btCollisionShape* GetShape() override { return m_CollisionShape.get(); }
+            btCollisionShape* GetShape() override { return m_CollisionShape; }
 
             IBulletColliderData* AsBullet3Collider() override { return this; }
     };

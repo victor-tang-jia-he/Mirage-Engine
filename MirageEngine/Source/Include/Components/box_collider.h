@@ -4,39 +4,54 @@
 
 namespace MirageEngine
 {
-	class GameObject;
-	namespace Core
-	{
-		namespace Math
-		{
-			struct Quaternion;
-			struct Vector3;
-		}
-		namespace Physics
-		{
-			class ICollider;
-		}
-		namespace Components
-		{
-			class BoxCollider : public Component
-			{
-				std::shared_ptr<Physics::ICollider> m_Collider;
+    class GameObject;
 
-			public:
-				BoxCollider();
-				~BoxCollider();
-				virtual void Init() override {}
-				virtual void Update() override {}
+    namespace Core
+    {
+        namespace Math
+        {
+            struct Quaternion;
+            struct Vector3;
+        } // namespace Math
 
-				entt::id_type GetType() const override {
-					return 0;
-				}
+        namespace Physics
+        {
+            class ICollider;
+        }
 
-				void SetOffset(MirageEngine::Core::Math::Vector3 _offset, MirageEngine::Core::Math::Quaternion _rotation);
-				void SetHalfExtents(const MirageEngine::Core::Math::Vector3& _halfExtents);
+        namespace Components
+        {
+            class BoxCollider : public Component
+            {
+                    std::shared_ptr<Physics::ICollider> m_Collider;
 
-				Physics::ICollider* GetCollision() const { return m_Collider.get(); }
-			};
-		}
-	}
-}
+                public:
+
+                    BoxCollider();
+                    ~BoxCollider();
+
+                    virtual void Init() override {}
+
+                    virtual void Update() override {}
+
+                    entt::id_type GetType() const override { return 0; }
+
+                    // Box only parameter
+                    void          SetHalfExtents(const Math::Vector3& _halfExtents);
+                    Math::Vector3 GetHalfExtents();
+
+                    // Global collider parameter
+                    void SetScale(Math::Vector3 _scale);
+                    void SetTranslate(Math::Vector3 _offset);
+                    void SetRotation(Math::Quaternion _rotation);
+                    void SetOffset(Math::Vector3 _offset, Math::Quaternion _rotation);
+
+                    Math::Vector3    GetScale() const;
+                    Math::Vector3    GetTranslate() const;
+                    Math::Quaternion GetRotation() const;
+
+                    Physics::ICollider* GetCollision() const { return m_Collider.get(); }
+            };
+        } // namespace Components
+    } // namespace Core
+} // namespace MirageEngine
