@@ -41,8 +41,8 @@ namespace Mirage
 		void ResolveUnsignedInt(entt::meta_any _value, const char* _label, entt::meta_data _data, entt::meta_any &_instance);
 		void ResolvePointer(entt::meta_any _value, const char* _label, entt::meta_data _data, entt::meta_any &_instance);
 
-		bool ResolveComponent(entt::meta_any _value);
-		bool ResolveResource(entt::meta_any _value);
+		bool ResolveComponent(entt::meta_any _value, const char* _label, entt::meta_data _data, entt::meta_any& _instance);
+		bool ResolveResource(entt::meta_any _value, const char* _label, entt::meta_data _data, entt::meta_any& _instance);
 
 		void ResolveMesh(entt::meta_any _value);
 		void ResolveMaterial(entt::meta_any _value);

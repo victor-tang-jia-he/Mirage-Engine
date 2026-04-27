@@ -11,6 +11,13 @@
 #include <fstream>
 #include <Resources/resource_manager.h>
 
+// RESOURCES HEADERS
+#include <Resources/mesh.h>
+#include <Resources/texture.h>
+#include <Resources/material.h>
+#include <Resources/shader.h>
+
+// COMPONENTS HEADERS
 #include "Components/camera.h"
 #include "Components/mesh_renderer.h"
 #include "Components/utility_agent.h"
@@ -299,59 +306,81 @@ namespace Mirage
 
 	void Inspector::ResolvePointer(entt::meta_any _value, const char* _label, entt::meta_data _data, entt::meta_any& _instance)
 	{
+		if (ResolveResource(_value, _label, _data, _instance))
+			return;
+
+		if (ResolveComponent(_value, _label, _data, _instance))
+			return;
+	}
+
+	bool Inspector::ResolveComponent(entt::meta_any _value, const char* _label, entt::meta_data _data, entt::meta_any& _instance)
+	{
 		if (entt::meta_any ref = *_value; ref)
 		{
-			if (ResolveComponent(ref))
+			if (Core::Components::Component* component = ref.try_cast<Core::Components::Component>())
 			{
-				return;
+				const char* componentLabel = component ? "Component Assigned" : "None";
+				ImGui::TextUnformatted(_label);
+				ImGui::SameLine();
+				ImGui::Button(componentLabel, ImVec2(-1, 0));
+				return true;
 			}
-			else if (ResolveResource(ref))
-			{
-				return;
-			}
-		}
-	}
-
-	bool Inspector::ResolveComponent(entt::meta_any _value)
-	{
-		if (Core::Components::Component* component = _value.try_cast<Core::Components::Component>())
-		{
-			const char* componentLabel = component ? "Assigned" : "None";
-
-			if (ImGui::Button((std::string(componentLabel) + "##" + _value.type().name()).c_str(), ImVec2(-1, 0)))
-			{
-				if (ImGui::BeginDragDropTarget())
-				{
-					if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM"))
-					{
-					}
-					ImGui::EndDragDropTarget();
-				}
-			}
-			return true;
 		}
 		return false;
 	}
 
-	bool Inspector::ResolveResource(entt::meta_any _value)
+	bool Inspector::ResolveResource(entt::meta_any _value, const char* _label, entt::meta_data _data, entt::meta_any& _instance)
 	{
-		if (Core::Resources::IResource* resource = _value.try_cast<Core::Resources::IResource>())
-		{
-			const char* resourceLabel = resource ? "Assigned" : "None";
+		auto typePointed = _data.type();
 
-			if (ImGui::Button((std::string(resourceLabel) + "##" + _value.type().name()).c_str(), ImVec2(-1, 0)))
-			{
-				if (ImGui::BeginDragDropTarget())
-				{
-					if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM"))
-					{
-					}
-					ImGui::EndDragDropTarget();
-				}
+		bool isResource = false;
+		for (auto [id, baseType] : typePointed.base()) {
+			if (id == entt::type_id<Core::Resources::IResource>().hash()) {
+				isResource = true;
+				break;
 			}
-			return true;
 		}
-		return false;
+
+		if (!isResource && !typePointed.is_pointer_like()) return false;
+
+		std::string resourceName = "None (Drop here)";
+		if (entt::meta_any ref = *_value; ref)
+		{
+			if (auto* res = ref.try_cast<Core::Resources::IResource>()) {
+				resourceName = res->GetName();
+			}
+		}
+
+		ImGui::TextUnformatted(_label);
+		ImGui::SameLine();
+
+		if (ImGui::Button((resourceName + "##" + _label).c_str(), ImVec2(-1, 0))) {
+			// Action clic
+		}
+
+		if (ImGui::BeginDragDropTarget())
+		{
+			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM"))
+			{
+				std::filesystem::path path = (const char*)payload->Data;
+				std::string name = path.stem().string();
+
+				if (typePointed == entt::resolve<std::shared_ptr<Core::Resources::Mesh>>() || typePointed == entt::resolve<Core::Resources::Mesh*>()) {
+					_data.set(_instance, Core::Resources::ResourceManager::Instance().GetMesh(name));
+				}
+				else if (typePointed == entt::resolve<std::shared_ptr<Core::Resources::Texture>>() || typePointed == entt::resolve<Core::Resources::Texture*>()) {
+					_data.set(_instance, Core::Resources::ResourceManager::Instance().GetTexture(name));
+				}
+				else if (typePointed == entt::resolve<std::shared_ptr<Core::Resources::Material>>() || typePointed == entt::resolve<Core::Resources::Material*>()) {
+					_data.set(_instance, Core::Resources::ResourceManager::Instance().GetMaterial(name));
+				}
+
+				LOG(logInfo, LogInspector, "Resource %s dropped onto %s", name.c_str(), _label);
+			}
+			ImGui::EndDragDropTarget();
+		}
+
+		return true;
 	}
 
 	void Inspector::RenderAddComponentPopup(std::shared_ptr<MirageEngine::GameObject> _selectedObj)
