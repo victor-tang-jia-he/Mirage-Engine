@@ -435,6 +435,7 @@ target_link_libraries(third_party INTERFACE
     Toolbox
     BulletDynamics
     BulletCollision
+    GameScripts
     LinearMath
     MirageEngine
     cpptrace::cpptrace
@@ -444,6 +445,7 @@ target_link_libraries(third_party INTERFACE
 message("")
 message(STATUS "Adding mirage_engine project...")
 add_subdirectory(MirageEngine)
+add_subdirectory(${CMAKE_SOURCE_DIR}/Scripts) # Add Script after build
 
 # Editor project
 message("")
