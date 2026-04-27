@@ -372,6 +372,37 @@ message(STATUS "================================================================
 message("")
 
 # ============================================================================
+# Json Serialization
+# ============================================================================
+message(STATUS "================================================================================")
+message(STATUS "JSON SERIALIZATION")
+
+set(JSON_DIR "${CMAKE_SOURCE_DIR}/Libraries/NlohmannJson")
+
+set(JSON_BUILD_DOCS OFF CACHE BOOL "" FORCE)
+set(JSON_BUILD_TESTS OFF CACHE BOOL "" FORCE)
+set(JSON_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
+set(JSON_INSTALL OFF CACHE BOOL "" FORCE)
+
+if(NOT EXISTS ${JSON_DIR}/CMakeLists.txt)
+    message(STATUS "Fetching NlohmannJson...")
+    FetchContent_Declare(
+        nlohmann_json
+        GIT_REPOSITORY https://github.com/nlohmann/json
+        GIT_TAG v3.12.0
+        SOURCE_DIR ${CMAKE_SOURCE_DIR}/Libraries/NlohmannJson
+    )
+    FetchContent_MakeAvailable(nlohmann_json)
+else()
+    message(STATUS "Using local NlohmannJson")
+    add_subdirectory(${CMAKE_SOURCE_DIR}/Libraries/NlohmannJson ${CMAKE_BINARY_DIR}/NlohmannJson)
+endif()
+
+message(STATUS "NlohmannJson target created successfully")
+message(STATUS "================================================================================")
+message("")
+
+# ============================================================================
 # CPP Trace - Debug system
 # ============================================================================
 message(STATUS "================================================================================")
@@ -421,6 +452,7 @@ target_include_directories(third_party INTERFACE
     ${CMAKE_SOURCE_DIR}/Libraries/EnTT/single_include
     ${CMAKE_SOURCE_DIR}/Libraries/EnTT/src
     ${CMAKE_SOURCE_DIR}/Libraries/Bullet3/src
+    ${CMAKE_SOURCE_DIR}/Libraries/NlohmannJson/include
     ${CMAKE_SOURCE_DIR}/Libraries/CppTrace/include
     ${CMAKE_SOURCE_DIR}/Libraries
 )

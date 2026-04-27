@@ -8,7 +8,7 @@ using namespace MirageEngine::Core;
 
 SphereCollider::SphereCollider() { m_Collider = PhysicsManager::Instance().CreateCollider(ECollisionShapeType::Sphere); }
 
-SphereCollider::~SphereCollider() { m_Collider.reset(); }
+SphereCollider::~SphereCollider() { delete m_Collider; }
 
 void SphereCollider::SetRadius(float _radius) { m_Collider->As<ISphereCollider>()->SetRadius(_radius); }
 

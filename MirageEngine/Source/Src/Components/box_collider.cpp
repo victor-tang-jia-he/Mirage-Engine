@@ -8,7 +8,7 @@ using namespace MirageEngine::Core;
 
 BoxCollider::BoxCollider() { m_Collider = PhysicsManager::Instance().CreateCollider(ECollisionShapeType::Box); }
 
-BoxCollider::~BoxCollider() { m_Collider.reset(); }
+BoxCollider::~BoxCollider() { delete m_Collider; }
 
 void BoxCollider::SetHalfExtents(const Math::Vector3& _halfExtents) { m_Collider->As<IBoxCollider>()->SetHalfExtents(_halfExtents); }
 

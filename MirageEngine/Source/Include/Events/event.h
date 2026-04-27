@@ -1,72 +1,58 @@
 #pragma once
 #include <vector>
 #include <functional>
-#include <map>
-#include <string>
+#include <unordered_map>
 #include <memory>
+#include <typeindex>
 
-namespace MirageEngine
+namespace MirageEngine::Core::EventSystem
 {
-	namespace Core
-	{
-		namespace EventSystem
-		{
-			class IEvent
-			{
-			public:
-				virtual const std::string& GetName() const = 0;
-			};
-			template <typename ..._args>
-			class Event : public IEvent
-			{
-			public:
-				//Alias for template callback
-				using _callback = std::function<void(_args...)>;
+    class IEvent
+    {
+        public:
 
-				//Ctor & Dtor
-				//template< typename T_CB >
-				explicit Event(const std::string& name, const _callback& cb) : _name(name), _cbFunc(cb) {}
-				~Event() {}
+            virtual ~IEvent()                       = default;
+            virtual std::type_index GetType() const = 0;
+    };
 
-				//Accessors
-				virtual const std::string& GetName() const override { return this->_name; }
+    template <typename... Args> class Event : public IEvent
+    {
+        public:
 
-				//Methods
-				void trigger(_args... a) { this->_cbFunc(a...); }
-			private:
-				//EventSystem identifier
-				std::string _name;
-				//EventSystem callback - can't be changed inside event.
-				_callback const _cbFunc;
-			};
-			class EventDispatcher
-			{
-			public:
-				EventDispatcher() {}
-				~EventDispatcher() { _eventList.clear(); }
+            using Callback = std::function<void(Args...)>;
 
-				void Add(std::shared_ptr<IEvent> event)
-				{
-					if (event)
-						_eventList[event->GetName()].push_back(event);
-				}
+            explicit Event(Callback cb)
+                : m_Callback(std::move(cb))
+            {
+            }
 
-				template <typename ..._args>
-				void Invoke(const std::string& eventName, _args...a)
-				{
-					auto it_eventList = _eventList.find(eventName);
-					if (it_eventList == _eventList.end())
-						return;
-					for (auto& ie : it_eventList->second)
-					{
-						if (std::shared_ptr<Event<_args...>> event = std::dynamic_pointer_cast<Event<_args...>>(ie))
-							event->trigger(a...);
-					}
-				}
+            std::type_index GetType() const override { return typeid(Event<Args...>); }
 
-			private:
-				std::map<std::string, std::vector<std::shared_ptr<IEvent>>> _eventList;
-			};
-		}
-	}
-}
+            void Trigger(Args... args) { m_Callback(args...); }
+
+        private:
+
+            Callback m_Callback;
+    };
+
+    class EventDispatcher
+    {
+        public:
+
+            template <typename... Args> void Add(std::shared_ptr<Event<Args...>> event) { m_Events[typeid(Event<Args...>)].push_back(event); }
+
+            template <typename... Args> void Invoke(Args... args)
+            {
+                auto it = m_Events.find(typeid(Event<Args...>));
+                if (it == m_Events.end()) return;
+
+                for (auto& ie : it->second) { static_cast<Event<Args...>*>(ie.get())->Trigger(args...); }
+            }
+
+            template <typename... Args> void Remove() { m_Events.erase(typeid(Event<Args...>)); }
+
+        private:
+
+            std::unordered_map<std::type_index, std::vector<std::shared_ptr<IEvent>>> m_Events;
+    };
+} // namespace MirageEngine::Core::EventSystem

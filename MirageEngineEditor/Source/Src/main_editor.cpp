@@ -11,26 +11,39 @@
 
 int main()
 {
-    Application       application;
+    Application application;	// Temp, will be replaced by Engine Handler
     Mirage::EditorApp editor;
 
+	// --- Initialization ---
 	application.InitApp();
 	MirageEngine::RegisterMeta().RegisterAllMeta();
 	editor.Init(application.m_Renderer.GetWindowHandle(), &application.m_Renderer, application.GetSceneGraph());
 	MirageEngine::TimeManager::Init();
+
 	while (application.m_Renderer.IsRunning())
 	{
+		// --- Update ---
 		MirageEngine::TimeManager::Update();
 		MirageEngine::Core::Input::InputSystem::UpdateHeldInput();
-		MirageEngine::Core::Physics::PhysicsManager::Instance().Update(MirageEngine::TimeManager::GetDeltaTime());
+		if (editor.IsPlaying() && !editor.IsPaused())
+			MirageEngine::Core::Physics::PhysicsManager::Instance().Update(MirageEngine::TimeManager::GetDeltaTime());
 		application.GetSceneGraph()->UpdateAllWorldMatrices();
+
+		// --- Render ---
 		application.m_Renderer.BeginFrame();
+
 		application.m_Renderer.RenderScene(application.m_SceneGraph);
 		application.m_Renderer.RenderScreen();
-		editor.Update(application.m_Renderer.GetFramebufferTextureID());
+
+		// Used to display the scene in the editor viewport
+		uint32_t textureID = application.m_Renderer.GetFramebufferTextureID();
+		// Display the editor panels and pass the framebuffer texture ID to the viewport for rendering the scene
+		editor.Update(textureID);
+
 		application.m_Renderer.EndFrame();
 	}
 
+	// --- Shutdown ---
     editor.Shutdown();
     application.ShutDown();
     return 0;

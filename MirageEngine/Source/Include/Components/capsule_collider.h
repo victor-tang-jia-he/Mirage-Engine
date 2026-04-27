@@ -1,5 +1,6 @@
 #pragma once
 
+#include <Components/physics_components_interface.h>
 #include <Components/component.h>
 
 namespace MirageEngine
@@ -21,9 +22,9 @@ namespace MirageEngine
 
         namespace Components
         {
-            class CapsuleCollider : public Component
+            class CapsuleCollider : public Component, public ICCollider
             {
-                    std::shared_ptr<Physics::ICollider> m_Collider;
+                    Physics::ICollider* m_Collider;
 
                 public:
 
@@ -52,7 +53,7 @@ namespace MirageEngine
                     Math::Vector3    GetTranslate() const;
                     Math::Quaternion GetRotation() const;
 
-                    Physics::ICollider* GetCollision() const { return m_Collider.get(); }
+                    Physics::ICollider* GetCollision() const override { return m_Collider; }
             };
         } // namespace Components
     } // namespace Core

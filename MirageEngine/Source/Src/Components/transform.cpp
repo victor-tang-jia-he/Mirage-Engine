@@ -33,11 +33,18 @@ Matrix4 Transform::GetMatrix()
     return m_LocalMatrix;
 }
 
-Vector3 Transform::Rotate(const Quaternion& q, const Vector3& v) const
+Vector3 Transform::Rotate(const Quaternion& _q, const Vector3& _v) const
 {
-	//Quaternion qRad = q * PI / 180.f; // Convert to radians
-    Quaternion qv(0.f,v.X, v.Y, v.Z);
-    Quaternion res = q * qv * q.Conjugation();
+    // Encode the 3D vector as a pure quaternion (real part = 0)
+    // qv = (0, vx, vy, vz)
+    Quaternion qv(0.f, _v.X, _v.Y, _v.Z);
+
+    // Quaternion rotation formula : v' = q * v * q-1
+    // For a unit quaternion, q-1 == conjugate(q) = (w, -x, -y, -z)
+    // The result is a pure quaternion whose imaginary part is the rotated vector
+    Quaternion res = _q * qv * _q.Conjugation();
+
+    // Extract the imaginary part, this is the rotated vector
     return Vector3(res.X, res.Y, res.Z);
 }
 

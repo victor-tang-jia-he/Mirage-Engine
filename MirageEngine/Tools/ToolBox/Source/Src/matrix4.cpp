@@ -1,4 +1,4 @@
-#include "matrix4.h"
+﻿#include "matrix4.h"
 #include <iostream>
 #include <array>
 #include <assert.h>
@@ -229,15 +229,20 @@ Matrix4 Matrix4::CreateTransformMatrix(const Vector3& _position, const Quaternio
 
 Matrix4 Matrix4::GetPerspectiveMatrix(unsigned int _width, unsigned int _height, float _near, float _far, float _fov)
 {
-	float aspectRatio = static_cast<float>(_width) / static_cast<float>(_height);
-	float tanHalfFov = tanf((_fov * 180 / PI) / 2.0f);
+	const float DEG2RAD = acos(-1.0f) / 180;
+	float tangent = tanf((_fov / 2) * DEG2RAD);
+	float right = _near * tangent;
+	float top = right * static_cast<float>(_height) / static_cast<float>(_width);
 
 	Matrix4 perspective;
-	perspective(0, 0) = 1.0f / (aspectRatio * tanHalfFov);
-	perspective(1, 1) = 1.0f / tanHalfFov;
+
+	perspective(0, 0) = _near / right;
+	perspective(1, 1) = _near / top;
 	perspective(2, 2) = -(_far + _near) / (_far - _near);
+	perspective(3, 2) = -1;
 	perspective(2, 3) = -(2.0f * _far * _near) / (_far - _near);
-	perspective(3, 2) = -1.0f;
+	perspective(3, 3) = 0;
+
 	return perspective;
 }
 

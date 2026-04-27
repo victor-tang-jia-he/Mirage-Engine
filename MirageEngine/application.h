@@ -6,7 +6,7 @@
 #include <SceneGraph/scene_graph.h>
 
 // Input
-#include <Components/input_system.h>
+#include <Input/input_system.h>
 namespace MirageEngine 
 {
 	namespace Core 

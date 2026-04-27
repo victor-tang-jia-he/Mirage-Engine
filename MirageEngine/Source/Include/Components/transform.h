@@ -21,7 +21,7 @@ namespace MirageEngine
 				bool m_bDirty = true;
 
 				// utility
-				Math::Vector3 Rotate(const Math::Quaternion& q, const Math::Vector3& v) const;
+				Math::Vector3 Rotate(const Math::Quaternion& _q, const Math::Vector3& _v) const;
 
 			public:
 				Transform() = default;

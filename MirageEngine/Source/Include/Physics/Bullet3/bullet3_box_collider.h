@@ -24,8 +24,6 @@ namespace MirageEngine::Core::Physics
             ~Bullet3BoxCollider() override;
 
             void Create() override;
-            void Init() override {};
-            void Update() override {};
 
             void SetOffset(Vector3 _offset, Quaternion _rotation) override;
             void SetHalfExtents(const Vector3& _halfExtents) override;
