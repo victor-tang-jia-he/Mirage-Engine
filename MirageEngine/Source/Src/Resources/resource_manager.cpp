@@ -169,10 +169,10 @@ std::shared_ptr<Mesh> ResourceManager::CreateMesh(const std::string& _name, cons
 
     // Load mesh data from file to ram
     std::vector<uint32_t>             indices;
-    std::vector<MirageRHI::LitVertex> vertices;
+    std::vector<LitVertex> vertices;
 
     rm.LoadMeshUtility(_path, vertices, indices);
-    std::shared_ptr<Mesh> mesh = std::make_shared<Mesh>(rm.m_Rhi->InstantiateBuffer(), rm.m_Rhi->InstantiateBuffer(), std::move(vertices), std::move(indices), indices.size());
+    std::shared_ptr<Mesh> mesh = std::make_shared<Mesh>(rm.m_Rhi->InstantiateVertexLayout(), rm.m_Rhi->InstantiateBuffer(), rm.m_Rhi->InstantiateBuffer(), std::move(vertices), std::move(indices), indices.size());
 
     mesh->p_Name = newAssetName;
     mesh->p_Path = _path;
@@ -203,7 +203,7 @@ std::shared_ptr<Material> ResourceManager::CreateMaterial(const std::string& _na
         = rm.m_ShaderCache.contains(_pathVertex) ? rm.m_ShaderCache[_pathVertex] : ResourceManager::CreateShader("ShaderVertex", _pathVertex, MirageRHI::IShader::ShaderType::Vertex);
 
     std::shared_ptr<MirageRHI::IPipelineParameters> pipelineparameter = rm.m_Rhi->InstantiatePipelineParameters();
-    pipelineparameter->Create(MirageRHI::VertexType::PBR, MirageRHI::CullingType::None, true); // Default setting
+    pipelineparameter->Create(MirageRHI::CullingType::None, true); // Default setting
 
     std::shared_ptr<MirageRHI::IPipeline> pipeline = rm.m_Rhi->InstantiatePipeline();
     pipeline->Create(vert->ShaderBind, frag->ShaderBind, pipelineparameter);
@@ -287,7 +287,7 @@ std::string ResourceManager::GenerateUniqueAssetName(const std::string& _baseNam
     return uniqueName;
 }
 
-void ResourceManager::LoadMeshUtility(std::string _path, std::vector<MirageRHI::LitVertex>& _vertices, std::vector<uint32_t>& _indices)
+void ResourceManager::LoadMeshUtility(std::string _path, std::vector<LitVertex>& _vertices, std::vector<uint32_t>& _indices)
 {
     tinyobj::attrib_t                attrib;
     std::vector<tinyobj::shape_t>    shapes;
@@ -327,7 +327,7 @@ void ResourceManager::LoadMeshUtility(std::string _path, std::vector<MirageRHI::
             {
                 tinyobj::index_t idx = shape.mesh.indices[index_offset + v];
 
-                MirageRHI::LitVertex vertex;
+                LitVertex vertex;
 
                 // Position
                 vertex.Position = MirageEngine::Core::Math::Vector3(attrib.vertices[3 * idx.vertex_index + 0], attrib.vertices[3 * idx.vertex_index + 1], attrib.vertices[3 * idx.vertex_index + 2]);

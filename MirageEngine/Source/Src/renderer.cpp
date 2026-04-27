@@ -194,7 +194,7 @@ void MirageEngine::Renderer::ClassCreation()
 
 void MirageEngine::Renderer::ScreenPipelineCreation()
 {
-    m_ScreenPipelineParameters->Create(MirageRHI::VertexType::None, MirageRHI::CullingType::None, false);
+    m_ScreenPipelineParameters->Create(MirageRHI::CullingType::None, false);
 
     // Creation of single use shader objects for screen rendering pipeline
     std::shared_ptr<MirageRHI::IShader> screenVertShader = m_RenderInterface->InstantiateShader();
@@ -215,7 +215,7 @@ void MirageEngine::Renderer::TEMP_PIPELINE_PLACEHOLDER()
     m_PipelineParameters = m_RenderInterface->InstantiatePipelineParameters();
     m_Pipeline           = m_RenderInterface->InstantiatePipeline();
 
-    m_PipelineParameters->Create(MirageRHI::VertexType::PBR, MirageRHI::CullingType::None, true);
+    m_PipelineParameters->Create(MirageRHI::CullingType::None, true);
 
     // Creation of single use shader objects for screen rendering pipeline
     std::shared_ptr<MirageRHI::IShader> tempVertShader = m_RenderInterface->InstantiateShader();
@@ -259,6 +259,7 @@ void Renderer::DrawMesh(std::shared_ptr<MirageEngine::Core::Components::MeshRend
 	_meshRenderer->GetMaterial()->Bind();
     m_UniformBuffer->UpdateUniformBuffer(_meshRenderer->GetMaterial()->GetMaterial()->GetPipeline(), _meshTransform.GetWorldMatrix());
 	m_CommandBuffer->BindBuffer(_meshRenderer->GetMesh()->GetVertexBuffer());
+    m_CommandBuffer->ApplyVertexLayout(_meshRenderer->GetMesh()->GetVertexLayout());
 	m_CommandBuffer->BindBuffer(_meshRenderer->GetMesh()->GetIndexBuffer());
 	m_CommandBuffer->Draw((uint32_t)_meshRenderer->GetMesh()->GetIndicesCount());
 }

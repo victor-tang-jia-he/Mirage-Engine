@@ -21,6 +21,7 @@ namespace MirageRHI
         void AddAttribute(std::shared_ptr<VertexAttribute> _newAttribute, uint32_t _index) override;
         void RemoveAttribute(uint32_t _targetAttributeIndex) override;
         void RemoveAttribute(std::string _targetAttributeName) override;
-        void SetLayout() override;
+        void ClearAttributes() override;
+        void SetLayout();
     };
 }

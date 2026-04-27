@@ -23,6 +23,7 @@ namespace MirageRHI
         void BindTextureFromID(uint32_t _ID) override;
 
         void ApplyPipelineParameters(std::shared_ptr<IPipeline> _pipeline) override;
+        void ApplyVertexLayout(std::shared_ptr<IVertexLayout> _vertexLayout) override;
 
         // Draw Binded Buffers
         void Draw(uint32_t _indexCount) override;

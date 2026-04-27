@@ -15,6 +15,7 @@ void MirageRHI::OpenGLVertexLayout::Create()
 
 void MirageRHI::OpenGLVertexLayout::Destroy()
 {
+	ClearAttributes();
 	glDeleteVertexArrays(1, &m_VAO);
 
 	LOG(logTemp, LogRHIVertexLayout, "Vertex Layout Destroyed with VAO ID: ", m_VAO);
@@ -52,6 +53,11 @@ void MirageRHI::OpenGLVertexLayout::RemoveAttribute(std::string _targetAttribute
 		}
 	}
 	LOG(logWarning, LogRHIVertexLayout, "Attribute name not used in this layout!");
+}
+
+void MirageRHI::OpenGLVertexLayout::ClearAttributes()
+{
+	m_Attributes.clear();
 }
 
 void MirageRHI::OpenGLVertexLayout::SetLayout()
