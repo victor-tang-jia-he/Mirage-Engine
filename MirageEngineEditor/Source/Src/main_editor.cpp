@@ -17,8 +17,8 @@
 struct DllDeleter {
     void operator()(MirageEngine::Core::Scripting::IScript* s) const {
         if (s) {
-            s->onDestroy();
-            destroyScript(s);
+            s->OnDestroy();
+            DestroyScript(s);
         }
     }
 };
@@ -26,27 +26,31 @@ struct DllDeleter {
 using ScriptPtr = std::unique_ptr<MirageEngine::Core::Scripting::IScript, DllDeleter>;
 
 int main() {
+    LoadLibraryA("GameScripts.dll");
+
     // R¨¦cup¨¨re tous les scripts de la DLL
     std::vector<ScriptPtr> scripts;
 
-    int count = getScriptCount();
+    int count = GetScriptCount();
     printf("=== %d script(s) trouv¨¦(s) ===\n\n", count);
 
     for (int i = 0; i < count; ++i) {
-        MirageEngine::Core::Scripting::IScript* s = createScript(i);
+        const char* name = GetScriptName(i);
+        std::cout << name << std::endl;
+        MirageEngine::Core::Scripting::IScript* s = CreateScriptByName(name);
         if (s) scripts.emplace_back(s);
     }
 
     // onStart
     printf("--- onStart ---\n");
     for (auto& s : scripts)
-        s->onStart();
+        s->OnStart();
 
     // onUpdate x3
     printf("\n--- onUpdate ---\n");
     for (int frame = 0; frame < 3; ++frame)
         for (auto& s : scripts)
-            s->onUpdate(0.016f);
+            s->OnUpdate(0.016f);
 
     // onDestroy ¡ª appel¨¦ automatiquement par le DllDeleter
     printf("\n--- onDestroy (destruction du vector) ---\n");

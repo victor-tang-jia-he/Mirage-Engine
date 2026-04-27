@@ -17,7 +17,7 @@ target_include_directories(GameScripts PUBLIC
 )
 
 add_custom_command(TARGET GameScripts POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy
+    COMMAND ${CMAKE_COMMAND} -E copy "${MIRAGE_BIN_OUTPUT_DIR}/Libs"
         $<TARGET_FILE:GameScripts>
         $<TARGET_FILE_DIR:MirageEngine>
 )

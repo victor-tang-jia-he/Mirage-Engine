@@ -8,7 +8,8 @@
 #endif
 
 extern "C" {
-    SCRIPT_API int      getScriptCount();
-    SCRIPT_API MirageEngine::Core::Scripting::IScript* createScript(int index);
-    SCRIPT_API void     destroyScript(MirageEngine::Core::Scripting::IScript* script);
+	SCRIPT_API int      GetScriptCount();
+	SCRIPT_API const char* GetScriptName(int index);
+	SCRIPT_API MirageEngine::Core::Scripting::IScript* CreateScriptByName(const char* name);
+	SCRIPT_API void     DestroyScript(MirageEngine::Core::Scripting::IScript* _script);
 }

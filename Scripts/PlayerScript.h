@@ -1,22 +1,25 @@
 #pragma once
 #include <i_script.h>
+#include "ScriptRegistry.h"
 #include <cstdio>
 
 class PlayerScript : public MirageEngine::Core::Scripting::IScript {
 public:
-    void onStart() override {
+    void OnStart() override {
         printf("[PlayerScript] onStart\n");
     }
 
-    void onUpdate(float dt) override {
+    void OnUpdate(float dt) override {
         printf("[PlayerScript] onUpdate dt=%.3f\n", dt);
     }
 
-    void onDestroy() override {
+    void OnFixedUpdate(float dt) override {};
+
+    void OnDestroy() override {
         printf("[PlayerScript] onDestroy\n");
     }
 
-    const char* getName() const override {
+    const char* GetName() const override {
         return "PlayerScript";
     }
 };
