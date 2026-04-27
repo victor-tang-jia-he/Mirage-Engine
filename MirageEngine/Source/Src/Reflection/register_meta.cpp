@@ -47,6 +47,8 @@ void RegisterMeta::RegisterAllMeta()
 	RegisterMeshRendererMeta();
 	RegisterCameraMeta();
 	RegisterInputMappingMeta();
+	RegisterInfluenceGridMeta();
+	RegisterInfluenceEmitterMeta();
 
 	RegisterMeshMeta();
 	RegisterTextureMeta();
@@ -192,8 +194,7 @@ void MirageEngine::RegisterMeta::RegisterShaderMeta()
 void RegisterMeta::RegisterInfluenceGridMeta()
 {
 	entt::meta_factory<InfluenceGrid> influenceGrid{};
-	influenceGrid.type(entt::type_id<InfluenceGrid>().hash());
-
+	influenceGrid.type(entt::type_id<InfluenceGrid>().hash(), "InfluenceGrid");
 
 	influenceGrid.base<Component>();
 
@@ -204,13 +205,11 @@ void RegisterMeta::RegisterInfluenceGridMeta()
 }
 
 void RegisterMeta::RegisterInfluenceEmitterMeta()
-{
+{	
 	entt::meta_factory<InfluenceEmitter> influenceEmitter{};
-	influenceEmitter.type(entt::type_id<InfluenceEmitter>().hash());
-
+	influenceEmitter.type(entt::type_id<InfluenceEmitter>().hash(), "InfluenceEmitter");
 
 	influenceEmitter.base<Component>();
-
 	influenceEmitter.data<&InfluenceEmitter::SetInfluenceType, &InfluenceEmitter::GetInfluenceType>("Type");
 	influenceEmitter.data<&InfluenceEmitter::SetRadius, &InfluenceEmitter::GetRadius>("Radius");
 	influenceEmitter.data<&InfluenceEmitter::SetStrength, &InfluenceEmitter::GetStrength>("Strength");

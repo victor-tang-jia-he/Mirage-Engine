@@ -11,11 +11,19 @@
 #include <fstream>
 #include <Resources/resource_manager.h>
 
+#include "Components/camera.h"
+#include "Components/mesh_renderer.h"
+#include "Components/utility_agent.h"
+#include "Components/influence_emitter.h"
+#include <Input/input_mapping.h>
+#include <AI/influence_grid.h>
+
 DEFINE_LOG_CATEGORY_WITH_COLOR(LogInspector, Loggers::Color::CYAN);
 
 using namespace MirageEngine::Core::Math;
 using namespace MirageEngine;
 using namespace entt::literals;
+using namespace MirageEngine::Core::Components;
 
 namespace Mirage
 {
@@ -90,6 +98,20 @@ namespace Mirage
 				}
 			}
 		}
+
+		ImGui::Spacing();
+		ImGui::Separator();
+		ImGui::Spacing();
+
+		float width = ImGui::GetWindowWidth();
+		ImGui::SetCursorPosX(width * 0.1f);
+		if (ImGui::Button("Add Component", ImVec2(width * 0.8f, 30)))
+		{
+			ImGui::OpenPopup("AddComponentPopup");
+		}
+
+		RenderAddComponentPopup(selectedObj);
+
 		UIWrapper::EndWindow();
 	}
 
@@ -330,5 +352,46 @@ namespace Mirage
 			return true;
 		}
 		return false;
+	}
+
+	void Inspector::RenderAddComponentPopup(std::shared_ptr<MirageEngine::GameObject> _selectedObj)
+	{
+		if (ImGui::BeginPopup("AddComponentPopup"))
+		{
+			ImGui::TextDisabled("Add Component");
+			ImGui::Separator();
+
+			if (ImGui::MenuItem("Mesh Renderer"))
+			{
+				_selectedObj->AddComponent<MeshRenderer>();
+				ImGui::CloseCurrentPopup();
+			}
+
+			if (ImGui::MenuItem("Camera"))
+			{
+				_selectedObj->AddComponent<Camera>();
+				ImGui::CloseCurrentPopup();
+			}
+
+			if (ImGui::MenuItem("Influence Grid"))
+			{
+				_selectedObj->AddComponent<InfluenceGrid>();
+				ImGui::CloseCurrentPopup();
+			}
+
+			if (ImGui::MenuItem("Influence Emitter"))
+			{
+				_selectedObj->AddComponent<InfluenceEmitter>();
+				ImGui::CloseCurrentPopup();
+			}
+
+			if (ImGui::MenuItem("Input Mapping"))
+			{
+				_selectedObj->AddComponent<MirageEngine::Core::Input::InputMapping>();
+				ImGui::CloseCurrentPopup();
+			}
+
+			ImGui::EndPopup();
+		}
 	}
 }

@@ -10,6 +10,7 @@ namespace MirageEngine
 {
 	class SceneGraph;
 	namespace Core::Components { class Component; }
+	class GameObject;
 }
 
 namespace Mirage
@@ -48,5 +49,6 @@ namespace Mirage
 		void ResolveTexture(entt::meta_any _value);
 		void ResolveShader(entt::meta_any _value);
 
+		void RenderAddComponentPopup(std::shared_ptr<MirageEngine::GameObject> _selectedObj);
 	};
 }

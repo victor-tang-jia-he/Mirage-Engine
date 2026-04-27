@@ -23,6 +23,7 @@
 #include <Components/rigidbody.h>
 #include <Components/camera.h>
 #include <Components/mesh_renderer.h>
+#include <Components/influence_emitter.h>
 
 // Physics and physics Components
 #include <Physics/physics_manager.h>
@@ -124,6 +125,7 @@ void Application::InitGameObject()
     cameraGO->AddComponent<Camera>();
     cameraGO->AddComponent<InputMapping>();
     cameraGO->AddComponent<MeshRenderer>();
+    cameraGO->AddComponent <InfluenceEmitter>();
     cameraGO->AddComponent(dynamicCollider);
     cameraGO->AddComponent(dynamicRB);
 
