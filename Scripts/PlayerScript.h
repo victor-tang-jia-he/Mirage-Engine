@@ -1,5 +1,5 @@
 #pragma once
-#include <i_script.h>
+#include "Scripting/i_script.h"
 #include "ScriptRegistry.h"
 #include <cstdio>
 

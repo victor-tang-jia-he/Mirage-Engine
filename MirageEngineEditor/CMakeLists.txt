@@ -1,4 +1,4 @@
-﻿# Project executable
+# Project executable
 add_executable(MirageEngineEditor)
 
 # Sources
@@ -28,4 +28,5 @@ target_link_libraries(MirageEngineEditor PRIVATE
     MirageEngine    # Link the engine itself
     third_party     # And third-party libs
     imguizmo
+    GameScripts
 )

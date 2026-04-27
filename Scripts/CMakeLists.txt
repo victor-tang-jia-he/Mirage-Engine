@@ -13,9 +13,11 @@ add_library(GameScripts SHARED
 target_compile_definitions(GameScripts PRIVATE SCRIPTS_DLL_EXPORT)
 
 target_include_directories(GameScripts PUBLIC
-    ${CMAKE_SOURCE_DIR}/MirageEngine/Source/include/Scripting
+    ${CMAKE_SOURCE_DIR}/MirageEngine/Source/include
 )
-
+target_link_libraries(GameScripts PRIVATE
+    third_party
+)
 add_custom_command(TARGET GameScripts POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy "${MIRAGE_BIN_OUTPUT_DIR}/Libs"
         $<TARGET_FILE:GameScripts>

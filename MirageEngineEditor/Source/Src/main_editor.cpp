@@ -27,8 +27,6 @@ using ScriptPtr = std::unique_ptr<MirageEngine::Core::Scripting::IScript, DllDel
 
 int main() {
     LoadLibraryA("GameScripts.dll");
-
-    // R¨¦cup¨¨re tous les scripts de la DLL
     std::vector<ScriptPtr> scripts;
 
     int count = GetScriptCount();
@@ -41,12 +39,10 @@ int main() {
         if (s) scripts.emplace_back(s);
     }
 
-    // onStart
     printf("--- onStart ---\n");
     for (auto& s : scripts)
         s->OnStart();
 
-    // onUpdate x3
     printf("\n--- onUpdate ---\n");
     for (int frame = 0; frame < 3; ++frame)
         for (auto& s : scripts)

@@ -1,5 +1,5 @@
 #pragma once
-#include "script_api.h"
+#include "Scripting/i_script.h"
 #include <functional>
 #include <unordered_map>
 #include <vector>

@@ -435,9 +435,7 @@ target_link_libraries(third_party INTERFACE
     Toolbox
     BulletDynamics
     BulletCollision
-    GameScripts
     LinearMath
-    MirageEngine
     cpptrace::cpptrace
 ) 
 
