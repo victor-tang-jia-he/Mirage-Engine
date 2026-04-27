@@ -10,6 +10,7 @@ namespace MirageRHI
 	class OpenGLCommandBuffer;
 	class OpenGLBuffer;
 	class IPipeline;
+	class IVertexLayout;
 	class IBuffer;
 	class IRenderPass;
 	class ISwapChain;
@@ -31,6 +32,7 @@ namespace MirageRHI
 		virtual void BindBuffer(std::shared_ptr<IBuffer> _buffer) = 0;
 		virtual void BindTextureFromID(uint32_t _ID) = 0;
 		virtual void ApplyPipelineParameters(std::shared_ptr<IPipeline> _pipeline) = 0;
+		virtual void ApplyVertexLayout(std::shared_ptr<IVertexLayout> _vertexLayout) = 0;
 		virtual void Draw(uint32_t _indexCount) = 0;
 		virtual void SubmitAndPresent(std::shared_ptr<ISwapChain> _swapChain, std::shared_ptr<ISurface> _surface) = 0;
 	};

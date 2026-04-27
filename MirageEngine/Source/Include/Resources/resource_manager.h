@@ -20,13 +20,13 @@ namespace MirageRHI
     class IBuffer;
     class IRenderInterface;
     struct IPipelineParameters;
-    struct LitVertex;
 } // namespace MirageRHI
 
 namespace MirageEngine::Core::Resources
 {
     class Texture;
     class Mesh;
+    struct LitVertex;
     class Material;
     class MaterialInstance;
     struct Shader;
@@ -178,7 +178,7 @@ namespace MirageEngine::Core::Resources
             /// <returns>A unique name (e.g., "resourceName" becomes "resourceName_1").</returns>
             std::string GenerateUniqueAssetName(const std::string& _baseName);
 
-            void LoadMeshUtility(std::string _path, std::vector<MirageRHI::LitVertex>& _vertices, std::vector<uint32_t>& _indices);
+            void LoadMeshUtility(std::string _path, std::vector<LitVertex>& _vertices, std::vector<uint32_t>& _indices);
 
             void LoadTextureUtility(const std::string& _path, int& m_Width, int& m_Height, int& m_Channel, int& m_Format, unsigned char*& m_Data);
 

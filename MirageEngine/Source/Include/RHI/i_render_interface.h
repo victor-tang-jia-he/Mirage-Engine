@@ -12,6 +12,7 @@ namespace MirageRHI
     class IRenderPass;
     class IPipeline;
     struct IPipelineParameters;
+    class IVertexLayout;
     class IShader;
     class IFramebuffer;
     class IBuffer;
@@ -39,6 +40,7 @@ namespace MirageRHI
             virtual std::shared_ptr<IRenderPass>         InstantiateRenderPass()         = 0;
             virtual std::shared_ptr<IPipeline>           InstantiatePipeline()           = 0;
             virtual std::shared_ptr<IPipelineParameters> InstantiatePipelineParameters() = 0;
+            virtual std::shared_ptr<IVertexLayout>       InstantiateVertexLayout()       = 0;
             virtual std::shared_ptr<IShader>             InstantiateShader()             = 0;
             virtual std::shared_ptr<IFramebuffer>        InstantiateFramebuffer()        = 0;
             virtual std::shared_ptr<IBuffer>             InstantiateBuffer()             = 0;
