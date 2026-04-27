@@ -21,11 +21,6 @@ namespace MirageEngine
 
 	class Renderer
 	{
-	public:
-		// Temp Default Pipeline, will be replaced when material system is done
-        std::shared_ptr<MirageRHI::IPipeline> m_Pipeline           = nullptr;
-		std::shared_ptr<MirageRHI::IPipelineParameters> m_PipelineParameters = nullptr;
-
 	private:
 		GLFWwindow* m_Window = nullptr;
 		uint32_t m_Width = 0;
@@ -79,8 +74,6 @@ namespace MirageEngine
 		void ClassCreation();
 		// Create the pipeline used for screen rendering (post processing, UI, etc...)
 		void ScreenPipelineCreation();
-		// Temp Pipeline Creation, will be replaced when material system is done !
-		void TEMP_PIPELINE_PLACEHOLDER();
 
 		// --- Rendering Internal ---
 		// Renders a GameObject and all its children recursively

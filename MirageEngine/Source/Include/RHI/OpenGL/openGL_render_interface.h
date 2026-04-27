@@ -11,6 +11,7 @@
 #include "openGL_render_pass.h"
 #include "openGL_pipeline.h"
 #include "openGL_pipeline_parameters.h"
+#include "openGL_vertex_layout.h"
 #include "openGL_shader.h"
 #include "openGL_framebuffer.h"
 #include "openGL_buffer.h"
@@ -30,6 +31,7 @@ namespace MirageRHI
 		std::shared_ptr<IRenderPass> InstantiateRenderPass() override { return std::make_shared< OpenGLRenderPass>(); }
 		std::shared_ptr<IPipeline> InstantiatePipeline() override { return std::make_shared< OpenGLPipeline>(); }
 		std::shared_ptr<IPipelineParameters> InstantiatePipelineParameters() override { return std::make_shared< OpenGLPipelineParameters>(); }
+		std::shared_ptr<IVertexLayout> InstantiateVertexLayout() override { return std::make_shared< OpenGLVertexLayout>(); }
 		std::shared_ptr<IShader> InstantiateShader() override { return std::make_shared< OpenGLShader>(); }
 		std::shared_ptr<IFramebuffer> InstantiateFramebuffer() override { return std::make_shared< OpenGLFramebuffer>(); }
 		std::shared_ptr<IBuffer> InstantiateBuffer() override { return std::make_shared< OpenGLBuffer>(); }

@@ -4,6 +4,7 @@
 #include "OpenGL/openGL_render_pass.h"
 #include "OpenGL/openGL_swap_chain.h"
 #include "OpenGL/openGL_surface.h"
+#include "OpenGL/openGL_vertex_layout.h"
 
 DEFINE_LOG_CATEGORY(LogRHICommandBuffer)
 
@@ -32,6 +33,11 @@ void MirageRHI::OpenGLCommandBuffer::BindTextureFromID(uint32_t _ID)
 void MirageRHI::OpenGLCommandBuffer::ApplyPipelineParameters(std::shared_ptr<IPipeline> _pipeline)
 {
 	_pipeline->API_OpenGL().ApplyParameters();
+}
+
+void MirageRHI::OpenGLCommandBuffer::ApplyVertexLayout(std::shared_ptr<IVertexLayout> _vertexLayout)
+{
+    _vertexLayout->API_OpenGL().SetLayout();
 }
 
 void MirageRHI::OpenGLCommandBuffer::Draw(uint32_t _indexCount)
