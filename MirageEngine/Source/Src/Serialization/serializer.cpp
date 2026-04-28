@@ -74,7 +74,7 @@ json MirageEngine::Serializer::SerializeComponent(std::shared_ptr<Components::Co
     jComponent["CompName"] = _component->GetName();
 
     // Serializing other Component specifice variables
-    auto type = entt::resolve(_component->GetType());
+    entt::meta_type type = entt::resolve(_component->GetType());
     if (type)
     {
         for (auto [id, data] : type.data())
@@ -107,10 +107,11 @@ json MirageEngine::Serializer::SerializeMetaData(entt::meta_type _type, entt::me
     if (!value)
         return jMetaData;
 
-    auto actualType = value.type();
+    entt::meta_type actualType = value.type();
 
-    const char* label = _data.name(); // The string name we gave in .data("Name")
-    if (!label) label = "Property";
+    const char* label = _data.name();
+    if (!label) 
+        label = "Property";
 
     if (actualType == entt::resolve<std::string>())
     {

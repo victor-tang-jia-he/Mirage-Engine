@@ -2,10 +2,13 @@
 #include "SceneGraph/scene_graph.h"
 #include "GameObject/game_object.h"
 #include "Components/component.h"
+#include "vector3.h"
+#include "quaternion.h"
 
 DEFINE_LOG_CATEGORY(LogDeserializer)
 
 using namespace MirageEngine;
+using namespace MirageEngine::Core;
 using namespace entt::literals;
 
 std::shared_ptr<SceneGraph> MirageEngine::Deserializer::LoadSceneFromJson(json _jSavedScene)
@@ -37,6 +40,7 @@ void MirageEngine::Deserializer::DeserializeGameObject(json _jGameObject, std::s
     std::shared_ptr<GameObject> savedGameObject = _savedScene->CreateGameObject(_jGameObject["ObjName"], _parent);
 
     savedGameObject->SetID(_jGameObject["id"]);
+    //DeserializeComponent(_jGameObject["transform"], savedGameObject);
     
     for (json jComponent : _jGameObject["components"])
     {
@@ -51,11 +55,9 @@ void MirageEngine::Deserializer::DeserializeGameObject(json _jGameObject, std::s
 
 void MirageEngine::Deserializer::DeserializeComponent(json _jComponent, std::shared_ptr<GameObject> _Owner)
 {
-    //std::shared_ptr<Core::Components::Component> _savedComponent = std::make_shared<Core::Components::Component>();
-
     std::string typeName = _jComponent["CompName"].get<std::string>();
     entt::hashed_string hashed{ typeName.c_str() };
-    auto metaType = entt::resolve(hashed);
+    entt::meta_type metaType = entt::resolve(hashed);
 
     if (!metaType)
     {
@@ -72,10 +74,72 @@ void MirageEngine::Deserializer::DeserializeComponent(json _jComponent, std::sha
 
     for (auto [id, data] : metaType.data())
     {
-        // TODO : Add Components Meta Data Deserialization
+        // Converts the Json data into corresponding Engine data and adds it to the Components Meta Instance
+        DeserializeMetaData(metaType, data, compInstance, _jComponent);
     }
 
     _Owner->AddComponentFromMeta(compInstance);
+}
+
+void MirageEngine::Deserializer::DeserializeMetaData(entt::meta_type _type, entt::meta_data _data, entt::meta_any& _instance, json _jComponent)
+{
+    entt::meta_type actualType = _data.type();
+
+    if (actualType == entt::resolve<std::string>())
+    {
+        std::string stringData = _jComponent[_data.name()].get<std::string>();
+        _data.set(_instance, stringData);
+        return;
+    }
+    else if (actualType == entt::resolve<Math::Vector3>())
+    {
+        Math::Vector3 vec3Data; // TODO : Vector3 Deserialization
+        _data.set(_instance, vec3Data);
+        return;
+    }
+    else if (actualType == entt::resolve<Math::Quaternion>())
+    {
+        Math::Quaternion quatData; // TODO : Quaternion Deserialization
+        _data.set(_instance, quatData);
+        return;
+    }
+    else if (actualType == entt::resolve<float>())
+    {
+        float floatData = _jComponent[_data.name()].get<float>();
+        _data.set(_instance, floatData);
+        return;
+    }
+    else if (actualType == entt::resolve<int>())
+    {
+        int intData = _jComponent[_data.name()].get<int>();
+        _data.set(_instance, intData);
+        return;
+    }
+    else if (actualType == entt::resolve<unsigned int>())
+    {
+        unsigned int unsignedIntData = _jComponent[_data.name()].get<unsigned int>();
+        _data.set(_instance, unsignedIntData);
+        return;
+    }
+    else if (actualType == entt::resolve<bool>())
+    {
+        bool booleanData = _jComponent[_data.name()].get<bool>();
+        _data.set(_instance, booleanData);
+        return;
+    }
+    else if (actualType.is_pointer_like())
+    {
+        // TODO : Add Pointer (ressources + components) Deserialization
+        return;
+    }
+    else
+    {
+        const char* label = _data.name();
+        if (!label)
+            label = "Property";
+
+        LOG(logTemp, LogDeserializer, "Meta Data Mismatch : ", label);
+    }
 }
 
 json MirageEngine::Deserializer::ConvertJsonFileToJsonVar(std::string _fileName)
