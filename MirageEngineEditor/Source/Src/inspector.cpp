@@ -143,38 +143,21 @@ namespace Mirage
 
 		// Dispatcher: Choose the ImGui widget based on the Data Type
 		if (actualType == entt::resolve<std::string>())
-		{
 			ResolveString(value, label, _data, instance);
-		}
 		else if (actualType == entt::resolve<Math::Vector3>())
-		{
 			ResolveVec3(value, label, _data, instance);
-		}
 		else if (actualType == entt::resolve<Math::Quaternion>())
-		{
 			ResolveQuaternion(value, label, _data, instance);
-		}
 		else if (actualType == entt::resolve<float>())
-		{
 			ResolveFloat(value, label, _data, instance);
-		}
 		else if (actualType == entt::resolve<int>())
-		{
 			ResolveInt(value, label, _data, instance);
-		}
 		else if (actualType == entt::resolve<unsigned int>())
-		{
 			ResolveUnsignedInt(value, label, _data, instance);
-		}
 		else if (actualType == entt::resolve<bool>())
-		{
 			ResolveBool(value, label, _data, instance);
-		}
 		else if (actualType.is_pointer_like())
-		{
-			// Checks if the component contains refs to other components or ressources
 			ResolvePointer(value, label, _data, instance);
-		}
 	}
 
 	void Inspector::ResolveVec3(entt::meta_any _value, const char* _label, entt::meta_data _data, entt::meta_any& _instance)
@@ -405,35 +388,50 @@ namespace Mirage
 			ImGui::TextDisabled("Add Component");
 			ImGui::Separator();
 
-			if (ImGui::MenuItem("Mesh Renderer"))
+			bool hasMesh = _selectedObj->GetComponent<MeshRenderer>() != nullptr;
+			if (ImGui::MenuItem("Mesh Renderer", nullptr, false, !hasMesh))
 			{
 				_selectedObj->AddComponent<MeshRenderer>();
 				ImGui::CloseCurrentPopup();
 			}
+			if (hasMesh && ImGui::IsItemHovered(ImGuiHoveredFlags_AllowWhenDisabled))
+				ImGui::SetTooltip("GameObject already has a Mesh Renderer");
 
-			if (ImGui::MenuItem("Camera"))
+			bool hasCamera = _selectedObj->GetComponent<Camera>() != nullptr;
+			if (ImGui::MenuItem("Camera", nullptr, false, !hasCamera))
 			{
 				_selectedObj->AddComponent<Camera>();
 				ImGui::CloseCurrentPopup();
 			}
+			if (hasCamera && ImGui::IsItemHovered(ImGuiHoveredFlags_AllowWhenDisabled))
+				ImGui::SetTooltip("GameObject already has a Camera");
 
-			if (ImGui::MenuItem("Influence Grid"))
+			bool hasInfluenceGrid = _selectedObj->GetComponent<InfluenceGrid>() != nullptr;
+			if (ImGui::MenuItem("Influence Grid", nullptr, false, !hasInfluenceGrid))
 			{
 				_selectedObj->AddComponent<InfluenceGrid>();
 				ImGui::CloseCurrentPopup();
 			}
+			if (hasInfluenceGrid && ImGui::IsItemHovered(ImGuiHoveredFlags_AllowWhenDisabled))
+				ImGui::SetTooltip("GameObject already has a Grid");
 
-			if (ImGui::MenuItem("Influence Emitter"))
+			bool hasInfluenceEmitter = _selectedObj->GetComponent<InfluenceEmitter>() != nullptr;
+			if (ImGui::MenuItem("Influence Emitter", nullptr, false, !hasInfluenceEmitter))
 			{
 				_selectedObj->AddComponent<InfluenceEmitter>();
 				ImGui::CloseCurrentPopup();
 			}
+			if (hasInfluenceEmitter && ImGui::IsItemHovered(ImGuiHoveredFlags_AllowWhenDisabled))
+				ImGui::SetTooltip("GameObject already has an Influence Emitter");
 
-			if (ImGui::MenuItem("Input Mapping"))
+			bool hasInputMapping = _selectedObj->GetComponent<MirageEngine::Core::Input::InputMapping>() != nullptr;
+			if (ImGui::MenuItem("Input Mapping", nullptr, false, !hasInputMapping))
 			{
 				_selectedObj->AddComponent<MirageEngine::Core::Input::InputMapping>();
 				ImGui::CloseCurrentPopup();
 			}
+			if (hasInputMapping && ImGui::IsItemHovered(ImGuiHoveredFlags_AllowWhenDisabled))
+				ImGui::SetTooltip("GameObject already has an InputMapping");
 
 			ImGui::EndPopup();
 		}
