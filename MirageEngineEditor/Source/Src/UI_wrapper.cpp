@@ -1,13 +1,14 @@
 #include "UI_wrapper.h"
-#include "vector3.h"
 
+#include "GLFW/glfw3.h"
+
+#include "vector3.h"
 #include <string>
 
 #include "imgui.h"
+#include "ImGuizmo.h"
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_opengl3.h"
-#include "ImGuizmo.h"
-#include "GLFW/glfw3.h"
 
 namespace Math = MirageEngine::Core::Math;
 
@@ -100,19 +101,6 @@ namespace Mirage
 	bool UIWrapper::IsItemClicked()
 	{
 		return ImGui::IsItemClicked() && !ImGui::IsItemToggledOpen();
-	}
-
-	static std::string s_NextModalToOpen = "";
-
-	void UIWrapper::RequestModal(const char* _modalName) {
-		s_NextModalToOpen = _modalName;
-	}
-
-	void UIWrapper::UpdateModalRequests() {
-		if (!s_NextModalToOpen.empty()) {
-			ImGui::OpenPopup(s_NextModalToOpen.c_str());
-			s_NextModalToOpen = "";
-		}
 	}
 
 	void UIWrapper::CreateSeparatorText(const char* _separatorName)

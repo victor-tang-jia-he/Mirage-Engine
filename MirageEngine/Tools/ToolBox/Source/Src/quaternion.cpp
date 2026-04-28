@@ -1,6 +1,7 @@
-#include "Include/Matrix4.h"
+#include "Matrix4.h"
 #include "Quaternion.h"
 #include <iostream>
+#include <algorithm>
 
 using namespace MirageEngine::Core::Math;
 
@@ -37,28 +38,26 @@ Quaternion::Quaternion(Quaternion&& _q) noexcept
 	_q.W = _q.X = _q.Y = _q.Z = 0.f;
 }
 
-Quaternion::Quaternion(Vector3& _axis, float _angle)
+Quaternion::Quaternion(Vector3 _axis, float _angle)
 {
-	if (_axis.IsNull())
+	if (_axis.IsNull() || std::abs(_angle) < 1e-8f)
 	{
-		W = NAN;
-		X = NAN;
-		Y = NAN;
-		Z = NAN;
+		W = 1.0f;
+		X = 0.0f;
+		Y = 0.0f;
+		Z = 0.0f;
+		return;
 	}
 
-	else
-	{
-		_axis = _axis.Normalized();
+	_axis = _axis.Normalized();
 
-		float halfAngle = _angle * 0.5f;
-		float sinHalfAngle = std::sin(halfAngle);
+	float halfAngle = _angle * 0.5f;
+	float sinHalfAngle = std::sin(halfAngle);
 
-		W = std::cos(halfAngle);
-		X = _axis[0] * sinHalfAngle;
-		Y = _axis[1] * sinHalfAngle;
-		Z = _axis[2] * sinHalfAngle;
-	}
+	W = std::cos(halfAngle);
+	X = _axis[0] * sinHalfAngle;
+	Y = _axis[1] * sinHalfAngle;
+	Z = _axis[2] * sinHalfAngle;
 }
 
 Quaternion::Quaternion(float _angleX, float _angleY, float _angleZ)
@@ -343,6 +342,13 @@ Vector3 Quaternion::ToEulerAngle() const
 
 	if (fabs(m02) < 1.0f)
 		return Vector3(atan2f(-m12, m22), asinf(m02), atan2f(-m01, m00));
+	// Clamp m02 into [-1,1] to avoid NaNs from roundoff.
+	m02 = std::clamp(m02, -1.0f, 1.0f);
+
+	// NOTE: this uses the (X, Y, Z) Euler order that the Quaternion(Vector3) ctor expects:
+	// returned vector = (rotX, rotY, rotZ) in radians.
+	if (fabs(m02) < 1.0f)
+		return Vector3(atan2f(-m12, m22), asinf(m02), atan2f(-m01, m00));
 
 	// Gimbal lock (Axe W)
 	else
@@ -351,7 +357,7 @@ Vector3 Quaternion::ToEulerAngle() const
 
 void Quaternion::Print() const
 {
-	printf("X = %g\nY = %g\nZ = %g\nW = %g\n", W, X, Y, Z);
+	printf("X = %g\nY = %g\nZ = %g\nW = %g\n", X, Y, Z, W);
 }
 
 

@@ -1,7 +1,7 @@
 #include "OpenGL/openGL_framebuffer.h"
 #include "OpenGL/openGL_buffer.h"
 
-#include <glad/glad.h>
+#include <Glad/glad.h>
 #include <GLFW/glfw3.h>
 
 DEFINE_LOG_CATEGORY(LogRHIFramebuffer)

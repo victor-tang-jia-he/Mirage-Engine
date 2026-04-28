@@ -13,7 +13,7 @@ void MirageRHI::OpenGLUniformBuffer::Create()
 	LOG(logTemp, LogRHIUniformBuffer, "Uniform Buffer Created.");
 }
 
-void MirageRHI::OpenGLUniformBuffer::UpdateUniformBuffer(IPipeline* _pipeline, MirageEngine::Core::Math::Matrix4 _model)
+void MirageRHI::OpenGLUniformBuffer::UpdateUniformBuffer(std::shared_ptr<IPipeline> _pipeline, MirageEngine::Core::Math::Matrix4 _model)
 {
 	_pipeline->API_OpenGL().SetMat4("model", _model);
 	_pipeline->API_OpenGL().SetMat4("view", m_View);

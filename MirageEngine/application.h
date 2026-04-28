@@ -6,7 +6,7 @@
 #include <SceneGraph/scene_graph.h>
 
 // Input
-#include <Components/input_system.h>
+#include <Input/input_system.h>
 namespace MirageEngine 
 {
 	namespace Core 
@@ -28,17 +28,20 @@ public:
 private:
 
 	// TODO : Edit in map
-	MirageEngine::Core::Input::InputMapping* m_EditorMapping = nullptr;
-	MirageEngine::Core::Input::InputMapping* m_PlayMapping = nullptr;
+	std::shared_ptr<MirageEngine::Core::Input::InputMapping> m_EditorMapping = nullptr;
+	std::shared_ptr<MirageEngine::Core::Input::InputMapping> m_PlayMapping = nullptr;
 
-	MirageEngine::Core::Components::Camera* m_EngineCamera = nullptr;
+	std::shared_ptr < MirageEngine::Core::Components::Camera> m_EngineCamera = nullptr;
 	std::vector < std::shared_ptr < MirageEngine::Core::Components::MeshRenderer>> m_meshRenderer;
+
+	static Application* s_Instance;
 
 public:
 	void InitApp();
 	void ShutDown();
 
 	MirageEngine::SceneGraph* GetSceneGraph() { return &m_SceneGraph; }
+	static Application* Instance() { return s_Instance; }
 
 private:
 	void InitScene();

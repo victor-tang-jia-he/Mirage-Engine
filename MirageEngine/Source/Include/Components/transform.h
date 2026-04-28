@@ -13,16 +13,15 @@ namespace MirageEngine
 			private:
 				Math::Vector3 m_LocalPosition{ 0.f,0.f,0.f };
 				Math::Vector3 m_LocalScale{ 1.f,1.f,1.f };
-				//Math::Quaternion m_LocalRotation{ 0.f,0.f,0.f };
-
 				Math::Quaternion m_LocalRotation = Math::Quaternion::Identity();
+
 				Math::Matrix4 m_LocalMatrix = Math::Matrix4::Identity();
 				Math::Matrix4 m_WorldMatrix = Math::Matrix4::Identity();
 
 				bool m_bDirty = true;
 
 				// utility
-				Math::Vector3 Rotate(const Math::Quaternion& q, const Math::Vector3& v) const;
+				Math::Vector3 Rotate(const Math::Quaternion& _q, const Math::Vector3& _v) const;
 
 			public:
 				Transform() = default;

@@ -4,21 +4,22 @@
 #include "OpenGL/openGL_render_pass.h"
 #include "OpenGL/openGL_swap_chain.h"
 #include "OpenGL/openGL_surface.h"
+#include "OpenGL/openGL_vertex_layout.h"
 
 DEFINE_LOG_CATEGORY(LogRHICommandBuffer)
 
-void MirageRHI::OpenGLCommandBuffer::BeginDraw(IRenderPass* _renderPass, uint32_t _FBO)
+void MirageRHI::OpenGLCommandBuffer::BeginDraw(std::shared_ptr<IRenderPass> _renderPass, uint32_t _FBO)
 {
     glBindFramebuffer(GL_FRAMEBUFFER, _FBO);
     _renderPass->API_OpenGL().Begin();
 }
 
-void MirageRHI::OpenGLCommandBuffer::BindPipeline(IPipeline* _pipeline)
+void MirageRHI::OpenGLCommandBuffer::BindPipeline(std::shared_ptr<IPipeline> _pipeline)
 {
 	_pipeline->API_OpenGL().Bind();
 }
 
-void MirageRHI::OpenGLCommandBuffer::BindBuffer(IBuffer* _buffer)
+void MirageRHI::OpenGLCommandBuffer::BindBuffer(std::shared_ptr<IBuffer> _buffer)
 {
 	_buffer->API_OpenGL().Bind();
 }
@@ -29,9 +30,14 @@ void MirageRHI::OpenGLCommandBuffer::BindTextureFromID(uint32_t _ID)
 	glBindTexture(GL_TEXTURE_2D, _ID);
 }
 
-void MirageRHI::OpenGLCommandBuffer::ApplyPipelineParameters(IPipeline* _pipeline)
+void MirageRHI::OpenGLCommandBuffer::ApplyPipelineParameters(std::shared_ptr<IPipeline> _pipeline)
 {
 	_pipeline->API_OpenGL().ApplyParameters();
+}
+
+void MirageRHI::OpenGLCommandBuffer::ApplyVertexLayout(std::shared_ptr<IVertexLayout> _vertexLayout)
+{
+    _vertexLayout->API_OpenGL().SetLayout();
 }
 
 void MirageRHI::OpenGLCommandBuffer::Draw(uint32_t _indexCount)
@@ -63,7 +69,7 @@ void MirageRHI::OpenGLCommandBuffer::Draw(uint32_t _indexCount)
         LOG(logWarning, LogRHICommandBuffer, "glDraw error: 0x%X", postErr);
 }
 
-void MirageRHI::OpenGLCommandBuffer::SubmitAndPresent(ISwapChain* _swapChain, ISurface* _surface)
+void MirageRHI::OpenGLCommandBuffer::SubmitAndPresent(std::shared_ptr<ISwapChain> _swapChain, std::shared_ptr<ISurface> _surface)
 {
 	_swapChain->API_OpenGL().Present(_surface->API_OpenGL());
 	_swapChain->IsScreenResized(_surface);

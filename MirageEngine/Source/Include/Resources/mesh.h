@@ -2,58 +2,59 @@
 #include <Resources/resource_interface.h>
 #include <vector>
 #include <Logs/log_macro.h>
+#include <i_pipeline_parameters.h>
 
 DECLARE_LOG_CATEGORY_EXTERN(LogMesh)
 
 namespace MirageRHI
 {
-    class IBuffer;
-    struct LitVertex;
+	class IBuffer;
+	class IVertexLayout;
+	struct VertexAttribute;
+	enum class AttributeType;
 }
 
-namespace MirageEngine
+namespace MirageEngine::Core::Resources
 {
-    namespace Core
-    {
-        namespace Resources
-        {
-            class Mesh : public IResource
-            {
-                private:
+	struct LitVertex
+	{
+		MirageEngine::Core::Math::Vector3 Position;
+		MirageEngine::Core::Math::Vector3 Normal;
+		MirageEngine::Core::Math::Vector2 UV;
+	};
 
-                    using IBuffer   = MirageRHI::IBuffer;
-                    using LitVertex = MirageRHI::LitVertex;
+	class Mesh : public IResource
+	{
+	private:
+		using IBuffer = MirageRHI::IBuffer;
 
-                    IBuffer* m_VertexBuffer = nullptr;
-                    IBuffer* m_IndexBuffer  = nullptr;
+		std::shared_ptr<MirageRHI::IVertexLayout> m_VertexLayout = nullptr;
 
-                    std::vector<uint32_t>  m_Index;
-                    std::vector<LitVertex> m_Vertex;
-                    size_t                 m_IndexCount = 0;
+		std::shared_ptr<IBuffer> m_VertexBuffer = nullptr;
+		std::shared_ptr<IBuffer> m_IndexBuffer = nullptr;
 
-                    bool m_bIsUpload = false;
+		std::vector<uint32_t>  m_Index;
+		std::vector<LitVertex> m_Vertex;
+		size_t                 m_IndexCount = 0;
 
-                public:
+		bool m_bIsUpload = false;
 
-                    Mesh(IBuffer* _vertexBuffer, IBuffer* _indiceBuffer, std::vector<LitVertex> _vertex, std::vector<uint32_t> _indice, size_t _IndexCount)
-                        : m_VertexBuffer(_vertexBuffer)
-                        , m_IndexBuffer(_indiceBuffer)
-                        , m_Vertex(_vertex)
-                        , m_Index(_indice)
-                        , m_IndexCount(_IndexCount)
-                    {
-                    }
+	public:
+		Mesh(std::shared_ptr<MirageRHI::IVertexLayout> _vao, std::shared_ptr<IBuffer> _vb, std::shared_ptr<IBuffer> _ib, std::vector<LitVertex>&& _vertices, std::vector<uint32_t>&& _indices, size_t _count);
 
-                    ~Mesh() = default;
+		~Mesh() override;
 
-                    void Bind();
+		void Bind();
 
-                    MirageRHI::IBuffer* GetVertexBuffer() const { return m_VertexBuffer; }
+		std::shared_ptr<MirageRHI::IVertexLayout> GetVertexLayout() const { return m_VertexLayout; }
 
-                    MirageRHI::IBuffer* GetIndexBuffer() const { return m_IndexBuffer; }
+		std::shared_ptr<MirageRHI::IBuffer> GetVertexBuffer() const { return m_VertexBuffer; }
 
-                    size_t GetIndicesCount() const { return m_IndexCount; }
-            };
-        } // namespace Resources
-    } // namespace Core
+		std::shared_ptr<MirageRHI::IBuffer> GetIndexBuffer() const { return m_IndexBuffer; }
+
+		size_t GetIndicesCount() const { return m_IndexCount; }
+
+		void CreateLitVertexLayout();
+		void ClearVertexLayout();
+	};
 } // namespace MirageEngine

@@ -20,6 +20,7 @@ void OpenGLBuffer::Create(const void* _data, size_t _size, BufferType _type)
         glBindBuffer(GL_ARRAY_BUFFER, m_Buffer);
         glBufferData(GL_ARRAY_BUFFER, _size, _data, GL_STATIC_DRAW);
         break;
+
     case BufferType::Indices:
         glGenBuffers(1, &m_Buffer);
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_Buffer);
@@ -46,10 +47,9 @@ void OpenGLBuffer::Bind() const
     case BufferType::Vertices:
         glBindBuffer(GL_ARRAY_BUFFER, m_Buffer);
         break;
+
     case BufferType::Indices:
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_Buffer);
         break;
-    default:
-        LOG(logWarning, LogRHIBuffer, "Unknown Buffer Type Used!");
     }
 }

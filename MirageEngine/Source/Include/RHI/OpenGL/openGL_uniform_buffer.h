@@ -19,6 +19,6 @@ namespace MirageRHI
 
 		void SetView(MirageEngine::Core::Math::Matrix4 _view) override { m_View = _view; }
 		void SetProjection(MirageEngine::Core::Math::Matrix4 _proj) override { m_Proj = _proj; }
-		void UpdateUniformBuffer(IPipeline* _pipeline, MirageEngine::Core::Math::Matrix4 _model) override;
+		void UpdateUniformBuffer(std::shared_ptr<IPipeline> _pipeline, MirageEngine::Core::Math::Matrix4 _model) override;
 	};
 }

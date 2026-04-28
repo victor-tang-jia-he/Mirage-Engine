@@ -46,6 +46,9 @@ bld/
 [Oo]bj/
 [Oo]ut/
 
+[Ll]ibrary/
+[Ll]ibraries/
+
 # Build results on 'Bin' directories
 **/[Bb]in/*
 # Uncomment if you have tasks that rely on *.refresh files to move binaries
@@ -97,7 +100,7 @@ StyleCopReport.xml
 *_p.c
 *_h.h
 *.ilk
-*.meta
+# *.meta
 *.idb
 *.iobj
 *.pch

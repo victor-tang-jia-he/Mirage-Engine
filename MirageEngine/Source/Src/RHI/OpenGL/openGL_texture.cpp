@@ -32,9 +32,10 @@ void MirageRHI::OpenGLTexture::Create(const void* _data, TextureDesc _desc)
 
 void MirageRHI::OpenGLTexture::Destroy()
 {
+    if (m_Texture == 0) return;
+    LOG(logTemp, LogRHITexture, "Texture Destroyed with ID: ", m_Texture); 
     glDeleteTextures(1, &m_Texture);
-
-	LOG(logTemp, LogRHITexture, "Texture Destroyed with ID: ", m_Texture);
+    m_Texture = 0;                                                         
 }
 
 void MirageRHI::OpenGLTexture::Bind() const

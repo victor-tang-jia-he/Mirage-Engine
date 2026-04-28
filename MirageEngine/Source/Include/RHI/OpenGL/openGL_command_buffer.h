@@ -14,20 +14,21 @@ namespace MirageRHI
         OpenGLCommandBuffer& API_OpenGL() override { return *this; }
 
         // PlaceHolder Function (empty)
-        void BeginDraw(IRenderPass* _renderPass, uint32_t _FBO) override;
+        void BeginDraw(std::shared_ptr<IRenderPass> _renderPass, uint32_t _FBO) override;
         void EndDraw() override {}
 
         // Binding Functions
-        void BindPipeline(IPipeline* _pipeline) override;
-        void BindBuffer(IBuffer* _buffer) override;
+        void BindPipeline(std::shared_ptr<IPipeline> _pipeline) override;
+        void BindBuffer(std::shared_ptr<IBuffer> _buffer) override;
         void BindTextureFromID(uint32_t _ID) override;
 
-        void ApplyPipelineParameters(IPipeline* _pipeline) override;
+        void ApplyPipelineParameters(std::shared_ptr<IPipeline> _pipeline) override;
+        void ApplyVertexLayout(std::shared_ptr<IVertexLayout> _vertexLayout) override;
 
         // Draw Binded Buffers
         void Draw(uint32_t _indexCount) override;
 
         // Swap Buffers
-        void SubmitAndPresent(ISwapChain* _swapchain, ISurface* _surface) override;
+        void SubmitAndPresent(std::shared_ptr<ISwapChain> _swapchain, std::shared_ptr<ISurface> _surface) override;
     };
 }

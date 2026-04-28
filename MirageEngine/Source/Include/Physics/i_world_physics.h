@@ -9,6 +9,7 @@ namespace MirageEngine
     {
         namespace Physics
         {
+            enum class ECollisionGroup;
             class Bullet3WorldPhysics;
             class IRigidBody;
 
@@ -21,7 +22,7 @@ namespace MirageEngine
                     IWorldPhysics()          = default;
                     virtual ~IWorldPhysics() = default;
 
-                    virtual void AddRigidBody(IRigidBody* _body)    = 0;
+                    virtual void AddRigidBody(IRigidBody* _body, ECollisionGroup _group, ECollisionGroup _mask) = 0;
                     virtual void RemoveRigidBody(IRigidBody* _body) = 0;
                     virtual void Update(float _deltaTime)           = 0;
 

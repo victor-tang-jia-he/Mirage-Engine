@@ -1,24 +1,37 @@
 #pragma once
 
-class RegisterMeta
+#include <EnTT/meta/meta.hpp>
+
+namespace MirageEngine
 {
-// Variables
-public:
-protected:
-private:
+	class RegisterMeta
+	{
+	public:
+		RegisterMeta();
+		~RegisterMeta();
 
-// Methods
-public:
-	RegisterMeta();
-	~RegisterMeta();
+		void RegisterAllMeta();
 
-	void RegisterAllMeta();
-	void RegisterMeshRendererMeta();
-	void RegisterCameraMeta();
-	void RegisterInputMappingMeta();
+	private:
+		void RegisterGameObjectMeta();
 
-protected:
-private:
-	void RegisterGameObjectMeta();
-	void RegisterTransformMeta();
-};
+		void RegisterTransformMeta();
+
+		void RegisterMeshRendererMeta();
+		void RegisterCameraMeta();
+		void RegisterInputMappingMeta();
+		void RegisterInfluenceGridMeta();
+		void RegisterInfluenceEmitterMeta();
+
+		void RegisterMeshMeta();
+		void RegisterTextureMeta();
+		void RegisterMaterialMeta();
+		void RegisterShaderMeta();
+
+		template<typename T>
+		void RegisterSharedPtr();
+
+	};
+}
+
+#include "register_meta.inl"
