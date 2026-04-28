@@ -97,9 +97,29 @@ namespace MirageEngine::Core::Components
 		}
 	}
 
+	void UtilityAgent::ModifyInternalStat(const std::string& _name, float _addValue)
+	{
+		if (m_InternalStats.find(_name) != m_InternalStats.end())
+			m_InternalStats[_name] += _addValue;
+	}
+
 	float UtilityAgent::GetIntensity(int _channelIndex) const {
 		if (_channelIndex >= 0 && _channelIndex < m_CurrentCellIntensity.size())
 			return m_CurrentCellIntensity[_channelIndex];
+		return 0.0f;
+	}
+
+	float UtilityAgent::GetIntensityByName(const std::string& _name) const
+	{
+		if (!m_Grid) return 0.0f;
+		int index = m_Grid->GetChannelsIndex(_name);
+		return GetIntensity(index);
+	}
+
+	float UtilityAgent::GetInternalStat(const std::string& _name)
+	{
+		if (m_InternalStats.find(_name) != m_InternalStats.end())
+			return m_InternalStats[_name];
 		return 0.0f;
 	}
 }
