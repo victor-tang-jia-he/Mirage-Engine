@@ -48,6 +48,8 @@ namespace MirageEngine
                     void Init() override {};
                     void Update() override;
 
+                    void AttachMeta(std::shared_ptr<GameObject> _Owner);
+
                     void OnTransformChanged(Components::Transform& _newTransform);
                     void SetType(Physics::ERigidBodyType _type);
 

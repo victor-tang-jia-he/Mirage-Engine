@@ -47,6 +47,12 @@ namespace MirageEngine::Core::Components
 			m_CurrentAction->Execute(TimeManager::GetDeltaTime());
 	}
 
+	void UtilityAgent::AttachMeta(std::shared_ptr<GameObject> _Owner)
+	{
+		std::shared_ptr<UtilityAgent> compPtr = std::make_shared<UtilityAgent>(*this);
+		_Owner->AddComponent(compPtr);
+	}
+
 	void UtilityAgent::Decide()
 	{
 		if (m_Grid)

@@ -32,4 +32,10 @@ namespace MirageEngine::Core::Components
 			m_Grid->AddInfluenceArea(pos, m_Radius, strengthToApply, m_CachedChannelIndex);
 		}
 	}
+
+	void InfluenceEmitter::AttachMeta(std::shared_ptr<GameObject> _Owner)
+	{
+		std::shared_ptr<InfluenceEmitter> compPtr = std::make_shared<InfluenceEmitter>(*this);
+		_Owner->AddComponent(compPtr);
+	}
 }

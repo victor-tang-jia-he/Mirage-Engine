@@ -1,12 +1,11 @@
 #include <Reflection/register_meta.h>
-#include "Components/mesh_renderer.h"
-#include <Resources/mesh.h>
-#include <Resources/texture.h>
 
 // Components includes
 #include <GameObject/game_object.h>
 #include <Components/transform.h>
+#include <Components/mesh_renderer.h>
 #include <Components/camera.h>
+
 //#include <Components/input_mapping.h>
 #include <Components/influence_emitter.h>
 #include <AI/influence_grid.h>
@@ -15,6 +14,8 @@
 // Ressources includes
 #include <Resources/material.h>
 #include <Resources/shader.h>
+#include <Resources/mesh.h>
+#include <Resources/texture.h>
 
 // EnTT includes
 #include <entt/entt.hpp>
@@ -83,14 +84,8 @@ void RegisterMeta::RegisterTransformMeta()
 	transform.data<&Components::Transform::SetPosition, &Components::Transform::GetPosition>("Position");
 	transform.data<&Components::Transform::SetRotation, &Components::Transform::GetRotation>("Rotation");
 	transform.data<&Components::Transform::SetScale, &Components::Transform::GetScale>("Scale");
-	
-	auto transType = entt::resolve("Transform"_hs);
-	if (transType)
-	{
-		for (auto [id, data] : transType.data())
-		{
-		}
-	}
+
+	transform.func<&Transform::AttachMeta>("Attach"_hs);
 }
 
 void RegisterMeta::RegisterMeshRendererMeta()
@@ -105,6 +100,8 @@ void RegisterMeta::RegisterMeshRendererMeta()
 
 	meshRenderer.data<&MeshRenderer::SetMesh, &MeshRenderer::GetMesh>("Mesh");
 	meshRenderer.data<&MeshRenderer::SetMaterial, &MeshRenderer::GetMaterial>("Material");
+
+	meshRenderer.func<&MeshRenderer::AttachMeta>("Attach"_hs);
 }
 
 void RegisterMeta::RegisterCameraMeta()
@@ -115,9 +112,13 @@ void RegisterMeta::RegisterCameraMeta()
 
 	camera.base<Component>();
 
+	camera.ctor<>();
+
 	camera.data<&Camera::SetFov, &Camera::GetFov>("FOV");
 	camera.data<&Camera::SetNear, &Camera::GetNear>("Near");
 	camera.data<&Camera::SetFar, &Camera::GetFar>("Far");
+
+	camera.func<&Camera::AttachMeta>("Attach"_hs);
 }
 
 void RegisterMeta::RegisterInputMappingMeta()
@@ -143,6 +144,8 @@ void RegisterMeta::RegisterInputMappingMeta()
 	inputMapping.func<&InputMapping::Clear>("ClearAll");
 
 	inputMapping.func<&InputMapping::Remove>("RemoveKey");
+
+	inputMapping.func<&InputMapping::AttachMeta>("Attach"_hs);
 }
 
 void RegisterMeta::RegisterMeshMeta()
@@ -215,4 +218,6 @@ void RegisterMeta::RegisterInfluenceEmitterMeta()
 	influenceEmitter.data<&InfluenceEmitter::SetRadius, &InfluenceEmitter::GetRadius>("Radius");
 	influenceEmitter.data<&InfluenceEmitter::SetStrength, &InfluenceEmitter::GetStrength>("Strength");
 	influenceEmitter.data<&InfluenceEmitter::SetTargetGrid, &InfluenceEmitter::GetTargetGrid>("Grid");
+
+	influenceEmitter.func<&InfluenceEmitter::AttachMeta>("Attach"_hs);
 }

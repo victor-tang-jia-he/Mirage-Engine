@@ -3,9 +3,14 @@
 #include <Components/transform.h>
 #include <atomic>
 #include <Components/rigidbody.h>.h>
+#include <Components/camera.h>
+
+DEFINE_LOG_CATEGORY(LogGameObject)
 
 using namespace MirageEngine::Core::Components;
 using namespace MirageEngine::Core::Math;
+
+using namespace entt::literals;
 
 static std::atomic<uint64_t> s_NextID = 1;
 
@@ -61,6 +66,25 @@ void MirageEngine::GameObject::SetActive(bool _isActive)
 	{
 		m_bIsActive = false;
 		std::cout << "GameObject is now inactive." << std::endl;
+	}
+}
+
+void MirageEngine::GameObject::AddComponentFromMeta(entt::meta_any _compInstance)
+{
+	entt::meta_type compType = _compInstance.type();
+
+	entt::meta_func compFunc = compType.func("Attach"_hs);
+	if (!compFunc)
+	{
+		LOG(logWarning, LogGameObject, "No Meta Attach function registered for type : ", compType.name());
+		return;
+	}
+
+	entt::meta_any result = compFunc.invoke(_compInstance, shared_from_this());
+
+	if (!result) 
+	{
+		LOG(logError, LogGameObject, "Meta Invoke failed for type : ", compType.name());
 	}
 }
 

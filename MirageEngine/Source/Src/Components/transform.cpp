@@ -23,6 +23,11 @@ void Transform::Update()
 
 }
 
+void MirageEngine::Core::Components::Transform::AttachMeta(std::shared_ptr<GameObject> _Owner)
+{
+    _Owner->Transform = *this;
+}
+
 Matrix4 Transform::GetMatrix()
 {
     if (m_bDirty)

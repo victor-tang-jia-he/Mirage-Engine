@@ -35,6 +35,8 @@ namespace MirageEngine
 
                     virtual void Update() override {}
 
+                    void AttachMeta(std::shared_ptr<GameObject> _Owner);
+
                     entt::id_type GetType() const override { return 0; }
 
                     // Capsule only parameter

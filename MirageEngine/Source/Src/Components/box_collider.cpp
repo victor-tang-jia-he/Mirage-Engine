@@ -10,6 +10,12 @@ BoxCollider::BoxCollider() { m_Collider = PhysicsManager::Instance().CreateColli
 
 BoxCollider::~BoxCollider() { delete m_Collider; }
 
+void MirageEngine::Core::Components::BoxCollider::AttachMeta(std::shared_ptr<GameObject> _Owner)
+{
+    std::shared_ptr<BoxCollider> compPtr = std::make_shared<BoxCollider>(*this);
+    _Owner->AddComponent(compPtr);
+}
+
 void BoxCollider::SetHalfExtents(const Math::Vector3& _halfExtents) { m_Collider->As<IBoxCollider>()->SetHalfExtents(_halfExtents); }
 
 Math::Vector3 BoxCollider::GetHalfExtents() { return m_Collider->As<IBoxCollider>()->GetHalfExtents(); }

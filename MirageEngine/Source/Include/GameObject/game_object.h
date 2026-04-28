@@ -11,6 +11,10 @@
 #include <Components/transform.h>
 #include <Components/mesh_renderer.h>
 
+#include <Logs/log_macro.h>
+
+DECLARE_LOG_CATEGORY_EXTERN(LogGameObject)
+
 namespace MirageEngine
 {
 
@@ -44,6 +48,8 @@ namespace MirageEngine
 		template <typename T>
 		std::shared_ptr<T> GetComponent();
 
+
+
 			// Game Object Constructor.
 		GameObject(std::shared_ptr<GameObject> _parent, std::string _name, bool _isStatic = false, bool _isActive = true);
 		~GameObject();
@@ -57,6 +63,8 @@ namespace MirageEngine
 			_component->m_Owner = this;
 			m_Components.push_back(_component);
 		}
+
+		void AddComponentFromMeta(entt::meta_any _compInstance);
 
 		void RemoveComponent(std::shared_ptr<MirageEngine::Core::Components::Component> _component);
 

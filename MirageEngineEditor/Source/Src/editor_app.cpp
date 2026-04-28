@@ -8,6 +8,7 @@
 #include "gizmo.h"
 #include "renderer.h"
 #include "Serialization/serializer.h"
+#include "Serialization/deserializer.h"
 
 namespace Mirage
 {
@@ -73,6 +74,7 @@ namespace Mirage
 		}
 		if (ImGui::IsKeyPressed(ImGuiKey_M) && m_IsPlaying)
 		{
+			MirageEngine::Deserializer::LoadSceneFromFile("scene.json");
 			m_IsStoped = true;
 		}
 

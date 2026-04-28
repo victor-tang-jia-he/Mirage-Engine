@@ -14,7 +14,7 @@ namespace MirageEngine
 
 		namespace Components
 		{
-			class Camera : public Component
+			class Camera : public Component , public std::enable_shared_from_this<Camera>
 			{
 			private:
 				// Clipping Planes
@@ -37,6 +37,8 @@ namespace MirageEngine
 
                     void Init() override {};
                     void Update() override {};
+
+                    void AttachMeta(std::shared_ptr<GameObject> _Owner);
 
                     entt::id_type GetType() const override { return entt::type_id<Camera>().hash(); }
 

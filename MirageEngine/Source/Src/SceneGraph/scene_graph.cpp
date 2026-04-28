@@ -30,6 +30,15 @@ namespace MirageEngine
         return newObject;
     }
 
+    void SceneGraph::AddGameObject(std::shared_ptr<GameObject> _newGameObject)
+    {
+        uint64_t objectID = _newGameObject->GetID();
+        auto [it, success] = m_Registry.try_emplace(objectID, _newGameObject);
+
+        this->SetParent(_newGameObject->GetParent(), _newGameObject);
+        m_LastCreatedObject = _newGameObject;
+    }
+
     std::shared_ptr<GameObject> SceneGraph::CreateObject3D(const std::string& _name, const std::string& _mesh, std::shared_ptr<GameObject> _parent, MirageEngine::Renderer* _renderer)
     {
         std::shared_ptr<GameObject>                     newObject    = CreateGameObject(_name, _parent);

@@ -23,7 +23,7 @@ void MirageEngine::Serializer::SaveScene(SceneGraph _sceneGraph)
     LOG(logInfo, LogSerializer, "Saving Scene...");
     json jSceneGraph = SerializeScene(_sceneGraph);
 
-    if (ConvertJsonToFile(jSceneGraph))
+    if (ConvertJsonVarToJsonFile(jSceneGraph))
         LOG(logInfo, LogSerializer, "Scene saved successfully");
     else
         LOG(logError, LogSerializer, "Failed to save scene");
@@ -48,9 +48,9 @@ json Serializer::SerializeGameObject(std::shared_ptr<GameObject> _gameObject, js
 
     jGameObject["ObjName"] = _gameObject->GetName();
     jGameObject["id"] = _gameObject->GetID();
+    jGameObject["transform"] = SerializeTransform(_gameObject->Transform);
     jGameObject["components"] = json::array();
     jGameObject["children"] = json::array();
-    jGameObject["transform"] = SerializeTransform(_gameObject->Transform);
 
     // Recursivly serialize all gameobjects children
     for (std::shared_ptr<GameObject> child : _gameObject->GetChildren()) {
@@ -206,7 +206,7 @@ json MirageEngine::Serializer::SerializeQuaternion(Core::Math::Quaternion _quate
     return jQuaternion;
 }
 
-bool MirageEngine::Serializer::ConvertJsonToFile(json _jTarget)
+bool MirageEngine::Serializer::ConvertJsonVarToJsonFile(json _jTarget)
 {
     std::ofstream file("scene.json");
     file.clear();

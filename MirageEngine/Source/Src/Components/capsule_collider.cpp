@@ -10,6 +10,12 @@ CapsuleCollider::CapsuleCollider() { m_Collider = PhysicsManager::Instance().Cre
 
 CapsuleCollider::~CapsuleCollider() { delete m_Collider; }
 
+void MirageEngine::Core::Components::CapsuleCollider::AttachMeta(std::shared_ptr<GameObject> _Owner)
+{
+    std::shared_ptr<CapsuleCollider> compPtr = std::make_shared<CapsuleCollider>(*this);
+    _Owner->AddComponent(compPtr);
+}
+
 void CapsuleCollider::SetRadius(float _radius) { m_Collider->As<ICapsuleCollider>()->SetRadius(_radius); }
 
 void CapsuleCollider::SetHeight(float _height) { m_Collider->As<ICapsuleCollider>()->SetHeight(_height); }

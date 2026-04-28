@@ -29,6 +29,8 @@ namespace MirageEngine
 				void Init();
 				void Update();
 
+				void AttachMeta(std::shared_ptr<GameObject> _Owner);
+
 				void LookAt(const Math::Vector3& _target);
 
 				Math::Vector3 Forward() const;

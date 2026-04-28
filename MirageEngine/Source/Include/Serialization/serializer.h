@@ -51,6 +51,6 @@ namespace MirageEngine
 		static json SerializeVector3(Core::Math::Vector3 _vector3);
 		static json SerializeQuaternion(Core::Math::Quaternion _quaternion);
 
-		static bool ConvertJsonToFile(json _jTarget);
+		static bool ConvertJsonVarToJsonFile(json _jTarget);
 	};
 }

@@ -22,6 +22,9 @@ namespace MirageEngine::Core::Components
 
 		void Init() override;
 		void Update() override;
+
+		void AttachMeta(std::shared_ptr<GameObject> _Owner);
+
 		entt::id_type GetType() const override { return entt::type_id<InfluenceEmitter>().hash(); }
 
 		// Getters

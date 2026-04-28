@@ -10,6 +10,12 @@ SphereCollider::SphereCollider() { m_Collider = PhysicsManager::Instance().Creat
 
 SphereCollider::~SphereCollider() { delete m_Collider; }
 
+void MirageEngine::Core::Components::SphereCollider::AttachMeta(std::shared_ptr<GameObject> _Owner)
+{
+    std::shared_ptr<SphereCollider> compPtr = std::make_shared<SphereCollider>(*this);
+    _Owner->AddComponent(compPtr);
+}
+
 void SphereCollider::SetRadius(float _radius) { m_Collider->As<ISphereCollider>()->SetRadius(_radius); }
 
 float SphereCollider::GetRadius() const { return m_Collider->As<ISphereCollider>()->GetRadius(); }

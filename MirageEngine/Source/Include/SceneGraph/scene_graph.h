@@ -43,7 +43,8 @@ namespace MirageEngine
             m_ActiveCamera.reset();
 		}
 
-		std::shared_ptr<GameObject> CreateGameObject(const std::string& _name, std::shared_ptr<GameObject> _parent = nullptr); 
+		std::shared_ptr<GameObject> CreateGameObject(const std::string& _name, std::shared_ptr<GameObject> _parent = nullptr);
+		void AddGameObject(std::shared_ptr<GameObject> _newGameObject);
 		void RemoveGameObject(std::shared_ptr<GameObject> _obj);											
 		void ClearScene();																	
 		std::shared_ptr<GameObject> FindGameObject(uint64_t _id) const;

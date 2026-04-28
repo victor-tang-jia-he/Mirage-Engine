@@ -1,4 +1,5 @@
 #include <Components/camera.h>
+#include <GameObject/game_object.h>
 #include <Input/input_system.h>
 #include <Input/input_mapping.h>
 #include <Events/event.h>
@@ -22,6 +23,12 @@ Camera::Camera(unsigned int _width, unsigned int _height, float _fov, float _nea
     , m_Far(_far)
 {
     m_transform.SetPosition(_position);
+}
+
+void MirageEngine::Core::Components::Camera::AttachMeta(std::shared_ptr<GameObject> _Owner)
+{
+    std::shared_ptr<Camera> compPtr = std::make_shared<Camera>(*this);
+    _Owner->AddComponent(compPtr);
 }
 
 void Camera::BindInput(std::shared_ptr<InputMapping> map)

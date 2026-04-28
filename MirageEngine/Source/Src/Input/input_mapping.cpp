@@ -1,5 +1,6 @@
 #include <Input/input_mapping.h>
 #include <Input/input_system.h>
+#include <GameObject/game_object.h>
 
 DEFINE_LOG_CATEGORY(logInputMapping)
 
@@ -12,6 +13,12 @@ namespace MirageEngine::Core::Input
     }
 
     void InputMapping::BindMapping() { InputSystem::SetCurrentMapping(shared_from_this()); }
+
+    void InputMapping::AttachMeta(std::shared_ptr<GameObject> _Owner)
+    {
+        std::shared_ptr<InputMapping> compPtr = std::make_shared<InputMapping>(*this);
+        _Owner->AddComponent(compPtr);
+    }
 
     void InputMapping::RegisterInput(const std::string& _name, int _actionInput)
     {

@@ -18,6 +18,12 @@ Rigidbody::~Rigidbody()
 
 void Rigidbody::Update() { m_Rigidbody->UpdateTransform(GetOwner()->Transform); }
 
+void MirageEngine::Core::Components::Rigidbody::AttachMeta(std::shared_ptr<GameObject> _Owner)
+{
+    std::shared_ptr<Rigidbody> compPtr = std::make_shared<Rigidbody>(*this);
+    _Owner->AddComponent(compPtr);
+}
+
 void Rigidbody::OnTransformChanged(Components::Transform& _newTransform) { m_Rigidbody->OnTransformChanged(_newTransform); }
 
 void Rigidbody::SetType(Physics::ERigidBodyType _type) { m_Rigidbody->SetType(_type); }

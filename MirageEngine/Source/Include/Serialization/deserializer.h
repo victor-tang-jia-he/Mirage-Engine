@@ -5,7 +5,7 @@
 
 #include <Logs/log_macro.h>
 
-DECLARE_LOG_CATEGORY_EXTERN(LogSerializer)
+DECLARE_LOG_CATEGORY_EXTERN(LogDeserializer)
 
 using json = nlohmann::json;
 
@@ -35,19 +35,21 @@ namespace MirageEngine
 	class Deserializer
 	{
 	public:
-		json SerializeScene(SceneGraph _sceneGraph);
+		static std::shared_ptr<SceneGraph> LoadSceneFromJson(json _jSavedScene);
+		static std::shared_ptr<SceneGraph> LoadSceneFromFile(std::string _saveFileName);
 
 	private:
-		json SerializeGameObject(std::shared_ptr<GameObject> _gameObject, json _jParent);
+		static std::shared_ptr<SceneGraph> DeserializeScene(json _jSceneGraph);
+		static void DeserializeGameObject(json _jGameObject, std::shared_ptr<GameObject> _parent, std::shared_ptr<SceneGraph> _savedScene);
+		
+		static void DeserializeComponent(json _jComponent, std::shared_ptr<GameObject> _Owner);
+		static json DeserializeTransform(Core::Components::Transform _transform);
+		
+		static json DeserializeMetaData(entt::meta_type _type, entt::meta_data _data, void* _instancePtr);
+		
+		static json DeserializeVector3(Core::Math::Vector3 _vector3);
+		static json DeserializeQuaternion(Core::Math::Quaternion _quaternion);
 
-		json SerializeComponent(std::shared_ptr<Core::Components::Component> _component, json _Owner);
-		json SerializeTransform(Core::Components::Transform _transform);
-
-		json SerializeMetaData(entt::meta_type _type, entt::meta_data _data, void* _instancePtr);
-
-		json SerializeVector3(Core::Math::Vector3 _vector3);
-		json SerializeQuaternion(Core::Math::Quaternion _quaternion);
-
-		json SerializeResource(Core::Resources::IResource* _resource);
+		static json ConvertJsonFileToJsonVar(std::string _fileName);
 	};
 }
