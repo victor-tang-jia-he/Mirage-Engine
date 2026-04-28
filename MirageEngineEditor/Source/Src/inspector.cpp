@@ -31,6 +31,7 @@ using namespace MirageEngine::Core::Math;
 using namespace MirageEngine;
 using namespace entt::literals;
 using namespace MirageEngine::Core::Components;
+using namespace MirageEngine::Core::Resources;
 
 namespace Mirage
 {
@@ -315,48 +316,59 @@ namespace Mirage
 
 	bool Inspector::ResolveComponent(entt::meta_any _value, const char* _label, entt::meta_data _data, entt::meta_any& _instance)
 	{
-		if (entt::meta_any ref = *_value; ref)
-		{
-			if (Core::Components::Component* component = ref.try_cast<Core::Components::Component>())
-			{
-				const char* componentLabel = component ? "Component Assigned" : "None";
-				ImGui::TextUnformatted(_label);
-				ImGui::SameLine();
-				ImGui::Button(componentLabel, ImVec2(-1, 0));
-				return true;
-			}
-		}
-		return false;
+		//if (entt::meta_any ref = *_value; ref)
+		//{
+		//	if (Core::Components::Component* component = ref.try_cast<Core::Components::Component>())
+		//	{
+		//		const char* componentLabel = component ? "Component Assigned" : "None";
+		//		ImGui::TextUnformatted(_label);
+		//		ImGui::SameLine();
+		//		ImGui::Button(componentLabel, ImVec2(-1, 0));
+		//		return true;
+		//	}
+		//}
+		//return false;
+
+		std::string btnLabel = "None (Drop here)";
+		entt::meta_any ref = *_value;
+		if (ref) btnLabel = "Assigned";
+
+		ImGui::TextUnformatted(_label);
+		ImGui::SameLine();
+		ImGui::Button((btnLabel + "##" + _label).c_str(), ImVec2(-1, 0));
+
+		return true;
 	}
 
 	bool Inspector::ResolveResource(entt::meta_any _value, const char* _label, entt::meta_data _data, entt::meta_any& _instance)
 	{
 		auto typePointed = _data.type();
+		auto typeHash = typePointed.info().hash();
 
-		bool isResource = false;
-		for (auto [id, baseType] : typePointed.base()) {
-			if (id == entt::type_id<Core::Resources::IResource>().hash()) {
-				isResource = true;
-				break;
-			}
-		}
+		bool isMesh = (typeHash == entt::type_id<std::shared_ptr<Mesh>>().hash() || typeHash == entt::type_id<Mesh*>().hash());
+		bool isTex = (typeHash == entt::type_id<std::shared_ptr<Texture>>().hash() || typeHash == entt::type_id<Texture*>().hash());
+		bool isMat = (typeHash == entt::type_id<std::shared_ptr<Material>>().hash() || typeHash == entt::type_id<Material*>().hash());
 
-		if (!isResource && !typePointed.is_pointer_like()) return false;
+		if (!isMesh && !isTex && !isMat) return false;
 
 		std::string resourceName = "None (Drop here)";
+
 		if (entt::meta_any ref = *_value; ref)
 		{
-			if (auto* res = ref.try_cast<Core::Resources::IResource>()) {
+			if (auto* res = ref.try_cast<IResource>()) {
 				resourceName = res->GetName();
+			}
+			else if (void** ptrAddr = ref.try_cast<void*>()) {
+				if (*ptrAddr) resourceName = static_cast<IResource*>(*ptrAddr)->GetName();
 			}
 		}
 
 		ImGui::TextUnformatted(_label);
 		ImGui::SameLine();
 
-		if (ImGui::Button((resourceName + "##" + _label).c_str(), ImVec2(-1, 0))) {
-			// Action clic
-		}
+		if (resourceName != "None (Drop here)") ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.2f, 0.4f, 0.6f, 1.0f));
+		ImGui::Button((resourceName + "##" + _label).c_str(), ImVec2(-1, 0));
+		if (resourceName != "None (Drop here)") ImGui::PopStyleColor();
 
 		if (ImGui::BeginDragDropTarget())
 		{
@@ -364,18 +376,21 @@ namespace Mirage
 			{
 				std::filesystem::path path = (const char*)payload->Data;
 				std::string name = path.stem().string();
+				std::string ext = path.extension().string();
+				auto& rm = Core::Resources::ResourceManager::Instance();
 
-				if (typePointed == entt::resolve<std::shared_ptr<Core::Resources::Mesh>>() || typePointed == entt::resolve<Core::Resources::Mesh*>()) {
-					_data.set(_instance, Core::Resources::ResourceManager::Instance().GetMesh(name));
+				if (isMesh && ext == ".obj") {
+					_data.set(_instance, rm.GetMesh(name));
 				}
-				else if (typePointed == entt::resolve<std::shared_ptr<Core::Resources::Texture>>() || typePointed == entt::resolve<Core::Resources::Texture*>()) {
-					_data.set(_instance, Core::Resources::ResourceManager::Instance().GetTexture(name));
+				else if (isTex && (ext == ".png" || ext == ".jpg")) {
+					_data.set(_instance, rm.GetTexture(name));
 				}
-				else if (typePointed == entt::resolve<std::shared_ptr<Core::Resources::Material>>() || typePointed == entt::resolve<Core::Resources::Material*>()) {
-					_data.set(_instance, Core::Resources::ResourceManager::Instance().GetMaterial(name));
+				else if (isMat && ext == ".mat") {
+					_data.set(_instance, rm.GetMaterial(name));
 				}
-
-				LOG(logInfo, LogInspector, "Resource %s dropped onto %s", name.c_str(), _label);
+				else {
+					LOG(logWarning, LogInspector, "Incompatible extension %s for field %s", ext.c_str(), _label);
+				}
 			}
 			ImGui::EndDragDropTarget();
 		}
