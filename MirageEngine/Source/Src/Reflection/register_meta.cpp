@@ -52,6 +52,7 @@ void RegisterMeta::RegisterAllMeta()
 	RegisterMeshMeta();
 	RegisterTextureMeta();
 	RegisterMaterialMeta();
+	RegisterMaterialInstanceMeta();
 	RegisterShaderMeta();
 }
 
@@ -186,6 +187,18 @@ void MirageEngine::RegisterMeta::RegisterMaterialMeta()
 	material.data<nullptr, &Resources::Material::GetName>("Name");
 
 	material.func<&Resources::Material::GetFromManager>("Get"_hs);
+}
+
+void MirageEngine::RegisterMeta::RegisterMaterialInstanceMeta()
+{
+	entt::meta_factory<Resources::MaterialInstance> materialInstance{};
+	materialInstance.type("MaterialInstance"_hs, "MaterialInstance");
+
+	materialInstance.base<Resources::IResource>();
+
+	materialInstance.data<nullptr, &Resources::MaterialInstance::GetName>("Name");
+
+	materialInstance.func<&Resources::MaterialInstance::GetFromManager>("Get"_hs);
 }
 
 void MirageEngine::RegisterMeta::RegisterShaderMeta()

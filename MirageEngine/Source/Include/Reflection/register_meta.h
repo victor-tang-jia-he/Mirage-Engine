@@ -26,6 +26,7 @@ namespace MirageEngine
 		void RegisterMeshMeta();
 		void RegisterTextureMeta();
 		void RegisterMaterialMeta();
+		void RegisterMaterialInstanceMeta();
 		void RegisterShaderMeta();
 
 		template<typename T>
