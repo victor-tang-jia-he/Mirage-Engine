@@ -46,8 +46,10 @@ namespace MirageEngine
 		
 		static void DeserializeMetaData(entt::meta_type _type, entt::meta_data _data, entt::meta_any& _instance, json _jComponent);
 		
-		static json DeserializeVector3(Core::Math::Vector3 _vector3);
-		static json DeserializeQuaternion(Core::Math::Quaternion _quaternion);
+		static Core::Math::Vector3 DeserializeVector3(json _jVector3);
+		static Core::Math::Quaternion DeserializeQuaternion(json _jQuaternion);
+
+		static void DeserializeResourcePtr();
 
 		static json ConvertJsonFileToJsonVar(std::string _fileName);
 	};

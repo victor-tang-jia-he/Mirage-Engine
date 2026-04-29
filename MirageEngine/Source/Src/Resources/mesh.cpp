@@ -1,6 +1,7 @@
 #include <Resources/mesh.h>
 #include <i_buffer.h>
 #include <i_vertex_layout.h>
+#include <Resources/resource_manager.h>
 
 DEFINE_LOG_CATEGORY(LogMesh)
 
@@ -45,6 +46,11 @@ void Mesh::Bind()
         m_Vertex.clear();
         m_Index.clear();
     }
+}
+
+std::shared_ptr<Mesh> const MirageEngine::Core::Resources::Mesh::GetFromManager(std::string _name)
+{
+    return ResourceManager::Instance().GetMesh(_name);
 }
 
 void MirageEngine::Core::Resources::Mesh::CreateLitVertexLayout()

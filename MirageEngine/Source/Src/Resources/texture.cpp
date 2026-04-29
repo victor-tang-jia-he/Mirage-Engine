@@ -1,6 +1,7 @@
 #include <Resources/texture.h>
 #include <RHI/i_texture.h>
 #include <string>
+#include <Resources/resource_manager.h>
 
 DEFINE_LOG_CATEGORY(LogTexture)
 
@@ -29,4 +30,9 @@ void Texture::Bind()
         m_Data = nullptr; // Avoid dangling pointer
     }
     m_TextureBuffer->Bind();
+}
+
+std::shared_ptr<Texture> const MirageEngine::Core::Resources::Texture::GetFromManager()
+{
+    return ResourceManager::Instance().GetTexture(GetName());
 }

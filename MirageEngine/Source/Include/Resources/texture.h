@@ -40,5 +40,7 @@ namespace MirageEngine::Core::Resources
 		void Bind();
 
 		std::shared_ptr<MirageRHI::ITexture> GetTextureBuffer() const { return m_TextureBuffer; }
+
+		std::shared_ptr<Texture> const GetFromManager();
 	};
 } // namespace MirageEngine

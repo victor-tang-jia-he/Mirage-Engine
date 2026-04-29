@@ -54,6 +54,8 @@ namespace MirageEngine::Core::Resources
 
 		size_t GetIndicesCount() const { return m_IndexCount; }
 
+		static std::shared_ptr<Mesh> const GetFromManager(std::string _name);
+
 		void CreateLitVertexLayout();
 		void ClearVertexLayout();
 	};

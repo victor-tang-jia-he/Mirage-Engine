@@ -166,14 +166,20 @@ json MirageEngine::Serializer::SerializeMetaData(entt::meta_type _type, entt::me
     {
         if (entt::meta_any ref = *value; ref) 
         {
+            json jPointer;
+
             if (Core::Components::Component* component = ref.try_cast<Core::Components::Component>())
             {
-                jMetaData = component->GetName();
+                jPointer["type"] = ref.type().name();
+                jPointer["name"] = component->GetName();
             }
             else if (Core::Resources::IResource* resource = ref.try_cast<Core::Resources::IResource>())
             {
-                jMetaData = resource->GetName();
+                jPointer["type"] = ref.type().name();
+                jPointer["name"] = resource->GetName();
             }
+
+            jMetaData = jPointer;
         }
     }
     else

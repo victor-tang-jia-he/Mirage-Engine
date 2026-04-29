@@ -153,11 +153,13 @@ void RegisterMeta::RegisterMeshMeta()
 	using namespace MirageEngine::Core::Resources;
 	entt::meta_factory<Mesh> mesh{};
 
-	mesh.type(entt::type_id<Mesh>().hash(), "Mesh");
+	mesh.type("Mesh"_hs, "Mesh");
 
 	mesh.base<IResource>();
 
 	mesh.data<nullptr, &Mesh::GetName>("Name");
+
+	mesh.func<&Mesh::GetFromManager>("Get"_hs);
 }
 
 void RegisterMeta::RegisterTextureMeta()
@@ -165,27 +167,31 @@ void RegisterMeta::RegisterTextureMeta()
 	using namespace MirageEngine::Core::Resources;
 	entt::meta_factory<Texture> texture{};
 	
-	texture.type(entt::type_id<Texture>().hash(), "Texture");
+	texture.type("Texture"_hs, "Texture");
 
 	texture.base<IResource>();
 
 	texture.data<nullptr, &Texture::GetName>("Name");
+
+	texture.func<&Texture::GetFromManager>("Get"_hs);
 }
 
 void MirageEngine::RegisterMeta::RegisterMaterialMeta()
 {
 	entt::meta_factory<Resources::Material> material{};
-	material.type(entt::type_id<Resources::Material>().hash(), "Material");
+	material.type("Material"_hs, "Material");
 
 	material.base<Resources::IResource>();
 
 	material.data<nullptr, &Resources::Material::GetName>("Name");
+
+	material.func<&Resources::Material::GetFromManager>("Get"_hs);
 }
 
 void MirageEngine::RegisterMeta::RegisterShaderMeta()
 {
 	entt::meta_factory<Resources::Shader> material{};
-	material.type(entt::type_id<Resources::Shader>().hash(), "Shader");
+	material.type("Shader"_hs, "Shader");
 
 	material.base<Resources::IResource>();
 

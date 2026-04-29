@@ -83,7 +83,15 @@ void MirageEngine::Deserializer::DeserializeComponent(json _jComponent, std::sha
 
 void MirageEngine::Deserializer::DeserializeMetaData(entt::meta_type _type, entt::meta_data _data, entt::meta_any& _instance, json _jComponent)
 {
-    entt::meta_type actualType = _data.type();
+    entt::meta_any value = _data.get(_instance);
+
+    if (!value)
+    {
+        LOG(logError, LogDeserializer, "Meta Data value empty!");
+        return;
+    }
+
+    entt::meta_type actualType = value.type();
 
     if (actualType == entt::resolve<std::string>())
     {
@@ -93,13 +101,13 @@ void MirageEngine::Deserializer::DeserializeMetaData(entt::meta_type _type, entt
     }
     else if (actualType == entt::resolve<Math::Vector3>())
     {
-        Math::Vector3 vec3Data; // TODO : Vector3 Deserialization
+        Math::Vector3 vec3Data = DeserializeVector3(_jComponent[_data.name()]);
         _data.set(_instance, vec3Data);
         return;
     }
     else if (actualType == entt::resolve<Math::Quaternion>())
     {
-        Math::Quaternion quatData; // TODO : Quaternion Deserialization
+        Math::Quaternion quatData = DeserializeQuaternion(_jComponent[_data.name()]);
         _data.set(_instance, quatData);
         return;
     }
@@ -129,17 +137,48 @@ void MirageEngine::Deserializer::DeserializeMetaData(entt::meta_type _type, entt
     }
     else if (actualType.is_pointer_like())
     {
-        // TODO : Add Pointer (ressources + components) Deserialization
-        return;
-    }
-    else
-    {
-        const char* label = _data.name();
-        if (!label)
-            label = "Property";
+        json jPointer = _jComponent[_data.name()];
 
-        LOG(logTemp, LogDeserializer, "Meta Data Mismatch : ", label);
+        if (!jPointer.is_null())
+        {
+            std::string typeName = jPointer["type"].get<std::string>();
+            entt::hashed_string hashed{ typeName.c_str() };
+            entt::meta_type metaType = entt::resolve(hashed);
+
+            entt::meta_func getPointer = metaType.func("Get"_hs);
+            _data.set(_instance, getPointer.invoke({}, jPointer["name"].get<std::string>()));
+            return;
+        }
     }
+
+    const char* label = _data.name();
+    if (!label)
+        label = "Property";
+
+    LOG(logWarning, LogDeserializer, "Meta Data Mismatch : ", label);
+}
+
+Core::Math::Vector3 MirageEngine::Deserializer::DeserializeVector3(json _jVector3)
+{
+    Core::Math::Vector3 savedVector3;
+
+    savedVector3.X = _jVector3["x"].get<float>();
+    savedVector3.Y = _jVector3["y"].get<float>();
+    savedVector3.Z = _jVector3["z"].get<float>();
+
+    return savedVector3;
+}
+
+Core::Math::Quaternion MirageEngine::Deserializer::DeserializeQuaternion(json _jQuaternion)
+{
+    Core::Math::Quaternion savedQuaternion;
+
+    savedQuaternion.W = _jQuaternion["w"].get<float>();
+    savedQuaternion.X = _jQuaternion["x"].get<float>();
+    savedQuaternion.Y = _jQuaternion["y"].get<float>();
+    savedQuaternion.Z = _jQuaternion["z"].get<float>();
+
+    return savedQuaternion;
 }
 
 json MirageEngine::Deserializer::ConvertJsonFileToJsonVar(std::string _fileName)
