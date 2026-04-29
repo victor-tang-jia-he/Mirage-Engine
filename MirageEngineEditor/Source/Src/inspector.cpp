@@ -330,7 +330,7 @@ namespace Mirage
 
 		bool isMesh = (typeHash == entt::type_id<std::shared_ptr<Mesh>>().hash() || typeHash == entt::type_id<Mesh*>().hash());
 		bool isTex = (typeHash == entt::type_id<std::shared_ptr<Texture>>().hash() || typeHash == entt::type_id<Texture*>().hash());
-		bool isMat = (typeHash == entt::type_id<std::shared_ptr<Material>>().hash() || typeHash == entt::type_id<Material*>().hash());
+		bool isMat = (typeHash == entt::type_id<std::shared_ptr<MaterialInstance>>().hash() || typeHash == entt::type_id<MaterialInstance*>().hash());
 
 		if (!isMesh && !isTex && !isMat) return false;
 
