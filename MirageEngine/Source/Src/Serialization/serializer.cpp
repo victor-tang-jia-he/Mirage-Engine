@@ -36,7 +36,7 @@ json Serializer::SerializeScene(SceneGraph _sceneGraph)
     // Serialize all GameObjects recursively from Roots
     for (std::shared_ptr<GameObject> root : _sceneGraph.GetRootObjects())
     {
-        jScene["roots"].emplace_back(SerializeGameObject(root, nullptr));
+        jScene["Roots"].emplace_back(SerializeGameObject(root, nullptr));
     }
 
     return jScene;
@@ -47,22 +47,22 @@ json Serializer::SerializeGameObject(std::shared_ptr<GameObject> _gameObject, js
     json jGameObject;
 
     jGameObject["ObjName"] = _gameObject->GetName();
-    jGameObject["id"] = _gameObject->GetID();
-    jGameObject["transform"] = SerializeTransform(_gameObject->Transform);
-    jGameObject["components"] = json::array();
-    jGameObject["children"] = json::array();
+    jGameObject["ID"] = _gameObject->GetID();
+    jGameObject["Transform"] = SerializeTransform(_gameObject->Transform);
+    jGameObject["Components"] = json::array();
+    jGameObject["Children"] = json::array();
 
     // Recursivly serialize all gameobjects children
     for (std::shared_ptr<GameObject> child : _gameObject->GetChildren()) {
-        jGameObject["children"].emplace_back(SerializeGameObject(child, jGameObject));
+        jGameObject["Children"].emplace_back(SerializeGameObject(child, jGameObject));
     }
 
     // Serialize all gameobjects components
     for (std::shared_ptr<Components::Component> component : _gameObject->GetComponents()) {
-        jGameObject["components"].emplace_back(SerializeComponent(component, jGameObject));
+        jGameObject["Components"].emplace_back(SerializeComponent(component, jGameObject));
     }
 
-    LOG(logTemp, LogSerializer, "Serialized : GameObject ", _gameObject->GetName().c_str());
+    LOG(logTemp, LogSerializer, "Serialized GameObject : ", _gameObject->GetName().c_str());
 
     return jGameObject;
 }
@@ -90,9 +90,9 @@ json Serializer::SerializeTransform(Components::Transform _transform)
 {
     json jTransform;
 
-    jTransform["position"] = SerializeVector3(_transform.GetPosition());
-    jTransform["rotation"] = SerializeQuaternion(_transform.GetRotation());
-    jTransform["scale"] = SerializeVector3(_transform.GetScale());
+    jTransform["Position"] = SerializeVector3(_transform.GetPosition());
+    jTransform["Rotation"] = SerializeQuaternion(_transform.GetRotation());
+    jTransform["Scale"] = SerializeVector3(_transform.GetScale());
 
     return jTransform;
 }
@@ -170,13 +170,13 @@ json MirageEngine::Serializer::SerializeMetaData(entt::meta_type _type, entt::me
 
             if (Core::Components::Component* component = ref.try_cast<Core::Components::Component>())
             {
-                jPointer["type"] = ref.type().name();
-                jPointer["name"] = component->GetName();
+                jPointer["Type"] = ref.type().name();
+                jPointer["Name"] = component->GetName();
             }
             else if (Core::Resources::IResource* resource = ref.try_cast<Core::Resources::IResource>())
             {
-                jPointer["type"] = ref.type().name();
-                jPointer["name"] = resource->GetName();
+                jPointer["Type"] = ref.type().name();
+                jPointer["Name"] = resource->GetName();
             }
 
             jMetaData = jPointer;
@@ -194,9 +194,9 @@ json MirageEngine::Serializer::SerializeVector3(Core::Math::Vector3 _vector3)
 {
     json jVector3;
 
-    jVector3["x"] = _vector3.X;
-    jVector3["y"] = _vector3.Y;
-    jVector3["z"] = _vector3.Z;
+    jVector3["X"] = _vector3.X;
+    jVector3["Y"] = _vector3.Y;
+    jVector3["Z"] = _vector3.Z;
 
     return jVector3;
 }
@@ -205,10 +205,10 @@ json MirageEngine::Serializer::SerializeQuaternion(Core::Math::Quaternion _quate
 {
     json jQuaternion;
 
-    jQuaternion["w"] = _quaternion.W;
-    jQuaternion["x"] = _quaternion.X;
-    jQuaternion["y"] = _quaternion.Y;
-    jQuaternion["z"] = _quaternion.Z;
+    jQuaternion["W"] = _quaternion.W;
+    jQuaternion["X"] = _quaternion.X;
+    jQuaternion["Y"] = _quaternion.Y;
+    jQuaternion["Z"] = _quaternion.Z;
 
     return jQuaternion;
 }

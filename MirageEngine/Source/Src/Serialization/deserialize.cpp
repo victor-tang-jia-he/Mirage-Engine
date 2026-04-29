@@ -27,7 +27,7 @@ std::shared_ptr<SceneGraph> MirageEngine::Deserializer::DeserializeScene(json _j
 {
     std::shared_ptr<SceneGraph> savedScene = std::make_shared<SceneGraph>();
 
-    for (json jGameObject : _jSceneGraph["roots"])
+    for (json jGameObject : _jSceneGraph["Roots"])
     {
         DeserializeGameObject(jGameObject, nullptr, savedScene);
     }
@@ -39,15 +39,15 @@ void MirageEngine::Deserializer::DeserializeGameObject(json _jGameObject, std::s
 {
     std::shared_ptr<GameObject> savedGameObject = _savedScene->CreateGameObject(_jGameObject["ObjName"], _parent);
 
-    savedGameObject->SetID(_jGameObject["id"]);
+    savedGameObject->SetID(_jGameObject["ID"]);
     //DeserializeComponent(_jGameObject["transform"], savedGameObject);
     
-    for (json jComponent : _jGameObject["components"])
+    for (json jComponent : _jGameObject["Components"])
     {
         DeserializeComponent(jComponent, savedGameObject);
     }
 
-    for (json jChild : _jGameObject["children"])
+    for (json jChild : _jGameObject["Children"])
     {
         DeserializeGameObject(jChild, savedGameObject, _savedScene);
     }
@@ -141,12 +141,12 @@ void MirageEngine::Deserializer::DeserializeMetaData(entt::meta_type _type, entt
 
         if (!jPointer.is_null())
         {
-            std::string typeName = jPointer["type"].get<std::string>();
+            std::string typeName = jPointer["Type"].get<std::string>();
             entt::hashed_string hashed{ typeName.c_str() };
             entt::meta_type metaType = entt::resolve(hashed);
 
             entt::meta_func getPointer = metaType.func("Get"_hs);
-            _data.set(_instance, getPointer.invoke({}, jPointer["name"].get<std::string>()));
+            _data.set(_instance, getPointer.invoke({}, jPointer["Name"].get<std::string>()));
             return;
         }
     }
@@ -162,9 +162,9 @@ Core::Math::Vector3 MirageEngine::Deserializer::DeserializeVector3(json _jVector
 {
     Core::Math::Vector3 savedVector3;
 
-    savedVector3.X = _jVector3["x"].get<float>();
-    savedVector3.Y = _jVector3["y"].get<float>();
-    savedVector3.Z = _jVector3["z"].get<float>();
+    savedVector3.X = _jVector3["X"].get<float>();
+    savedVector3.Y = _jVector3["Y"].get<float>();
+    savedVector3.Z = _jVector3["Z"].get<float>();
 
     return savedVector3;
 }
@@ -173,10 +173,10 @@ Core::Math::Quaternion MirageEngine::Deserializer::DeserializeQuaternion(json _j
 {
     Core::Math::Quaternion savedQuaternion;
 
-    savedQuaternion.W = _jQuaternion["w"].get<float>();
-    savedQuaternion.X = _jQuaternion["x"].get<float>();
-    savedQuaternion.Y = _jQuaternion["y"].get<float>();
-    savedQuaternion.Z = _jQuaternion["z"].get<float>();
+    savedQuaternion.W = _jQuaternion["W"].get<float>();
+    savedQuaternion.X = _jQuaternion["X"].get<float>();
+    savedQuaternion.Y = _jQuaternion["Y"].get<float>();
+    savedQuaternion.Z = _jQuaternion["Z"].get<float>();
 
     return savedQuaternion;
 }
