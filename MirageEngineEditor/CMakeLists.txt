@@ -17,16 +17,18 @@ file(GLOB_RECURSE MIRAGE_ENGINE_EDITOR_HEADERS
 
 target_sources(MirageEngineEditor PRIVATE ${MIRAGE_ENGINE_EDITOR_SOURCES} ${MIRAGE_ENGINE_EDITOR_HEADERS})
 
+set(buildDirectory MIRAGE_BIN_OUTPUT_DIR)
 # Include directories
 target_include_directories(MirageEngineEditor PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/Source/Include
     ${CMAKE_SOURCE_DIR}/Libraries/ImGuizmo
+    ${CMAKE_SOURCE_DIR}/Libraries/ImGui          
+    ${CMAKE_SOURCE_DIR}/Libraries/ImGui/backends 
 )
 
-# Link engine and third-party
 target_link_libraries(MirageEngineEditor PRIVATE
-    MirageEngine    # Link the engine itself
-    third_party     # And third-party libs
+    MirageEngine
+    third_party
     imguizmo
-    GameScripts
+    imgui  
 )

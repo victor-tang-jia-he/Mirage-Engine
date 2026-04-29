@@ -5,7 +5,9 @@ cmake_minimum_required(VERSION 3.20)
 project(CustomEngine)
 
 # Create global variable (project-level) to store output directory
-set(MIRAGE_BIN_OUTPUT_DIR "${CMAKE_SOURCE_DIR}/Build/${CMAKE_CXX_COMPILER_ID}_$<CONFIG>")
+set(MIRAGE_BIN_OUTPUT_DIR "${CMAKE_BINARY_DIR}/Bin/${CMAKE_CXX_COMPILER_ID}_$<CONFIG>")
+
+add_compile_definitions(BUILD_DIRECTORY="${CMAKE_BINARY_DIR}")
 
 # Log directory at configuration-time
 message("[${CMAKE_PROJECT_NAME}]: Output directory: ${MIRAGE_BIN_OUTPUT_DIR}")
@@ -22,6 +24,13 @@ set(CMAKE_C_STANDARD_REQUIRED ON)
 # Set C++ standard version
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+# ONLY VICTOR TANG
+cmake_host_system_information(RESULT HOSTNAME QUERY HOSTNAME)
+if ("${HOSTNAME}" STREQUAL "TheDarkPhoenix" )
+    set(CMAKE_JOB_POOL_COMPILE compile_pool)
+    set_property(GLOBAL PROPERTY JOB_POOLS compile_pool=1)
+endif()
 
 message(STATUS "Adding external Libraries...")
 message("")
@@ -413,9 +422,6 @@ add_library(third_party INTERFACE)
 target_include_directories(third_party INTERFACE
     ${CMAKE_SOURCE_DIR}/Libraries/Glad/Code/Include
     ${CMAKE_SOURCE_DIR}/Libraries/GLFW/include
-    ${CMAKE_SOURCE_DIR}/Libraries/ImGui
-    ${CMAKE_SOURCE_DIR}/Libraries/ImGuizmo
-    ${CMAKE_SOURCE_DIR}/Libraries/ImGui/backends
     ${CMAKE_SOURCE_DIR}/Libraries/TinyObjLoader
     ${CMAKE_SOURCE_DIR}/Libraries/STBImage
     ${CMAKE_SOURCE_DIR}/Libraries/EnTT/single_include
@@ -426,10 +432,8 @@ target_include_directories(third_party INTERFACE
 )
 
 target_link_libraries(third_party INTERFACE
-    MirageEngine
     glfw
     glad
-    imgui
     tinyobjloader
     OpenGL::GL
     Toolbox
@@ -443,7 +447,10 @@ target_link_libraries(third_party INTERFACE
 message("")
 message(STATUS "Adding mirage_engine project...")
 add_subdirectory(MirageEngine)
-add_subdirectory(${CMAKE_SOURCE_DIR}/Scripts) # Add Script after build
+
+message("")
+message(STATUS "Adding scripts project...")
+add_subdirectory(Scripts) # Add Script after build
 
 # Editor project
 message("")

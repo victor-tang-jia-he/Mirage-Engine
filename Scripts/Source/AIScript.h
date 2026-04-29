@@ -1,6 +1,6 @@
 #pragma once
-#include "Scripting/i_script.h"
-#include "ScriptRegistry.h"
+#include <Scripting/i_script.h>
+#include <Scripting/script_registry.h>
 #include <cstdio>
 #include <GameObject/game_object.h>
 

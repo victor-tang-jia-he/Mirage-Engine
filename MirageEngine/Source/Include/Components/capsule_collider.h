@@ -31,10 +31,6 @@ namespace MirageEngine
                     CapsuleCollider();
                     ~CapsuleCollider();
 
-                    virtual void Init() override {}
-
-                    virtual void Update() override {}
-
                     entt::id_type GetType() const override { return 0; }
 
                     // Capsule only parameter

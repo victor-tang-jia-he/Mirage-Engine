@@ -26,8 +26,8 @@ namespace MirageEngine::Core::Physics
             bool               m_bIsDirty         = true;
 
             std::vector<ICollider*> m_CurrentRigidBodyShapesBind;
-
         public:
+            std::function<void()> OnSimulated;
 
             IRigidBody()          = default;
             virtual ~IRigidBody() = default;

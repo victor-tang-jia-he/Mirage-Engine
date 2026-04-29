@@ -4,10 +4,9 @@
 #include <string>
 #include <stdexcept>
 
-#include <entt/meta/factory.hpp>
-#include <entt/meta/container.hpp>
-#include <entt/meta/meta.hpp>
-
+namespace entt {
+	using id_type = std::uint32_t;
+}
 namespace MirageEngine
 {
 	class GameObject;
@@ -26,10 +25,6 @@ namespace MirageEngine
 			public:
 				Component() = default;
 				virtual ~Component() = default;
-
-				// Delete later
-				virtual void Init() = 0;
-				virtual void Update() = 0;
 
 				virtual void OnCreate() {}
 				virtual void OnDestroy() {}

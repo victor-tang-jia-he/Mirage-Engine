@@ -8,15 +8,19 @@ DEFINE_LOG_CATEGORY(LogComponentRigidBody)
 using namespace MirageEngine::Core::Components;
 using namespace MirageEngine::Core;
 
-Rigidbody::Rigidbody(ICCollider* _shape, Physics::ERigidBodyType _type) { m_Rigidbody = Physics::PhysicsManager::Instance().CreateRigidBody(_shape->GetCollision(), _type); }
+Rigidbody::Rigidbody(ICCollider* _shape, Physics::ERigidBodyType _type) { m_Rigidbody = Physics::PhysicsManager::Instance().CreateRigidBody(_shape->GetCollision(), _type); 
+
+    m_Rigidbody->OnSimulated = [this]()
+    {
+        m_Rigidbody->UpdateTransform(GetOwner()->Transform);
+    };
+}
 
 Rigidbody::~Rigidbody()
 {
     delete m_Rigidbody;
     LOG(logTemp, LogComponentRigidBody, "Rigidbody die");
 }
-
-void Rigidbody::Update() { m_Rigidbody->UpdateTransform(GetOwner()->Transform); }
 
 void Rigidbody::OnTransformChanged(Components::Transform& _newTransform) { m_Rigidbody->OnTransformChanged(_newTransform); }
 

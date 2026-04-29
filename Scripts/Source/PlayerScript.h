@@ -1,6 +1,6 @@
 #pragma once
-#include "Scripting/i_script.h"
-#include "ScriptRegistry.h"
+#include <Scripting/script_registry.h>
+#include <Scripting/i_script.h>
 #include <cstdio>
 
 class PlayerScript : public MirageEngine::Core::Scripting::IScript {

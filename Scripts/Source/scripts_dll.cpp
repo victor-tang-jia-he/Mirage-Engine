@@ -1,5 +1,5 @@
 #include <Scripting/script_api.h>
-#include "ScriptRegistry.h"
+#include <Scripting/script_registry.h>
 #include <functional>
 
 extern "C" {

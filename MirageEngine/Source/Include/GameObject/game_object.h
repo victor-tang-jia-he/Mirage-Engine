@@ -1,8 +1,5 @@
 #pragma once
 
-#include <entt/entt.hpp>
-#include <entt/meta/meta.hpp>
-
 #include <iostream>
 #include <string>
 #include <vector>
@@ -13,6 +10,11 @@
 
 namespace MirageEngine
 {
+	namespace Core::Math
+	{
+		class Vector3;
+		class Quaternion;
+	}
 
 	// Static : Transform matrix doesn't update every frame
 	// Dynamic : Transform matrix updates every frame

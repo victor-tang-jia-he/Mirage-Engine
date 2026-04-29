@@ -110,7 +110,7 @@ void Application::InitGameObject()
     std::shared_ptr<GameObject> floorGO  = m_SceneGraph.CreateGameObject("Lin", root);
     std::shared_ptr<GameObject> child1   = m_SceneGraph.CreateGameObject("Monin", floorGO);
     std::shared_ptr<GameObject> child2   = m_SceneGraph.CreateGameObject("Tang", child1);
-    ResourceManager::Instance().GetMesh("cu12be")->Bind();
+    ResourceManager::Instance().GetMesh("cube")->Bind();
     ResourceManager::Instance().GetMesh("sphere")->Bind();
     ResourceManager::Instance().GetMesh("cylinder")->Bind();
     ResourceManager::Instance().GetMesh("plane")->Bind();

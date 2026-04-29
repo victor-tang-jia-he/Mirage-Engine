@@ -2,7 +2,7 @@
 #include <Components/component.h>
 #include <Components/transform.h>
 #include <atomic>
-#include <Components/rigidbody.h>.h>
+#include <Components/rigidbody.h>
 
 using namespace MirageEngine::Core::Components;
 using namespace MirageEngine::Core::Math;
