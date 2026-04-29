@@ -25,6 +25,7 @@ int main()
 	MirageEngine::TimeManager::Init();
 	while (application.m_Renderer.IsRunning())
 	{
+		glfwPollEvents();
 		MirageEngine::TimeManager::Update();
 		MirageEngine::Core::Input::InputSystem::UpdateHeldInput();
 		MirageEngine::Core::Physics::PhysicsManager::Instance().Update(MirageEngine::TimeManager::GetDeltaTime());
