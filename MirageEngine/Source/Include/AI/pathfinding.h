@@ -6,13 +6,13 @@
 
 using namespace MirageEngine::Core::Math;
 
+namespace MirageEngine::Core::Components
+{
+	class InfluenceGrid;
+}
+
 namespace MirageEngine
 {
-	namespace Core::Components
-	{
-		class InfluenceGrid;
-	}
-
 	using namespace Core::Components;
 
 	namespace AI
