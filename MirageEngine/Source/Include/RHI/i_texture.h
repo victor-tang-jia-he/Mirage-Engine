@@ -27,6 +27,7 @@ namespace MirageRHI
 
 		virtual void Bind() const = 0;
 
+		virtual uint32_t GetID() const = 0;
 		virtual OpenGLTexture& API_OpenGL() { throw std::runtime_error("Bad API Call : object is not an OpenGLTexture"); }
 	};
 }

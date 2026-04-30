@@ -1,7 +1,5 @@
 #include "UI_wrapper.h"
 
-#include "GLFW/glfw3.h"
-
 #include "vector3.h"
 #include <string>
 
@@ -10,12 +8,22 @@
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_opengl3.h"
 
+#include <Resources/texture.h>
+
+DEFINE_LOG_CATEGORY(LogUIWrapper)
+
+namespace MirageEngine::Core::Resources
+{
+	class Texture;
+}
+
 namespace Math = MirageEngine::Core::Math;
 
 namespace Mirage
 {
 	void UIWrapper::Init(void* _windowHandle)
 	{
+		LOG(logTemp, LogUIWrapper, "UI Wrapper Init");
 		IMGUI_CHECKVERSION();
 		ImGuiContext* context = ImGui::CreateContext();
 		ImGuiIO& io = ImGui::GetIO();
@@ -37,6 +45,7 @@ namespace Mirage
 		ImGui_ImplOpenGL3_Shutdown();
 		ImGui_ImplGlfw_Shutdown();
 		ImGui::DestroyContext();
+		LOG(logTemp, LogUIWrapper, "UI Wrapper Shutdown");
 	}
 
 	void UIWrapper::BeginFrame()
@@ -131,51 +140,49 @@ namespace Mirage
 		return ImGui::BeginTable("Content", colomnNbr);
 	}
 
-	//WidgetAction UIWrapper::DrawAssetTile(const char* _name, bool _isSelected, void* _icon)
-	//{
-	//	ImGui::TableNextColumn();
-	//	ImGui::PushID(_name);
-
-	//	WidgetAction action = WidgetAction::None;
-
-	//	if (_icon == nullptr)
-	//	{
-
-	//	}
-
-	//	ImGui::BeginGroup();
-	//	if (_isSelected)
-	//	{
-
-	//	}
-	//	ImGui::Button("##icon", ImVec2(64, 64));
-	//	ImGui::TextWrapped(_name);
-	//	ImGui::EndGroup();
-
-	//	if (ImGui::IsItemHovered())
-	//	{
-	//		if (ImGui::IsMouseDoubleClicked(0))
-	//			action = WidgetAction::DoubleClicked;
-	//		else if (ImGui::IsItemClicked(0))
-	//			action = WidgetAction::Clicked;
-	//		else if (ImGui::IsItemClicked(1))
-	//			action = WidgetAction::RightClicked;
-	//	}
-
-	//	//ImGui::PopID();
-	//	return action;
-	//}
-
-	WidgetAction UIWrapper::DrawAssetTile(const char* _name, bool _isSelected, void* _icon)
+	/*WidgetAction UIWrapper::DrawAssetTile(const char* _name, bool _isSelected, void* _icon)
 	{
 		ImGui::TableNextColumn();
 		ImGui::PushID(_name);
+
+		WidgetAction action = WidgetAction::None;
 
 		if (_icon == nullptr)
 		{
 
 		}
 
+		ImGui::BeginGroup();
+		if (_isSelected)
+		{
+
+		}
+		ImGui::Button("##icon", ImVec2(64, 64));
+		ImGui::TextWrapped(_name);
+		ImGui::EndGroup();
+
+		if (ImGui::IsItemHovered())
+		{
+			if (ImGui::IsMouseDoubleClicked(0))
+				action = WidgetAction::DoubleClicked;
+			else if (ImGui::IsItemClicked(0))
+				action = WidgetAction::Clicked;
+			else if (ImGui::IsItemClicked(1))
+				action = WidgetAction::RightClicked;
+		}
+
+		//ImGui::PopID();
+		return action;
+	}*/
+
+	WidgetAction UIWrapper::DrawAssetTile(const char* _name, bool _isSelected, std::shared_ptr<MirageEngine::Core::Resources::Texture> _icon)
+	{
+		MirageEngine::Core::Resources::ResourceManager rm;
+
+		ImGui::TableNextColumn();
+		ImGui::PushID(_name);
+
+		
 		WidgetAction action = WidgetAction::None;
 		ImVec2 startPos = ImGui::GetCursorPos();
 		float columnWidth = ImGui::GetContentRegionAvail().x;
@@ -183,18 +190,12 @@ namespace Mirage
 
 		ImGui::BeginGroup();
 
-		float iconSize = 64.0f;
+		float iconSize = 110.0f;
 		float iconPadding = (columnWidth - iconSize) * 0.5f;
 		ImVec2 screenPos = ImGui::GetCursorScreenPos();
+		ImGui::Image((ImTextureID)_icon->GetTextureID(), ImVec2(iconSize, iconSize), ImVec2(0, 1), ImVec2(1, 0));
 
-		ImGui::GetWindowDrawList()->AddRectFilled(
-			ImVec2(screenPos.x + iconPadding, screenPos.y),
-			ImVec2(screenPos.x + iconPadding + iconSize, screenPos.y + iconSize),
-			ImColor(60, 60, 70),
-			4.0f 
-		);
-
-		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + iconSize + 8.0f);
+		//ImGui::SetCursorPosY(ImGui::GetCursorPosY() + iconSize + 8.0f);
 
 		float textWidth = ImGui::CalcTextSize(_name).x;
 		if (textWidth < columnWidth)

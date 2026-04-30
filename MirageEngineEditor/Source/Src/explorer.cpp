@@ -3,6 +3,9 @@
 #include "editor_actions.h"
 #include "console.h"
 #include "dragdrop.h"
+
+#include <Resources/resource_manager.h>
+
 #include <fstream>
 #include <iostream>
 
@@ -338,6 +341,10 @@ namespace Mirage
 
 	void Explorer::RenderAssetGrid()
 	{
+		MirageEngine::Core::Resources::ResourceManager& rm = MirageEngine::Core::Resources::ResourceManager::Instance();
+
+		std::shared_ptr<MirageEngine::Core::Resources::Texture> texCat = rm.GetTexture("cat");
+
 		float windowSize = ImGui::GetContentRegionAvail().x;
 		std::filesystem::path directoryToChange = "";
 		bool needsRefresh = false;
@@ -347,7 +354,7 @@ namespace Mirage
 			for (const AssetEntry& entry : m_Entries)
 			{
 				bool isSelected = (m_SelectedEntry == &entry);
-				WidgetAction action = UIWrapper::DrawAssetTile(entry.Name.c_str(), isSelected);
+				WidgetAction action = UIWrapper::DrawAssetTile(entry.Name.c_str(), isSelected, texCat);
 
 				if (action == WidgetAction::Clicked)
 				{
@@ -457,7 +464,14 @@ namespace Mirage
 					if (ImGui::MenuItem("New Folder"))
 					{
 						std::error_code ec;
-						std::filesystem::create_directory(m_CurrentPath / "NewFolder", ec);
+						std::filesystem::path newFolderPath = m_CurrentPath / "NewFolder";
+						int counter = 1;
+						while (std::filesystem::exists(newFolderPath))
+						{
+							newFolderPath = m_CurrentPath / ("NewFolder (" + std::to_string(counter) + ")");
+							counter++;
+						}
+						std::filesystem::create_directory(newFolderPath, ec);
 						ScanProjectDirectory(m_CurrentPath);
 					}
 

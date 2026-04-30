@@ -2,6 +2,8 @@
 #include <Resources/resource_interface.h>
 #include <Logs/log_macro.h>
 
+#include <RHI/i_texture.h>
+
 DECLARE_LOG_CATEGORY_EXTERN(LogTexture)
 
 namespace MirageRHI
@@ -38,6 +40,9 @@ namespace MirageEngine::Core::Resources
 
 		~Texture();
 		void Bind();
+		uint32_t GetTextureID() const { return m_TextureBuffer->GetID(); }
+		int GetWidth() const { return m_Width; }
+		int GetHeight() const { return m_Height; }
 
 		std::shared_ptr<MirageRHI::ITexture> GetTextureBuffer() const { return m_TextureBuffer; }
 	};

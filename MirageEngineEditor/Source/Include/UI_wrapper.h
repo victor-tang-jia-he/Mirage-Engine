@@ -1,6 +1,13 @@
 #pragma once
 #include <string>
 #include "vector3.h"
+#include <imgui.h>
+
+#include <Resources/resource_manager.h>
+
+#include <Logs/log_macro.h>
+
+DECLARE_LOG_CATEGORY_EXTERN(LogUIWrapper)
 
 namespace Math = MirageEngine::Core::Math;
 
@@ -32,7 +39,7 @@ namespace Mirage
 		static bool IsItemClicked();
 
 		static bool BeginAssetGrid(float _cellSize, float _windowSize);
-		static WidgetAction DrawAssetTile(const char* _name, bool _isSelected, void* _icon = nullptr);
+		static WidgetAction DrawAssetTile(const char* _name, bool _isSelected, std::shared_ptr<MirageEngine::Core::Resources::Texture> _icon);
 		static void EndAssetTile();
 		static void EndAssetGrid();
 

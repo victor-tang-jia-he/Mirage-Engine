@@ -15,6 +15,7 @@ namespace MirageRHI
 
         void Bind() const override;
 
+		uint32_t GetID() const override { return m_Texture; }
         OpenGLTexture& API_OpenGL() override { return *this; }
     };
 }
