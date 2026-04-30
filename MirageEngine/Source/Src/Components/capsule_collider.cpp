@@ -13,6 +13,7 @@ CapsuleCollider::~CapsuleCollider() { delete m_Collider; }
 void MirageEngine::Core::Components::CapsuleCollider::AttachMeta(std::shared_ptr<GameObject> _Owner)
 {
     std::shared_ptr<CapsuleCollider> compPtr = std::make_shared<CapsuleCollider>(*this);
+    compPtr->m_ComponentName = typeid(CapsuleCollider).name();
     _Owner->AddComponent(compPtr);
 }
 

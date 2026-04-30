@@ -21,6 +21,7 @@ void Rigidbody::Update() { m_Rigidbody->UpdateTransform(GetOwner()->Transform); 
 void MirageEngine::Core::Components::Rigidbody::AttachMeta(std::shared_ptr<GameObject> _Owner)
 {
     std::shared_ptr<Rigidbody> compPtr = std::make_shared<Rigidbody>(*this);
+    compPtr->m_ComponentName = typeid(Rigidbody).name();
     _Owner->AddComponent(compPtr);
 }
 

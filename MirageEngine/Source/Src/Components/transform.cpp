@@ -25,7 +25,8 @@ void Transform::Update()
 
 void MirageEngine::Core::Components::Transform::AttachMeta(std::shared_ptr<GameObject> _Owner)
 {
-    _Owner->Transform = *this;
+    Transform savedTransform = *this;
+    _Owner->Transform = savedTransform;
 }
 
 Matrix4 Transform::GetMatrix()

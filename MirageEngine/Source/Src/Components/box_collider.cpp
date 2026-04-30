@@ -13,6 +13,7 @@ BoxCollider::~BoxCollider() { delete m_Collider; }
 void MirageEngine::Core::Components::BoxCollider::AttachMeta(std::shared_ptr<GameObject> _Owner)
 {
     std::shared_ptr<BoxCollider> compPtr = std::make_shared<BoxCollider>(*this);
+    compPtr->m_ComponentName = typeid(BoxCollider).name();
     _Owner->AddComponent(compPtr);
 }
 

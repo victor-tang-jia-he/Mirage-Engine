@@ -5,6 +5,7 @@
 #include <GameObject/game_object.h>
 #include <Components/component.h>
 #include <Components/transform.h>
+#include <Components/camera.h>
 
 #include <Resources/mesh.h>
 #include <Resources/material.h>
@@ -32,6 +33,8 @@ void MirageEngine::Serializer::SaveScene(SceneGraph _sceneGraph)
 json Serializer::SerializeScene(SceneGraph _sceneGraph)
 {
     json jScene;
+
+    jScene["CameraOwnerID"] = _sceneGraph.GetActiveCamera()->GetOwner()->GetID();
 
     // Serialize all GameObjects recursively from Roots
     for (std::shared_ptr<GameObject> root : _sceneGraph.GetRootObjects())
@@ -71,7 +74,7 @@ json MirageEngine::Serializer::SerializeComponent(std::shared_ptr<Components::Co
 {
     json jComponent;
 
-    jComponent["CompName"] = _component->GetName();
+    jComponent["CompName"] = _component->GetName().c_str();
 
     // Serializing other Component specifice variables
     entt::meta_type type = entt::resolve(_component->GetType());
@@ -90,9 +93,15 @@ json Serializer::SerializeTransform(Components::Transform _transform)
 {
     json jTransform;
 
-    jTransform["Position"] = SerializeVector3(_transform.GetPosition());
-    jTransform["Rotation"] = SerializeQuaternion(_transform.GetRotation());
-    jTransform["Scale"] = SerializeVector3(_transform.GetScale());
+    entt::hashed_string hashed{ typeid(Components::Transform).name() };
+    entt::meta_type type = entt::resolve(hashed);
+    if (type)
+    {
+        for (auto [id, data] : type.data())
+        {
+            jTransform[data.name()] = (SerializeMetaData(type, data, (void*)&_transform));
+        }
+    }
 
     return jTransform;
 }
@@ -160,6 +169,13 @@ json MirageEngine::Serializer::SerializeMetaData(entt::meta_type _type, entt::me
         if (bool* boolData = value.try_cast<bool>())
         {
             jMetaData = *boolData;
+        }
+    }
+    else if (actualType == entt::resolve<Core::Components::Transform>())
+    {
+        if (Core::Components::Transform* transformData = value.try_cast<Core::Components::Transform>())
+        {
+            jMetaData = SerializeTransform(*transformData);
         }
     }
     else if (actualType.is_pointer_like())

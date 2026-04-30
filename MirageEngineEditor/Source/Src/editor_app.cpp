@@ -74,7 +74,7 @@ namespace Mirage
 		}
 		if (ImGui::IsKeyPressed(ImGuiKey_M) && m_IsPlaying)
 		{
-			m_SceneGraph = MirageEngine::Deserializer::LoadSceneFromFile("scene.json").get();
+			*m_SceneGraph = *MirageEngine::Deserializer::LoadSceneFromFile("scene.json");
 			m_IsStoped = true;
 		}
 

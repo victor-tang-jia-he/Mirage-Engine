@@ -113,11 +113,12 @@ void RegisterMeta::RegisterCameraMeta()
 
 	camera.base<Component>();
 
-	camera.ctor<>();
-
 	camera.data<&Camera::SetFov, &Camera::GetFov>("FOV");
 	camera.data<&Camera::SetNear, &Camera::GetNear>("Near");
 	camera.data<&Camera::SetFar, &Camera::GetFar>("Far");
+	camera.data<&Camera::SetHeight, &Camera::GetHeight>("Height");
+	camera.data<&Camera::SetWidth, &Camera::GetWidth>("Width");
+	camera.data<&Camera::SetTransform, &Camera::Transform>("Transform");
 
 	camera.func<&Camera::AttachMeta>("Attach"_hs);
 }

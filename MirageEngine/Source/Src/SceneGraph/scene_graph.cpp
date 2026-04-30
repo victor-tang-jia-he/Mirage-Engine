@@ -101,6 +101,18 @@ namespace MirageEngine
         m_RootsList.clear();
     }
 
+    std::shared_ptr<GameObject> SceneGraph::FindGameObject(uint64_t _id) const
+    {
+        if (m_Registry.contains(_id))
+        {
+            return m_Registry.at(_id);
+        }
+        else
+        {
+            return nullptr;
+        }
+    }
+
     void SceneGraph::UpdateAllWorldMatrices()
     {
         MirageEngine::Core::Math::Matrix4 Identity = Core::Math::Matrix4::Identity();
@@ -122,16 +134,6 @@ namespace MirageEngine
         Core::Math::Matrix4 childWorldBefore = _child->Transform.GetWorldMatrix();
 
 		std::shared_ptr<GameObject> current = _parent;
-		while (current != nullptr)
-		{
-			if (current == _child)
-			{
-				return false;
-			}
-			current = current->GetParent();
-		}
-
-
 
         while (current != nullptr)
         {
@@ -146,8 +148,14 @@ namespace MirageEngine
             current = currentShared->GetParent();
         }
 
-        if (_child->GetParent() == nullptr) std::erase(m_RootsList, _child);
-        else { _child->GetParent()->RemoveChild(_child); }
+        if (_child->GetParent() == nullptr) 
+        {
+            std::erase(m_RootsList, _child);
+        }
+        else 
+        { 
+            _child->GetParent()->RemoveChild(_child); 
+        }
 
         if (_parent == nullptr)
         {

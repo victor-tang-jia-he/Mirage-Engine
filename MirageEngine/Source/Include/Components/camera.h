@@ -24,10 +24,10 @@ namespace MirageEngine
 				unsigned int m_Height = 0;
 				float m_Fov = 90.f;
 				float m_CameraVelocity = 1.f;
-                float m_CameraYaw;
- 				float m_CameraPitch;
+                float m_CameraYaw = 0;
+ 				float m_CameraPitch = 0;
 
-                    MirageEngine::Core::Components::Transform m_transform;
+                MirageEngine::Core::Components::Transform m_transform;
 
                 public:
 
@@ -52,6 +52,8 @@ namespace MirageEngine
                     }
 
                     // SetParameter
+                    void SetTransform(MirageEngine::Core::Components::Transform _transform) { m_transform = _transform; }
+
                     void SetNear(float _near) { m_Near = _near; }
 
                     void SetFar(float _far) { m_Far = _far; }

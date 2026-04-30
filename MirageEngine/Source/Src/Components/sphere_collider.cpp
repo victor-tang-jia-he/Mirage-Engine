@@ -13,6 +13,7 @@ SphereCollider::~SphereCollider() { delete m_Collider; }
 void MirageEngine::Core::Components::SphereCollider::AttachMeta(std::shared_ptr<GameObject> _Owner)
 {
     std::shared_ptr<SphereCollider> compPtr = std::make_shared<SphereCollider>(*this);
+    compPtr->m_ComponentName = typeid(SphereCollider).name();
     _Owner->AddComponent(compPtr);
 }
 

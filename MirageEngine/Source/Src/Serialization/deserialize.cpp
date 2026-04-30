@@ -2,6 +2,7 @@
 #include "SceneGraph/scene_graph.h"
 #include "GameObject/game_object.h"
 #include "Components/component.h"
+#include "Components/camera.h"
 #include "vector3.h"
 #include "quaternion.h"
 
@@ -32,15 +33,21 @@ std::shared_ptr<SceneGraph> MirageEngine::Deserializer::DeserializeScene(json _j
         DeserializeGameObject(jGameObject, nullptr, savedScene);
     }
 
+    // Temp while editor camera is in scene obj (TO FIX)
+    std::shared_ptr<GameObject> cameraObj = savedScene->FindGameObject(_jSceneGraph["CameraOwnerID"].get<uint64_t>());
+    if (cameraObj)
+        savedScene->SetEditorCamera(cameraObj->GetComponent<Core::Components::Camera>());
+    else
+        LOG(logError, LogDeserializer, "No Editor Camera found!");
+
     return savedScene;
 }
 
 void MirageEngine::Deserializer::DeserializeGameObject(json _jGameObject, std::shared_ptr<GameObject> _parent, std::shared_ptr<SceneGraph> _savedScene)
 {
-    std::shared_ptr<GameObject> savedGameObject = _savedScene->CreateGameObject(_jGameObject["ObjName"], _parent);
+    std::shared_ptr<GameObject> savedGameObject = std::make_shared<GameObject>(_parent, _jGameObject["ObjName"].get<std::string>());
 
     savedGameObject->SetID(_jGameObject["ID"]);
-    //DeserializeComponent(_jGameObject["transform"], savedGameObject);
     
     for (json jComponent : _jGameObject["Components"])
     {
@@ -51,6 +58,10 @@ void MirageEngine::Deserializer::DeserializeGameObject(json _jGameObject, std::s
     {
         DeserializeGameObject(jChild, savedGameObject, _savedScene);
     }
+
+    _savedScene->AddGameObject(savedGameObject);
+
+    DeserializeTransform(_jGameObject["Transform"], savedGameObject);
 }
 
 void MirageEngine::Deserializer::DeserializeComponent(json _jComponent, std::shared_ptr<GameObject> _Owner)
@@ -79,6 +90,38 @@ void MirageEngine::Deserializer::DeserializeComponent(json _jComponent, std::sha
     }
 
     _Owner->AddComponentFromMeta(compInstance);
+}
+
+entt::meta_any MirageEngine::Deserializer::DeserializeTransform(json _jComponent, std::shared_ptr<GameObject> _Owner)
+{
+    std::string typeName = typeid(Core::Components::Transform).name();
+    entt::hashed_string hashed{ typeName.c_str() };
+    entt::meta_type metaType = entt::resolve(hashed);
+    entt::meta_any compInstance = metaType.construct();
+
+    if (!metaType)
+    {
+        LOG(logError, LogDeserializer, "Saved Transform not recognised!");
+        return compInstance;
+    }
+    if (!compInstance) 
+    {
+        LOG(logError, LogDeserializer, "Failed to construct Transform Meta Instance!");
+        return compInstance;
+    }
+
+    for (auto [id, data] : metaType.data())
+    {
+        // Converts the Json data into corresponding Engine data and adds it to the Components Meta Instance
+        DeserializeMetaData(metaType, data, compInstance, _jComponent);
+    }
+
+    if (_Owner)
+    {
+        _Owner->AddComponentFromMeta(compInstance);
+    }
+
+    return compInstance;
 }
 
 void MirageEngine::Deserializer::DeserializeMetaData(entt::meta_type _type, entt::meta_data _data, entt::meta_any& _instance, json _jComponent)
@@ -134,6 +177,17 @@ void MirageEngine::Deserializer::DeserializeMetaData(entt::meta_type _type, entt
         bool booleanData = _jComponent[_data.name()].get<bool>();
         _data.set(_instance, booleanData);
         return;
+    }
+    else if (actualType == entt::resolve<Core::Components::Transform>())
+    {
+        json transformData = _jComponent[_data.name()];
+        entt::meta_any transformInstance = DeserializeTransform(transformData, nullptr);
+        Core::Components::Transform* savedTransform = transformInstance.try_cast<Core::Components::Transform>();
+        if (savedTransform)
+        {
+            _data.set(_instance, *savedTransform);
+            return;
+        }
     }
     else if (actualType.is_pointer_like())
     {

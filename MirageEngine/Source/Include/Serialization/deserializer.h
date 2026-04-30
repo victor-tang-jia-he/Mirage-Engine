@@ -43,13 +43,12 @@ namespace MirageEngine
 		static void DeserializeGameObject(json _jGameObject, std::shared_ptr<GameObject> _parent, std::shared_ptr<SceneGraph> _savedScene);
 		
 		static void DeserializeComponent(json _jComponent, std::shared_ptr<GameObject> _Owner);
+		static entt::meta_any DeserializeTransform(json _jComponent, std::shared_ptr<GameObject> _Owner);
 		
 		static void DeserializeMetaData(entt::meta_type _type, entt::meta_data _data, entt::meta_any& _instance, json _jComponent);
 		
 		static Core::Math::Vector3 DeserializeVector3(json _jVector3);
 		static Core::Math::Quaternion DeserializeQuaternion(json _jQuaternion);
-
-		static void DeserializeResourcePtr();
 
 		static json ConvertJsonFileToJsonVar(std::string _fileName);
 	};
