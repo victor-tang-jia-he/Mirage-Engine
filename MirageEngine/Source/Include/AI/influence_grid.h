@@ -56,6 +56,8 @@ namespace MirageEngine::Core::Components
 		const std::vector<InfluenceCell>& GetCells() const{ return m_Cells; }
 		int GetChannelsIndex(std::string _name) const;
 		std::vector<std::string> GetChannelsNames() const { return m_ChannelsNames; }
+		int GetResX() const { return m_ResolutionX; }
+		int GetResY() const { return m_ResolutionY; }
 
 		// Setters
 		void SetWidth(float _w) { m_GridWidth = _w; }
