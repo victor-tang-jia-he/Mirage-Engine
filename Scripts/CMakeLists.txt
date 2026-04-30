@@ -18,6 +18,12 @@ target_include_directories(GameScripts PRIVATE
 
 target_link_libraries(GameScripts PRIVATE MirageEngine third_party)
 
+set_target_properties(GameScripts
+    PROPERTIES
+        LIBRARY_OUTPUT_DIRECTORY "${MIRAGE_BIN_OUTPUT_DIR}/DLL"
+        RUNTIME_OUTPUT_DIRECTORY "${MIRAGE_BIN_OUTPUT_DIR}/DLL"
+)
+
 add_custom_command(TARGET GameScripts POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_if_different
         $<TARGET_FILE:GameScripts>

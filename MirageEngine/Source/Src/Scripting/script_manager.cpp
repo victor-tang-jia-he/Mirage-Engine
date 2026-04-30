@@ -18,15 +18,16 @@ namespace MirageEngine::Core::Scripting
 	void ScriptManager::ReloadScript()
 	{
 		UnloadSharedLibrary(hScripts);
+		hScripts = nullptr;
 		RebuildScriptsDll(buildDir, config);
 
 		auto LoadModule = [](const char* name) -> LibHandle {
 			LibHandle h = LoadSharedLibrary(name);
 			if (!h) {
 #ifdef _WIN32
-				LOG(logError, LogScriptManager, "Failed to load library ", GetLastError());
+				LOG(logFatal, LogScriptManager, "Failed to load library ", GetLastError());
 #else
-				LOG(logError, LogScriptManager, "Failed to load library: ", dlerror());
+				LOG(logFatal, LogScriptManager, "Failed to load library: ", dlerror());
 #endif
 			}
 			return h;
@@ -41,10 +42,16 @@ namespace MirageEngine::Core::Scripting
 		DestroyScriptDLL = (PFN_DestroyScript)GetSymbol(hScripts, "DestroyScript");
 
 		if (!GetScriptCountDLL || !GetScriptNameDLL || !CreateScriptByNameDLL || !DestroyScriptDLL) {
-			LOG(logError, LogScriptManager, "Failed to load functions");
+			LOG(logFatal, LogScriptManager, "Failed to load functions");
 			UnloadSharedLibrary(hScripts);
 			return;
 		}
+
+		LOG(logInfo, LogScriptManager, "Script count : ", ((PFN_GetScriptCount)GetScriptCountDLL)());
+
+		// Trigger callback
+		for (auto& [gameobject, callback] : m_Subscribers)
+			callback->Trigger();
 	}
 	void ScriptManager::ShutDown() const
 	{
@@ -52,13 +59,10 @@ namespace MirageEngine::Core::Scripting
 	}
 	int ScriptManager::GetScriptsCount() const { return ((PFN_GetScriptCount)GetScriptCountDLL)(); }
 	const char* ScriptManager::GetScriptName(int index) const { return ((PFN_GetScriptName)GetScriptNameDLL)(index); }
-	IScript* ScriptManager::CreateScriptByName(const char* name) {
+	std::unique_ptr<IScript, ScriptManager::DllDeleter>  ScriptManager::CreateScriptByName(const char* name) {
 
 		IScript* script = ((PFN_CreateScriptByName)CreateScriptByNameDLL)(name);
-		// registe script in cache
-		if (script)
-			scripts.emplace_back(script, DllDeleter{ (PFN_DestroyScript)DestroyScriptDLL });
-		return script;
+		return { script, DllDeleter{ (PFN_DestroyScript)DestroyScriptDLL } };
 	}
 	void ScriptManager::DestroyScript(IScript* script) const { ((PFN_DestroyScript)DestroyScriptDLL)(script); }
 	bool ScriptManager::SetupVisualStudioEnvironment() {
@@ -101,7 +105,7 @@ namespace MirageEngine::Core::Scripting
 		}
 
 		if (vcvarsPath.empty()) {
-			LOG(logError, LogScriptManager, "Cannot find vcvarsall.bat");
+			LOG(logFatal, LogScriptManager, "Cannot find vcvarsall.bat");
 			return false;
 		}
 
@@ -111,7 +115,7 @@ namespace MirageEngine::Core::Scripting
 
 		FILE* pipe = _popen(cmd.c_str(), "r");
 		if (!pipe) {
-			LOG(logError, LogScriptManager, "Failed to run vcvarsall.bat\n");
+			LOG(logFatal, LogScriptManager, "Failed to run vcvarsall.bat\n");
 			return false;
 		}
 
@@ -134,17 +138,17 @@ namespace MirageEngine::Core::Scripting
 	bool ScriptManager::RebuildScriptsDll(const fs::path& buildDir, const std::string& config)
 	{
 		if (!fs::exists(buildDir / "CMakeCache.txt")) {
-			LOG(logError, LogScriptManager, "Build directory not valid: ", buildDir.string().c_str());
+			LOG(logFatal, LogScriptManager, "Build directory not valid: ", buildDir.string().c_str());
 			return false;
 		}
 
 		std::string cmd = "cmake --build \"" + fs::absolute(buildDir).string() +
-			"\" --target GameScripts --config " + config;
+			"\" --target GameScripts --config " + config + std::string(" --parallel");
 		LOG(logInfo, LogScriptManager, ">>> ", cmd.c_str());
 
 		FILE* pipe = _popen(cmd.c_str(), "r");
 		if (!pipe) {
-			LOG(logError, LogScriptManager," Failed to execute cmake");
+			LOG(logFatal, LogScriptManager," Failed to execute cmake");
 			return false;
 		}
 

@@ -44,6 +44,11 @@ target_compile_definitions(MirageEngine PRIVATE ENGINE_EXPORTS)
 set_target_properties(MirageEngine PROPERTIES
     WINDOWS_EXPORT_ALL_SYMBOLS ON
 )
+set_target_properties(MirageEngine
+    PROPERTIES
+        LIBRARY_OUTPUT_DIRECTORY "${MIRAGE_BIN_OUTPUT_DIR}/DLL"
+        RUNTIME_OUTPUT_DIRECTORY "${MIRAGE_BIN_OUTPUT_DIR}/DLL"
+)
 
 # Copy all asset in the build
 set(ASSETS_SOURCE "${CMAKE_SOURCE_DIR}/MirageEngine/Assets")

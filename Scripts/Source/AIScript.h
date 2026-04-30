@@ -8,19 +8,18 @@ class AIScript : public MirageEngine::Core::Scripting::IScript {
 public:
     void OnStart() override 
     {
-        m_ComponentName = "caca";
-        printf("[AIScript] onStart\n");
     }
 
     void OnUpdate(float dt) override {
-        printf("[AIScript] onUpdate dt=%.3f\n", dt);
-        printf("[AIScript] name : %s\n", m_ComponentName.c_str());
+        if (m_Owner != nullptr)
+        {
+            //m_Owner->SetPosition(m_Owner->GetPosition() + MirageEngine::Core::Math::Vector3::Vector3(1 * dt, 0, 0));
+        }
     }
 
     void OnFixedUpdate(float dt) override {};
 
     void OnDestroy() override {
-        printf("[AIScript] onDestroy\n");
     }
 
     const char* GetName() const override {

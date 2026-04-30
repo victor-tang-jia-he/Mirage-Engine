@@ -26,8 +26,14 @@ namespace MirageEngine
 				Component() = default;
 				virtual ~Component() = default;
 
+				virtual void OnStart() {};
+				virtual void OnUpdate(float dt) {};
+				virtual void OnLateUpdate(float dt) {};
+				virtual void OnFixedUpdate(float dt) {};
+
 				virtual void OnCreate() {}
 				virtual void OnDestroy() {}
+
 
 				virtual entt::id_type GetType() const = 0;
 

@@ -7,6 +7,9 @@
 #include <Components/component.h>
 #include <Components/transform.h>
 #include <Components/mesh_renderer.h>
+#include <Logs/log_macro.h>
+
+DECLARE_LOG_CATEGORY_EXTERN(LogGameObject)
 
 namespace MirageEngine
 {
@@ -26,6 +29,7 @@ namespace MirageEngine
 		std::string m_Name = "";
 		std::vector<std::shared_ptr<MirageEngine::Core::Components::Component>> m_Components;
 		std::vector<std::shared_ptr<GameObject>> m_Children;
+		std::vector<std::string> m_ScriptNames;
 		std::weak_ptr<GameObject> m_Parent;
 		uint64_t m_ID;
 
@@ -54,11 +58,7 @@ namespace MirageEngine
 		void AddChild(std::shared_ptr<GameObject> _child, bool _isStatic = false, bool _isActive = true);
 		void SetActive(bool _isActive);
 
-		void AddComponent(std::shared_ptr<MirageEngine::Core::Components::Component> _component)
-		{
-			_component->m_Owner = this;
-			m_Components.push_back(_component);
-		}
+		void AddComponent(std::shared_ptr<MirageEngine::Core::Components::Component> _component);
 
 		void RemoveComponent(std::shared_ptr<MirageEngine::Core::Components::Component> _component);
 
@@ -66,7 +66,7 @@ namespace MirageEngine
 		bool IsRoot() const { return m_Parent.expired(); };
 		void RemoveChild(std::shared_ptr<GameObject> _child);
 		void SetDirty(bool _isDirty);
-
+		void OnHotReload();
 
 		// Getters
 		std::string GetName() const { return m_Name; }

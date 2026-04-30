@@ -3,9 +3,13 @@
 #include <Components/transform.h>
 #include <atomic>
 #include <Components/rigidbody.h>
+#include <Scripting/script_manager.h>
+
+DEFINE_LOG_CATEGORY(LogGameObject)
 
 using namespace MirageEngine::Core::Components;
 using namespace MirageEngine::Core::Math;
+using namespace MirageEngine::Core::Scripting;
 
 static std::atomic<uint64_t> s_NextID = 1;
 
@@ -20,9 +24,16 @@ MirageEngine::GameObject::GameObject(std::shared_ptr<GameObject> _parent, std::s
 	m_bIsActive(_isActive)
 {
 	m_ID = GenerateUniqueID();
+
+	ScriptManager::Instance().Subscribe(this, [this]() {
+		OnHotReload();
+		});
 }
 
-MirageEngine::GameObject::~GameObject() { m_Components.clear(); }
+MirageEngine::GameObject::~GameObject() {
+	ScriptManager::Instance().Unsubscribe(this);
+	m_Components.clear();
+}
 
 void MirageEngine::GameObject::AddChild(std::shared_ptr<GameObject> _child, bool _isStatic, bool _isActive)
 {
@@ -63,7 +74,14 @@ void MirageEngine::GameObject::SetActive(bool _isActive)
 		std::cout << "GameObject is now inactive." << std::endl;
 	}
 }
-
+void MirageEngine::GameObject::AddComponent(std::shared_ptr<MirageEngine::Core::Components::Component> _component)
+{
+	_component->m_Owner = this;
+	if (auto* script = dynamic_cast<Core::Scripting::IScript*>(_component.get())) {
+		m_ScriptNames.push_back(script->GetName());
+	}
+	m_Components.push_back(_component);
+}
 void MirageEngine::GameObject::RemoveComponent(std::shared_ptr<MirageEngine::Core::Components::Component> _component)
 {
 	m_Components.erase(std::remove(m_Components.begin(), m_Components.end(), _component), m_Components.end());
@@ -104,5 +122,31 @@ void MirageEngine::GameObject::SetDirty(bool _isDirty)
 	if (_isDirty)
 	{
 		Transform.SetDirty(true);
+	}
+}
+void MirageEngine::GameObject::OnHotReload()
+{
+	m_Components.erase(
+		std::remove_if(m_Components.begin(), m_Components.end(),
+			[](const std::shared_ptr<Component>& c) {
+				return dynamic_cast<IScript*>(c.get()) != nullptr;
+			}),
+		m_Components.end()
+	);
+
+	auto& sm = ScriptManager::Instance();
+	std::vector<std::string> copy = m_ScriptNames;
+	m_ScriptNames.clear(); // Clear name
+	for (auto& name : copy)
+	{
+		std::unique_ptr<IScript, ScriptManager::DllDeleter> raw = sm.CreateScriptByName(name.c_str());
+		if (raw.get() != nullptr)
+		{
+			AddComponent(std::move(raw));
+		}
+		else
+		{
+			LOG(logWarning, LogGameObject, "Script ", name.c_str(), " not found after reload");
+		}
 	}
 }
