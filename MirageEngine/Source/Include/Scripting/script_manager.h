@@ -13,85 +13,109 @@ DECLARE_LOG_CATEGORY_EXTERN(LogScriptManager)
 
 namespace MirageEngine::Core::Scripting
 {
-	namespace fs = std::filesystem;
+    namespace fs = std::filesystem;
 
-#ifdef _WIN32
-	constexpr const char* kScriptLibName = "GameScripts_Debug.dll";
-#elif __APPLE__
-	constexpr const char* kScriptLibName = "LibGameScripts.dylib";
-#else
-	constexpr const char* kScriptLibName = "LibGameScripts.so";
-#endif
+    class ENGINE_API ScriptManager
+    {
+            using IScript               = MirageEngine::Core::Scripting::IScript;
+            fs::path buildDir           = BUILD_DIRECTORY;
+            fs::path m_ScriptsSourceDir = SCRIPT_SOURCE_FILE;
+            fs::path m_OutputDir        = BUILD_DIRECTORY;
+            fs::path m_engineIncludeDir = ENGINE_INCLUDE_DIR;
+            fs::path m_toolbox          = TOOLBOX_INCLUDE_DIR;
+            fs::path m_engineLibPath    = BUILD_LIBS_DIRECTORY + std::string("/MirageEngine_Debug.lib");
 
-	class ENGINE_API ScriptManager
-	{
-		using IScript = MirageEngine::Core::Scripting::IScript;
-		fs::path buildDir = BUILD_DIRECTORY;
-		std::string config = "Debug";
+            std::string config         = "Debug";
+            std::string m_DLLBuildName = "GameScripts";
 
+            // Internal forward definition
+            typedef int (*PFN_GetScriptCount)();
+            typedef const char* (*PFN_GetScriptName)(int);
+            typedef IScript* (*PFN_CreateScriptByName)(const char*);
+            typedef void (*PFN_DestroyScript)(IScript*);
 
-		// Internal forward definition
-		typedef int       (*PFN_GetScriptCount)();
-		typedef const char* (*PFN_GetScriptName)(int);
-		typedef IScript* (*PFN_CreateScriptByName)(const char*);
-		typedef void      (*PFN_DestroyScript)(IScript*);
+            void* GetScriptCountDLL     = nullptr;
+            void* GetScriptNameDLL      = nullptr;
+            void* CreateScriptByNameDLL = nullptr;
+            void* DestroyScriptDLL      = nullptr;
 
-		void* GetScriptCountDLL = nullptr;
-		void* GetScriptNameDLL = nullptr;
-		void* CreateScriptByNameDLL = nullptr;
-		void* DestroyScriptDLL = nullptr;
+            // handle
+            LibHandle hScripts;
 
-		// handle
-		LibHandle hScripts;
+            // Callback
+            std::unordered_map<GameObject*, std::shared_ptr<EventSystem::Event<>>> m_PreReloadSubscribers;
+            std::unordered_map<GameObject*, std::shared_ptr<EventSystem::Event<>>> m_PostReloadSubscribers;
 
-		// Callback
-		std::unordered_map<GameObject*, std::shared_ptr<EventSystem::Event<>>> m_Subscribers;
-	public:
-		// Dll instance cleaner
-		struct DllDeleter {
-			PFN_DestroyScript destroyFunc;
-			void operator()(IScript* s) const {
-				if (s) {
-					s->OnDestroy();
-					destroyFunc(s);
-				}
-			}
-		};
+        public:
 
-		// Create and bind ours cleaner 
-		using ScriptPtr = std::unique_ptr<IScript, DllDeleter>;
+            // Dll instance cleaner
+            struct DllDeleter
+            {
+                    PFN_DestroyScript destroyFunc;
 
-		static ScriptManager& Instance()
-		{
-			static ScriptManager instance;
-			return instance;
-		}
+                    void operator()(IScript* s) const
+                    {
+                        if (s)
+                        {
+                            s->OnDestroy();
+                            destroyFunc(s);
+                        }
+                    }
+            };
 
+            // Create and bind ours cleaner
+            using ScriptPtr = std::unique_ptr<IScript, DllDeleter>;
 
-		void Subscribe(GameObject* go, std::function<void()> _func) {
+            static ScriptManager& Instance()
+            {
+                static ScriptManager instance;
+                return instance;
+            }
 
-			std::shared_ptr<EventSystem::Event<>> event = std::make_shared<EventSystem::Event<>>(_func);
-			m_Subscribers[go] = event;
-		}
-		void Unsubscribe(GameObject* go) {
-			m_Subscribers.erase(go);
-		}
+            // For GameObject
+            void SubscribePreReload(GameObject* go, std::function<void()> _func)
+            {
 
-		void Init();
-		void ReloadScript();
+                std::shared_ptr<EventSystem::Event<>> event = std::make_shared<EventSystem::Event<>>(_func);
+                m_PreReloadSubscribers[go]                  = event;
+            }
 
-		void ShutDown() const;
+            void SubscribePostReload(GameObject* go, std::function<void()> _func)
+            {
 
-		int GetScriptsCount() const;
-		const char* GetScriptName(int index) const;
-		std::unique_ptr<IScript, DllDeleter>  CreateScriptByName(const char* name);
-		void DestroyScript(IScript* script) const ;
-	private:
-		bool SetupVisualStudioEnvironment();
+                std::shared_ptr<EventSystem::Event<>> event = std::make_shared<EventSystem::Event<>>(_func);
+                m_PostReloadSubscribers[go]                 = event;
+            }
 
-		bool RebuildScriptsDll(const fs::path& buildDir, const std::string& config);
+            void Unsubscribe(GameObject* go)
+            {
+                m_PreReloadSubscribers.erase(go);
+                m_PostReloadSubscribers.erase(go);
+            }
 
-		std::string FindMSVCCompiler();
+            // Initialization
+            void Init();
+            void ReloadScript();
 
-	};
-}
+            void ShutDown() const;
+
+            // Getter
+            int         GetScriptsCount() const;
+            const char* GetScriptName(int index) const;
+
+            // Public function
+            std::unique_ptr<IScript, DllDeleter> CreateScriptByName(const char* name);
+
+            void DestroyScript(IScript* script) const;
+
+        private:
+
+            // Initialize MSVC
+            bool SetupVisualStudioEnvironment();
+
+            // Main Function for reload
+            bool RebuildScriptsDll();
+
+            LibHandle LoadModule(const char* name);
+    };
+} // namespace MirageEngine::Core::Scripting

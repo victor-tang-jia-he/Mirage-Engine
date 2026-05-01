@@ -10,6 +10,7 @@
 #include <filesystem>
 #include <string>
 #include <sstream>
+#include <Scripting/engine_script_api.h>
 
 #ifndef NDEBUG
     #ifndef CPP_TRACE_DEBUG
@@ -94,7 +95,7 @@ namespace Loggers
     // - reduce the number of expensive std::clog calls
     // - reduce the number of writes to the file by buffering log messages and writing them in batches
     // - reduce contention when logging from multiple threads
-    class LogBuffer
+    class ENGINE_API LogBuffer
     {
         private:
 

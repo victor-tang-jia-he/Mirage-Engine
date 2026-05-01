@@ -1,9 +1,0 @@
-set(GAME_SCRIPTS_SOURCES
-    "P:/School/2025_year/C++/2025_gp_2029_gp_2029_customengine-mirageengine/Scripts/Source/AIScript.cpp"
-    "P:/School/2025_year/C++/2025_gp_2029_gp_2029_customengine-mirageengine/Scripts/Source/PlayerScript.cpp"
-    "P:/School/2025_year/C++/2025_gp_2029_gp_2029_customengine-mirageengine/Scripts/Source/scripts_dll.cpp"
-    "P:/School/2025_year/C++/2025_gp_2029_gp_2029_customengine-mirageengine/Scripts/Source/test.cpp"
-    "P:/School/2025_year/C++/2025_gp_2029_gp_2029_customengine-mirageengine/Scripts/Source/AIScript.h"
-    "P:/School/2025_year/C++/2025_gp_2029_gp_2029_customengine-mirageengine/Scripts/Source/PlayerScript.h"
-    "P:/School/2025_year/C++/2025_gp_2029_gp_2029_customengine-mirageengine/Scripts/Source/test.h"
-)

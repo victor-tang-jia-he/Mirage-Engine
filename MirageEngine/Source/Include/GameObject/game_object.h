@@ -66,7 +66,10 @@ namespace MirageEngine
 		bool IsRoot() const { return m_Parent.expired(); };
 		void RemoveChild(std::shared_ptr<GameObject> _child);
 		void SetDirty(bool _isDirty);
-		void OnHotReload();
+
+        // Hot reload
+        void OnPreReload();
+        void OnPostReload();
 
 		// Getters
 		std::string GetName() const { return m_Name; }

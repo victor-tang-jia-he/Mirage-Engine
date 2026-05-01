@@ -18,7 +18,6 @@ int main()
 	Mirage::EditorApp editor;
 	// --- Initialization ---
 	MirageEngine::Core::Scripting::ScriptManager::Instance().Init();
-	MirageEngine::Core::Scripting::ScriptManager::Instance().ReloadScript();
 	application.InitApp();
 	MirageEngine::RegisterMeta().RegisterAllMeta();
 	editor.Init(application.m_Renderer.GetWindowHandle(), &application.m_Renderer, application.GetSceneGraph());

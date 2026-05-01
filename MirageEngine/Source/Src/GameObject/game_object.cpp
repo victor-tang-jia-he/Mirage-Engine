@@ -25,9 +25,8 @@ MirageEngine::GameObject::GameObject(std::shared_ptr<GameObject> _parent, std::s
 {
 	m_ID = GenerateUniqueID();
 
-	ScriptManager::Instance().Subscribe(this, [this]() {
-		OnHotReload();
-		});
+	ScriptManager::Instance().SubscribePreReload(this, [this]() { OnPreReload(); });
+    ScriptManager::Instance().SubscribePostReload(this, [this]() { OnPostReload(); });
 }
 
 MirageEngine::GameObject::~GameObject() {
@@ -131,29 +130,22 @@ void MirageEngine::GameObject::SetDirty(bool _isDirty)
 		Transform.SetDirty(true);
 	}
 }
-void MirageEngine::GameObject::OnHotReload()
-{
-	m_Components.erase(
-		std::remove_if(m_Components.begin(), m_Components.end(),
-			[](const std::shared_ptr<Component>& c) {
-				return dynamic_cast<IScript*>(c.get()) != nullptr;
-			}),
-		m_Components.end()
-	);
 
-	auto& sm = ScriptManager::Instance();
-	std::vector<std::string> copy = m_ScriptNames;
-	m_ScriptNames.clear(); // Clear name
-	for (auto& name : copy)
-	{
-		std::unique_ptr<IScript, ScriptManager::DllDeleter> raw = sm.CreateScriptByName(name.c_str());
-		if (raw.get() != nullptr)
-		{
-			AddComponent(std::move(raw));
-		}
-		else
-		{
-			LOG(logWarning, LogGameObject, "Script ", name.c_str(), " not found after reload");
-		}
-	}
+void MirageEngine::GameObject::OnPreReload()
+{
+    m_Components.erase(std::remove_if(m_Components.begin(), m_Components.end(), [](const std::shared_ptr<Component>& c) { return dynamic_cast<IScript*>(c.get()) != nullptr; }), m_Components.end());
+}
+
+void MirageEngine::GameObject::OnPostReload()
+{
+    auto& sm = ScriptManager::Instance();
+
+    std::vector<std::string> copy = m_ScriptNames;
+    m_ScriptNames.clear();
+    for (auto& name : copy)
+    {
+        auto raw = sm.CreateScriptByName(name.c_str());
+        if (raw) AddComponent(std::move(raw));
+        else LOG(logWarning, LogGameObject, "Script ", name, " not found after reload");
+    }
 }

@@ -13,7 +13,7 @@ public:
     void OnUpdate(float dt) override {
         if (m_Owner != nullptr)
         {
-            //m_Owner->SetPosition(m_Owner->GetPosition() + MirageEngine::Core::Math::Vector3::Vector3(1 * dt, 0, 0));
+            m_Owner->SetPosition(m_Owner->GetPosition() + MirageEngine::Core::Math::Vector3::Vector3(1 * dt, 0, 0));
         }
     }
 

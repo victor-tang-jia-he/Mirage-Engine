@@ -7,7 +7,7 @@ project(CustomEngine)
 # Create global variable (project-level) to store output directory
 set(MIRAGE_BIN_OUTPUT_DIR "${CMAKE_BINARY_DIR}/Bin/${CMAKE_CXX_COMPILER_ID}_$<CONFIG>")
 
-add_compile_definitions(BUILD_DIRECTORY="${CMAKE_BINARY_DIR}")
+
 
 # Log directory at configuration-time
 message("[${CMAKE_PROJECT_NAME}]: Output directory: ${MIRAGE_BIN_OUTPUT_DIR}")
@@ -16,6 +16,14 @@ message("[${CMAKE_PROJECT_NAME}]: Output directory: ${MIRAGE_BIN_OUTPUT_DIR}")
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${MIRAGE_BIN_OUTPUT_DIR}/Libs")
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${MIRAGE_BIN_OUTPUT_DIR}/Libs")
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${MIRAGE_BIN_OUTPUT_DIR}")
+
+# Define
+add_compile_definitions(BUILD_DIRECTORY="${CMAKE_RUNTIME_OUTPUT_DIRECTORY}")
+add_compile_definitions(BUILD_LIBS_DIRECTORY="${CMAKE_LIBRARY_OUTPUT_DIRECTORY}")
+add_compile_definitions(ENGINE_INCLUDE_DIR="${CMAKE_SOURCE_DIR}/MirageEngine/Source/Include")
+add_compile_definitions(SCRIPT_SOURCE_FILE="${CMAKE_SOURCE_DIR}/Scripts")
+add_compile_definitions(TOOLBOX_INCLUDE_DIR="${CMAKE_SOURCE_DIR}/MirageEngine/Tools/ToolBox/Source/Include")
+add_compile_definitions(CMAKE_SOURCE_DIRECTORY="${CMAKE_SOURCE_DIR}")
 
 # Set C standard version
 set(CMAKE_C_STANDARD 11)
@@ -480,10 +488,6 @@ target_link_libraries(third_party INTERFACE
 message("")
 message(STATUS "Adding mirage_engine project...")
 add_subdirectory(MirageEngine)
-
-message("")
-message(STATUS "Adding scripts project...")
-add_subdirectory(Scripts) # Add Script after build
 
 # Editor project
 message("")
