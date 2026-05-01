@@ -42,9 +42,6 @@ void Application::InitApp()
 {
     s_Instance = this;
 
-    Loggers::LogBuffer::GetInstance().EnableImmediateFlush(true); // Enable immediate flushing of log messages for real-time output during initialization
-    Loggers::LogBuffer::GetInstance().EnableFileWriting(true);    // Enable writing logs to file during initialization to capture any issues that may occur before the main loop starts.
-
 	m_Renderer.InitRenderer();
 
 	MirageEngine::Core::Resources::ResourceManager::Instance().Init(m_Renderer.GetRenderInterfaceHandle());

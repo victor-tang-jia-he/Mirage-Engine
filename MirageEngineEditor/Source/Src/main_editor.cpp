@@ -12,6 +12,8 @@
 
 int main()
 {
+	Loggers::LogBuffer::GetInstance().EnableImmediateFlush(true); // Enable immediate flushing of log messages for real-time output during initialization
+	Loggers::LogBuffer::GetInstance().EnableFileWriting(true);    // Enable writing logs to file during initialization to capture any issues that may occur before the main loop starts.
 	Application application;	// Temp, will be replaced by Engine Handler
 	Mirage::EditorApp editor;
 	// --- Initialization ---

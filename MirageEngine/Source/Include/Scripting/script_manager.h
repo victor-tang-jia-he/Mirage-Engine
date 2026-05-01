@@ -91,5 +91,7 @@ namespace MirageEngine::Core::Scripting
 
 		bool RebuildScriptsDll(const fs::path& buildDir, const std::string& config);
 
+		std::string FindMSVCCompiler();
+
 	};
 }

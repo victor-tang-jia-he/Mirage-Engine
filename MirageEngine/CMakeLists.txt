@@ -37,7 +37,7 @@ target_compile_options(MirageEngine PRIVATE
 )
 
 # Link third-party libraries
-target_link_libraries(MirageEngine PRIVATE third_party)
+target_link_libraries(MirageEngine PUBLIC third_party)
 
 target_compile_definitions(MirageEngine PRIVATE ENGINE_EXPORTS)
 # Ensure import library is always generated

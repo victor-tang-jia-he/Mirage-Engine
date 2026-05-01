@@ -8,6 +8,8 @@
 #include <fstream> // For file output
 #include <csignal> // For signal handling
 #include <filesystem>
+#include <string>
+#include <sstream>
 
 #ifndef NDEBUG
     #ifndef CPP_TRACE_DEBUG
