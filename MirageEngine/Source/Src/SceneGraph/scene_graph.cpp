@@ -92,6 +92,56 @@ namespace MirageEngine
         m_RootsList.clear();
     }
 
+    void SceneGraph::CallAllUpdate(float dt)
+    {
+        for (std::shared_ptr<GameObject> root : m_RootsList)
+        {
+            CallAllUpdateRecursive(root, dt);
+        }
+    }
+    void SceneGraph::CallAllLateUpdate(float dt)
+    {
+        for (std::shared_ptr<GameObject> root : m_RootsList)
+        {
+            CallAllLateUpdateRecursive(root, dt);
+        }
+    }
+    void SceneGraph::CallAllFixedUpdate(float dt)
+    {
+        for (std::shared_ptr<GameObject> root : m_RootsList)
+        {
+            CallAllFixedUpdateRecursive(root, dt);
+        }
+    }
+
+    void SceneGraph::CallAllUpdateRecursive(std::shared_ptr<GameObject> _obj,float dt)
+    {
+        for (auto& component : _obj->GetComponents())
+        {
+            component->OnUpdate(dt);
+        }
+
+        for (std::shared_ptr<GameObject> child : _obj->GetChildren()) { CallAllUpdateRecursive(child, dt); }
+    }
+    void SceneGraph::CallAllLateUpdateRecursive(std::shared_ptr<GameObject> _obj,float dt)
+    {
+        for (auto& component : _obj->GetComponents())
+        {
+            component->OnLateUpdate(dt);
+        }
+
+        for (std::shared_ptr<GameObject> child : _obj->GetChildren()) { CallAllLateUpdateRecursive(child, dt); }
+    }
+    void SceneGraph::CallAllFixedUpdateRecursive(std::shared_ptr<GameObject> _obj,float dt)
+    {
+        for (auto& component : _obj->GetComponents())
+        {
+            component->OnFixedUpdate(dt);
+        }
+
+        for (std::shared_ptr<GameObject> child : _obj->GetChildren()) { CallAllFixedUpdateRecursive(child, dt); }
+    }
+
     void SceneGraph::UpdateAllWorldMatrices()
     {
         MirageEngine::Core::Math::Matrix4 Identity = Core::Math::Matrix4::Identity();

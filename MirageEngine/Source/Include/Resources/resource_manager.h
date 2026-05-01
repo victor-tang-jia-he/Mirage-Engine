@@ -8,6 +8,7 @@
 #include <memory>
 #include <vector3.h>
 #include <filesystem>
+#include <Scripting/engine_script_api.h>
 
 #include <Logs/log_macro.h>
 
@@ -32,7 +33,7 @@ namespace MirageEngine::Core::Resources
     struct Shader;
     struct Pipeline;
 
-    class ResourceManager
+    class ENGINE_API ResourceManager
     {
             friend class IResource;
 

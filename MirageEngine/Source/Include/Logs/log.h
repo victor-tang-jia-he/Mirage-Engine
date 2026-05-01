@@ -10,7 +10,9 @@
 #include <filesystem>
 
 #ifndef NDEBUG
-    #include <cpptrace/cpptrace.hpp>
+    #ifndef CPP_TRACE_DEBUG
+        #include <cpptrace/cpptrace.hpp>
+    #endif
 #endif
 
 #ifdef _WIN32
@@ -272,14 +274,16 @@ namespace Loggers
             {
                 LogBuffer& log = LogBuffer::GetInstance();
                 log.Append("A critical error occurred. Attempting to flush logs before termination...\n Error is comming from below :\n");
-#ifndef NDEBUG
-                cpptrace::stacktrace trace = cpptrace::generate_trace();
-                for (const auto& frame : trace.frames)
-                {
-                    std::ostringstream oss;
-                    oss << frame.filename << ":" << frame.line.raw_value << " | " << frame.symbol << "\n";
-                    log.Append(oss.str());
-                }
+#ifndef NDEBUG    
+    #ifndef CPP_TRACE_DEBUG
+                    cpptrace::stacktrace trace = cpptrace::generate_trace();
+                    for (const auto& frame : trace.frames)
+                    {
+                        std::ostringstream oss;
+                        oss << frame.filename << ":" << frame.line.raw_value << " | " << frame.symbol << "\n";
+                        log.Append(oss.str());
+                    }
+    #endif
 #endif
 
                 const char* msg;

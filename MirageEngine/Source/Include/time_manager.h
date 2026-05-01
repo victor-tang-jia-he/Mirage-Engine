@@ -1,10 +1,11 @@
 #pragma once
 
 #include <chrono>
+#include <Scripting/engine_script_api.h>
 
 namespace MirageEngine
 {
-	class TimeManager
+	class ENGINE_API TimeManager
 	{
 	public:
 		static void Init();

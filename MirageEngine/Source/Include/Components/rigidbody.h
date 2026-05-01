@@ -45,9 +45,6 @@ namespace MirageEngine
 
                     entt::id_type GetType() const override { return 0; }
 
-                    void Init() override {};
-                    void Update() override;
-
                     void OnTransformChanged(Components::Transform& _newTransform);
                     void SetType(Physics::ERigidBodyType _type);
 

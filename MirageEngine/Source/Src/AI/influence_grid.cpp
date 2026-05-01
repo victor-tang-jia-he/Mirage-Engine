@@ -3,20 +3,24 @@
 #include "Components/transform.h"
 #include <matrix4.h>
 #include "time_manager.h"
+#include <entt/entt.hpp>
 
 using namespace MirageEngine::Core::Math;
 
 namespace MirageEngine::Core::Components
 {
-	void InfluenceGrid::Init()
+	void InfluenceGrid::OnStart()
 	{
-		Bake();	
+		Bake();
 	}
 
-	void InfluenceGrid::Update()
+	void InfluenceGrid::OnUpdate(float _dt)
 	{
-		float dt = TimeManager::GetDeltaTime();
-		UpdateDecay(dt);
+		UpdateDecay(_dt);
+	}
+	entt::id_type InfluenceGrid::GetType() const
+	{
+		return entt::type_id<InfluenceGrid>().hash();
 	}
 
 	void InfluenceGrid::Bake()
@@ -73,7 +77,7 @@ namespace MirageEngine::Core::Components
 
 	void InfluenceGrid::AddInfluenceArea(Vector3 pos, float radius, float value, int _channelIndex)
 	{
-		if(IsInBounds(pos.X, pos.Z))
+		if (IsInBounds(pos.X, pos.Z))
 		{
 			int centerX, centerY;
 			WorldToGrid(pos, centerX, centerY);
@@ -119,7 +123,7 @@ namespace MirageEngine::Core::Components
 			if (m_ChannelsNames[i] == _name)
 				return static_cast<int>(i);
 		}
-		return -1; 
+		return -1;
 	}
 
 	void InfluenceGrid::RenderGrid()

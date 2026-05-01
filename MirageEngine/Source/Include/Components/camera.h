@@ -35,10 +35,7 @@ namespace MirageEngine
                     Camera(unsigned int _width, unsigned int _height, float _fov, float _near, float _far, const MirageEngine::Core::Math::Vector3 _position);
                     ~Camera() = default;
 
-                    void Init() override {};
-                    void Update() override {};
-
-                    entt::id_type GetType() const override { return entt::type_id<Camera>().hash(); }
+                    entt::id_type GetType() const override;
 
                     MirageEngine::Core::Components::Transform& Transform() { return m_transform; }
 

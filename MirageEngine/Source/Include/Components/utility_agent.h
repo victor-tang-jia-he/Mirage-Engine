@@ -48,9 +48,9 @@ namespace MirageEngine::Core::Components
 		UtilityAgent() = default;
 		virtual ~UtilityAgent();
 
-		void Init() override;
-		void Update() override;
-		entt::id_type GetType() const override { return entt::type_id<UtilityAgent>().hash(); }
+		void OnStart() override;
+		void OnUpdate(float _dt) override;
+		entt::id_type GetType() const override;
 
 		void AddAction(AIAction* _action) { m_actions.push_back(_action); }
 		void Decide();

@@ -6,6 +6,7 @@
 #include "application.h"
 #include "time_manager.h"
 #include "AI/ai_action.h"
+#include <entt/entt.hpp>
 
 using namespace MirageEngine::Core::Math;
 
@@ -19,7 +20,7 @@ namespace MirageEngine::Core::Components
 		m_actions.clear();
 	}
 
-	void UtilityAgent::Init()
+	void UtilityAgent::OnStart()
 	{
 		srand(static_cast <unsigned> (time(0)));
 
@@ -35,18 +36,18 @@ namespace MirageEngine::Core::Components
 		m_DecisionTimer = static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / m_DecisionInterval));
 	}
 
-	void UtilityAgent::Update()
+	void UtilityAgent::OnUpdate(float _dt)
 	{
-		m_DecisionTimer -= TimeManager::GetDeltaTime();
+		m_DecisionTimer -= _dt;
 		if (m_DecisionTimer <= 0.0f)
 		{
 			Decide();
 			m_DecisionTimer = m_DecisionInterval;
 		}
 		if (m_CurrentAction != nullptr)
-			m_CurrentAction->Execute(TimeManager::GetDeltaTime());
+			m_CurrentAction->Execute(_dt);
 	}
-
+	entt::id_type UtilityAgent::GetType() const { return entt::type_id<UtilityAgent>().hash(); }
 	void UtilityAgent::Decide()
 	{
 		if (m_Grid)

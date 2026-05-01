@@ -1,12 +1,9 @@
 #pragma once
 
 #include <utility>
-#include <unordered_map>
-
+#include <unordered_set>
 #include <Events/event.h>
-
 #include <Input/input_system.h>
-
 #include <Input/input_mapping.h>
 
 struct GLFWwindow;
