@@ -140,62 +140,45 @@ namespace Mirage
 		return ImGui::BeginTable("Content", colomnNbr);
 	}
 
-	/*WidgetAction UIWrapper::DrawAssetTile(const char* _name, bool _isSelected, void* _icon)
-	{
-		ImGui::TableNextColumn();
-		ImGui::PushID(_name);
-
-		WidgetAction action = WidgetAction::None;
-
-		if (_icon == nullptr)
-		{
-
-		}
-
-		ImGui::BeginGroup();
-		if (_isSelected)
-		{
-
-		}
-		ImGui::Button("##icon", ImVec2(64, 64));
-		ImGui::TextWrapped(_name);
-		ImGui::EndGroup();
-
-		if (ImGui::IsItemHovered())
-		{
-			if (ImGui::IsMouseDoubleClicked(0))
-				action = WidgetAction::DoubleClicked;
-			else if (ImGui::IsItemClicked(0))
-				action = WidgetAction::Clicked;
-			else if (ImGui::IsItemClicked(1))
-				action = WidgetAction::RightClicked;
-		}
-
-		//ImGui::PopID();
-		return action;
-	}*/
-
 	WidgetAction UIWrapper::DrawAssetTile(const char* _name, bool _isSelected, std::shared_ptr<MirageEngine::Core::Resources::Texture> _icon)
 	{
 		MirageEngine::Core::Resources::ResourceManager rm;
 
 		ImGui::TableNextColumn();
 		ImGui::PushID(_name);
-
 		
 		WidgetAction action = WidgetAction::None;
+
+		// Get the starting position of the tile
 		ImVec2 startPos = ImGui::GetCursorPos();
+
+		// Calculate the size of the tile based on the available width and a fixed height
+		float iconSize = 64;
 		float columnWidth = ImGui::GetContentRegionAvail().x;
-		ImVec2 tileSize = ImVec2(columnWidth, 110.0f);
+		ImVec2 tileSize = ImVec2(columnWidth, iconSize);
 
 		ImGui::BeginGroup();
 
-		float iconSize = 110.0f;
-		float iconPadding = (columnWidth - iconSize) * 0.5f;
-		ImVec2 screenPos = ImGui::GetCursorScreenPos();
-		ImGui::Image((ImTextureID)_icon->GetTextureID(), ImVec2(iconSize, iconSize), ImVec2(0, 1), ImVec2(1, 0));
+		// Calculate the offset to center the icon with the tile
+		float iconOffset = (columnWidth - iconSize) * 0.5f;
+		ImGui::SetCursorPosX(ImGui::GetCursorPosX() + iconOffset);
 
-		//ImGui::SetCursorPosY(ImGui::GetCursorPosY() + iconSize + 8.0f);
+		if (_icon)
+		{
+			// Standard UV coordinates (0, 0) bottom-left to (1, 1) top-right for OpenGL
+			ImGui::Image((ImTextureID)(intptr_t)_icon->GetTextureID(), ImVec2(iconSize, iconSize), ImVec2(0, 1), ImVec2(1, 0));
+		}
+		else
+		{
+			// Display placeholder for missing texture
+			ImGui::Dummy(ImVec2(iconSize, iconSize));
+			ImGui::GetWindowDrawList()->AddRect(
+				ImGui::GetItemRectMin(),
+				ImGui::GetItemRectMax(),
+				ImGui::GetColorU32(ImGuiCol_TextDisabled),
+				2.0f
+			);
+		}
 
 		float textWidth = ImGui::CalcTextSize(_name).x;
 		if (textWidth < columnWidth)

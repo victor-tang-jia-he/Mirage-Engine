@@ -5,6 +5,7 @@
 #include "dragdrop.h"
 
 #include <Resources/resource_manager.h>
+#include <Resources/texture.h>
 
 #include <fstream>
 #include <iostream>
@@ -45,7 +46,7 @@ namespace Mirage
 	void Explorer::ScanProjectDirectory(const std::filesystem::path _rootPath)
 	{
 		m_Entries.clear();
-		if(std::filesystem::exists(_rootPath) && std::filesystem::is_directory(_rootPath))
+		if (std::filesystem::exists(_rootPath) && std::filesystem::is_directory(_rootPath))
 		{
 			for (const std::filesystem::directory_entry& entry : std::filesystem::directory_iterator(_rootPath))
 			{
@@ -288,7 +289,7 @@ namespace Mirage
 				ImGui::CloseCurrentPopup();
 			ImGui::EndPopup();
 		}
-		
+
 	}
 
 	void Explorer::DuplicateItem(const std::filesystem::path& _source, const std::filesystem::path& _target)
@@ -341,10 +342,6 @@ namespace Mirage
 
 	void Explorer::RenderAssetGrid()
 	{
-		MirageEngine::Core::Resources::ResourceManager& rm = MirageEngine::Core::Resources::ResourceManager::Instance();
-
-		std::shared_ptr<MirageEngine::Core::Resources::Texture> texCat = rm.GetTexture("cat");
-
 		float windowSize = ImGui::GetContentRegionAvail().x;
 		std::filesystem::path directoryToChange = "";
 		bool needsRefresh = false;
@@ -354,16 +351,48 @@ namespace Mirage
 			for (const AssetEntry& entry : m_Entries)
 			{
 				bool isSelected = (m_SelectedEntry == &entry);
-				WidgetAction action = UIWrapper::DrawAssetTile(entry.Name.c_str(), isSelected, texCat);
 
-				if (action == WidgetAction::Clicked)
+				unsigned int id = (int)AssetType::Unknown;
+				if (entry.Type == AssetType::Folder)
+				{
+					id = (int)AssetType::Folder;
+				}
+				else if (entry.Type == AssetType::Texture)
+				{
+					id = (int)AssetType::Texture;
+				}
+				else if (entry.Type == AssetType::Model)
+				{
+					id = (int)AssetType::Model;
+				}
+				else if (entry.Type == AssetType::Script)
+				{
+					id = (int)AssetType::Script;
+				}
+				else if (entry.Type == AssetType::Shader)
+				{
+					id = (int)AssetType::Shader;
+				}
+				else if (entry.Type == AssetType::Scene)
+				{
+					id = (int)AssetType::Scene;
+				}
+				else
+				{
+					id = (int)AssetType::Unknown;
+				}
+
+				// Determine correct icon index based on asset type
+				WidgetAction content = UIWrapper::DrawAssetTile(entry.Name.c_str(), isSelected, GetIconTexture(id));
+
+				if (content == WidgetAction::Clicked)
 				{
 					m_SelectedEntry = (void*)&entry;
 				}
 
-				if (action == WidgetAction::DoubleClicked)
+				if (content == WidgetAction::DoubleClicked)
 				{
-					if(entry.Type == AssetType::Folder)
+					if (entry.Type == AssetType::Folder)
 					{
 						directoryToChange = entry.Path;
 					}
@@ -373,7 +402,7 @@ namespace Mirage
 					}
 				}
 
-				if (action == WidgetAction::RightClicked)
+				if (content == WidgetAction::RightClicked)
 				{
 					m_EntryToProcess = const_cast<AssetEntry*>(&entry);
 					m_NextModalToOpen = "AssetContextMenu";
@@ -501,15 +530,15 @@ namespace Mirage
 
 					if (ImGui::BeginMenu("Document"))
 					{
-						if (ImGui::MenuItem("Text File (.txt)")) 
+						if (ImGui::MenuItem("Text File (.txt)"))
 						{
 							CreateItem(m_CurrentPath, "NewText", ".txt", "");
 						}
-						if (ImGui::MenuItem("JSON File (.json)")) 
+						if (ImGui::MenuItem("JSON File (.json)"))
 						{
 							CreateItem(m_CurrentPath, "NewJSON", ".json", "{\n\t\"version\": 1\n}");
 						}
-						if (ImGui::MenuItem("Readme (.md)")) 
+						if (ImGui::MenuItem("Readme (.md)"))
 						{
 							CreateItem(m_CurrentPath, "README", ".md", "# Project Notes\n");
 						}
@@ -607,13 +636,47 @@ namespace Mirage
 		std::error_code ec;
 		std::filesystem::rename(_source, newPath, ec);
 
-		if (ec) 
+		if (ec)
 		{
 			std::cerr << "Move Error: " << ec.message() << std::endl;
 		}
 		else
 		{
 			ScanProjectDirectory(m_CurrentPath);
+		}
+	}
+
+	std::shared_ptr<MirageEngine::Core::Resources::Texture> Explorer::GetIconTexture(unsigned int _index)
+	{
+		MirageEngine::Core::Resources::ResourceManager& rm = MirageEngine::Core::Resources::ResourceManager::Instance();
+
+		std::shared_ptr<MirageEngine::Core::Resources::Texture> texCat = rm.GetTexture("cat");
+
+		std::shared_ptr<MirageEngine::Core::Resources::Texture> folder = rm.GetTexture("folder_icon");
+		std::shared_ptr<MirageEngine::Core::Resources::Texture> texture = rm.GetTexture("texture_icon");
+		std::shared_ptr<MirageEngine::Core::Resources::Texture> model = rm.GetTexture("model_icon");
+		std::shared_ptr<MirageEngine::Core::Resources::Texture> script = rm.GetTexture("script_icon");
+		std::shared_ptr<MirageEngine::Core::Resources::Texture> shader = rm.GetTexture("shader_icon");
+		std::shared_ptr<MirageEngine::Core::Resources::Texture> scene = rm.GetTexture("scene_icon");
+		std::shared_ptr<MirageEngine::Core::Resources::Texture> file = rm.GetTexture("file_icon");
+
+		folder->Bind();
+		texture->Bind();
+		model->Bind();
+		script->Bind();
+		shader->Bind();
+		scene->Bind();
+		file->Bind();
+		switch (_index)
+		{
+		case 0: return folder;   // Folder
+		case 1: return texture;  // Texture
+		case 2: return model;    // Model
+		case 3: return script;   // Script
+		case 4: return shader;   // Shader
+		case 5: return scene;    // Scene
+		case 6: return file;     // Unknown/Generic
+		default: return nullptr;
 		}
 	}
 }

@@ -3,16 +3,18 @@
 #include <string>
 #include <filesystem>
 
+#include <Resources/texture.h>
+
 namespace Mirage
 {
 	enum class AssetType {
-		Folder,
-		Texture,
-		Model,
-		Script,
-		Shader,
-		Scene,
-		Unknown
+		Folder = 0,
+		Texture = 1,
+		Model = 2,
+		Script = 3,
+		Shader = 4,
+		Scene = 5,
+		Unknown = 6
 	};
 
 	struct AssetEntry
@@ -71,5 +73,8 @@ namespace Mirage
 		void RenderDeleteModal();
 		void RenameItem(const std::filesystem::path& _oldPath, const std::filesystem::path& _newPath);
 		void MoveItem(const std::filesystem::path& _source, const std::filesystem::path& _target);
+
+		// Texture / Icon
+		std::shared_ptr<MirageEngine::Core::Resources::Texture> GetIconTexture(unsigned int _index);
 	};
 }

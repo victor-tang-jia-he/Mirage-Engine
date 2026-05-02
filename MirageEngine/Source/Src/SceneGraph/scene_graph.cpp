@@ -163,7 +163,6 @@ namespace MirageEngine
         }
         else
         {
-            std::cout << "Root" << std::endl;
             //_child->Transform.SetLocalMatrix(childWorldBefore);
             _child->SetPosition(childWorldBefore.GetTranslation());
             _child->SetRotation(childWorldBefore.GetRotation());

@@ -38,20 +38,18 @@ target_compile_options(MirageEngine PRIVATE
 # Link third-party libraries
 target_link_libraries(MirageEngine PRIVATE third_party)
 
-# Copy all asset in the build
-set(ASSETS_SOURCE "${CMAKE_SOURCE_DIR}/MirageEngine/Assets")
-set(ASSETS_DEST "${CMAKE_SOURCE_DIR}/Build/${CMAKE_CXX_COMPILER_ID}_$<CONFIG>/Assets")
 
-if(EXISTS ${ASSETS_SOURCE})
-    add_custom_command(TARGET MirageEngine POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E make_directory "${ASSETS_DEST}"
-        COMMAND ${CMAKE_COMMAND} -E copy_directory
-            "${ASSETS_SOURCE}"
-            "${ASSETS_DEST}"
-        COMMENT "Copying assets to ${ASSETS_DEST}"
-        VERBATIM
-    )
-    message(STATUS "Assets will be copie from ${ASSETS_SOURCE}")
+set(ASSETS_MIRAGE_ENGINE "${CMAKE_SOURCE_DIR}/MirageEngine/Assets")
+set(ASSETS_MIRAGE_EDITOR "${CMAKE_SOURCE_DIR}/MirageEngineEditor/Assets")
+set(ASSETS_MIRAGE_BUILD "${CMAKE_SOURCE_DIR}/Build/${CMAKE_CXX_COMPILER_ID}_${CMAKE_BUILD_TYPE}/Assets")
+set(ASSETS_MAIN "${CMAKE_SOURCE_DIR}/Assets")
+
+if(EXISTS ${ASSETS_MAIN})
+    file(MAKE_DIRECTORY "${ASSETS_MIRAGE_BUILD}")
+    file(COPY "${ASSETS_MAIN}/" DESTINATION "${ASSETS_MIRAGE_BUILD}")
+    file(COPY "${ASSETS_MAIN}/" DESTINATION "${ASSETS_MIRAGE_ENGINE}")
+    file(COPY "${ASSETS_MAIN}/" DESTINATION "${ASSETS_MIRAGE_EDITOR}")
+    message(STATUS "Assets copied from ${ASSETS_MAIN}")
 else()
-    message(STATUS "No Assets folder found at ${ASSETS_SOURCE} skip asset copy")
+    message(STATUS "No Assets folder found at ${ASSETS_MAIN}")
 endif()

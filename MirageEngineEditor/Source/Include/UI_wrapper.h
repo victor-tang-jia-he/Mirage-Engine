@@ -3,6 +3,8 @@
 #include "vector3.h"
 #include <imgui.h>
 
+#include <explorer.h>
+
 #include <Resources/resource_manager.h>
 
 #include <Logs/log_macro.h>
