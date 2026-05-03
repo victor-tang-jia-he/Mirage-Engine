@@ -6,6 +6,8 @@
 #include <algorithm>
 #include <time_manager.h>
 #include <GLFW/glfw3.h>
+#include <entt/entt.hpp>
+
 
 using namespace MirageEngine;
 using namespace MirageEngine::Core;
@@ -71,3 +73,5 @@ void Camera::View(Input::CallbackInputInfo info)
 
     Transform().SetRotation(rotationY * rotationX);
 }
+
+entt::id_type Camera::GetType() const { return entt::type_id<Camera>().hash(); }

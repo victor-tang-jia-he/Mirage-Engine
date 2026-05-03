@@ -31,10 +31,6 @@ namespace MirageEngine
                     BoxCollider();
                     ~BoxCollider();
 
-                    virtual void Init() override {}
-
-                    virtual void Update() override {}
-
                     entt::id_type GetType() const override { return 0; }
 
                     // Box only parameter

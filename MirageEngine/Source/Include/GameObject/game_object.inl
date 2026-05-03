@@ -11,6 +11,7 @@ namespace MirageEngine
 
 		// Name of the type ID
 		component->m_ComponentName = typeid(T).name();
+
 		m_Components.push_back(component);
 		return component;
 	}

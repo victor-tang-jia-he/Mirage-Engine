@@ -1,8 +1,5 @@
 #pragma once
 
-#include <entt/entt.hpp>
-#include <entt/meta/meta.hpp>
-
 #include <iostream>
 #include <string>
 #include <vector>
@@ -10,9 +7,17 @@
 #include <Components/component.h>
 #include <Components/transform.h>
 #include <Components/mesh_renderer.h>
+#include <Logs/log_macro.h>
+
+DECLARE_LOG_CATEGORY_EXTERN(LogGameObject)
 
 namespace MirageEngine
 {
+	namespace Core::Math
+	{
+		class Vector3;
+		class Quaternion;
+	}
 
 	// Static : Transform matrix doesn't update every frame
 	// Dynamic : Transform matrix updates every frame
@@ -24,6 +29,7 @@ namespace MirageEngine
 		std::string m_Name = "";
 		std::vector<std::shared_ptr<MirageEngine::Core::Components::Component>> m_Components;
 		std::vector<std::shared_ptr<GameObject>> m_Children;
+		std::vector<std::string> m_ScriptNames;
 		std::weak_ptr<GameObject> m_Parent;
 		uint64_t m_ID;
 
@@ -52,11 +58,7 @@ namespace MirageEngine
 		void AddChild(std::shared_ptr<GameObject> _child, bool _isStatic = false, bool _isActive = true);
 		void SetActive(bool _isActive);
 
-		void AddComponent(std::shared_ptr<MirageEngine::Core::Components::Component> _component)
-		{
-			_component->m_Owner = this;
-			m_Components.push_back(_component);
-		}
+		void AddComponent(std::shared_ptr<MirageEngine::Core::Components::Component> _component);
 
 		void RemoveComponent(std::shared_ptr<MirageEngine::Core::Components::Component> _component);
 
@@ -65,6 +67,9 @@ namespace MirageEngine
 		void RemoveChild(std::shared_ptr<GameObject> _child);
 		void SetDirty(bool _isDirty);
 
+        // Hot reload
+        void OnPreReload();
+        void OnPostReload();
 
 		// Getters
 		std::string GetName() const { return m_Name; }

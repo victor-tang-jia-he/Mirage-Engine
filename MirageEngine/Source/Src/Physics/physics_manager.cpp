@@ -42,6 +42,12 @@ void PhysicsManager::Update(float _deltaTime)
     }
 
     m_worldPhysics->Update(_deltaTime);
+
+    for (IRigidBody* rb : m_WorldRigidbodys)
+    {
+        if (rb->OnSimulated)
+            rb->OnSimulated();
+    }
 }
 
 IRigidBody* PhysicsManager::CreateRigidBody(ICollider* _shape, ERigidBodyType _type)

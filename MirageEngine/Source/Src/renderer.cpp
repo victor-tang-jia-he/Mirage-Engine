@@ -63,8 +63,6 @@ bool Renderer::IsRunning() const { return !glfwWindowShouldClose(m_Window); }
 
 void Renderer::BeginFrame()
 {
-    glfwPollEvents();
-
     uint32_t currentFBO = m_SwapChain->AcquireCurrentFBO();
     m_CommandBuffer->BeginDraw(m_RenderPass, currentFBO);
 }

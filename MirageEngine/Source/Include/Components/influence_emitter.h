@@ -20,9 +20,9 @@ namespace MirageEngine::Core::Components
 		InfluenceEmitter() = default;
 		virtual ~InfluenceEmitter() = default;
 
-		void Init() override;
-		void Update() override;
-		entt::id_type GetType() const override { return entt::type_id<InfluenceEmitter>().hash(); }
+		void OnStart() override;
+		void OnUpdate(float _dt) override;
+		entt::id_type GetType() const override;
 
 		// Getters
 		std::string GetInfluenceType() const { return m_ChannelName; }

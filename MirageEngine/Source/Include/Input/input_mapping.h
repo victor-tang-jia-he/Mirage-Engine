@@ -73,7 +73,7 @@ namespace MirageEngine::Core
 
                 ~InputMapping() override;
 
-                entt::id_type GetType() const override { return entt::type_id<InputMapping>().hash(); }
+                entt::id_type GetType() const override;
 
                 void RegisterInput(const std::string& _name, int _actionInput);
 
@@ -92,10 +92,6 @@ namespace MirageEngine::Core
                 void Clear() { m_Map.clear(); }
 
                 void BindMapping();
-
-                void Init() override {}
-
-                void Update() override {}
         };
     } // namespace Input
 } // namespace MirageEngine::Core

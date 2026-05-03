@@ -8,9 +8,14 @@
 #include <fstream> // For file output
 #include <csignal> // For signal handling
 #include <filesystem>
+#include <string>
+#include <sstream>
+#include <Scripting/engine_script_api.h>
 
 #ifndef NDEBUG
-    #include <cpptrace/cpptrace.hpp>
+    #ifndef CPP_TRACE_DEBUG
+        #include <cpptrace/cpptrace.hpp>
+    #endif
 #endif
 
 #ifdef _WIN32
@@ -90,7 +95,7 @@ namespace Loggers
     // - reduce the number of expensive std::clog calls
     // - reduce the number of writes to the file by buffering log messages and writing them in batches
     // - reduce contention when logging from multiple threads
-    class LogBuffer
+    class ENGINE_API LogBuffer
     {
         private:
 
@@ -272,14 +277,16 @@ namespace Loggers
             {
                 LogBuffer& log = LogBuffer::GetInstance();
                 log.Append("A critical error occurred. Attempting to flush logs before termination...\n Error is comming from below :\n");
-#ifndef NDEBUG
-                cpptrace::stacktrace trace = cpptrace::generate_trace();
-                for (const auto& frame : trace.frames)
-                {
-                    std::ostringstream oss;
-                    oss << frame.filename << ":" << frame.line.raw_value << " | " << frame.symbol << "\n";
-                    log.Append(oss.str());
-                }
+#ifndef NDEBUG    
+    #ifndef CPP_TRACE_DEBUG
+                    cpptrace::stacktrace trace = cpptrace::generate_trace();
+                    for (const auto& frame : trace.frames)
+                    {
+                        std::ostringstream oss;
+                        oss << frame.filename << ":" << frame.line.raw_value << " | " << frame.symbol << "\n";
+                        log.Append(oss.str());
+                    }
+    #endif
 #endif
 
                 const char* msg;

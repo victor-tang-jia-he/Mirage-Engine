@@ -31,9 +31,9 @@ namespace MirageEngine::Core::Components
 		InfluenceGrid() = default;
 		virtual ~InfluenceGrid() = default;
 
-		void Init() override;
-		void Update() override;
-		entt::id_type GetType() const override { return entt::type_id<InfluenceGrid>().hash(); }
+		void OnStart() override;
+		void OnUpdate(float _dt) override;
+		entt::id_type GetType() const override;
 
 		void Bake();
 		void UpdateDecay(float _deltaTime);

@@ -5,7 +5,9 @@ cmake_minimum_required(VERSION 3.20)
 project(CustomEngine)
 
 # Create global variable (project-level) to store output directory
-set(MIRAGE_BIN_OUTPUT_DIR "${CMAKE_SOURCE_DIR}/Build/${CMAKE_CXX_COMPILER_ID}_$<CONFIG>")
+set(MIRAGE_BIN_OUTPUT_DIR "${CMAKE_BINARY_DIR}/Bin/${CMAKE_CXX_COMPILER_ID}_$<CONFIG>")
+
+
 
 # Log directory at configuration-time
 message("[${CMAKE_PROJECT_NAME}]: Output directory: ${MIRAGE_BIN_OUTPUT_DIR}")
@@ -15,6 +17,14 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${MIRAGE_BIN_OUTPUT_DIR}/Libs")
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${MIRAGE_BIN_OUTPUT_DIR}/Libs")
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${MIRAGE_BIN_OUTPUT_DIR}")
 
+# Define
+add_compile_definitions(BUILD_DIRECTORY="${CMAKE_RUNTIME_OUTPUT_DIRECTORY}")
+add_compile_definitions(BUILD_LIBS_DIRECTORY="${CMAKE_LIBRARY_OUTPUT_DIRECTORY}")
+add_compile_definitions(ENGINE_INCLUDE_DIR="${CMAKE_SOURCE_DIR}/MirageEngine/Source/Include")
+add_compile_definitions(SCRIPT_SOURCE_FILE="${CMAKE_SOURCE_DIR}/Scripts")
+add_compile_definitions(TOOLBOX_INCLUDE_DIR="${CMAKE_SOURCE_DIR}/MirageEngine/Tools/ToolBox/Source/Include")
+add_compile_definitions(CMAKE_SOURCE_DIRECTORY="${CMAKE_SOURCE_DIR}")
+
 # Set C standard version
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_C_STANDARD_REQUIRED ON)
@@ -22,6 +32,13 @@ set(CMAKE_C_STANDARD_REQUIRED ON)
 # Set C++ standard version
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+# ONLY VICTOR TANG
+cmake_host_system_information(RESULT HOSTNAME QUERY HOSTNAME)
+if ("${HOSTNAME}" STREQUAL "TheDarkPhoenix" )
+    set(CMAKE_JOB_POOL_COMPILE compile_pool)
+    set_property(GLOBAL PROPERTY JOB_POOLS compile_pool=20)
+endif()
 
 message(STATUS "Adding external Libraries...")
 message("")
@@ -41,7 +58,7 @@ set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)
 set(GLFW_BUILD_TESTS OFF CACHE BOOL "" FORCE)
 set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
 set(GLFW_INSTALL OFF CACHE BOOL "" FORCE)
-
+set(BUILD_SHARED_LIBS ON)
 if(NOT EXISTS "${GLFW_SOURCE}/CMakeLists.txt")
     message(STATUS "Fetching GLFW...")
     FetchContent_Declare(
@@ -55,6 +72,7 @@ else()
     message(STATUS "Using local GLFW")
     add_subdirectory(${GLFW_SOURCE} ${CMAKE_BINARY_DIR}/GLFW)
 endif()
+set(BUILD_SHARED_LIBS OFF)
 
 message(STATUS "GLFW created successfully")
 message(STATUS "================================================================================")
@@ -444,9 +462,6 @@ add_library(third_party INTERFACE)
 target_include_directories(third_party INTERFACE
     ${CMAKE_SOURCE_DIR}/Libraries/Glad/Code/Include
     ${CMAKE_SOURCE_DIR}/Libraries/GLFW/include
-    ${CMAKE_SOURCE_DIR}/Libraries/ImGui
-    ${CMAKE_SOURCE_DIR}/Libraries/ImGuizmo
-    ${CMAKE_SOURCE_DIR}/Libraries/ImGui/backends
     ${CMAKE_SOURCE_DIR}/Libraries/TinyObjLoader
     ${CMAKE_SOURCE_DIR}/Libraries/STBImage
     ${CMAKE_SOURCE_DIR}/Libraries/EnTT/single_include
@@ -458,17 +473,14 @@ target_include_directories(third_party INTERFACE
 )
 
 target_link_libraries(third_party INTERFACE
-    MirageEngine
     glfw
     glad
-    imgui
     tinyobjloader
     OpenGL::GL
     Toolbox
     BulletDynamics
     BulletCollision
     LinearMath
-    MirageEngine
     cpptrace::cpptrace
 ) 
 

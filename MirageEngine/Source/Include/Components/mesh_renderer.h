@@ -23,10 +23,7 @@ namespace MirageEngine
 				{
 				}
 
-				void Init() override {};
-				void Update() override {};
-
-				entt::id_type GetType() const override { return entt::type_id<MeshRenderer>().hash(); }
+				entt::id_type GetType() const override;
 
 				// Getters
 				std::shared_ptr<MirageEngine::Core::Resources::Mesh> GetMesh() const { return m_Mesh; }
