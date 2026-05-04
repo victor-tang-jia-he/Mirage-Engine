@@ -1,5 +1,6 @@
 #include <Physics/i_collider.h>
 #include <Physics/i_rigidbody.h>
+#include <Logs/log.h>
 
 using namespace MirageEngine::Core::Physics;
 

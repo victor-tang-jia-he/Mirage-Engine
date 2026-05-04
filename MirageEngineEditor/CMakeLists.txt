@@ -16,6 +16,7 @@ file(GLOB_RECURSE MIRAGE_ENGINE_EDITOR_HEADERS
 )
 
 target_sources(MirageEngineEditor PRIVATE ${MIRAGE_ENGINE_EDITOR_SOURCES} ${MIRAGE_ENGINE_EDITOR_HEADERS})
+target_precompile_headers(MirageEngineEditor PRIVATE "Source/pch.h")
 
 set(buildDirectory MIRAGE_BIN_OUTPUT_DIR)
 # Include directories

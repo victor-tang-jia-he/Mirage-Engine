@@ -1,6 +1,7 @@
 #include "OpenGL/openGL_swap_chain.h"
 #include "OpenGL/openGL_surface.h"
 #include "OpenGL/openGL_framebuffer.h"
+#include <Logs/log.h>
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>

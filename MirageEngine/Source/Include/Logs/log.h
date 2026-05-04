@@ -11,11 +11,12 @@
 #include <string>
 #include <sstream>
 #include <Scripting/engine_script_api.h>
+#include "log_types.h"
 
 #ifndef NDEBUG
-#ifndef CPP_TRACE_DEBUG
-#include <cpptrace/cpptrace.hpp>
-#endif
+	#ifndef CPP_TRACE_DEBUG
+		#include <cpptrace/cpptrace.hpp>
+	#endif
 #endif
 
 #ifdef _WIN32
@@ -32,33 +33,9 @@
         Loggers::Log(Level, Category, __VA_ARGS__); \
     } while (0)
 
-#define logTemp    Loggers::LogLevel::Temp
-#define logInfo    Loggers::LogLevel::Info
-#define logDebug   Loggers::LogLevel::Debug
-#define logWarning Loggers::LogLevel::Warning
-#define logError   Loggers::LogLevel::Error
-#define logFatal   Loggers::LogLevel::Fatal
-
 
 namespace Loggers
 {
-	enum class LogLevel
-	{
-		Temp = 0,
-		Info,
-		Debug,
-		Warning,
-		Error,
-		Fatal
-	};
-
-	struct LogCategory
-	{
-		const char* Name;
-		bool        Enabled = true;
-		const char* ColorCode = nullptr;
-	};
-
 	namespace Color
 	{
 		// ANSI color codes used for console output

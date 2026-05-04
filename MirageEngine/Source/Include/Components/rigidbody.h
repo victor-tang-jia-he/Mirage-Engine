@@ -2,7 +2,6 @@
 
 #include <Components/component.h>
 #include <Components/physics_components_interface.h>
-#include <Logs/log_macro.h>
 
 DECLARE_LOG_CATEGORY_EXTERN(LogComponentRigidBody)
 

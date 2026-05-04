@@ -2,7 +2,7 @@
 
 #include "i_render_interface.h"
 
-#include <Logs/log_macro.h>
+
 
 DECLARE_LOG_CATEGORY_EXTERN(LogMirageRenderer)
 

@@ -10,6 +10,7 @@
 #include <limits>
 #include <fstream>
 #include <Resources/resource_manager.h>
+#include <Logs/log.h>
 
 // RESOURCES HEADERS
 #include <Resources/mesh.h>

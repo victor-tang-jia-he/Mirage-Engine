@@ -9,6 +9,7 @@
 #include "Physics/physics_manager.h"
 #include "Reflection/register_meta.h"
 #include <Scripting/script_manager.h>
+#include <Logs/log.h>
 
 int main()
 {

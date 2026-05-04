@@ -1,5 +1,4 @@
 #pragma once
-#include <Logs/log_macro.h>
 
 namespace MirageEngine::Core::Physics
 {

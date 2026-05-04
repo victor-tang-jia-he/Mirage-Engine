@@ -1,5 +1,5 @@
 #pragma once
-#include <Logs/log_macro.h>
+
 
 #include "i_panel.h"
 #include <entt/entt.hpp>

@@ -30,6 +30,7 @@ target_include_directories(MirageEngine PRIVATE
     "${CMAKE_CURRENT_SOURCE_DIR}/Source/Src/RHI"
 )
 
+target_precompile_headers(MirageEngine PRIVATE "Source/Include/pch.h")
 
 target_compile_options(MirageEngine PRIVATE
     $<$<CXX_COMPILER_ID:MSVC>:/Zi>        # Windows

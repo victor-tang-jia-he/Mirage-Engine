@@ -4,6 +4,8 @@
 #include <atomic>
 #include <Components/rigidbody.h>
 #include <Scripting/script_manager.h>
+#include <Logs/log.h>
+
 
 DEFINE_LOG_CATEGORY(LogGameObject)
 

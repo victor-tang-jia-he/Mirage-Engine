@@ -11,6 +11,9 @@
 
 #include <vector3.h>
 #include <quaternion.h>
+#include <Logs/log.h>
+
+#include <fstream>
 
 DEFINE_LOG_CATEGORY(LogSerializer)
 

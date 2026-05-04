@@ -7,7 +7,6 @@
 #include <Components/component.h>
 #include <Components/transform.h>
 #include <Components/mesh_renderer.h>
-#include <Logs/log_macro.h>
 
 DECLARE_LOG_CATEGORY_EXTERN(LogGameObject)
 

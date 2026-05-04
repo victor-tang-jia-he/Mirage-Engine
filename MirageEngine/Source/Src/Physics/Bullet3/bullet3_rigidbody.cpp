@@ -3,6 +3,8 @@
 #include <Physics/Bullet3/bullet3_sphere_collider.h>
 #include <Physics/Bullet3/bullet3_capsule_collider.h>
 #include <Physics/physics_manager.h>
+#include <Logs/log.h>
+
 
 DEFINE_LOG_CATEGORY(LogBullet3Rigidbody)
 

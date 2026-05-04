@@ -1,7 +1,7 @@
 #pragma once
 #include <Resources/resource_interface.h>
 #include <RHI/i_pipeline.h>
-#include <Logs/log_macro.h>
+
 
 DECLARE_LOG_CATEGORY_EXTERN(LogPipeline)
 

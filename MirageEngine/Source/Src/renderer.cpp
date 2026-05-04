@@ -3,6 +3,7 @@
 
 #include "renderer.h"
 
+#include <Logs/log.h>
 #include <OpenGL/openGL_render_interface.h>
 #include <SceneGraph/scene_graph.h>
 #include <Components/mesh_renderer.h>

@@ -1,6 +1,8 @@
 #include <Input/input_mapping.h>
 #include <Input/input_system.h>
 #include <entt/entt.hpp>
+#include <Logs/log.h>
+
 
 DEFINE_LOG_CATEGORY(logInputMapping)
 

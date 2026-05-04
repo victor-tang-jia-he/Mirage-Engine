@@ -2,7 +2,7 @@
 #include <vector3.h>
 #include <unordered_map>
 #include <Resources/resource_interface.h>
-#include <Logs/log_macro.h>
+
 #include <memory>
 
 DECLARE_LOG_CATEGORY_EXTERN(LogMaterial)
