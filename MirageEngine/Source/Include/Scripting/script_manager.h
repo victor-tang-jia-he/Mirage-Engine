@@ -18,12 +18,11 @@ namespace MirageEngine::Core::Scripting
     class ENGINE_API ScriptManager
     {
             using IScript               = MirageEngine::Core::Scripting::IScript;
-            fs::path buildDir           = BUILD_DIRECTORY;
-            fs::path m_ScriptsSourceDir = SCRIPT_SOURCE_FILE;
-            fs::path m_OutputDir        = BUILD_DIRECTORY;
-            fs::path m_engineIncludeDir = ENGINE_INCLUDE_DIR;
-            fs::path m_toolbox          = TOOLBOX_INCLUDE_DIR;
-            fs::path m_engineLibPath    = BUILD_LIBS_DIRECTORY + std::string("/MirageEngine_Debug.lib");
+            fs::path m_ScriptsSourceDir = "./Scripts";
+            fs::path m_OutputDir        = ".";
+            fs::path m_EngineIncludeDir = "./Include/Engine";
+            fs::path m_Toolbox          = "./Include/Toolbox";
+            fs::path m_engineLibPath    = "./Libs/MirageEngine_Debug.lib";
 
             std::string config         = "Debug";
             std::string m_DLLBuildName = "GameScripts";
@@ -73,25 +72,11 @@ namespace MirageEngine::Core::Scripting
             }
 
             // For GameObject
-            void SubscribePreReload(GameObject* go, std::function<void()> _func)
-            {
+            void SubscribePreReload(GameObject* go, std::function<void()> _func);
 
-                std::shared_ptr<EventSystem::Event<>> event = std::make_shared<EventSystem::Event<>>(_func);
-                m_PreReloadSubscribers[go]                  = event;
-            }
+            void SubscribePostReload(GameObject* go, std::function<void()> _func);
 
-            void SubscribePostReload(GameObject* go, std::function<void()> _func)
-            {
-
-                std::shared_ptr<EventSystem::Event<>> event = std::make_shared<EventSystem::Event<>>(_func);
-                m_PostReloadSubscribers[go]                 = event;
-            }
-
-            void Unsubscribe(GameObject* go)
-            {
-                m_PreReloadSubscribers.erase(go);
-                m_PostReloadSubscribers.erase(go);
-            }
+            void Unsubscribe(GameObject* go);
 
             // Initialization
             void Init();

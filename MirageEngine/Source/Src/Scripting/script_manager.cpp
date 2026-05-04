@@ -44,11 +44,31 @@ namespace MirageEngine::Core::Scripting
         for (auto& [gameobject, callback] : m_PostReloadSubscribers) callback->Trigger();
     }
 
+    void ScriptManager::SubscribePreReload(GameObject* _go, std::function<void()> _func)
+    {
+
+        std::shared_ptr<EventSystem::Event<>> event = std::make_shared<EventSystem::Event<>>(_func);
+        m_PreReloadSubscribers[_go] = event;
+    }
+
+    void ScriptManager::SubscribePostReload(GameObject* _go, std::function<void()> _func)
+    {
+
+        std::shared_ptr<EventSystem::Event<>> event = std::make_shared<EventSystem::Event<>>(_func);
+        m_PostReloadSubscribers[_go] = event;
+    }
+
+    void ScriptManager::Unsubscribe(GameObject* _go)
+    {
+        m_PreReloadSubscribers.erase(_go);
+        m_PostReloadSubscribers.erase(_go);
+    }
+
     void ScriptManager::ShutDown() const { UnloadSharedLibrary(hScripts); }
 
     int ScriptManager::GetScriptsCount() const { return ((PFN_GetScriptCount)GetScriptCountDLL)(); }
 
-    const char* ScriptManager::GetScriptName(int index) const { return ((PFN_GetScriptName)GetScriptNameDLL)(index); }
+    const char* ScriptManager::GetScriptName(int _index) const { return ((PFN_GetScriptName)GetScriptNameDLL)(_index); }
 
     std::unique_ptr<IScript, ScriptManager::DllDeleter> ScriptManager::CreateScriptByName(const char* name)
     {
@@ -58,7 +78,7 @@ namespace MirageEngine::Core::Scripting
         return { script, DllDeleter{ (PFN_DestroyScript)DestroyScriptDLL } };
     }
 
-    void ScriptManager::DestroyScript(IScript* script) const { ((PFN_DestroyScript)DestroyScriptDLL)(script); }
+    void ScriptManager::DestroyScript(IScript* _script) const { ((PFN_DestroyScript)DestroyScriptDLL)(_script); }
 
     bool ScriptManager::SetupVisualStudioEnvironment()
     {
@@ -143,6 +163,10 @@ namespace MirageEngine::Core::Scripting
     bool ScriptManager::RebuildScriptsDll()
     {
         std::vector<std::string> sources;
+        if (!fs::exists(m_ScriptsSourceDir))
+        {
+            fs::create_directory(m_ScriptsSourceDir);
+        }
         for (const auto& entry : fs::recursive_directory_iterator(m_ScriptsSourceDir))
         {
             if (entry.path().extension() == ".cpp") sources.push_back("\"" + entry.path().string() + "\"");
@@ -165,8 +189,8 @@ namespace MirageEngine::Core::Scripting
         cmd += " /EHsc /nologo";
         cmd += " /D SCRIPTS_DLL_EXPORT";
         cmd += " /D CPP_TRACE_DEBUG";
-        cmd += " /I\"" + m_engineIncludeDir.string() + "\"";
-        cmd += " /I\"" + m_toolbox.string() + "" + "\"";
+        cmd += " /I\"" + m_EngineIncludeDir.string() + "\"";
+        cmd += " /I\"" + m_Toolbox.string() + "\"";
 
         for (const auto& src : sources) cmd += " " + src;
 
@@ -191,9 +215,9 @@ namespace MirageEngine::Core::Scripting
         return (status == 0);
     }
 
-    LibHandle ScriptManager::LoadModule(const char* name)
+    LibHandle ScriptManager::LoadModule(const char* _name)
     {
-        LibHandle h = LoadSharedLibrary(name);
+        LibHandle h = LoadSharedLibrary(_name);
         if (!h)
         {
 #ifdef _WIN32

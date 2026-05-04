@@ -21,7 +21,7 @@ set(buildDirectory MIRAGE_BIN_OUTPUT_DIR)
 # Include directories
 target_include_directories(MirageEngineEditor PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/Source/Include
-    ${CMAKE_SOURCE_DIR}/Libraries/ImGuizmo
+    ${CMAKE_SOURCE_DIR}/Libraries/ImGuizmo/src
     ${CMAKE_SOURCE_DIR}/Libraries/ImGui          
     ${CMAKE_SOURCE_DIR}/Libraries/ImGui/backends 
 )

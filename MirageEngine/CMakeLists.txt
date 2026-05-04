@@ -44,11 +44,6 @@ target_compile_definitions(MirageEngine PRIVATE ENGINE_EXPORTS)
 set_target_properties(MirageEngine PROPERTIES
     WINDOWS_EXPORT_ALL_SYMBOLS ON
 )
-set_target_properties(MirageEngine
-    PROPERTIES
-        LIBRARY_OUTPUT_DIRECTORY "${MIRAGE_BIN_OUTPUT_DIR}/DLL"
-        RUNTIME_OUTPUT_DIRECTORY "${MIRAGE_BIN_OUTPUT_DIR}/DLL"
-)
 
 # Copy all asset in the build
 set(ASSETS_SOURCE "${CMAKE_SOURCE_DIR}/MirageEngine/Assets")
@@ -72,4 +67,18 @@ add_custom_command(TARGET MirageEngine POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_if_different
         $<TARGET_FILE:MirageEngine>
         $<TARGET_FILE_DIR:MirageEngineEditor>
+)
+
+
+set(ENGINE_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/Source/Include")
+set(TOOLBOX_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/Tools/Toolbox/Source/Include")
+
+add_custom_command(TARGET MirageEngine POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+        "${ENGINE_INCLUDE_DIR}"
+        "$<TARGET_FILE_DIR:MirageEngine>/Include/Engine"
+
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+        "${TOOLBOX_INCLUDE_DIR}"
+        "$<TARGET_FILE_DIR:MirageEngine>/Include/Toolbox"
 )
