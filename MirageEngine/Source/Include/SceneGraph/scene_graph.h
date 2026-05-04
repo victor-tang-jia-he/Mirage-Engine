@@ -25,8 +25,6 @@ namespace MirageEngine
 		std::unordered_map<uint64_t, std::shared_ptr<MirageEngine::GameObject>> m_Registry;
 
 		std::shared_ptr<GameObject> m_SelectedObject = nullptr;
-		std::shared_ptr<MirageEngine::Core::Components::Camera> m_EditorCamera = nullptr;
-		std::shared_ptr<MirageEngine::Core::Components::Camera> m_ActiveCamera = nullptr;
 		std::shared_ptr<GameObject> m_LastCreatedObject = nullptr;
 
 	public:
@@ -39,8 +37,6 @@ namespace MirageEngine
             m_SelectedObject.reset();
             m_Registry.clear();
             m_RootsList.clear();
-            m_EditorCamera.reset();
-            m_ActiveCamera.reset();
 		}
 
 		std::shared_ptr<GameObject> CreateGameObject(const std::string& _name, std::shared_ptr<GameObject> _parent = nullptr);
@@ -75,10 +71,8 @@ namespace MirageEngine
 		std::shared_ptr<GameObject> GetSelectedObject() { return m_SelectedObject; }
 		const std::vector<std::shared_ptr<GameObject>>& GetRootObjects() const { return m_RootsList; }
 		std::vector<std::shared_ptr<GameObject>> GetChildren(std::shared_ptr<GameObject> _parent) const;
-
-		void SetEditorCamera(std::shared_ptr<MirageEngine::Core::Components::Camera> _cam) { m_EditorCamera = _cam; m_ActiveCamera = _cam; }
-		std::shared_ptr<MirageEngine::Core::Components::Camera> GetActiveCamera() const { return m_ActiveCamera; }
 		std::shared_ptr<GameObject> GetLastCreatedObject() const { return m_LastCreatedObject; }
+
 	protected:
 	private:
 		void WorldMatrixRecursive(std::shared_ptr<GameObject> _obj, Core::Math::Matrix4& _parentMatrix, bool _forceUpdate);

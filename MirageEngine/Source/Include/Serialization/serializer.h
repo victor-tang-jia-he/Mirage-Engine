@@ -42,7 +42,7 @@ namespace MirageEngine
 		static json SerializeScene(SceneGraph _sceneGraph);
 		static json SerializeGameObject(std::shared_ptr<GameObject> _gameObject, json _jParent);
 
-		static json SerializeComponent(std::shared_ptr<Core::Components::Component> _component, json _Owner);
+		static json SerializeComponent(std::shared_ptr<Core::Components::Component> _component);
 		static json SerializeTransform(Core::Components::Transform _transform);
 
 		// Serializes Components reflected meta data

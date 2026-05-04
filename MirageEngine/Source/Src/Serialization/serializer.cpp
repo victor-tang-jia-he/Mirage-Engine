@@ -13,6 +13,8 @@
 #include <vector3.h>
 #include <quaternion.h>
 
+#include <fstream>
+
 DEFINE_LOG_CATEGORY(LogSerializer)
 
 using namespace MirageEngine;
@@ -33,8 +35,6 @@ void MirageEngine::Serializer::SaveScene(SceneGraph _sceneGraph)
 json Serializer::SerializeScene(SceneGraph _sceneGraph)
 {
     json jScene;
-
-    jScene["CameraOwnerID"] = _sceneGraph.GetActiveCamera()->GetOwner()->GetID();
 
     // Serialize all GameObjects recursively from Roots
     for (std::shared_ptr<GameObject> root : _sceneGraph.GetRootObjects())
@@ -62,7 +62,7 @@ json Serializer::SerializeGameObject(std::shared_ptr<GameObject> _gameObject, js
 
     // Serialize all gameobjects components
     for (std::shared_ptr<Components::Component> component : _gameObject->GetComponents()) {
-        jGameObject["Components"].emplace_back(SerializeComponent(component, jGameObject));
+        jGameObject["Components"].emplace_back(SerializeComponent(component));
     }
 
     LOG(logTemp, LogSerializer, "Serialized GameObject : ", _gameObject->GetName().c_str());
@@ -70,7 +70,7 @@ json Serializer::SerializeGameObject(std::shared_ptr<GameObject> _gameObject, js
     return jGameObject;
 }
 
-json MirageEngine::Serializer::SerializeComponent(std::shared_ptr<Components::Component> _component, json _Owner)
+json MirageEngine::Serializer::SerializeComponent(std::shared_ptr<Components::Component> _component)
 {
     json jComponent;
 

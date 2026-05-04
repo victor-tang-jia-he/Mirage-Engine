@@ -4,6 +4,7 @@
 #include <iostream>
 #include <vector>
 #include <memory>
+#include <editor_camera.h>
 #include "SceneGraph/scene_graph.h" 
 
 namespace MirageEngine
@@ -20,6 +21,8 @@ namespace Mirage
 		std::vector<std::unique_ptr<IPanel>> m_PanelList;
 		void* m_WindowHandle = nullptr;
 		MainMenuBar m_MainMenuBar;
+
+		std::shared_ptr <MirageEditor::EditorCamera> m_EditorCamera;
 		MirageEngine::SceneGraph* m_SceneGraph;
 
 		// Play mode variables
@@ -39,5 +42,7 @@ namespace Mirage
 		bool IsPlaying() const { return m_IsPlaying; }
 		bool IsPaused() const { return m_IsPaused; }
 		bool IsStopped() const { return m_IsStoped; }
+
+		std::shared_ptr <MirageEditor::EditorCamera> GetEditorCamera() const { return m_EditorCamera; }
 	};
 }

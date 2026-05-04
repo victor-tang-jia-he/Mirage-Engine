@@ -55,7 +55,6 @@ void Application::InitApp()
 void Application::InitScene()
 {
     m_EngineCamera = std::make_shared<Camera>(1920, 1080, 90.f, 0.1f, 100.f, Vector3(0.f, 0.f, -3.f));
-    m_SceneGraph.SetEditorCamera(m_EngineCamera);
 }
 
 void Application::InitInput()
@@ -130,15 +129,6 @@ void Application::InitGameObject()
     std::shared_ptr<Camera>       cam       = cameraGO->GetComponent<Camera>();
     std::shared_ptr<InputMapping> input     = cameraGO->GetComponent<InputMapping>();
     std::shared_ptr<MeshRenderer> renderer1 = cameraGO->GetComponent<MeshRenderer>();
-
-    m_SceneGraph.SetEditorCamera(cam);
-
-    cam->BindInput(input);
-    cam->SetNear(0.1f);
-    cam->SetFar(100.f);
-    cam->SetFov(60.f);
-    cam->SetWidth(1920);
-    cam->SetHeight(1080);
 
     InputSystem::SetCurrentMapping(input);
 

@@ -2,6 +2,7 @@
 #include <GLFW/glfw3.h>
 
 #include "renderer.h"
+#include <Camera/i_camera.h>
 
 #include <OpenGL/openGL_render_interface.h>
 #include <SceneGraph/scene_graph.h>
@@ -69,12 +70,12 @@ void Renderer::BeginFrame()
     m_CommandBuffer->BeginDraw(m_RenderPass, currentFBO);
 }
 
-void Renderer::RenderScene(SceneGraph _sceneGraph)
+void Renderer::RenderScene(SceneGraph _sceneGraph, std::shared_ptr<Core::ICamera> _camera)
 {
-    if (_sceneGraph.GetActiveCamera())
+    if (_camera)
     {
-        m_UniformBuffer->SetView(_sceneGraph.GetActiveCamera()->GetView());
-        m_UniformBuffer->SetProjection(_sceneGraph.GetActiveCamera()->GetPerspective());
+        m_UniformBuffer->SetView(_camera->GetView());
+        m_UniformBuffer->SetProjection(_camera->GetPerspective());
     }
 
 	for (std::shared_ptr<GameObject> root : _sceneGraph.GetRootObjects())

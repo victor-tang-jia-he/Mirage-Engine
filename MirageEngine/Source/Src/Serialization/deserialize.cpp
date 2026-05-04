@@ -33,13 +33,6 @@ std::shared_ptr<SceneGraph> MirageEngine::Deserializer::DeserializeScene(json _j
         DeserializeGameObject(jGameObject, nullptr, savedScene);
     }
 
-    // Temp while editor camera is in scene obj (TO FIX)
-    std::shared_ptr<GameObject> cameraObj = savedScene->FindGameObject(_jSceneGraph["CameraOwnerID"].get<uint64_t>());
-    if (cameraObj)
-        savedScene->SetEditorCamera(cameraObj->GetComponent<Core::Components::Camera>());
-    else
-        LOG(logError, LogDeserializer, "No Editor Camera found!");
-
     return savedScene;
 }
 

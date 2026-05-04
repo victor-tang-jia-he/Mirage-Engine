@@ -29,6 +29,9 @@ namespace Mirage
 		{
 			panel->InitPanel();
 		}
+
+		m_EditorCamera = std::make_shared<MirageEditor::EditorCamera>();
+		m_EditorCamera->BindDefaultInput();
 	}
 
 	void Mirage::EditorApp::Update(uint32_t _textureID)
@@ -44,8 +47,8 @@ namespace Mirage
 			}
 		}
 
-		MirageEditor::Gizmo::EditView(m_SceneGraph);
-		MirageEditor::Gizmo::EditTransform(m_SceneGraph);
+		MirageEditor::Gizmo::EditView(m_SceneGraph); // Disabled
+		MirageEditor::Gizmo::EditTransform(m_SceneGraph, m_EditorCamera);
 
 		HandlePlayMode();
 
