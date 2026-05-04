@@ -1,0 +1,26 @@
+// rhi_pch.h
+#pragma once
+
+#define FORCE_ALIGNED_TYPES 1
+
+#ifdef FORCE_ALIGNED_TYPES
+#    define ALIGN16 alignas(16)
+#    define ALIGN8  alignas(8)
+#    define ALIGN4  alignas(4)
+#else
+#    define ALIGN16
+#    define ALIGN8
+#    define ALIGN4
+#endif
+// STL
+#include <memory>
+#include <vector>
+#include <unordered_map>
+#include <string>
+#include <functional>
+#include <optional>
+#include <span>
+#include <cstdint>
+
+// Common
+#include <Logs/log_macro.h>

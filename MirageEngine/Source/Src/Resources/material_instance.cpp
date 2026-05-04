@@ -5,6 +5,7 @@
 #include <RHI/i_pipeline.h>
 #include <RHI/i_shader.h>
 #include <RHI/i_uniform_buffer.h>
+#include <Logs/log.h>
 
 MirageEngine::Core::Resources::MaterialInstance::MaterialInstance(std::shared_ptr<Material> _material, std::shared_ptr<MirageRHI::IUniformBuffer> _ubos)
     : m_Material(_material)

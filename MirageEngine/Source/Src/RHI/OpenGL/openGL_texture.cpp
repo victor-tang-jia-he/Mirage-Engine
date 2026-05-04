@@ -1,5 +1,6 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
+#include <Logs/log.h>
 
 #include <OpenGL/openGL_texture.h>
 

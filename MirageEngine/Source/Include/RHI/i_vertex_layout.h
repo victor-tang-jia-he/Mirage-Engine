@@ -1,7 +1,5 @@
 #pragma once
-
-#include <Logs/log_macro.h>
-
+#include <stdexcept>
 DECLARE_LOG_CATEGORY_EXTERN(LogRHIVertexLayout)
 
 namespace MirageRHI

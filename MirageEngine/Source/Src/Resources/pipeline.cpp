@@ -1,6 +1,7 @@
 #include <Resources/pipeline.h>
 #include <Resources/resource_manager.h>
 #include <Resources/shader.h>
+#include <Logs/log.h>
 
 DEFINE_LOG_CATEGORY(LogPipeline)
 

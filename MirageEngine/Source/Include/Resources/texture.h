@@ -1,6 +1,6 @@
 #pragma once
 #include <Resources/resource_interface.h>
-#include <Logs/log_macro.h>
+
 
 #include <RHI/i_texture.h>
 

@@ -10,7 +10,7 @@
 #include <filesystem>
 #include <Scripting/engine_script_api.h>
 
-#include <Logs/log_macro.h>
+
 
 DECLARE_LOG_CATEGORY_EXTERN(LogResourceManager)
 

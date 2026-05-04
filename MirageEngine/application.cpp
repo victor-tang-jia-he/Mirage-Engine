@@ -40,7 +40,7 @@ using namespace MirageEngine::Core::Resources;
 Application* Application::s_Instance = nullptr;
 void Application::InitApp()
 {
-    s_Instance = this;
+	s_Instance = this;
 
 	m_Renderer.InitRenderer();
 
@@ -125,8 +125,12 @@ void Application::InitGameObject()
 	// =========================
 	MirageEngine::Core::Scripting::ScriptManager& scriptManager = MirageEngine::Core::Scripting::ScriptManager::Instance();
 
-	std::unique_ptr<Core::Scripting::IScript, Core::Scripting::ScriptManager::DllDeleter> script = scriptManager.CreateScriptByName(scriptManager.GetScriptName(0));
-	floorGO->AddComponent(std::move(script));
+	scriptManager.CreateNewScript("Test");
+	if (const char* name = scriptManager.GetScriptName(0))
+	{
+		std::unique_ptr<Core::Scripting::IScript, Core::Scripting::ScriptManager::DllDeleter> script = scriptManager.CreateScriptByName("Test");
+		floorGO->AddComponent(std::move(script));
+	}
 	// =========================
 	//  Camera object
 	// =========================

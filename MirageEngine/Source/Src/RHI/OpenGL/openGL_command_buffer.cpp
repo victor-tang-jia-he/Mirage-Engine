@@ -5,6 +5,7 @@
 #include "OpenGL/openGL_swap_chain.h"
 #include "OpenGL/openGL_surface.h"
 #include "OpenGL/openGL_vertex_layout.h"
+#include <Logs/log.h>
 
 DEFINE_LOG_CATEGORY(LogRHICommandBuffer)
 

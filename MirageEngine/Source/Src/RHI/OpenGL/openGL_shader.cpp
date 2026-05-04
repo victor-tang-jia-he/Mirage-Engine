@@ -1,4 +1,5 @@
 #include "OpenGL/openGL_shader.h"
+#include <Logs/log.h>
 
 DEFINE_LOG_CATEGORY(LogRHIShader)
 

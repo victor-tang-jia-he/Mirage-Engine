@@ -1,6 +1,7 @@
 #include <Resources/mesh.h>
 #include <i_buffer.h>
 #include <i_vertex_layout.h>
+#include <Logs/log.h>
 
 DEFINE_LOG_CATEGORY(LogMesh)
 

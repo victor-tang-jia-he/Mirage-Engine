@@ -4,7 +4,6 @@
 
 #include <Events/event.h>
 #include <Components/component.h>
-#include <Logs/log_macro.h>
 #include <vector2.h>
 
 DECLARE_LOG_CATEGORY_EXTERN(logInputMapping)

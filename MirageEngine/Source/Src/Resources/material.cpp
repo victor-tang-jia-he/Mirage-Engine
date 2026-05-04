@@ -4,6 +4,7 @@
 #include <RHI/i_shader.h>
 #include <Resources/mesh.h>
 #include <Resources/texture.h>
+#include <Logs/log.h>
 
 DEFINE_LOG_CATEGORY(LogMaterial)
 

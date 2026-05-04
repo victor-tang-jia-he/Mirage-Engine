@@ -5,6 +5,7 @@
 
 #include <vector3.h>
 #include <matrix4.h>
+#include <array>
 
 #include <imgui.h>
 #include <ImGuizmo.h>

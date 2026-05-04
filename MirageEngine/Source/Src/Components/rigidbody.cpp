@@ -2,6 +2,8 @@
 #include <Components/transform.h>
 #include <Physics/physics_manager.h>
 #include <Physics/common_enum.h>
+#include <Logs/log.h>
+
 
 DEFINE_LOG_CATEGORY(LogComponentRigidBody)
 

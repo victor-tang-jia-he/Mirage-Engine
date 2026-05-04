@@ -4,6 +4,7 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <stb_image.h>
+#include <Logs/log.h>
 
 DEFINE_LOG_CATEGORY(LogRHIBuffer)
 

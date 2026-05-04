@@ -30,6 +30,7 @@ target_include_directories(MirageEngine PRIVATE
     "${CMAKE_CURRENT_SOURCE_DIR}/Source/Src/RHI"
 )
 
+target_precompile_headers(MirageEngine PRIVATE "Source/Include/pch.h")
 
 target_compile_options(MirageEngine PRIVATE
     $<$<CXX_COMPILER_ID:MSVC>:/Zi>        # Windows
@@ -44,6 +45,7 @@ target_compile_definitions(MirageEngine PRIVATE ENGINE_EXPORTS)
 set_target_properties(MirageEngine PROPERTIES
     WINDOWS_EXPORT_ALL_SYMBOLS ON
 )
+
 # Copy all asset in the build
 add_custom_command(TARGET MirageEngine POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E make_directory

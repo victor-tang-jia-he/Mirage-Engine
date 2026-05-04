@@ -1,4 +1,5 @@
 #include <OpenGL/openGL_vertex_layout.h>
+#include <Logs/log.h>
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>

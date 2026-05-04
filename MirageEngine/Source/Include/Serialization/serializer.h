@@ -3,7 +3,7 @@
 #include <nlohmann/json.hpp>
 #include <entt/entt.hpp>
 
-#include <Logs/log_macro.h>
+
 
 DECLARE_LOG_CATEGORY_EXTERN(LogSerializer)
 

@@ -1,6 +1,7 @@
 #include <Input/input_system.h>
 #include <GLFW/glfw3.h>
 #include <vector2.h>
+#include <algorithm>
 
 namespace MirageEngine::Core::Input
 {

@@ -1,7 +1,7 @@
 #pragma once
 #include <Resources/resource_interface.h>
 #include <vector>
-#include <Logs/log_macro.h>
+
 #include <RHI/i_pipeline_parameters.h>
 
 DECLARE_LOG_CATEGORY_EXTERN(LogMesh)
