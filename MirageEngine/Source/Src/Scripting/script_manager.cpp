@@ -72,7 +72,7 @@ namespace MirageEngine::Core::Scripting
 	const char* ScriptManager::GetScriptName(int _index) const {
 		if (_index > ((PFN_GetScriptCount)m_GetScriptCountDLL)())
 		{
-			LOG(logFatal, LogScriptManager, "Script index : ", _index," out of range");
+			LOG(logFatal, LogScriptManager, "Script index : ", _index, " out of range");
 			return nullptr;
 		}
 		return ((PFN_GetScriptName)m_GetScriptNameDLL)(_index);
@@ -80,7 +80,7 @@ namespace MirageEngine::Core::Scripting
 
 	std::unique_ptr<IScript, ScriptManager::DllDeleter> ScriptManager::CreateScriptByName(const char* name)
 	{
-		if (!name) 
+		if (!name)
 		{
 			LOG(logFatal, LogScriptManager, "Script name invalid");
 			return nullptr;
@@ -244,13 +244,13 @@ namespace MirageEngine::Core::Scripting
 		return h;
 	};
 
-	void MirageEngine::Core::Scripting::ScriptManager::GenerateScriptBindings() const
+	void ScriptManager::GenerateScriptBindings() const
 	{
 		fs::path filePath = m_OutputDir / "Scripts/script_bindings.cpp";
 
 		std::ofstream file(filePath);
 		if (!file.is_open())
-			throw std::runtime_error("Failed to create: " + filePath.string());
+			LOG(logFatal, LogScriptManager, "Failed to create: " , filePath.string());
 
 		file << R"(#include <Scripting/script_api.h>
 #include <Scripting/script_registry.h>
@@ -277,5 +277,36 @@ extern "C" {
 )";
 
 		file.close();
+	}
+
+	void ScriptManager::CreateNewScript(const std::string& _fileName) const
+	{
+		fs::path headerFilePath = m_OutputDir / "Scripts" / (_fileName + ".h");
+		fs::path cppFilePath = m_OutputDir / "Scripts" / (_fileName + ".cpp");
+
+		std::ofstream headerFile(headerFilePath);
+		if (!headerFile.is_open())
+			LOG(logFatal, LogScriptManager, "Failed to create: ", headerFilePath.string());
+
+		headerFile << "#include <Scripting/script_api.h>\n";
+		headerFile << "#include <Scripting/script_registry.h>\n\n\n";
+
+		headerFile << "class " << _fileName << " : public MirageEngine::Core::Scripting::IScript{\n";
+		headerFile << "public: \n";
+		headerFile << "void OnStart() override {} \n";
+		headerFile << "void OnUpdate(float dt) override {}\n";
+		headerFile << "    const char* GetName() const override { return \"" << _fileName << "\"; }\n";
+		headerFile << "};\n";
+
+		headerFile.close();
+
+		std::ofstream cppFile(cppFilePath);
+		if (!cppFile.is_open())
+			LOG(logFatal, LogScriptManager, "Failed to create: ", cppFilePath.string());
+
+		cppFile << "#include \"" << _fileName << ".h\"\n\n";
+		cppFile << "REGISTER_SCRIPT(" << _fileName << "); ";
+
+		cppFile.close();
 	}
 } // namespace MirageEngine::Core::Scripting

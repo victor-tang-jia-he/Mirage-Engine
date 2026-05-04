@@ -51,14 +51,14 @@ namespace MirageEngine::Core::Scripting
 		// Dll instance cleaner
 		struct DllDeleter
 		{
-			PFN_DestroyScript destroyFunc;
+			PFN_DestroyScript DestroyFunc;
 
-			void operator()(IScript* s) const
+			void operator()(IScript* _s) const
 			{
-				if (s)
+				if (_s)
 				{
-					s->OnDestroy();
-					destroyFunc(s);
+					_s->OnDestroy();
+					DestroyFunc(_s);
 				}
 			}
 		};
@@ -73,11 +73,11 @@ namespace MirageEngine::Core::Scripting
 		}
 
 		// For GameObject
-		void SubscribePreReload(GameObject* go, std::function<void()> _func);
+		void SubscribePreReload(GameObject* _go, std::function<void()> _func);
 
-		void SubscribePostReload(GameObject* go, std::function<void()> _func);
+		void SubscribePostReload(GameObject* _go, std::function<void()> _func);
 
-		void Unsubscribe(GameObject* go);
+		void Unsubscribe(GameObject* _go);
 
 		// Initialization
 		void Init();
@@ -87,10 +87,12 @@ namespace MirageEngine::Core::Scripting
 
 		// Getter
 		int         GetScriptsCount() const;
-		const char* GetScriptName(int index) const;
+		const char* GetScriptName(int _index) const;
 
 		// Public function
-		std::unique_ptr<IScript, DllDeleter> CreateScriptByName(const char* name);
+		std::unique_ptr<IScript, DllDeleter> CreateScriptByName(const char* _name);
+
+		void CreateNewScript(const std::string& _fileName) const;
 
 		void DestroyScript(IScript* script) const;
 

@@ -125,9 +125,10 @@ void Application::InitGameObject()
 	// =========================
 	MirageEngine::Core::Scripting::ScriptManager& scriptManager = MirageEngine::Core::Scripting::ScriptManager::Instance();
 
+	scriptManager.CreateNewScript("Test");
 	if (const char* name = scriptManager.GetScriptName(0))
 	{
-		std::unique_ptr<Core::Scripting::IScript, Core::Scripting::ScriptManager::DllDeleter> script = scriptManager.CreateScriptByName(name);
+		std::unique_ptr<Core::Scripting::IScript, Core::Scripting::ScriptManager::DllDeleter> script = scriptManager.CreateScriptByName("Test");
 		floorGO->AddComponent(std::move(script));
 	}
 	// =========================
