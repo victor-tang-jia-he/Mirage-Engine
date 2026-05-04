@@ -29,6 +29,8 @@ namespace MirageEngine::Core
 			void Update() override;
 			entt::id_type GetType() const override { return entt::type_id<NavAgent>().hash(); }
 
+			void SetDestination(Vector3 _newDestination);
+
 			// Getters
 			std::vector<Vector3> GetCurrentPath() { return m_CurrentPath; }
 			int GetNextWaypointIndex() { return m_NextWaypointIndex; }
@@ -44,7 +46,6 @@ namespace MirageEngine::Core
 			void SetRotationSpeed(float _newRotationSpeed) { m_RotationSpeed = _newRotationSpeed; }
 			void SetStoppingDistance(float _newStoppingDistance) { m_StoppingDistance = _newStoppingDistance; }
 			void SetRecalculateInterval(float _newRecalculateInterval) { m_RecalculateInterval = _newRecalculateInterval; }
-			void SetDestination(Vector3 _newDestination);
 		};
 	}
 }

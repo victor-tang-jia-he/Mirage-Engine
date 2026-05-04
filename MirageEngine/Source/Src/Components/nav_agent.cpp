@@ -1,41 +1,62 @@
 #include "Components/nav_agent.h"
 #include "GameObject/game_object.h"
+#include "AI/pathfinding.h"
+#include "AI/influence_grid.h"
 #include "time_manager.h"
+#include "application.h"
 
-namespace MirageEngine::Core::Components
+namespace MirageEngine::Core
 {
-	void NavAgent::Init()
+	namespace Components
 	{
-		m_Owner = GetOwner();
-	}
-
-	void NavAgent::Update()
-	{
-		if (m_CurrentPath.empty()) return;
-		
-		Vector3 targetPos = m_CurrentPath[m_NextWaypointIndex];
-		Vector3 myPos = m_Owner->Transform.GetPosition();
-
-		float distance = m_Owner->Transform.GetPosition().Distance(targetPos);
-		if (distance < m_StoppingDistance)
+		void NavAgent::Init()
 		{
-			m_NextWaypointIndex++;
-			if (m_NextWaypointIndex >= m_CurrentPath.size())
-			{
-				m_CurrentPath.clear();
-				return;
-			}
+			m_Owner = GetOwner();
 		}
 
-		Vector3 direction = (targetPos - myPos).Normalized();
-		float dt = TimeManager::GetDeltaTime();
-		Vector3 newPos = myPos + (direction * m_MovementSpeed * dt);
-		m_Owner->Transform.SetPosition(newPos);
-		m_Owner->Transform.LookAt(targetPos);
-	}
+		void NavAgent::Update()
+		{
+			if (m_CurrentPath.empty()) return;
 
-	void NavAgent::SetDestination(Vector3 _newDestination)
-	{
+			Vector3 targetPos = m_CurrentPath[m_NextWaypointIndex];
+			Vector3 myPos = m_Owner->Transform.GetPosition();
 
+			float distance = m_Owner->Transform.GetPosition().Distance(targetPos);
+			if (distance < m_StoppingDistance)
+			{
+				m_NextWaypointIndex++;
+				if (m_NextWaypointIndex >= m_CurrentPath.size())
+				{
+					m_CurrentPath.clear();
+					return;
+				}
+			}
+
+			Vector3 direction = (targetPos - myPos).Normalized();
+			float dt = TimeManager::GetDeltaTime();
+
+			Vector3 newPos = myPos + (direction * m_MovementSpeed * dt);
+
+			m_Owner->SetPosition(newPos);
+			m_Owner->Transform.LookAt(targetPos);
+		}
+
+		void NavAgent::SetDestination(Vector3 _newDestination)
+		{
+			m_TargetDestination = _newDestination;
+
+			Application* app = Application::Instance();
+			if (!app) return;
+
+			InfluenceGrid* grid = app->GetSceneGraph()->FindComponentInScene<InfluenceGrid>();
+
+			if (grid)
+			{
+				AI::Pathfinding pathfinder;
+
+				m_CurrentPath = pathfinder.FindPath(m_Owner->Transform.GetPosition(), m_TargetDestination, grid, m_Profile);
+				m_NextWaypointIndex = 0;
+			}
+		}
 	}
 }
