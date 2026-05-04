@@ -1,6 +1,7 @@
 #include "AI/pathfinding.h"
 #include "AI/influence_grid.h"
 #include <stdlib.h>
+#include <algorithm>
 
 namespace MirageEngine::AI
 {
