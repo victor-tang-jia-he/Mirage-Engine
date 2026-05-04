@@ -72,7 +72,7 @@ namespace MirageEngine
 			std::priority_queue<PathNode*, std::vector<PathNode*>, NodeComparator> m_OpenList;
 
 		public:
-			std::vector<Vector3> FindPath(Vector3 _start, Vector3 _end, InfluenceGrid* _grid, const NavProfile _profile);
+			std::vector<Vector3> FindPath(Vector3 _start, Vector3 _end, InfluenceGrid* _grid, const NavProfile& _profile);
 		private:
 			float GetHeuristic(int _x1, int _y1, int _x2, int _y2);
 			float GetInfluenceCost(int _x, int _y, Core::Components::InfluenceGrid* _grid, const NavProfile& _profile);
