@@ -14,9 +14,9 @@
 #include "log_types.h"
 
 #ifndef NDEBUG
-	#ifndef CPP_TRACE_DEBUG
-		#include <cpptrace/cpptrace.hpp>
-	#endif
+#ifndef CPP_TRACE_DEBUG
+#include <cpptrace/cpptrace.hpp>
+#endif
 #endif
 
 #ifdef _WIN32
@@ -27,12 +27,6 @@
 #else
 #    include <unistd.h> // write(), STDERR_FILENO
 #endif
-
-#define LOG(Level, Category, ...)                   \
-    do {                                            \
-        Loggers::Log(Level, Category, __VA_ARGS__); \
-    } while (0)
-
 
 namespace Loggers
 {
@@ -67,6 +61,29 @@ namespace Loggers
 		return errorMutex;
 	}
 
+	struct LogConfig
+	{
+		// flush and truncating it if it exceeds a certain threshold.
+		std::atomic<bool> WriteInFile{ false };   // Flag to unable file writing when the log file is being checked to maintain file size.
+		std::atomic<bool> FlushEveryLog{ false }; // Flag to flush every log immediately, used for testing and debugging purposes.
+		std::atomic<bool> ShowTimeOnEveryLog{ false }; // Show the day and time on every log.
+		std::atomic<bool> ShowFileNameAndLine{ false }; // Show the line and the file on every log.
+	};
+
+	// ===== GLOBAL GETTER & SETTING =====
+	inline LogConfig& GetLogConfig()
+	{
+		static LogConfig instance;
+		return instance;
+	}
+	static void EnableFileWriting(bool enable) { GetLogConfig().WriteInFile.store(enable); }
+
+	static void EnableImmediateFlush(bool enable) { GetLogConfig().FlushEveryLog.store(enable); }
+
+	static void EnableTimeOnEveryLog(bool enable) { GetLogConfig().ShowTimeOnEveryLog.store(enable); }
+
+	static void EnableFileNameAndLine(bool enable) { GetLogConfig().ShowFileNameAndLine.store(enable); }
+
 	// ===== GLOBAL BUFFER =====
 	// This buffer batches normal log messages before flushing to stdcout.
 	// Goal:
@@ -78,15 +95,11 @@ namespace Loggers
 	private:
 
 		static constexpr size_t BUFFER_SIZE = 4096; // Flush buffer when it exceeds this size (in bytes)
-		std::ostringstream      m_buffer;           // String stream used as the temporary message accumulator
-		std::mutex              m_mutex;            // Protects the buffer against concurrent writes
-		std::string             m_logFileName = "log.txt";
-		std::string             m_logFileLocation = "Logs/"; // Default log file location, can be changed by the user. We will ensure this directory exists before writing logs.
+		std::ostringstream      m_Buffer;           // String stream used as the temporary message accumulator
+		std::mutex              m_Mutex;            // Protects the buffer against concurrent writes
+		std::string             m_LogFileName = "log.txt";
+		std::string             m_LogFileLocation = "Logs/"; // Default log file location, can be changed by the user. We will ensure this directory exists before writing logs.
 		std::ofstream m_file; // File stream for log output , keep it open to avoid the overhead of opening/closing the file on every flush. We will manage the file size by checking it on every
-		// flush and truncating it if it exceeds a certain threshold.
-// std::atomic<bool>		m_manageFileSize{ false }; // Flag to unable file size management when the log file is being checked to maintain file size.
-		std::atomic<bool> m_writeInFile{ false };   // Flag to unable file writing when the log file is being checked to maintain file size.
-		std::atomic<bool> m_flushEveryLog{ false }; // Flag to flush every log immediately, used for testing and debugging purposes.
 	public:
 
 		inline static LogBuffer& GetInstance()
@@ -105,9 +118,9 @@ namespace Loggers
 			signal(SIGILL, handle_crash);
 			signal(SIGTERM, handle_crash);
 
-			std::filesystem::create_directories(m_logFileLocation.c_str());
-			if (IsFileExist(m_logFileLocation + m_logFileName)) m_file.open(m_logFileLocation + m_logFileName, std::ios_base::trunc); // Open in append mode
-			else m_file.open(m_logFileLocation + m_logFileName, std::ios_base::trunc);
+			std::filesystem::create_directories(m_LogFileLocation.c_str());
+			if (IsFileExist(m_LogFileLocation + m_LogFileName)) m_file.open(m_LogFileLocation + m_LogFileName, std::ios_base::trunc); // Open in append mode
+			else m_file.open(m_LogFileLocation + m_LogFileName, std::ios_base::trunc);
 		}
 
 		~LogBuffer()
@@ -116,63 +129,56 @@ namespace Loggers
 			m_file.close();
 		}
 
-		// void EnableFileSizeManagement(bool enable)
-		//{
-		//	m_manageFileSize.store(enable);
-		// }
-		void EnableFileWriting(bool enable) { m_writeInFile.store(enable); }
-
-		void EnableImmediateFlush(bool enable) { m_flushEveryLog.store(enable); }
-
 		void SetLogFileName(const std::string& fileName)
 		{
-			std::lock_guard<std::mutex> lock(m_mutex);
+			std::lock_guard<std::mutex> lock(m_Mutex);
 			Flush(); // Flush any pending logs before switching files
 			m_file.close();
-			m_logFileName = fileName;
-			m_file.open(m_logFileName, std::ios_base::trunc); // Open new log file in truncate mode to start fresh
+			m_LogFileName = fileName;
+			m_file.open(m_LogFileName, std::ios_base::trunc); // Open new log file in truncate mode to start fresh
 		}
 
 		void SetLogFileLocation(const std::string& location)
 		{
-			std::lock_guard<std::mutex> lock(m_mutex);
+			std::lock_guard<std::mutex> lock(m_Mutex);
 			Flush(); // Flush any pending logs before switching files
 			m_file.close();
-			m_logFileLocation = location;
+			m_LogFileLocation = location;
 			// Ensure the directory exists (create it if it doesn't)
-			std::filesystem::create_directories(m_logFileLocation.c_str());
-			m_file.open(m_logFileLocation + m_logFileName, std::ios_base::trunc); // Open new log file in truncate mode to start fresh
+			std::filesystem::create_directories(m_LogFileLocation.c_str());
+			m_file.open(m_LogFileLocation + m_LogFileName, std::ios_base::trunc); // Open new log file in truncate mode to start fresh
 		}
 
 		void Append(const std::string& msg)
 		{
-			m_mutex.lock();
-			m_buffer << msg;
-			m_mutex.unlock();
+			{
+				std::lock_guard<std::mutex> lock(m_Mutex);
+				m_Buffer << msg;
+			}
 			// If the buffer grows too large we flush immediately.
 			// This prevents excessive memory growth.
-			if (m_buffer.str().size() > BUFFER_SIZE) Flush();
-			if (m_flushEveryLog.load())
-				Flush(); // For testing and debugging purposes, we can enable immediate flushing of every log message to ensure they are output in real-time without buffering. This is useful for
-			// diagnosing issues where logs may be lost due to crashes or buffer overflows.
+			if (m_Buffer.tellp() > BUFFER_SIZE) Flush();
+			if (GetLogConfig().FlushEveryLog.load())
+				Flush(); // For testing and debugging purposes, we can enable immediate flushing of every log message to ensure they are output in real-time without buffering. 
+			// This is useful for diagnosing issues where logs may be lost due to crashes or buffer overflows.
 		}
 
 		void Flush()
 		{
-			std::lock_guard<std::mutex> lock(m_mutex);
-			if (m_buffer.str().size() > 0)
+			std::lock_guard<std::mutex> lock(m_Mutex);
+			if (m_Buffer.str().size() > 0)
 			{
 				// Output the buffered log message to the console only in debug mode. In release mode, we skip this step to improve performance.
 #ifndef NDEBUG
-				std::clog << m_buffer.str();
+				std::clog << m_Buffer.str();
 #endif
 
 				// Write the log message to the file
-				if (m_writeInFile.load()) WriteInLogFile();
+				if (GetLogConfig().WriteInFile.load()) WriteInLogFile();
 
 				// Reset stream content
-				m_buffer.str("");
-				m_buffer.clear();
+				m_Buffer.str("");
+				m_Buffer.clear();
 			}
 		}
 
@@ -180,7 +186,7 @@ namespace Loggers
 		{
 			if (m_file.is_open())
 			{
-				std::string content = m_buffer.str();
+				std::string content = m_Buffer.str();
 				if (!content.empty())
 				{
 #ifndef NDEBUG
@@ -200,29 +206,10 @@ namespace Loggers
 		{
 			if (m_file.is_open())
 			{
-				// if (m_manageFileSize.load())
-				//	CheckLogFileSize();
-				m_file << StripAnsiCodes(m_buffer.str());
+				m_file << StripAnsiCodes(m_Buffer.str());
 			}
 		}
 
-		// TODO : Implement a more robust file size management system that doesn't rely on checking the file size on every flush, as this is extremely expensive.
-		// void CheckLogFileSize()
-		//{
-		//	if (IsFileExist(m_logFileName))
-		//	{
-		//		std::ifstream file(m_logFileName, std::ios_base::ate | std::ios_base::binary);
-		//		size_t fileSize = file.tellg();
-		//		// If the log file exceeds 10 MB, we clear it to prevent unbounded growth.
-		//		if (fileSize > static_cast<unsigned long long>(10 * 1024) * 1024)
-		//		{
-		//			std::ofstream ofs(m_logFileName, std::ofstream::out | std::ofstream::trunc);
-		//			ofs.close();
-		//			std::clog << Color::YELLOW <<  "Log file exceeded 10 MB and has been cleared.\n" << Color::DEFAULT;
-		//		}
-		//		file.close();
-		//	}
-		//}
 		// Remove ANSI color codes from the log message for file output
 		std::string StripAnsiCodes(const std::string& input)
 		{
@@ -309,24 +296,27 @@ namespace Loggers
 
 	// Determines which color should be used for the log line.
 	// Category color overrides level color if defined.
-	inline const char* GetColor(const LogCategory& cat, LogLevel type) { return cat.ColorCode ? cat.ColorCode : LevelColor[static_cast<int>(type)]; }
+	inline const char* GetColor(const LogCategory& _cat, LogLevel _type) { return _cat.ColorCode ? _cat.ColorCode : LevelColor[static_cast<int>(_type)]; }
 
 	// ===== MAIN LOG FUNCTION =====
-	template <typename... Args> inline void Log(LogLevel type, const LogCategory& cat, Args&&... args)
+	template <typename... Args> inline void Log(const char* _fileName, int _fileLine, LogLevel _type, const LogCategory& _cat, Args&&... _args)
 	{
 		// Early exit if the category is disabled
-		if (!cat.Enabled) return;
+		if (!_cat.Enabled) return;
 
 		// Build the formatted log message locally.
 		// Using a local stream avoids locking during formatting.
 		std::ostringstream oss{};
 
-		oss << (type != LogLevel::Fatal ? GetColor(cat, type) : Color::RED) // Fatal logs are always red, regardless of category color
-			<< "[" << GetTimeString() << "]"
-			<< "[" << cat.Name << "] ";
+		oss << (_type != LogLevel::Fatal ? GetColor(_cat, _type) : Color::RED);// Fatal logs are always red, regardless of category color
+		if (GetLogConfig().ShowTimeOnEveryLog)
+			oss << "[" << GetTimeString() << "]";
+		oss << "[" << _cat.Name << "] ";
+		if (GetLogConfig().ShowFileNameAndLine)
+			oss << "[" << std::filesystem::path(_fileName).filename() << ":" << _fileLine << "] ";
 
 		// Fold expression to stream all arguments
-		(oss << ... << std::forward<Args>(args));
+		(oss << ... << std::forward<Args>(_args));
 
 		// Reset console color and terminate the line
 		oss << Color::DEFAULT << "\n";
@@ -337,10 +327,10 @@ namespace Loggers
 		// Errors and Fatal logs are immediately flushed to ensure they are visible in the console and written to the file without delay. This is crucial for debugging critical issues.
 		// Fatal logs terminate the program immediately.
 		// Before aborting we flush the buffer to avoid losing logs.
-		if (type == LogLevel::Error || type == LogLevel::Fatal)
+		if (_type == LogLevel::Error || _type == LogLevel::Fatal)
 		{
 			LogBuffer::GetInstance().Flush();
-			if (type == LogLevel::Fatal) std::abort();
+			if (_type == LogLevel::Fatal) std::abort();
 		}
 	}
 } // namespace Loggers
