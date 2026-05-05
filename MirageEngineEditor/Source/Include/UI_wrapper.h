@@ -7,8 +7,6 @@
 
 #include <Resources/resource_manager.h>
 
-#include <Logs/log_macro.h>
-
 DECLARE_LOG_CATEGORY_EXTERN(LogUIWrapper)
 
 namespace Math = MirageEngine::Core::Math;

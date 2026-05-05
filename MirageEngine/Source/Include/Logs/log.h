@@ -40,13 +40,24 @@ namespace Loggers
 	{
 		// ANSI color codes used for console output
 		// These only work if the terminal supports ANSI escape sequences.
-		inline constexpr const char* RED = "\033[31m";
-		inline constexpr const char* GREEN = "\033[32m";
-		inline constexpr const char* YELLOW = "\033[33m";
-		inline constexpr const char* BLUE = "\033[34m";
-		inline constexpr const char* MAGENTA = "\033[35m";
-		inline constexpr const char* CYAN = "\033[36m";
-		inline constexpr const char* WHITE = "\033[37m";
+		inline constexpr const char* BLACK		= "\033[30m";
+		inline constexpr const char* RED		= "\033[31m";
+		inline constexpr const char* GREEN		= "\033[32m";
+		inline constexpr const char* YELLOW		= "\033[33m";
+		inline constexpr const char* BLUE		= "\033[34m";
+		inline constexpr const char* MAGENTA	= "\033[35m";
+		inline constexpr const char* CYAN		= "\033[36m";
+		inline constexpr const char* WHITE		= "\033[37m";
+
+		inline constexpr const char* B_BLACK	= "\033[90m";
+		inline constexpr const char* B_RED		= "\033[91m";
+		inline constexpr const char* B_GREEN	= "\033[92m";
+		inline constexpr const char* B_YELLOW	= "\033[93m";
+		inline constexpr const char* B_BLUE		= "\033[94m";
+		inline constexpr const char* B_MAGENTA	= "\033[95m";
+		inline constexpr const char* B_CYAN		= "\033[96m";
+		inline constexpr const char* B_WHITE	= "\033[97m";
+
 		inline constexpr const char* DEFAULT = "\033[0m";
 	} // namespace Color
 

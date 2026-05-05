@@ -21,7 +21,7 @@ Rigidbody::Rigidbody(ICCollider* _shape, Physics::ERigidBodyType _type) { m_Rigi
 Rigidbody::~Rigidbody()
 {
     delete m_Rigidbody;
-    LOG(logTemp, LogComponentRigidBody, "Rigidbody die");
+    LOG(logTemp, LogComponentRigidBody, "Rigidbody destroyed");
 }
 
 void Rigidbody::OnTransformChanged(Components::Transform& _newTransform) { m_Rigidbody->OnTransformChanged(_newTransform); }

@@ -110,12 +110,12 @@ uint32_t Renderer::GetFramebufferTextureID() const
 void Renderer::InitWindow()
 {
     if (!glfwInit()) { LOG(logFatal, LogMirageRenderer, "Failed to init GLFW!"); }
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-    m_Width  = 1920;
-    m_Height = 1080;
+    m_Width  = 1280;
+    m_Height = 720;
 
     m_Window = glfwCreateWindow(m_Width, m_Height, "Mirage Engine", nullptr, nullptr);
     if (!m_Window)

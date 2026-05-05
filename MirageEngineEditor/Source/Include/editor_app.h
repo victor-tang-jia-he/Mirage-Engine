@@ -6,6 +6,8 @@
 #include <memory>
 #include "SceneGraph/scene_graph.h" 
 
+DECLARE_LOG_CATEGORY_EXTERN(logEditorApp)
+
 namespace MirageEngine
 {
 	class GameObject;

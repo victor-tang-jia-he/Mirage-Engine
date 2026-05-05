@@ -15,6 +15,7 @@ namespace MirageEngine::Core::Scripting
 		}
 #endif
 		ReloadScript();
+		LOG(logInfo, LogScriptManager, "Script Manager Initialized");
 	}
 
 	void ScriptManager::ReloadScript()

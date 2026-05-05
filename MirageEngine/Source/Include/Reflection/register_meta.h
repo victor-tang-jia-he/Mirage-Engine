@@ -2,6 +2,8 @@
 
 #include <EnTT/meta/meta.hpp>
 
+DECLARE_LOG_CATEGORY_EXTERN(LogRegisterMeta);
+
 namespace MirageEngine
 {
 	class RegisterMeta

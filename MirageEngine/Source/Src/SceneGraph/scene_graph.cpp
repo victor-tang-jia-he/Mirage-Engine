@@ -12,6 +12,10 @@
 
 #include "Components/camera.h"
 
+#include <Logs/log.h>
+
+DEFINE_LOG_CATEGORY(LogSceneGraph);
+
 using namespace MirageEngine::Core::Math;
 using namespace MirageEngine::Core::Resources;
 
@@ -180,7 +184,7 @@ namespace MirageEngine
 
             if (currentShared == _child)
             {
-                std::cout << "Error: Circular dependency detected!" << std::endl;
+				LOG(logError, LogSceneGraph, "Error: Circular dependency detected!");
                 return false;
             }
 
@@ -209,7 +213,7 @@ namespace MirageEngine
             //_child->Transform.SetLocalMatrix(newLoc);
             _child->SetPosition(newLoc.GetTranslation());
             _child->SetRotation(newLoc.GetRotation());
-            std::cout << "New Local calculated. Scale: " << newLoc.GetScale().X << std::endl;
+            LOG(logTemp, LogSceneGraph, "New Local calculated. Scale: ", newLoc.GetScale().X);
         }
         else
         {

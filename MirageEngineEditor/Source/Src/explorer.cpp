@@ -10,6 +10,10 @@
 #include <fstream>
 #include <iostream>
 
+#include <Logs/log.h>
+
+DEFINE_LOG_CATEGORY_WITH_COLOR(LogExplorer, Loggers::Color::CYAN);
+
 namespace Mirage
 {
 	void Explorer::InitPanel()
@@ -18,7 +22,8 @@ namespace Mirage
 		m_CurrentPath = m_RootPath;
 		ScanProjectDirectory(m_CurrentPath);
 
-		std::cout << "[Explorer] Root Path detecte : " << m_RootPath << std::endl;
+		LOG(logTemp, LogExplorer, "Root Path detected: ", m_RootPath.string());
+		LOG(logTemp, LogExplorer, "Explorer Panel Initialized");
 	}
 
 	void Explorer::DrawPanel(uint32_t _textureID)
@@ -40,11 +45,12 @@ namespace Mirage
 
 	void Explorer::ShutdownPanel()
 	{
-
+		LOG(logTemp, LogExplorer, "Explorer Panel Shutdown");
 	}
 
 	void Explorer::ScanProjectDirectory(const std::filesystem::path _rootPath)
 	{
+		LOG(logTemp, LogExplorer, "Scanning directory: ", _rootPath.string());
 		m_Entries.clear();
 		if (std::filesystem::exists(_rootPath) && std::filesystem::is_directory(_rootPath))
 		{
@@ -58,15 +64,21 @@ namespace Mirage
 				else
 				{
 					auto ext = entry.path().extension();
-					if (ext == ".png" || ext == ".jpg") newEntry.Type = AssetType::Texture;
-					else if (ext == ".obj") newEntry.Type = AssetType::Model;
-					else if (ext == ".cs" || ext == ".py") newEntry.Type = AssetType::Script;
-					else if (ext == ".glsl" || ext == ".frag" || ext == ".vert") newEntry.Type = AssetType::Shader;
-					else newEntry.Type = AssetType::Unknown;
+					if (ext == ".png" || ext == ".jpg")
+						newEntry.Type = AssetType::Texture;
+					else if (ext == ".obj")
+						newEntry.Type = AssetType::Model;	
+					else if (ext == ".c" || ext == ".cpp" || ext == ".cs" || ext == ".py")
+						newEntry.Type = AssetType::Script;
+					else if (ext == ".glsl" || ext == ".frag" || ext == ".vert")
+						newEntry.Type = AssetType::Shader;
+					else
+						newEntry.Type = AssetType::Unknown;
 				}
 				m_Entries.push_back(newEntry);
 			}
 		}
+		LOG(logTemp, LogExplorer, "Found ", m_Entries.size(), " entries in directory.");
 	}
 
 	void Explorer::DrawFolderTree()
@@ -75,8 +87,10 @@ namespace Mirage
 		std::string id = m_RootPath.string();
 
 		bool isLeaf = true;
-		for (const auto& sub : std::filesystem::directory_iterator(m_RootPath)) {
-			if (sub.is_directory()) {
+		for (const auto& sub : std::filesystem::directory_iterator(m_RootPath))
+		{
+			if (sub.is_directory())
+			{
 				isLeaf = false;
 				break;
 			}
@@ -107,9 +121,8 @@ namespace Mirage
 		}
 		else
 		{
-			if (UIWrapper::IsItemClicked()) {
+			if (UIWrapper::IsItemClicked())
 				this->ChangeDirectory(m_RootPath);
-			}
 		}
 	}
 
@@ -118,7 +131,8 @@ namespace Mirage
 		std::error_code ec;
 		auto it = std::filesystem::directory_iterator(_path, ec);
 
-		if (ec) return;
+		if (ec)
+			return;
 
 		for (const auto& entry : it)
 		{
@@ -128,8 +142,10 @@ namespace Mirage
 				std::string id = entry.path().string();
 
 				bool bisLeaf = true;
-				for (const auto& sub : std::filesystem::directory_iterator(entry.path())) {
-					if (sub.is_directory()) {
+				for (const auto& sub : std::filesystem::directory_iterator(entry.path()))
+				{
+					if (sub.is_directory())
+					{
 						bisLeaf = false;
 						break;
 					}
@@ -151,6 +167,7 @@ namespace Mirage
 
 					if (ImGui::BeginDragDropSource())
 					{
+						// Display a mini message when drag an object
 						DragDrop::SetPathPayload(DragDropTag::CONTENT_BROWSER_ITEM, entry.path());
 						ImGui::Text("Moving folder: %s", name.c_str());
 						ImGui::EndDragDropSource();
@@ -167,7 +184,8 @@ namespace Mirage
 				}
 				else
 				{
-					if (UIWrapper::IsItemClicked()) {
+					if (UIWrapper::IsItemClicked())
+					{
 						this->ChangeDirectory(entry.path());
 					}
 				}
@@ -211,6 +229,7 @@ namespace Mirage
 				break;
 			}
 		}
+
 		if (!found)
 		{
 			content = std::filesystem::current_path();
@@ -299,7 +318,7 @@ namespace Mirage
 		std::filesystem::copy(_source, _target, std::filesystem::copy_options::recursive, ec);
 
 		if (ec)
-			std::cout << "Error during duplication: " << ec.message() << std::endl;
+			LOG(logError, LogExplorer, "Error during duplication: ", ec.message());
 
 		ScanProjectDirectory(m_CurrentPath);
 	}
@@ -624,9 +643,7 @@ namespace Mirage
 		std::filesystem::rename(_oldPath, _newPath, ec);
 
 		if (ec)
-		{
-			std::cout << "Error during renaming" << ec.message() << std::endl;
-		}
+			LOG(logError, LogExplorer, "Error during renaming: ", ec.message());
 	}
 
 	void Explorer::MoveItem(const std::filesystem::path& _source, const std::filesystem::path& _target)
@@ -637,13 +654,9 @@ namespace Mirage
 		std::filesystem::rename(_source, newPath, ec);
 
 		if (ec)
-		{
-			std::cerr << "Move Error: " << ec.message() << std::endl;
-		}
+			LOG(logError, LogExplorer, "Move Error: ", ec.message());
 		else
-		{
 			ScanProjectDirectory(m_CurrentPath);
-		}
 	}
 
 	std::shared_ptr<MirageEngine::Core::Resources::Texture> Explorer::GetIconTexture(unsigned int _index)

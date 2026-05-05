@@ -22,6 +22,10 @@
 #include <vector3.h>
 #include <quaternion.h>
 
+#include <Logs/log.h>
+
+DEFINE_LOG_CATEGORY(LogRegisterMeta)
+
 using namespace MirageEngine;
 using namespace MirageEngine::Core;
 using namespace MirageEngine::Core::Components;
@@ -73,6 +77,7 @@ void RegisterMeta::RegisterGameObjectMeta()
 	gameObject.data<static_cast<void(GameObject::*)(Math::Vector3)>(&GameObject::SetPosition), &GameObject::GetPosition>("Position");
 	gameObject.data<static_cast<void(GameObject::*)(Math::Quaternion)>(&GameObject::SetRotation), &GameObject::GetRotation>("Rotation");
 	gameObject.data<static_cast<void(GameObject::*)(Math::Vector3)>(&GameObject::SetScale), &GameObject::GetScale>("Scale");
+	LOG(logTemp, LogRegisterMeta, "Registered GameObject Meta");
 }
 
 void RegisterMeta::RegisterTransformMeta()
@@ -80,6 +85,7 @@ void RegisterMeta::RegisterTransformMeta()
 	entt::meta_factory<Components::Transform> transform{};
 
 	transform.type(entt::type_id<Transform>().hash(), "Transform");
+
 	transform.ctor<Math::Vector3, Math::Quaternion, Math::Vector3>();
 
 	transform.data<&Components::Transform::SetPosition, &Components::Transform::GetPosition>("Position");
@@ -93,6 +99,7 @@ void RegisterMeta::RegisterTransformMeta()
 		{
 		}
 	}
+	LOG(logTemp, LogRegisterMeta, "Registered Transform Meta");
 }
 
 void RegisterMeta::RegisterMeshRendererMeta()
@@ -107,6 +114,7 @@ void RegisterMeta::RegisterMeshRendererMeta()
 
 	meshRenderer.data<&MeshRenderer::SetMesh, &MeshRenderer::GetMesh>("Mesh");
 	meshRenderer.data<&MeshRenderer::SetMaterial, &MeshRenderer::GetMaterial>("Material");
+	LOG(logTemp, LogRegisterMeta, "Registered MeshRenderer Meta");
 }
 
 void RegisterMeta::RegisterCameraMeta()
@@ -120,6 +128,7 @@ void RegisterMeta::RegisterCameraMeta()
 	camera.data<&Camera::SetFov, &Camera::GetFov>("FOV");
 	camera.data<&Camera::SetNear, &Camera::GetNear>("Near");
 	camera.data<&Camera::SetFar, &Camera::GetFar>("Far");
+	LOG(logTemp, LogRegisterMeta, "Registered Camera Meta");
 }
 
 void RegisterMeta::RegisterInputMappingMeta()
@@ -133,6 +142,7 @@ void RegisterMeta::RegisterInputMappingMeta()
 	callbackInputInfo.data<&CallbackInputInfo::Pressed>("Pressed");
 	callbackInputInfo.data<&CallbackInputInfo::Held>("Held");
 	callbackInputInfo.data<&CallbackInputInfo::Released>("Released");;
+	LOG(logTemp, LogRegisterMeta, "Registered CallbackInputInfo Meta");
 
 	entt::meta_factory<InputMapping> inputMapping{};
 
@@ -143,8 +153,8 @@ void RegisterMeta::RegisterInputMappingMeta()
 	inputMapping.data<&InputMapping::m_Map>("Bindings");
 
 	inputMapping.func<&InputMapping::Clear>("ClearAll");
-
 	inputMapping.func<&InputMapping::Remove>("RemoveKey");
+	LOG(logTemp, LogRegisterMeta, "Registered InputMapping Meta");
 }
 
 void RegisterMeta::RegisterMeshMeta()
@@ -157,6 +167,7 @@ void RegisterMeta::RegisterMeshMeta()
 	mesh.base<IResource>();
 
 	mesh.data<nullptr, &Mesh::GetName>("Name");
+	LOG(logTemp, LogRegisterMeta, "Registered Mesh Meta");
 }
 
 void RegisterMeta::RegisterTextureMeta()
@@ -169,6 +180,7 @@ void RegisterMeta::RegisterTextureMeta()
 	texture.base<IResource>();
 
 	texture.data<nullptr, &Texture::GetName>("Name");
+	LOG(logTemp, LogRegisterMeta, "Registered Texture Meta");
 }
 
 void MirageEngine::RegisterMeta::RegisterMaterialMeta()
@@ -179,6 +191,7 @@ void MirageEngine::RegisterMeta::RegisterMaterialMeta()
 	material.base<Resources::IResource>();
 
 	material.data<nullptr, &Resources::Material::GetName>("Name");
+	LOG(logTemp, LogRegisterMeta, "Registered Material Meta");
 }
 
 void MirageEngine::RegisterMeta::RegisterShaderMeta()
@@ -189,6 +202,7 @@ void MirageEngine::RegisterMeta::RegisterShaderMeta()
 	material.base<Resources::IResource>();
 
 	material.data<nullptr, &Resources::Shader::GetName>("Name");
+	LOG(logTemp, LogRegisterMeta, "Registered Shader Meta");
 }
 
 void RegisterMeta::RegisterInfluenceGridMeta()
@@ -202,6 +216,7 @@ void RegisterMeta::RegisterInfluenceGridMeta()
 	influenceGrid.data<&InfluenceGrid::SetHeight, &InfluenceGrid::GetHeight>("Height");
 	influenceGrid.data<&InfluenceGrid::SetCellSize, &InfluenceGrid::GetCellSize>("Cell Size");
 	influenceGrid.data<&InfluenceGrid::SetDecayRate, &InfluenceGrid::GetDecayRate>("Decay Rate");
+	LOG(logTemp, LogRegisterMeta, "Registered InfluenceGrid Meta");
 }
 
 void RegisterMeta::RegisterInfluenceEmitterMeta()
@@ -214,4 +229,5 @@ void RegisterMeta::RegisterInfluenceEmitterMeta()
 	influenceEmitter.data<&InfluenceEmitter::SetRadius, &InfluenceEmitter::GetRadius>("Radius");
 	influenceEmitter.data<&InfluenceEmitter::SetStrength, &InfluenceEmitter::GetStrength>("Strength");
 	influenceEmitter.data<&InfluenceEmitter::SetTargetGrid, &InfluenceEmitter::GetTargetGrid>("Grid");
+	LOG(logTemp, LogRegisterMeta, "Registered InfluenceEmitter Meta");
 }

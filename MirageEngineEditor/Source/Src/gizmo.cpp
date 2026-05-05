@@ -92,7 +92,6 @@ void MirageEditor::Gizmo::EditView(MirageEngine::SceneGraph* _sceneGraph)
 
 	ImGuizmo::ViewManipulate(view, 1, pos, size, 0);
 
-
 	Math::Matrix4 viewMatrix(view);
 	
 	mainCamera->Transform().SetLocalMatrix(viewMatrix.Inverse().Transpose());

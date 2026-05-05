@@ -6,6 +6,10 @@
 #include <cstdint>
 #include "GameObject/game_object.h"	
 
+#include <Logs/log_macro.h>
+
+DECLARE_LOG_CATEGORY_EXTERN(LogSceneGraph)
+
 //class GameObject;
 namespace MirageEngine::Core::Components
 {

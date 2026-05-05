@@ -10,7 +10,9 @@
 
 #include <Resources/texture.h>
 
-DEFINE_LOG_CATEGORY(LogUIWrapper)
+#include <Logs/log.h>
+
+DEFINE_LOG_CATEGORY_WITH_COLOR(LogUIWrapper, Loggers::Color::CYAN);
 
 namespace MirageEngine::Core::Resources
 {
@@ -23,7 +25,6 @@ namespace Mirage
 {
 	void UIWrapper::Init(void* _windowHandle)
 	{
-		LOG(logTemp, LogUIWrapper, "UI Wrapper Init");
 		IMGUI_CHECKVERSION();
 		ImGuiContext* context = ImGui::CreateContext();
 		ImGuiIO& io = ImGui::GetIO();
@@ -38,6 +39,7 @@ namespace Mirage
 		GLFWwindow* window = static_cast<GLFWwindow*>(_windowHandle);
 		ImGui_ImplGlfw_InitForOpenGL(window, true);
 		ImGui_ImplOpenGL3_Init();
+		LOG(logTemp, LogUIWrapper, "UI Wrapper Init");
 	}
 
 	void UIWrapper::Shutdown()

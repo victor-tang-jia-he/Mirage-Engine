@@ -4,16 +4,21 @@
 #include <filesystem>
 
 #include <Resources/texture.h>
+#include <vector2.h>
+
+#include <Logs/log_macro.h>
+
+DECLARE_LOG_CATEGORY_EXTERN(LogExplorer)
 
 namespace Mirage
 {
 	enum class AssetType {
-		Folder = 0,
+		Folder	= 0,
 		Texture = 1,
-		Model = 2,
-		Script = 3,
-		Shader = 4,
-		Scene = 5,
+		Model	= 2,
+		Script	= 3,
+		Shader	= 4,
+		Scene	= 5,
 		Unknown = 6
 	};
 

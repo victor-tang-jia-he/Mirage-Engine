@@ -36,7 +36,10 @@ using namespace MirageEngine::Core::Resources;
 
 namespace Mirage
 {
-	void Inspector::InitPanel() {}
+	void Inspector::InitPanel()
+	{
+		LOG(logTemp, LogInspector, "Inspector Panel Initialized");
+	}
 
 	void Inspector::DrawPanel([[maybe_unused]] uint32_t _textureID)
 	{

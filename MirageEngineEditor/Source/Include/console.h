@@ -4,6 +4,9 @@
 #include <vector>
 #include <string>
 
+DECLARE_LOG_CATEGORY_EXTERN(logConsole)
+DECLARE_LOG_CATEGORY_EXTERN(logConsoleInfo)
+
 namespace Mirage
 {
     enum class LogLevel

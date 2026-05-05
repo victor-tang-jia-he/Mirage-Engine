@@ -9,6 +9,11 @@
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_opengl3.h"
 
+#include <Logs/log.h>
+
+DEFINE_LOG_CATEGORY_WITH_COLOR(logConsole, Loggers::Color::CYAN);
+DEFINE_LOG_CATEGORY(logConsoleInfo,);
+
 namespace Mirage
 {
 	void Console::InitPanel()
@@ -16,6 +21,7 @@ namespace Mirage
 		AddLog("I am a test", LogLevel::Info);
 		AddLog("I am a second test", LogLevel::Error);
 		AddLog("You know the drill", LogLevel::Warning);
+		LOG(logTemp, logConsole, "Console Panel Initialized");
 	}
 
 	void Console::DrawPanel(uint32_t _textureID)
@@ -24,6 +30,7 @@ namespace Mirage
 
 		if(ImGui::Button("Clear"))
 			m_Logs.clear();
+
 		ImGui::SameLine();
 		m_SearchBar.Draw("Search", 150.0f);
 		if (ImGui::TreeNode("Filters"))
@@ -81,12 +88,13 @@ namespace Mirage
 
 	void Console::AddLog(const char* _log, LogLevel _level)
 	{
-		if(m_Logs.size() < 500)
+		if(m_Logs.size() < 512)
 		{
 			m_Logs.push_back(LogInfo(_log, _level));
 		}
 		else
 		{
+			LOG(logWarning, logConsoleInfo, "Log limit reached, oldest log removed");
 			m_Logs.erase(m_Logs.begin());
 		}
 	}

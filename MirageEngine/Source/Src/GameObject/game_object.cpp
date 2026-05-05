@@ -67,12 +67,12 @@ void MirageEngine::GameObject::SetActive(bool _isActive)
 	if (_isActive)
 	{
 		m_bIsActive = true;
-		std::cout << "GameObject is now active." << std::endl;
+		LOG(logTemp, LogGameObject, "GameObject is now active.");
 	}
 	else
 	{
 		m_bIsActive = false;
-		std::cout << "GameObject is now inactive." << std::endl;
+		LOG(logTemp, LogGameObject, "GameObject is now inactive.");
 	}
 }
 void MirageEngine::GameObject::AddComponent(std::shared_ptr<MirageEngine::Core::Components::Component> _component)

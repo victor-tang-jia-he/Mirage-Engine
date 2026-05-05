@@ -3,6 +3,8 @@
 #include <memory>
 #include <string>
 
+DECLARE_LOG_CATEGORY_EXTERN(LogHierarchy)
+
 namespace MirageEngine {
 	class SceneGraph;
 	class GameObject;
