@@ -72,8 +72,6 @@ void Application::InitInput()
     glfwSetKeyCallback(window, InputSystem::KeyCallback);
     glfwSetMouseButtonCallback(window, InputSystem::MouseButtonCallback);
     glfwSetCursorPosCallback(window, InputSystem::CursorPosCallback);
-    // bind camera
-    m_EngineCamera->BindInput(m_EditorMapping);
 }
 
 using namespace MirageEngine::Core::Resources;

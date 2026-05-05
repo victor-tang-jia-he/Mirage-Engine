@@ -17,7 +17,7 @@ namespace MirageEditor
         float m_DefaultVelocity = 1.f;
         float m_RunVelocity = 5.f;
 
-        float m_CameraSensitivity = 1.0f;
+        float m_CameraSensitivity = 0.1f;
 
     public:
         // Inputs

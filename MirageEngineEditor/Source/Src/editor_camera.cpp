@@ -41,11 +41,11 @@ void MirageEditor::EditorCamera::Move(Input::CallbackInputInfo _info)
 {
     if (_info.Held)
     {
-        Math::Vector3 up = Math::Vector3(0, 1, 0).Rotate(m_Pitch, m_Yaw, 0);
+        Math::Vector3 up = Math::Vector3(0, 1, 0).Rotate(m_Rotation.X, m_Rotation.Y, m_Rotation.Z);
         SetPosition(GetPosition() - up * _info.Axis1D * m_CameraVelocity * TimeManager::GetDeltaTime());
 
-        Math::Vector3 forward = Math::Vector3(0, 0, -1).Rotate(m_Pitch, m_Yaw, 0);
-        Math::Vector3 left = Math::Vector3(1, 0, 0).Rotate(m_Pitch, m_Yaw, 0);
+        Math::Vector3 forward = Math::Vector3(0, 0, -1).Rotate(m_Rotation.X, m_Rotation.Y, m_Rotation.Z);
+        Math::Vector3 left = Math::Vector3(1, 0, 0).Rotate(m_Rotation.X, m_Rotation.Y, m_Rotation.Z);
         Math::Vector3 direction = forward * _info.Axis2D.Y + left * _info.Axis2D.X;
         SetPosition(GetPosition() + direction * m_CameraVelocity * TimeManager::GetDeltaTime());
     }
@@ -56,11 +56,10 @@ void MirageEditor::EditorCamera::View(Input::CallbackInputInfo _info)
     if (!_info.Held) return;
 
     Math::Vector2 mouseDelta = Input::InputSystem::GetMouseDelta();
-    float sensitivity = -0.1f;
 
-    m_Pitch = m_Pitch + ToRad(mouseDelta.Y * sensitivity);
-    m_Yaw = m_Yaw + ToRad(mouseDelta.X * sensitivity);
+    m_Rotation.X -= ToRad(mouseDelta.Y * m_CameraSensitivity);
+    m_Rotation.Y -= ToRad(mouseDelta.X * m_CameraSensitivity);
 
     const float maxPitch = ToRad(89);
-    m_Pitch = std::clamp(m_Pitch, -maxPitch, maxPitch);
+    m_Rotation.X = std::clamp(m_Rotation.X, -maxPitch, maxPitch);
 }

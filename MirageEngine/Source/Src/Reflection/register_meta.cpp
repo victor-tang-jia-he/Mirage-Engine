@@ -118,7 +118,8 @@ void RegisterMeta::RegisterCameraMeta()
 	camera.data<&Camera::SetFar, &Camera::GetFar>("Far");
 	camera.data<&Camera::SetHeight, &Camera::GetHeight>("Height");
 	camera.data<&Camera::SetWidth, &Camera::GetWidth>("Width");
-	camera.data<&Camera::SetTransform, &Camera::Transform>("Transform");
+	camera.data<&Camera::SetPosition, &Camera::GetPosition>("Position");
+	camera.data<&Camera::SetRotation, &Camera::GetRotation>("Rotation");
 
 	camera.func<&Camera::AttachMeta>("Attach"_hs);
 }
