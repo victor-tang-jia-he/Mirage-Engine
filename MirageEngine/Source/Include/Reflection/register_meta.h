@@ -20,13 +20,17 @@ namespace MirageEngine
 		void RegisterMeshRendererMeta();
 		void RegisterCameraMeta();
 		void RegisterInputMappingMeta();
-		void RegisterInfluenceGridMeta();
-		void RegisterInfluenceEmitterMeta();
 
 		void RegisterMeshMeta();
 		void RegisterTextureMeta();
 		void RegisterMaterialMeta();
 		void RegisterShaderMeta();
+
+		void RegisterInfluenceGridMeta();
+		void RegisterInfluenceEmitterMeta();
+		void RegisterResponsiveCurveMeta();
+		void RegisterNavAgentMeta();
+		void RegisterUtilityAgentMeta();
 
 		template<typename T>
 		void RegisterSharedPtr();

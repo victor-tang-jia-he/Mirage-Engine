@@ -11,6 +11,9 @@
 #include <Components/influence_emitter.h>
 #include <AI/influence_grid.h>
 #include <Input/input_mapping.h>
+#include <AI/responsive_curve.h>
+#include <Components/nav_agent.h>
+#include <Components/utility_agent.h>
 
 // Ressources includes
 #include <Resources/material.h>
@@ -202,6 +205,8 @@ void RegisterMeta::RegisterInfluenceGridMeta()
 	influenceGrid.data<&InfluenceGrid::SetHeight, &InfluenceGrid::GetHeight>("Height");
 	influenceGrid.data<&InfluenceGrid::SetCellSize, &InfluenceGrid::GetCellSize>("Cell Size");
 	influenceGrid.data<&InfluenceGrid::SetDecayRate, &InfluenceGrid::GetDecayRate>("Decay Rate");
+
+	influenceGrid.func<&InfluenceGrid::Bake>("Bake Grid");
 }
 
 void RegisterMeta::RegisterInfluenceEmitterMeta()
@@ -214,4 +219,47 @@ void RegisterMeta::RegisterInfluenceEmitterMeta()
 	influenceEmitter.data<&InfluenceEmitter::SetRadius, &InfluenceEmitter::GetRadius>("Radius");
 	influenceEmitter.data<&InfluenceEmitter::SetStrength, &InfluenceEmitter::GetStrength>("Strength");
 	influenceEmitter.data<&InfluenceEmitter::SetTargetGrid, &InfluenceEmitter::GetTargetGrid>("Grid");
+}
+
+void RegisterMeta::RegisterResponsiveCurveMeta()
+{
+	entt::meta_factory<AI::ResponsiveCurve> curve{};
+	curve.type(entt::type_id<AI::ResponsiveCurve>().hash(), "ResponsiveCurve");
+
+	curve.data<&AI::ResponsiveCurve::SetSlope, &AI::ResponsiveCurve::GetSlope>("Slope");
+	curve.data<&AI::ResponsiveCurve::SetExponent, &AI::ResponsiveCurve::GetExponent>("Exponent");
+	curve.data<&AI::ResponsiveCurve::SetXOffset, &AI::ResponsiveCurve::GetXOffset>("X Offset");
+	curve.data<&AI::ResponsiveCurve::SetYOffset, &AI::ResponsiveCurve::GetYOffset>("Y Offset");
+	curve.data<&AI::ResponsiveCurve::SetInverted, &AI::ResponsiveCurve::GetInverted>("Inverted");
+}
+
+void RegisterMeta::RegisterNavAgentMeta()
+{
+	entt::meta_factory<AI::NavProfile> navProfile{};
+	navProfile.type(entt::type_id<AI::NavProfile>().hash(), "NavProfile");
+	navProfile.data<&AI::NavProfile::influenceWeights>("Weights");
+	navProfile.data<&AI::NavProfile::canWalkDiagonal>("Can Walk Diagonal");
+
+	entt::meta_factory<NavAgent> navAgent{};
+	navAgent.type(entt::type_id<NavAgent>().hash(), "NavAgent");
+	navAgent.base<Component>();
+
+	navAgent.data<&NavAgent::SetMovementSpeed, &NavAgent::GetMovementSpeed>("Movement Speed");
+	navAgent.data<&NavAgent::SetRotationSpeed, &NavAgent::GetRotationSpeed>("Rotation Speed");
+	navAgent.data<&NavAgent::SetStoppingDistance, &NavAgent::GetStoppingDistance>("Stopping Distance");
+	navAgent.data<&NavAgent::SetRecalculateInterval, &NavAgent::GetRecalculateInterval>("Recalculate Interval");
+
+	navAgent.data<&NavAgent::SetProfile, &NavAgent::GetProfile>("Navigation Profile");
+}
+
+void RegisterMeta::RegisterUtilityAgentMeta()
+{
+	entt::meta_factory<UtilityAgent> utilityAgent{};
+	utilityAgent.type(entt::type_id<UtilityAgent>().hash(), "UtilityAgent");
+	utilityAgent.base<Component>();
+
+	utilityAgent.data<&UtilityAgent::SetDecisionInterval, &UtilityAgent::GetDecisionInterval>("Decision Interval");
+	utilityAgent.data<&UtilityAgent::SetInertia, &UtilityAgent::GetInertia>("Inertia");
+
+	utilityAgent.data<nullptr, &UtilityAgent::GetLastDecisionReason>("Status");
 }

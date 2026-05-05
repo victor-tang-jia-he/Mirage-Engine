@@ -19,5 +19,19 @@ namespace MirageEngine::AI
 
 	public:
 		float Evaluate(float _x);
+
+		// Getters
+		float GetSlope() { return m_Slope; }
+		float GetExponent() { return m_Exponent; }
+		float GetXOffset() { return m_XOffset; }
+		float GetYOffset() { return m_YOffset; }
+		bool GetInverted() { return m_Inverted; }
+
+		// Setters
+		void SetSlope(float _newValue) { m_Slope = _newValue; }
+		void SetExponent(float _newValue) { m_Exponent = _newValue; }
+		void SetXOffset(float _newValue) { m_XOffset = _newValue; }
+		void SetYOffset(float _newValue) { m_YOffset = _newValue; }
+		void SetInverted(bool _isInverted) { m_Inverted = _isInverted; }
 	};
 }

@@ -65,6 +65,7 @@ namespace MirageEngine::Core::Components
 		float GetIntensity(int _channelIndex) const;
 		float GetIntensityByName(const std::string& _name) const;
 		float GetInternalStat(const std::string& _name);
+		const std::string& GetLastDecisionReason() const { return m_LastDecisionReason; }
 
 		// Setters
 		void SetDecisionInterval(float _newDecisionInterval) { m_DecisionInterval = _newDecisionInterval; }
