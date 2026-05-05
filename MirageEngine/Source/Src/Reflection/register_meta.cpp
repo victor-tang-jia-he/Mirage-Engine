@@ -52,6 +52,9 @@ void RegisterMeta::RegisterAllMeta()
 	RegisterInputMappingMeta();
 	RegisterInfluenceGridMeta();
 	RegisterInfluenceEmitterMeta();
+	RegisterNavAgentMeta();   
+	RegisterUtilityAgentMeta();
+	RegisterResponsiveCurveMeta();
 
 	RegisterMeshMeta();
 	RegisterTextureMeta();

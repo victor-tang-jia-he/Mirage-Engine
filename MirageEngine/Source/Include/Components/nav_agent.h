@@ -13,7 +13,6 @@ namespace MirageEngine::Core
 			int m_NextWaypointIndex;
 			Vector3 m_TargetDestination;
 			AI::NavProfile m_Profile;
-			GameObject* m_Owner;
 
 			// Variables to show in inspector
 			float m_MovementSpeed = 5.0f;

@@ -24,6 +24,8 @@
 #include "Components/influence_emitter.h"
 #include <Input/input_mapping.h>
 #include <AI/influence_grid.h>
+#include <AI/responsive_curve.h>
+#include <Components/nav_agent.h>
 
 DEFINE_LOG_CATEGORY_WITH_COLOR(LogInspector, Loggers::Color::CYAN);
 
@@ -74,6 +76,14 @@ namespace Mirage
 		{
 			// 2. Ask EnTT if it has meta-data for this component's Type ID
 			auto type = entt::resolve(comp->GetType());
+
+			if (type) {
+				LOG(logTemp, LogInspector, "Drawing component: %s with %d properties", type.name(), std::distance(type.data().begin(), type.data().end()));
+			}
+			else {
+				LOG(logTemp, LogInspector, "Meta type not found for ID: %llu", comp->GetType());
+			}
+
 			if (type)
 			{
 				const char* displayName = type.name();
@@ -99,6 +109,24 @@ namespace Mirage
 							// 4. Call our "Dispatcher" to draw the appropriate ImGui widget
 							DrawPropertyDirect(type, data, (void*)comp.get());
 							ImGui::PopItemWidth();
+						}
+						ImGui::TableNextRow();
+						ImGui::TableNextColumn();
+						ImGui::TableNextColumn();
+
+						for (auto [id, func] : type.func())
+						{
+							const char* funcName = func.name();
+							std::string btnLabel = (funcName && funcName[0] != '\0')
+								? funcName
+								: "Invoke " + std::to_string(static_cast<uint32_t>(id));
+
+							float btnWidth = ImGui::GetContentRegionAvail().x;
+							if (ImGui::Button(btnLabel.c_str(), ImVec2(btnWidth, 25)))
+							{
+								entt::meta_any instance = type.from_void(comp.get());
+								func.invoke(instance);
+							}
 						}
 						ImGui::EndTable();
 					}
@@ -158,6 +186,55 @@ namespace Mirage
 			ResolveBool(value, label, _data, instance);
 		else if (actualType.is_pointer_like())
 			ResolvePointer(value, label, _data, instance);
+		else if (actualType == entt::resolve<AI::ResponsiveCurve>())
+		{
+			if (ImGui::TreeNode(label)) {
+				AI::ResponsiveCurve* curve = value.try_cast<AI::ResponsiveCurve>();
+				if (curve) {
+					float samples[50];
+					for (int i = 0; i < 50; i++) samples[i] = curve->Evaluate((float)i / 49.0f);
+					ImGui::PlotLines("##Preview", samples, 50, 0, nullptr, 0.0f, 1.0f, ImVec2(0, 80));
+
+					auto curveType = entt::resolve<AI::ResponsiveCurve>();
+					for (auto [id, childData] : curveType.data()) {
+						DrawPropertyDirect(curveType, childData, curve);
+					}
+				}
+				ImGui::TreePop();
+			}
+		}
+		else if (!actualType.is_arithmetic() && !actualType.is_pointer_like())
+		{
+			if (ImGui::TreeNode(label))
+			{
+				for (auto [id, childData] : actualType.data())
+				{
+					entt::meta_any childValue = childData.get(value);
+					if (childValue)
+					{
+						ImGui::Text("%s : (Nested Object)", childData.name());
+					}
+				}
+				ImGui::TreePop();
+			}
+		}
+		else if (value.type().is_sequence_container())
+		{
+			if (ImGui::TreeNode(label)) {
+				auto view = value.as_sequence_container();
+				int index = 0;
+				for (auto item : view) {
+					std::string itemLabel = "Element " + std::to_string(index);
+					if (item.type() == entt::resolve<float>()) {
+						float val = item.cast<float>();
+						if (ImGui::DragFloat(itemLabel.c_str(), &val)) {
+						}
+					}
+					index++;
+				}
+				ImGui::TreePop();
+			}
+		}
 	}
 
 	void Inspector::ResolveVec3(entt::meta_any _value, const char* _label, entt::meta_data _data, entt::meta_any& _instance)
@@ -432,6 +509,33 @@ namespace Mirage
 			}
 			if (hasInputMapping && ImGui::IsItemHovered(ImGuiHoveredFlags_AllowWhenDisabled))
 				ImGui::SetTooltip("GameObject already has an InputMapping");
+
+			/*bool hasResponsiveCurve = _selectedObj->GetComponent<ResponsiveCurve>() != nullptr;
+			if (ImGui::MenuItem("Responsive curve", nullptr, false, !hasResponsiveCurve))
+			{
+				_selectedObj->AddComponent<ResponsiveCurve>();
+				ImGui::CloseCurrentPopup();
+			}
+			if (hasResponsiveCurve && ImGui::IsItemHovered(ImGuiHoveredFlags_AllowWhenDisabled))
+				ImGui::SetTooltip("GameObject already has an Responsive curve");*/
+
+			bool hasNavAgent = _selectedObj->GetComponent<NavAgent>() != nullptr;
+			if (ImGui::MenuItem("Nav Agent", nullptr, false, !hasNavAgent))
+			{
+				_selectedObj->AddComponent<NavAgent>();
+				ImGui::CloseCurrentPopup();
+			}
+			if (hasNavAgent && ImGui::IsItemHovered(ImGuiHoveredFlags_AllowWhenDisabled))
+				ImGui::SetTooltip("GameObject already has an Nav Agent");
+
+			bool hasUtilityAgent = _selectedObj->GetComponent<UtilityAgent>() != nullptr;
+			if (ImGui::MenuItem("UtilityAgent", nullptr, false, !hasUtilityAgent))
+			{
+				_selectedObj->AddComponent<UtilityAgent>();
+				ImGui::CloseCurrentPopup();
+			}
+			if (hasUtilityAgent && ImGui::IsItemHovered(ImGuiHoveredFlags_AllowWhenDisabled))
+				ImGui::SetTooltip("GameObject already has an Utility Agent");
 
 			ImGui::EndPopup();
 		}

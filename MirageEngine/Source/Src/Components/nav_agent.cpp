@@ -11,7 +11,6 @@ namespace MirageEngine::Core
 	{
 		void NavAgent::Init()
 		{
-			m_Owner = GetOwner();
 		}
 
 		void NavAgent::Update()
@@ -19,7 +18,7 @@ namespace MirageEngine::Core
 			if (m_CurrentPath.empty()) return;
 
 			Vector3 targetPos = m_CurrentPath[m_NextWaypointIndex];
-			Vector3 myPos = m_Owner->Transform.GetPosition();
+			Vector3 myPos = GetOwner()->Transform.GetPosition();
 
 			float distance = m_Owner->Transform.GetPosition().Distance(targetPos);
 			if (distance < m_StoppingDistance)
