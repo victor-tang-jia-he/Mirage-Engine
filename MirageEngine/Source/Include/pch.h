@@ -19,7 +19,6 @@
 #include <string>
 #include <functional>
 #include <optional>
-#include <span>
 #include <cstdint>
 
 // Common

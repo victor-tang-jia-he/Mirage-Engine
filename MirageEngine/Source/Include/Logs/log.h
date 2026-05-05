@@ -71,11 +71,8 @@ namespace Loggers
 	};
 
 	// ===== GLOBAL GETTER & SETTING =====
-	inline LogConfig& GetLogConfig()
-	{
-		static LogConfig instance;
-		return instance;
-	}
+	ENGINE_API LogConfig& GetLogConfig();
+
 	static void EnableFileWriting(bool enable) { GetLogConfig().WriteInFile.store(enable); }
 
 	static void EnableImmediateFlush(bool enable) { GetLogConfig().FlushEveryLog.store(enable); }

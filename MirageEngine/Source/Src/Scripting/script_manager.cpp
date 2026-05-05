@@ -204,6 +204,7 @@ namespace MirageEngine::Core::Scripting
 		cmd += " /D CPP_TRACE_DEBUG";
 		cmd += " /I\"" + m_EngineIncludeDir.string() + "\"";
 		cmd += " /I\"" + m_Toolbox.string() + "\"";
+		cmd += " /FI\"pch.h\"";
 
 		for (const auto& src : sources) cmd += " " + src;
 
