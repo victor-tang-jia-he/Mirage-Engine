@@ -9,6 +9,7 @@
 #include <Logs/log_macro.h>
 
 DECLARE_LOG_CATEGORY_EXTERN(LogExplorer)
+DECLARE_LOG_CATEGORY_EXTERN(LogExplorerInfo)
 
 namespace Mirage
 {

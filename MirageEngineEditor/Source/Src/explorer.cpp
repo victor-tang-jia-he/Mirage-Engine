@@ -13,6 +13,7 @@
 #include <Logs/log.h>
 
 DEFINE_LOG_CATEGORY_WITH_COLOR(LogExplorer, Loggers::Color::CYAN);
+DEFINE_LOG_CATEGORY(LogExplorerInfo);
 
 namespace Mirage
 {
@@ -31,6 +32,7 @@ namespace Mirage
 		UIWrapper::BeginWindow("Explorer");
 
 		ImGui::BeginChild("Sidebar", ImVec2(150, 0), true); //LEFT->SideBar
+
 		DrawFolderTree();
 		ImGui::EndChild();
 
@@ -318,7 +320,7 @@ namespace Mirage
 		std::filesystem::copy(_source, _target, std::filesystem::copy_options::recursive, ec);
 
 		if (ec)
-			LOG(logError, LogExplorer, "Error during duplication: ", ec.message());
+			LOG(logError, LogExplorerInfo, "Error during duplication: ", ec.message());
 
 		ScanProjectDirectory(m_CurrentPath);
 	}
@@ -643,7 +645,7 @@ namespace Mirage
 		std::filesystem::rename(_oldPath, _newPath, ec);
 
 		if (ec)
-			LOG(logError, LogExplorer, "Error during renaming: ", ec.message());
+			LOG(logError, LogExplorerInfo, "Error during renaming: ", ec.message());
 	}
 
 	void Explorer::MoveItem(const std::filesystem::path& _source, const std::filesystem::path& _target)
@@ -654,7 +656,7 @@ namespace Mirage
 		std::filesystem::rename(_source, newPath, ec);
 
 		if (ec)
-			LOG(logError, LogExplorer, "Move Error: ", ec.message());
+			LOG(logError, LogExplorerInfo, "Move Error: ", ec.message());
 		else
 			ScanProjectDirectory(m_CurrentPath);
 	}
@@ -662,8 +664,6 @@ namespace Mirage
 	std::shared_ptr<MirageEngine::Core::Resources::Texture> Explorer::GetIconTexture(unsigned int _index)
 	{
 		MirageEngine::Core::Resources::ResourceManager& rm = MirageEngine::Core::Resources::ResourceManager::Instance();
-
-		std::shared_ptr<MirageEngine::Core::Resources::Texture> texCat = rm.GetTexture("cat");
 
 		std::shared_ptr<MirageEngine::Core::Resources::Texture> folder = rm.GetTexture("folder_icon");
 		std::shared_ptr<MirageEngine::Core::Resources::Texture> texture = rm.GetTexture("texture_icon");

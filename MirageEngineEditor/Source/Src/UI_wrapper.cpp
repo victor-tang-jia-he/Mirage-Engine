@@ -34,6 +34,20 @@ namespace Mirage
 		//io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
 		ImGui::StyleColorsDark();
 
+		// Load custom font
+		ImFont* font = io.Fonts->AddFontFromFileTTF("./Assets/TextFonts/ZenDots-Regular.ttf", 16);
+		if (font == nullptr)
+		{
+			LOG(logWarning, LogUIWrapper, "Failed to load custom font, using default");
+		}
+		else
+		{
+			io.FontDefault = font;
+			LOG(logTemp, LogUIWrapper, "Custom font loaded successfully");
+		}
+
+		ImColor textColor = ImColor(255, 255, 255);
+
 		ImGuizmo::SetImGuiContext(context);
 
 		GLFWwindow* window = static_cast<GLFWwindow*>(_windowHandle);

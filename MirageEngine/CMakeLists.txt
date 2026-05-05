@@ -47,11 +47,39 @@ set_target_properties(MirageEngine PROPERTIES
 )
 
 # Copy all asset in the build
+set(ASSETS_SOURCE "${CMAKE_SOURCE_DIR}/MirageEngine/Assets")
+set(ASSETS_DEST "${MIRAGE_BIN_OUTPUT_DIR}/Assets")
+
+if(EXISTS ${ASSETS_SOURCE})
+    add_custom_command(TARGET MirageEngine POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E make_directory "${ASSETS_DEST}"
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+            "${ASSETS_SOURCE}"
+            "${ASSETS_DEST}"
+        COMMENT "Copying assets to ${ASSETS_DEST}"
+        VERBATIM
+    )
+    message(STATUS "Assets will be copie from ${ASSETS_SOURCE}")
+else()
+    message(STATUS "No Assets folder found at ${ASSETS_SOURCE} skip asset copy")
+endif()
+
 add_custom_command(TARGET MirageEngine POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E make_directory
-        "$<TARGET_FILE_DIR:MirageEngine>/Assets"
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        $<TARGET_FILE:MirageEngine>
+        $<TARGET_FILE_DIR:MirageEngineEditor>
+)
+
+
+set(ENGINE_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/Source/Include")
+set(TOOLBOX_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/Tools/Toolbox/Source/Include")
+
+add_custom_command(TARGET MirageEngine POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+        "${ENGINE_INCLUDE_DIR}"
+        "$<TARGET_FILE_DIR:MirageEngine>/Include/Engine"
 
     COMMAND ${CMAKE_COMMAND} -E copy_directory
-        "${CMAKE_SOURCE_DIR}/Assets"
-        "$<TARGET_FILE_DIR:MirageEngine>/Assets"
+        "${TOOLBOX_INCLUDE_DIR}"
+        "$<TARGET_FILE_DIR:MirageEngine>/Include/Toolbox"
 )
