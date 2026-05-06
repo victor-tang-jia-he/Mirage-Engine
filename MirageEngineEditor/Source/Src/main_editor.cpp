@@ -10,6 +10,8 @@
 #include "Reflection/register_meta.h"
 #include <Scripting/script_manager.h>
 #include <Logs/log.h>
+#include <DebugDraw/debug_draw.h>
+#include <Components/camera.h>
 
 int main()
 {
@@ -25,10 +27,13 @@ int main()
 	MirageEngine::RegisterMeta().RegisterAllMeta();
 	editor.Init(application.m_Renderer.GetWindowHandle(), &application.m_Renderer, application.GetSceneGraph());
 	MirageEngine::TimeManager::Init();
-
+	Debug_Draw.Init(application.m_Renderer.GetRenderInterfaceHandle());
 	float dt;
 	while (application.m_Renderer.IsRunning())
 	{
+		Debug_Draw.Line({ 0,0,0 }, { 1,0,0 }, { 1,0,0,1 }); // ligne rouge
+		Debug_Draw.Line({ 0,0,0 }, { 0,1,0 }, { 0,1,0,1 }); // ligne verte
+
 		glfwPollEvents();
 		MirageEngine::TimeManager::Update();
 		dt = MirageEngine::TimeManager::GetDeltaTime();
@@ -47,6 +52,7 @@ int main()
 		application.m_Renderer.BeginFrame();
 
 		application.m_Renderer.RenderScene(application.m_SceneGraph);
+		application.m_Renderer.RenderLine();
 		application.m_Renderer.RenderScreen();
 
 		// Used to display the scene in the editor viewport

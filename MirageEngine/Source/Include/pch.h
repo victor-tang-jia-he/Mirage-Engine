@@ -1,4 +1,4 @@
-// rhi_pch.h
+// pch.h
 #pragma once
 
 #define FORCE_ALIGNED_TYPES 1

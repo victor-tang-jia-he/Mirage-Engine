@@ -7,6 +7,7 @@
 #include <Components/component.h>
 #include <Components/transform.h>
 #include <Components/mesh_renderer.h>
+#include <Scripting/engine_script_api.h>
 
 DECLARE_LOG_CATEGORY_EXTERN(LogGameObject)
 
@@ -21,7 +22,7 @@ namespace MirageEngine
 	// Static : Transform matrix doesn't update every frame
 	// Dynamic : Transform matrix updates every frame
 
-	class GameObject  : public std::enable_shared_from_this<GameObject>
+	class ENGINE_API GameObject  : public std::enable_shared_from_this<GameObject>
 	{
 	private:
 		// Game Object variables

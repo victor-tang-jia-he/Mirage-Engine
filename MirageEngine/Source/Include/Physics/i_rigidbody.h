@@ -26,7 +26,9 @@ namespace MirageEngine::Core::Physics
             bool               m_bIsDirty         = true;
 
             std::vector<ICollider*> m_CurrentRigidBodyShapesBind;
+
         public:
+
             std::function<void()> OnSimulated;
 
             IRigidBody()          = default;
@@ -62,10 +64,19 @@ namespace MirageEngine::Core::Physics
                 m_bIsDirty         = true;
             }
 
-            ECollisionGroup GetCollisionGroup() const { return m_CollisionGroup; }
+            ECollisionGroup GetCollisionGroup() const
+            {
+                return m_CollisionGroup;
+            }
 
-            ECollisionGroup GetCollisionMask() const { return m_CollisionMask; }
+            ECollisionGroup GetCollisionMask() const
+            {
+                return m_CollisionMask;
+            }
 
-            virtual Bullet3RigidBody& API_Bullet3() { throw std::runtime_error("Bad API Call : object is not a Bullet3RigidBody"); }
+            virtual Bullet3RigidBody& API_Bullet3()
+            {
+                throw std::runtime_error("Bad API Call : object is not a Bullet3RigidBody");
+            }
     };
 } // namespace MirageEngine::Core::Physics

@@ -2,6 +2,7 @@
 #include <GLFW/glfw3.h>
 
 #include "renderer.h"
+#include <DebugDraw/debug_draw.h>
 
 #include <Logs/log.h>
 #include <OpenGL/openGL_render_interface.h>
@@ -220,6 +221,18 @@ void Renderer::RenderObjectRecursive(std::shared_ptr<MirageEngine::GameObject> _
     {
         RenderObjectRecursive(child);
     }
+}
+
+void MirageEngine::Renderer::RenderLine()
+{
+    m_CommandBuffer->BindPipeline(Debug_Draw.m_Pipeline);
+    m_CommandBuffer->ApplyPipelineParameters(Debug_Draw.m_Pipeline);
+    Debug_Draw.UpdateVertexBuffer();
+    m_UniformBuffer->UpdateUniformBuffer(Debug_Draw.m_Pipeline, Matrix4::Identity());
+    m_CommandBuffer->BindBuffer(Debug_Draw.m_VertexBufferObject);
+    m_CommandBuffer->ApplyVertexLayout(Debug_Draw.m_VertexAttributeObject);
+    m_CommandBuffer->Draw((uint32_t)Debug_Draw.m_Lines.size(), MirageRHI::DrawMode::Lines);
+    Debug_Draw.Flush();
 }
 
 void Renderer::DrawMesh(std::shared_ptr<MirageEngine::Core::Components::MeshRenderer> _meshRenderer, const MirageEngine::Core::Components::Transform& _meshTransform)

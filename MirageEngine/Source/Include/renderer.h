@@ -54,6 +54,8 @@ namespace MirageEngine
 		void RenderScreen();
 		// Manages the end of the frame, such as presenting the rendered image and swapping buffers
 		void EndFrame();
+		// REdners a list of line
+		void RenderLine();
 
 		// --- Getters ---
 		// Used to display the scene in the editor viewport

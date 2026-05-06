@@ -11,7 +11,7 @@ void Pipeline::Bind()
 {
 	if (!PipelineBind)
 	{
-		LOG(logError, LogPipeline, "Pipeline ", p_Name, " has no valid pipeline to bind !");
+		LOG(logError, LogPipeline, "Pipeline ", p_Name, " has no valid m_Pipeline to bind !");
 		return;
 	}
 	if (!AttachedVertexShader || !AttachedFragmentShader)
@@ -21,7 +21,7 @@ void Pipeline::Bind()
 	}
 	if (!PipelineParameters)
 	{
-		LOG(logError, LogPipeline, "Pipeline ", p_Name, " has no valid pipeline parameters !");
+		LOG(logError, LogPipeline, "Pipeline ", p_Name, " has no valid m_Pipeline parameters !");
 		return;
 	}
 	if (!m_bUploaded)

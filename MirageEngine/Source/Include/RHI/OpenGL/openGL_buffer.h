@@ -17,6 +17,7 @@ namespace MirageRHI
     public:
         // Creates and stores buffer data (vertexes, indices)
         void Create(const void* _data, size_t _size, BufferType _type) override;
+        void Update(const void* _data, size_t _size) override;
         void Destroy() override;
 
         // Getters

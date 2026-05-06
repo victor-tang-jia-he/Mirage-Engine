@@ -26,7 +26,7 @@ namespace MirageRHI
         void ApplyVertexLayout(std::shared_ptr<IVertexLayout> _vertexLayout) override;
 
         // Draw Binded Buffers
-        void Draw(uint32_t _indexCount) override;
+        void Draw(uint32_t _indexCount, DrawMode _mode = DrawMode::Triangles) override;
 
         // Swap Buffers
         void SubmitAndPresent(std::shared_ptr<ISwapChain> _swapchain, std::shared_ptr<ISurface> _surface) override;

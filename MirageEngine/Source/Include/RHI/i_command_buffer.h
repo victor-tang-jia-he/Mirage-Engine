@@ -16,6 +16,13 @@ namespace MirageRHI
 	class ISwapChain;
 	class ISurface;
 
+	enum class DrawMode
+	{
+		Triangles,
+		Lines,
+		Points
+	};
+
 	class ICommandBuffer
 	{
 	public:
@@ -33,7 +40,7 @@ namespace MirageRHI
 		virtual void BindTextureFromID(uint32_t _ID) = 0;
 		virtual void ApplyPipelineParameters(std::shared_ptr<IPipeline> _pipeline) = 0;
 		virtual void ApplyVertexLayout(std::shared_ptr<IVertexLayout> _vertexLayout) = 0;
-		virtual void Draw(uint32_t _indexCount) = 0;
+		virtual void Draw(uint32_t _indexCount, DrawMode _mode = DrawMode::Triangles) = 0;
 		virtual void SubmitAndPresent(std::shared_ptr<ISwapChain> _swapChain, std::shared_ptr<ISurface> _surface) = 0;
 	};
 }
