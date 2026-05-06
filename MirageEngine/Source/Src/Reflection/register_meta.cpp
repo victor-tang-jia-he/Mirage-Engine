@@ -208,7 +208,7 @@ void RegisterMeta::RegisterInfluenceGridMeta()
 	influenceGrid.data<&InfluenceGrid::SetHeight, &InfluenceGrid::GetHeight>("Height");
 	influenceGrid.data<&InfluenceGrid::SetCellSize, &InfluenceGrid::GetCellSize>("Cell Size");
 	influenceGrid.data<&InfluenceGrid::SetDecayRate, &InfluenceGrid::GetDecayRate>("Decay Rate");
-
+	influenceGrid.data<&InfluenceGrid::SetChannelsNames, &InfluenceGrid::GetChannelsNames>("Channels");
 	influenceGrid.func<&InfluenceGrid::Bake>("Bake Grid");
 }
 

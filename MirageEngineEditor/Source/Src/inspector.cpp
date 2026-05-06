@@ -219,14 +219,58 @@ namespace Mirage
 			if (ImGui::TreeNode(label)) {
 				auto view = value.as_sequence_container();
 				int index = 0;
-				for (auto item : view) {
-					std::string itemLabel = "Element " + std::to_string(index);
-					if (item.type() == entt::resolve<float>()) {
-						float val = item.cast<float>();
-						if (ImGui::DragFloat(itemLabel.c_str(), &val)) {
-						}
+
+				if (ImGui::Button("+ Add New Element")) {
+					if (view.value_type() == entt::resolve<float>())
+						view.insert(view.end(), 0.0f);
+					else if (view.value_type() == entt::resolve<std::string>())
+						view.insert(view.end(), std::string("NewChannel"));
+
+					_data.set(instance, value);
+				}
+				ImGui::Separator();
+
+				for (auto it = view.begin(); it != view.end(); )
+				{
+					ImGui::PushID(index);
+					bool elementDeleted = false;
+
+					if (ImGui::Button("X")) {
+						it = view.erase(it);
+						_data.set(instance, value);
+						elementDeleted = true;
 					}
-					index++;
+
+					if (!elementDeleted) {
+						ImGui::SameLine();
+						std::string itemLabel = "##" + std::to_string(index);
+						entt::meta_any item = *it;
+
+						if (item.type() == entt::resolve<float>()) {
+							float val = item.cast<float>();
+							if (ImGui::DragFloat(itemLabel.c_str(), &val, 0.1f)) {
+								it = view.erase(it);
+								it = view.insert(it, val); 
+								_data.set(instance, value);
+							}
+						}
+						else if (item.type() == entt::resolve<std::string>()) {
+							std::string str = item.cast<std::string>();
+							char buffer[256];
+							memset(buffer, 0, sizeof(buffer));
+							strncpy(buffer, str.c_str(), sizeof(buffer) - 1);
+
+							if (ImGui::InputText(itemLabel.c_str(), buffer, 256)) {
+								it = view.erase(it);
+								it = view.insert(it, std::string(buffer));
+								_data.set(instance, value);
+							}
+						}
+						++it;
+						index++;
+					}
+
+					ImGui::PopID();
 				}
 				ImGui::TreePop();
 			}
@@ -280,6 +324,32 @@ namespace Mirage
 		else if (type == entt::resolve<bool>()) {
 			bool v = childValue.cast<bool>();
 			if (ImGui::Checkbox(name, &v)) _childData.set(_parentInstance, v);
+		}
+		else if (type.is_sequence_container())
+		{
+			auto view = childValue.as_sequence_container();
+			if (ImGui::TreeNode(name)) {
+				int index = 0;
+				for (auto item : view) {
+					float val = item.cast<float>();
+					std::string label = "Channel " + std::to_string(index);
+
+					if (ImGui::DragFloat(label.c_str(), &val, 0.1f)) {
+						auto it = view.begin();
+						for (int i = 0; i < index; ++i) ++it;
+						view.erase(it);
+						view.insert(it, val);
+						_childData.set(_parentInstance, childValue);
+					}
+					index++;
+				}
+
+				if (ImGui::Button("+ Add Weight")) {
+					view.insert(view.end(), 0.0f);
+					_childData.set(_parentInstance, childValue);
+				}
+				ImGui::TreePop();
+			}
 		}
 	}
 
