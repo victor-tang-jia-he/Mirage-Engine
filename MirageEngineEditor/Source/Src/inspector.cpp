@@ -77,13 +77,6 @@ namespace Mirage
 			// 2. Ask EnTT if it has meta-data for this component's Type ID
 			auto type = entt::resolve(comp->GetType());
 
-			if (type) {
-				LOG(logTemp, LogInspector, "Drawing component: %s with %d properties", type.name(), std::distance(type.data().begin(), type.data().end()));
-			}
-			else {
-				LOG(logTemp, LogInspector, "Meta type not found for ID: %llu", comp->GetType());
-			}
-
 			if (type)
 			{
 				const char* displayName = type.name();
@@ -203,18 +196,21 @@ namespace Mirage
 				ImGui::TreePop();
 			}
 		}
-		else if (!actualType.is_arithmetic() && !actualType.is_pointer_like())
+		else if (!actualType.is_arithmetic() && !actualType.is_pointer_like() && !value.type().is_sequence_container())
 		{
 			if (ImGui::TreeNode(label))
 			{
 				for (auto [id, childData] : actualType.data())
 				{
-					entt::meta_any childValue = childData.get(value);
-					if (childValue)
-					{
-						ImGui::Text("%s : (Nested Object)", childData.name());
-					}
+					ImGui::TableNextRow();
+					ImGui::TableNextColumn();
+					ImGui::TextUnformatted(childData.name());
+					ImGui::TableNextColumn();
+					ImGui::PushItemWidth(-1);
+					DrawNestedProperty(childData, value);
+					ImGui::PopItemWidth();
 				}
+				_data.set(instance, value);
 				ImGui::TreePop();
 			}
 		}
@@ -234,6 +230,24 @@ namespace Mirage
 				}
 				ImGui::TreePop();
 			}
+		}
+	}
+
+	void Inspector::DrawNestedProperty(entt::meta_data _childData, entt::meta_any& _parentInstance)
+	{
+		entt::meta_any childValue = _childData.get(_parentInstance);
+		if (!childValue) return;
+
+		auto type = childValue.type();
+		const char* name = _childData.name();
+
+		if (type == entt::resolve<float>()) {
+			float v = childValue.cast<float>();
+			if (ImGui::DragFloat(name, &v, 0.1f)) _childData.set(_parentInstance, v);
+		}
+		else if (type == entt::resolve<bool>()) {
+			bool v = childValue.cast<bool>();
+			if (ImGui::Checkbox(name, &v)) _childData.set(_parentInstance, v);
 		}
 	}
 
@@ -509,15 +523,6 @@ namespace Mirage
 			}
 			if (hasInputMapping && ImGui::IsItemHovered(ImGuiHoveredFlags_AllowWhenDisabled))
 				ImGui::SetTooltip("GameObject already has an InputMapping");
-
-			/*bool hasResponsiveCurve = _selectedObj->GetComponent<ResponsiveCurve>() != nullptr;
-			if (ImGui::MenuItem("Responsive curve", nullptr, false, !hasResponsiveCurve))
-			{
-				_selectedObj->AddComponent<ResponsiveCurve>();
-				ImGui::CloseCurrentPopup();
-			}
-			if (hasResponsiveCurve && ImGui::IsItemHovered(ImGuiHoveredFlags_AllowWhenDisabled))
-				ImGui::SetTooltip("GameObject already has an Responsive curve");*/
 
 			bool hasNavAgent = _selectedObj->GetComponent<NavAgent>() != nullptr;
 			if (ImGui::MenuItem("Nav Agent", nullptr, false, !hasNavAgent))
