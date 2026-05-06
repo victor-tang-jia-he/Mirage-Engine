@@ -107,6 +107,13 @@ namespace MirageEngine::Core::Components
 			cell.channels.push_back(0.0f);
 	}
 
+	void InfluenceGrid::SetChannelsNames(const std::vector<std::string>& _names)
+	{
+		m_ChannelsNames = _names;
+		for (InfluenceCell& cell : m_Cells)
+			cell.channels.resize(m_ChannelsNames.size(), 0.0f);
+	}
+
 	Vector3 InfluenceGrid::GetCellWorldPosition(int _x, int _y) const
 	{
 		return Vector3(m_Origin.X + _x * m_CellSize + m_CellSize * 0.5f, m_Origin.Y, m_Origin.Z + _y * m_CellSize + m_CellSize * 0.5f);

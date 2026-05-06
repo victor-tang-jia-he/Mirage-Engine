@@ -55,12 +55,15 @@ namespace MirageEngine::Core::Components
 		float GetDecayRate() const { return m_DecayRate; }
 		const std::vector<InfluenceCell>& GetCells() const{ return m_Cells; }
 		int GetChannelsIndex(std::string _name) const;
-		std::vector<std::string> GetChannelsNames() const { return m_ChannelsNames; }
+		std::vector<std::string>& GetChannelsNames() { return m_ChannelsNames; }
+		int GetResX() const { return m_ResolutionX; }
+		int GetResY() const { return m_ResolutionY; }
 
 		// Setters
 		void SetWidth(float _w) { m_GridWidth = _w; }
 		void SetHeight(float _h) { m_GridHeight = _h; }
 		void SetCellSize(float _s) { m_CellSize = _s; }
 		void SetDecayRate(float _d) { m_DecayRate = _d; }
+		void SetChannelsNames(const std::vector<std::string>& _names);
 	};
 }
