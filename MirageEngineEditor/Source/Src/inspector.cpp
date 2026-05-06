@@ -10,6 +10,7 @@
 #include <limits>
 #include <fstream>
 #include <Resources/resource_manager.h>
+#include <application.h>
 
 // RESOURCES HEADERS
 #include <Resources/mesh.h>
@@ -328,26 +329,63 @@ namespace Mirage
 		else if (type.is_sequence_container())
 		{
 			auto view = childValue.as_sequence_container();
-			if (ImGui::TreeNode(name)) {
+			if (ImGui::TreeNode(name))
+			{
+				InfluenceGrid* grid = nullptr;
+				auto app = Application::Instance();
+				if (app) grid = app->GetSceneGraph()->FindComponentInScene<InfluenceGrid>();
+
 				int index = 0;
-				for (auto item : view) {
+				int indexToModify = -1;
+				float newValue = 0.0f;
+				bool shouldAdd = false;
+				int indexToDelete = -1;
+
+				for (auto item : view)
+				{
+					ImGui::PushID(index);
+
+					if (ImGui::Button("X")) { indexToDelete = index; }
+					ImGui::SameLine();
+
 					float val = item.cast<float>();
-					std::string label = "Channel " + std::to_string(index);
+
+					std::string label;
+					if (grid && index < (int)grid->GetChannelsNames().size())
+						label = grid->GetChannelsNames()[index];
+					else
+						label = "Weight " + std::to_string(index);
 
 					if (ImGui::DragFloat(label.c_str(), &val, 0.1f)) {
-						auto it = view.begin();
-						for (int i = 0; i < index; ++i) ++it;
-						view.erase(it);
-						view.insert(it, val);
-						_childData.set(_parentInstance, childValue);
+						indexToModify = index;
+						newValue = val;
 					}
+
+					ImGui::PopID();
 					index++;
 				}
 
-				if (ImGui::Button("+ Add Weight")) {
+				if (ImGui::Button("+ Add Weight")) { shouldAdd = true; }
+				if (indexToModify != -1) {
+					auto it = view.begin();
+					for (int i = 0; i < indexToModify; ++i) ++it;
+					it = view.erase(it);   
+					view.insert(it, newValue);
+					_childData.set(_parentInstance, childValue);
+				}
+
+				if (indexToDelete != -1) {
+					auto it = view.begin();
+					for (int i = 0; i < indexToDelete; ++i) ++it;
+					view.erase(it);
+					_childData.set(_parentInstance, childValue);
+				}
+
+				if (shouldAdd) {
 					view.insert(view.end(), 0.0f);
 					_childData.set(_parentInstance, childValue);
 				}
+
 				ImGui::TreePop();
 			}
 		}
