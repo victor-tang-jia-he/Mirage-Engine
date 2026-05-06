@@ -35,7 +35,7 @@ void PhysicsManager::Initialize(EPhysicsEngine _physicsEngine)
 
 void PhysicsManager::Update(float _deltaTime)
 {
-    if (m_worldPhysics == nullptr)
+    if (m_worldPhysics.get() == nullptr)
     {
         LOG(logWarning, LogPhysics, "Cannot Update : physics engine not initialized");
         return;
@@ -44,18 +44,21 @@ void PhysicsManager::Update(float _deltaTime)
     m_worldPhysics->Update(_deltaTime);
 }
 
-IRigidBody* PhysicsManager::CreateRigidBody(ICollider* _shape, ERigidBodyType _type)
+std::shared_ptr<IRigidBody> PhysicsManager::CreateRigidBody(std::shared_ptr<ICollider> _shape, ERigidBodyType _type)
 {
-    if (_shape == nullptr)
+    if (_shape.get() == nullptr)
     {
         LOG(logWarning, LogPhysics, "Cannot create rigid body : shape is null");
         return nullptr;
     }
-    IRigidBody* body = nullptr;
+    std::shared_ptr<Physics::IRigidBody> body;
     switch (m_physicsEngine)
     {
-        case EPhysicsEngine::Bullet3: body = new Bullet3RigidBody(); break;
-        default                     : break;
+    case EPhysicsEngine::Bullet3:
+        body = std::make_shared<Bullet3RigidBody>();
+        break;
+    default:
+        break;
     }
     if (body != nullptr) { body->Create(_shape, _type); }
     else
@@ -66,29 +69,36 @@ IRigidBody* PhysicsManager::CreateRigidBody(ICollider* _shape, ERigidBodyType _t
     return body;
 }
 
-ICollider* PhysicsManager::CreateCollider(ECollisionShapeType _shapeType)
+std::shared_ptr<ICollider> PhysicsManager::CreateCollider(ECollisionShapeType _shapeType)
 {
-    ICollider* collider = nullptr;
+    std::shared_ptr<Physics::ICollider> collider;
     switch (m_physicsEngine)
     {
         case EPhysicsEngine::Bullet3:
             switch (_shapeType)
             {
-                case ECollisionShapeType::Box    : collider = new Bullet3BoxCollider(); break;
-                case ECollisionShapeType::Sphere : collider = new Bullet3SphereCollider(); break;
-                case ECollisionShapeType::Capsule: collider = new Bullet3CapsuleCollider(); break;
-                default                          : break;
+            case ECollisionShapeType::Box    : 
+                collider = std::make_shared<Bullet3BoxCollider>();
+                break;
+                case ECollisionShapeType::Sphere :
+                    collider = std::make_shared<Bullet3SphereCollider>();
+                    break;
+                case ECollisionShapeType::Capsule:
+                    collider = std::make_shared<Bullet3CapsuleCollider>();
+                    break;
+                default                          :
+                    break;
             }
             break;
         default: break;
     }
-    if (collider != nullptr) { collider->Create(); }
+    if (collider.get() != nullptr) { collider->Create(); }
     return collider;
 }
 
-void PhysicsManager::RegisterRigidBody(IRigidBody* _body, ECollisionGroup _group, ECollisionGroup _mask)
+void PhysicsManager::RegisterRigidBody(std::shared_ptr<IRigidBody> _body, ECollisionGroup _group, ECollisionGroup _mask)
 {
-    if (m_worldPhysics == nullptr)
+    if (m_worldPhysics.get() == nullptr)
     {
         LOG(logWarning, LogPhysics, "Cannot register rigid body : physics engine not initialized");
         return;
@@ -97,9 +107,9 @@ void PhysicsManager::RegisterRigidBody(IRigidBody* _body, ECollisionGroup _group
     m_WorldRigidbodys.push_back(_body);
 }
 
-void PhysicsManager::UnregisterRigidBody(IRigidBody* _body)
+void PhysicsManager::UnregisterRigidBody(std::shared_ptr<IRigidBody> _body)
 {
-    if (m_worldPhysics == nullptr)
+    if (m_worldPhysics.get() == nullptr)
     {
         LOG(logWarning, LogPhysics, "Cannot unregister rigid body : physics engine not initialized");
         return;

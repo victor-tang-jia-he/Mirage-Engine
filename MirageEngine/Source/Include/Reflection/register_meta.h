@@ -20,6 +20,10 @@ namespace MirageEngine
 		void RegisterMeshRendererMeta();
 		void RegisterCameraMeta();
 		void RegisterInputMappingMeta();
+		void RegisterBoxColliderMeta();
+		void RegisterSphereColliderMeta();
+		void RegisterCapsuleColliderMeta();
+		void RegisterRigidbodyMeta();
 		void RegisterInfluenceGridMeta();
 		void RegisterInfluenceEmitterMeta();
 
@@ -28,11 +32,5 @@ namespace MirageEngine
 		void RegisterMaterialMeta();
 		void RegisterMaterialInstanceMeta();
 		void RegisterShaderMeta();
-
-		template<typename T>
-		void RegisterSharedPtr();
-
 	};
 }
-
-#include "register_meta.inl"

@@ -25,6 +25,7 @@ namespace MirageEngine
 
 			public:
 				Component() = default;
+				Component(GameObject* _owner) : m_Owner(_owner) {}
 				virtual ~Component() = default;
 
 				virtual void Init() = 0;

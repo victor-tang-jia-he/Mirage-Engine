@@ -32,14 +32,14 @@ namespace MirageEngine::Core::Physics
             IRigidBody()          = default;
             virtual ~IRigidBody() = default;
 
-            virtual bool Create(ICollider* _shape, ERigidBodyType _type) = 0;
+            virtual bool Create(std::shared_ptr<ICollider> _shape, ERigidBodyType _type) = 0;
 
             virtual void UpdateTransform(MirageEngine::Core::Components::Transform& _transform) = 0;
 
             virtual void OnTransformChanged(MirageEngine::Core::Components::Transform& _newTransform) = 0;
             virtual void SetType(ERigidBodyType _type)                                                = 0;
 
-            virtual void AddCollider(ICollider* _newCollider) = 0;
+            virtual void AddCollider(std::shared_ptr<ICollider> _newCollider) = 0;
             virtual void RemoveCollider(ICollider* _collider) = 0;
 
             virtual void SetMass(float _mass) = 0;
@@ -62,9 +62,15 @@ namespace MirageEngine::Core::Physics
                 m_bIsDirty         = true;
             }
 
+            ERigidBodyType GetType() const { return m_Type; }
+
+            float GetMass() const { return m_Mass; }
+
             ECollisionGroup GetCollisionGroup() const { return m_CollisionGroup; }
 
             ECollisionGroup GetCollisionMask() const { return m_CollisionMask; }
+
+            ECollisionResponse GetCollisionResponse() const{ return m_CollisionRespond; }
 
             virtual Bullet3RigidBody& API_Bullet3() { throw std::runtime_error("Bad API Call : object is not a Bullet3RigidBody"); }
     };

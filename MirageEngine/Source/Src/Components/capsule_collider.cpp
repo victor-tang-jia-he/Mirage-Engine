@@ -6,15 +6,18 @@ using namespace MirageEngine::Core::Components;
 using namespace MirageEngine::Core::Physics;
 using namespace MirageEngine::Core;
 
-CapsuleCollider::CapsuleCollider() { m_Collider = PhysicsManager::Instance().CreateCollider(ECollisionShapeType::Sphere); }
+CapsuleCollider::CapsuleCollider() { m_Collider = PhysicsManager::Instance().CreateCollider(ECollisionShapeType::Capsule); }
 
-CapsuleCollider::~CapsuleCollider() { delete m_Collider; }
+MirageEngine::Core::Components::CapsuleCollider::CapsuleCollider(GameObject* _owner)
+    : Component(_owner)
+{
+    m_Collider = PhysicsManager::Instance().CreateCollider(ECollisionShapeType::Capsule);
+}
 
 void MirageEngine::Core::Components::CapsuleCollider::AttachMeta(std::shared_ptr<GameObject> _Owner)
 {
     std::shared_ptr<CapsuleCollider> compPtr = std::make_shared<CapsuleCollider>(*this);
-    compPtr->m_ComponentName = typeid(CapsuleCollider).name();
-    _Owner->AddComponent(compPtr);
+    _Owner->AddComponent<CapsuleCollider>(compPtr);
 }
 
 void CapsuleCollider::SetRadius(float _radius) { m_Collider->As<ICapsuleCollider>()->SetRadius(_radius); }

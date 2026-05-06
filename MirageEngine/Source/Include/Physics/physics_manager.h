@@ -21,7 +21,7 @@ namespace MirageEngine::Core::Physics
 
             EPhysicsEngine m_physicsEngine = EPhysicsEngine::Bullet3;
 
-            std::vector<IRigidBody*> m_WorldRigidbodys;
+            std::vector<std::shared_ptr<IRigidBody>> m_WorldRigidbodys;
 
             std::shared_ptr<IWorldPhysics> m_worldPhysics = nullptr;
         public:
@@ -38,12 +38,12 @@ namespace MirageEngine::Core::Physics
 
 			std::weak_ptr<IWorldPhysics> GetWorldPhysics() const { return m_worldPhysics; }
 
-            IRigidBody* CreateRigidBody(ICollider* _shape, ERigidBodyType _type);
+            std::shared_ptr<IRigidBody> CreateRigidBody(std::shared_ptr<ICollider> _shape, ERigidBodyType _type);
 
-            ICollider* CreateCollider(ECollisionShapeType _shapeType);
+            std::shared_ptr<ICollider> CreateCollider(ECollisionShapeType _shapeType);
 
-            void RegisterRigidBody(IRigidBody* _body, ECollisionGroup _group, ECollisionGroup _mask);
+            void RegisterRigidBody(std::shared_ptr<IRigidBody> _body, ECollisionGroup _group, ECollisionGroup _mask);
 
-            void UnregisterRigidBody(IRigidBody* _body);
+            void UnregisterRigidBody(std::shared_ptr<IRigidBody> _body);
     };
 } // namespace MirageEngine::Core::Physics

@@ -29,18 +29,11 @@ namespace MirageEngine::Core::Physics
 			m_World->setGravity(btVector3(0, -9.81f, 0)); // default gravity
 		}
 
-		~Bullet3WorldPhysics() override
-		{
-			delete m_World;
-			delete m_Solver;
-			delete m_Broadphase;
-			delete m_Dispatcher;
-			delete m_CollisionConfig;
-		}
+		~Bullet3WorldPhysics() override {}
 
-		void AddRigidBody(IRigidBody* _body, ECollisionGroup _group, ECollisionGroup _mask) override;
+		void AddRigidBody(std::shared_ptr<IRigidBody> _body, ECollisionGroup _group, ECollisionGroup _mask) override;
 
-		void RemoveRigidBody(IRigidBody* _body) override;
+		void RemoveRigidBody(std::shared_ptr<IRigidBody> _body) override;
 
 		void Update(float _deltaTime) override { m_World->stepSimulation(_deltaTime); }
 

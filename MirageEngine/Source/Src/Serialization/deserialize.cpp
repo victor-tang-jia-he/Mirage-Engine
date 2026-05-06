@@ -69,7 +69,7 @@ void MirageEngine::Deserializer::DeserializeComponent(json _jComponent, std::sha
         return;
     }
 
-    entt::meta_any compInstance = metaType.construct();
+    entt::meta_any compInstance = metaType.construct(_Owner.get());
 
     if (!compInstance) {
         LOG(logError, LogDeserializer, "Failed to construct Meta Instance for type : ", metaType.name());

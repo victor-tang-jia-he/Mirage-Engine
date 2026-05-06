@@ -5,6 +5,10 @@
 #include <Components/transform.h>
 #include <Components/mesh_renderer.h>
 #include <Components/camera.h>
+#include <Components/box_collider.h>
+#include <Components/sphere_collider.h>
+#include <Components/capsule_collider.h>
+#include <Components/rigidbody.h>
 
 //#include <Components/input_mapping.h>
 #include <Components/influence_emitter.h>
@@ -48,6 +52,11 @@ void RegisterMeta::RegisterAllMeta()
 	RegisterMeshRendererMeta();
 	RegisterCameraMeta();
 	RegisterInputMappingMeta();
+
+	RegisterBoxColliderMeta();
+	RegisterSphereColliderMeta();
+	RegisterCapsuleColliderMeta();
+	RegisterRigidbodyMeta();
 
 	RegisterMeshMeta();
 	RegisterTextureMeta();
@@ -96,6 +105,7 @@ void RegisterMeta::RegisterMeshRendererMeta()
 	// IMPORTANT: We use entt::type_id<T>().hash() as the ID because components are stored as base "Component*" pointers. 
 	// When we call comp->GetType(), it returns the native C++ hash. By using the same hash here, the Inspector can "resolve" the correct meta-data.
 	meshRenderer.type(entt::type_id<MeshRenderer>().hash(), "MeshRenderer");
+	meshRenderer.ctor<GameObject*>();
 
 	meshRenderer.base<Component>();
 
@@ -110,6 +120,7 @@ void RegisterMeta::RegisterCameraMeta()
 	entt::meta_factory<Camera> camera{};
 
 	camera.type(entt::type_id<Camera>().hash(), "Camera");
+	camera.ctor<GameObject*>();
 
 	camera.base<Component>();
 
@@ -139,16 +150,85 @@ void RegisterMeta::RegisterInputMappingMeta()
 	entt::meta_factory<InputMapping> inputMapping{};
 
 	inputMapping.type(entt::type_id<InputMapping>().hash(), "InputMapping");
+	inputMapping.ctor<GameObject*>();
 
 	inputMapping.base<Component>();
-
-	inputMapping.data<&InputMapping::m_Map>("Bindings");
 
 	inputMapping.func<&InputMapping::Clear>("ClearAll");
 
 	inputMapping.func<&InputMapping::Remove>("RemoveKey");
 
 	inputMapping.func<&InputMapping::AttachMeta>("Attach"_hs);
+}
+
+void MirageEngine::RegisterMeta::RegisterBoxColliderMeta()
+{
+	entt::meta_factory<BoxCollider> boxCollider{};
+
+	boxCollider.type(entt::type_id<BoxCollider>().hash(), "BoxCollider");
+	boxCollider.ctor<GameObject*>();
+
+	boxCollider.base<Component>();
+
+	boxCollider.data<&BoxCollider::SetHalfExtents, &BoxCollider::GetHalfExtents>("HalfExtents");
+	boxCollider.data<&BoxCollider::SetTranslate, &BoxCollider::GetTranslate>("Position");
+	boxCollider.data<&BoxCollider::SetRotation, &BoxCollider::GetRotation>("Rotation");
+	boxCollider.data<&BoxCollider::SetScale, &BoxCollider::GetScale>("Scale");
+
+	boxCollider.func<&BoxCollider::AttachMeta>("Attach"_hs);
+}
+
+void MirageEngine::RegisterMeta::RegisterSphereColliderMeta()
+{
+	entt::meta_factory<SphereCollider> sphereCollided{};
+
+	sphereCollided.type(entt::type_id<SphereCollider>().hash(), "SphereCollider");
+	sphereCollided.ctor<GameObject*>();
+
+	sphereCollided.base<Component>();
+
+	sphereCollided.data<&SphereCollider::SetRadius, &SphereCollider::GetRadius>("Radius");
+	sphereCollided.data<&SphereCollider::SetTranslate, &SphereCollider::GetTranslate>("Position");
+	sphereCollided.data<&SphereCollider::SetRotation, &SphereCollider::GetRotation>("Rotation");
+	sphereCollided.data<&SphereCollider::SetScale, &SphereCollider::GetScale>("Scale");
+
+	sphereCollided.func<&SphereCollider::AttachMeta>("Attach"_hs);
+}
+
+void MirageEngine::RegisterMeta::RegisterCapsuleColliderMeta()
+{
+	entt::meta_factory<CapsuleCollider> capsuleCollider{};
+
+	capsuleCollider.type(entt::type_id<CapsuleCollider>().hash(), "CapsuleCollider");
+	capsuleCollider.ctor<GameObject*>();
+
+	capsuleCollider.base<Component>();
+
+	capsuleCollider.data<&CapsuleCollider::SetHeight, &CapsuleCollider::GetHeight>("Height");
+	capsuleCollider.data<&CapsuleCollider::SetRadius, &CapsuleCollider::GetRadius>("Radius");
+	capsuleCollider.data<&CapsuleCollider::SetTranslate, &CapsuleCollider::GetTranslate>("Position");
+	capsuleCollider.data<&CapsuleCollider::SetRotation, &CapsuleCollider::GetRotation>("Rotation");
+	capsuleCollider.data<&CapsuleCollider::SetScale, &CapsuleCollider::GetScale>("Scale");
+
+	capsuleCollider.func<&CapsuleCollider::AttachMeta>("Attach"_hs);
+}
+
+void MirageEngine::RegisterMeta::RegisterRigidbodyMeta()
+{
+	entt::meta_factory<Rigidbody> rigidBody{};
+
+	rigidBody.type(entt::type_id<Rigidbody>().hash(), "Rigidbody");
+	rigidBody.ctor<GameObject*>();
+
+	rigidBody.base<Component>();
+
+	rigidBody.data<&Rigidbody::SetRigidBodyType, &Rigidbody::GetRigidBodyType>("Type");
+	rigidBody.data<&Rigidbody::SetMass, &Rigidbody::GetMass>("Mass");
+	rigidBody.data<&Rigidbody::SetCollisionGroup, &Rigidbody::GetCollisionGroup>("Collision Group");
+	rigidBody.data<&Rigidbody::SetCollisionMask, &Rigidbody::GetCollisionMask>("Collision Mask");
+	rigidBody.data<&Rigidbody::SetCollisionResponse, &Rigidbody::GetCollisionResponse>("Collision Response");
+
+	rigidBody.func<&Rigidbody::AttachMeta>("Attach"_hs);
 }
 
 void RegisterMeta::RegisterMeshMeta()

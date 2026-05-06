@@ -60,7 +60,7 @@ namespace MirageEngine::Core::Physics
 	//=========================================================================
 	// ICollider - Base collider interface
 	//=========================================================================
-	class ICollider
+	class ICollider : public std::enable_shared_from_this<ICollider>
 	{
 	protected:
 
@@ -69,7 +69,7 @@ namespace MirageEngine::Core::Physics
 		Quaternion          m_Rot = Quaternion(0.f, 0.f, 0.f, 1.f);
 		ECollisionShapeType m_Type;
 
-		IRigidBody* m_RigidBody;
+		std::shared_ptr<IRigidBody> m_RigidBody;
 
 		bool m_bIsDirty = true;
 
@@ -81,7 +81,7 @@ namespace MirageEngine::Core::Physics
 
 
 		virtual void SetOffset(Vector3 _offset, Quaternion _rotation) = 0;
-		bool SetRigidbody(IRigidBody* _rigidbody);
+		bool SetRigidbody(std::shared_ptr<IRigidBody> _rigidbody);
 		void SetScale(Vector3 _scale)
 		{
 			m_Scale = _scale;

@@ -24,7 +24,7 @@ namespace MirageEngine::Core::Physics
             Bullet3RigidBody() = default;
             ~Bullet3RigidBody() override;
 
-            bool Create(ICollider* _shape, ERigidBodyType _type) override;
+            bool Create(std::shared_ptr<ICollider> _shape, ERigidBodyType _type) override;
 
             void UpdateTransform(Transform& _transform) override;
             void OnTransformChanged(Transform& _newTransform) override;
@@ -33,7 +33,7 @@ namespace MirageEngine::Core::Physics
 
             void SetScale(const Vector3& scale);
 
-            void AddCollider(ICollider* _newCollider) override;
+            void AddCollider(std::shared_ptr<ICollider> _newCollider) override;
             void RemoveCollider(ICollider* _collider) override;
 
             void UpdateCompound();

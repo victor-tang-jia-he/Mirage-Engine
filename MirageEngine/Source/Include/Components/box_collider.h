@@ -24,12 +24,13 @@ namespace MirageEngine
         {
             class BoxCollider : public Component, public ICCollider
             {
-                    Physics::ICollider* m_Collider;
+                std::shared_ptr<Physics::ICollider> m_Collider;
 
                 public:
 
                     BoxCollider();
-                    ~BoxCollider();
+                    BoxCollider(GameObject* _owner);
+                    ~BoxCollider() = default;
 
                     virtual void Init() override {}
 
@@ -37,7 +38,7 @@ namespace MirageEngine
 
                     void AttachMeta(std::shared_ptr<GameObject> _Owner);
 
-                    entt::id_type GetType() const override { return 0; }
+                    entt::id_type GetType() const override { return entt::type_id<BoxCollider>().hash(); }
 
                     // Box only parameter
                     void          SetHalfExtents(const Math::Vector3& _halfExtents);
@@ -53,7 +54,7 @@ namespace MirageEngine
                     Math::Vector3    GetTranslate() const;
                     Math::Quaternion GetRotation() const;
 
-                    Physics::ICollider* GetCollision() const override { return m_Collider; }
+                    std::shared_ptr<Physics::ICollider> GetCollision() const override { return m_Collider; }
             };
         } // namespace Components
     } // namespace Core

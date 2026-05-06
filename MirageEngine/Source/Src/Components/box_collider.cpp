@@ -8,13 +8,16 @@ using namespace MirageEngine::Core;
 
 BoxCollider::BoxCollider() { m_Collider = PhysicsManager::Instance().CreateCollider(ECollisionShapeType::Box); }
 
-BoxCollider::~BoxCollider() { delete m_Collider; }
+MirageEngine::Core::Components::BoxCollider::BoxCollider(GameObject* _owner)
+    : Component(_owner)
+{
+    m_Collider = PhysicsManager::Instance().CreateCollider(ECollisionShapeType::Box);
+}
 
 void MirageEngine::Core::Components::BoxCollider::AttachMeta(std::shared_ptr<GameObject> _Owner)
 {
     std::shared_ptr<BoxCollider> compPtr = std::make_shared<BoxCollider>(*this);
-    compPtr->m_ComponentName = typeid(BoxCollider).name();
-    _Owner->AddComponent(compPtr);
+    _Owner->AddComponent<BoxCollider>(compPtr);
 }
 
 void BoxCollider::SetHalfExtents(const Math::Vector3& _halfExtents) { m_Collider->As<IBoxCollider>()->SetHalfExtents(_halfExtents); }

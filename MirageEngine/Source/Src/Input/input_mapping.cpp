@@ -17,8 +17,7 @@ namespace MirageEngine::Core::Input
     void InputMapping::AttachMeta(std::shared_ptr<GameObject> _Owner)
     {
         std::shared_ptr<InputMapping> compPtr = std::make_shared<InputMapping>(*this);
-        compPtr->m_ComponentName = typeid(InputMapping).name();
-        _Owner->AddComponent(compPtr);
+        _Owner->AddComponent<InputMapping>(compPtr);
     }
 
     void InputMapping::RegisterInput(const std::string& _name, int _actionInput)

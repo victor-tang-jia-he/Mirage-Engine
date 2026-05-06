@@ -36,14 +36,15 @@ namespace MirageEngine
         {
             class Rigidbody : public Components::Component
             {
-                    Physics::IRigidBody* m_Rigidbody;
+                    std::shared_ptr<Physics::IRigidBody> m_Rigidbody;
 
                 public:
 
                     Rigidbody(ICCollider* _shape, Physics::ERigidBodyType _type);
-                    ~Rigidbody();
+                    Rigidbody(GameObject* _owner);
+                    ~Rigidbody() {}
 
-                    entt::id_type GetType() const override { return 0; }
+                    entt::id_type GetType() const override { return entt::type_id<Rigidbody>().hash(); }
 
                     void Init() override {};
                     void Update() override;
@@ -51,7 +52,7 @@ namespace MirageEngine
                     void AttachMeta(std::shared_ptr<GameObject> _Owner);
 
                     void OnTransformChanged(Components::Transform& _newTransform);
-                    void SetType(Physics::ERigidBodyType _type);
+                    void SetRigidBodyType(Physics::ERigidBodyType _type);
 
                     void AddCollider(ICCollider* _newCollider);
                     void RemoveCollider(ICCollider* _collider);
@@ -64,9 +65,15 @@ namespace MirageEngine
 
                     void SetCollisionResponse(Physics::ECollisionResponse response);
 
+                    Physics::ERigidBodyType GetRigidBodyType() const;
+
+                    float GetMass() const;
+
                     Physics::ECollisionGroup GetCollisionGroup() const;
 
                     Physics::ECollisionGroup GetCollisionMask() const;
+
+                    Physics::ECollisionResponse GetCollisionResponse() const;
             };
         } // namespace Components
     } // namespace Core

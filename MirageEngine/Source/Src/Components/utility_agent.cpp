@@ -50,8 +50,7 @@ namespace MirageEngine::Core::Components
 	void UtilityAgent::AttachMeta(std::shared_ptr<GameObject> _Owner)
 	{
 		std::shared_ptr<UtilityAgent> compPtr = std::make_shared<UtilityAgent>(*this);
-		compPtr->m_ComponentName = typeid(UtilityAgent).name();
-		_Owner->AddComponent(compPtr);
+		_Owner->AddComponent<UtilityAgent>(compPtr);
 	}
 
 	void UtilityAgent::Decide()

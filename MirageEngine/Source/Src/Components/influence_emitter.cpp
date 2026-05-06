@@ -36,7 +36,6 @@ namespace MirageEngine::Core::Components
 	void InfluenceEmitter::AttachMeta(std::shared_ptr<GameObject> _Owner)
 	{
 		std::shared_ptr<InfluenceEmitter> compPtr = std::make_shared<InfluenceEmitter>(*this);
-		compPtr->m_ComponentName = typeid(InfluenceEmitter).name();
-		_Owner->AddComponent(compPtr);
+		_Owner->AddComponent<InfluenceEmitter>(compPtr);
 	}
 }

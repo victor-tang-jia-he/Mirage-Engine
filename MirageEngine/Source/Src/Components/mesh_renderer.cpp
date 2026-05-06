@@ -5,6 +5,5 @@
 void MirageEngine::Core::Components::MeshRenderer::AttachMeta(std::shared_ptr<GameObject> _Owner)
 {
 	std::shared_ptr<MeshRenderer> compPtr = std::make_shared<MeshRenderer>(*this);
-	compPtr->m_ComponentName = typeid(MeshRenderer).name();
-	_Owner->AddComponent(compPtr);
+	_Owner->AddComponent<MeshRenderer>(compPtr);
 }

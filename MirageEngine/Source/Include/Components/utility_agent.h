@@ -46,6 +46,7 @@ namespace MirageEngine::Core::Components
 
 	public:
 		UtilityAgent() = default;
+		UtilityAgent(GameObject* _owner) {}
 		virtual ~UtilityAgent();
 
 		void Init() override;

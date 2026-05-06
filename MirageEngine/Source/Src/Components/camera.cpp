@@ -22,6 +22,5 @@ Camera::Camera(unsigned int _width, unsigned int _height, float _fov, float _nea
 void MirageEngine::Core::Components::Camera::AttachMeta(std::shared_ptr<GameObject> _Owner)
 {
     std::shared_ptr<Camera> compPtr = std::make_shared<Camera>(*this);
-    compPtr->m_ComponentName = typeid(Camera).name();
-    _Owner->AddComponent(compPtr);
+    _Owner->AddComponent<Camera>(compPtr);
 }

@@ -18,6 +18,7 @@ namespace MirageEngine::Core::Components
 
 	public:
 		InfluenceEmitter() = default;
+		InfluenceEmitter(GameObject* _owner) {}
 		virtual ~InfluenceEmitter() = default;
 
 		void Init() override;

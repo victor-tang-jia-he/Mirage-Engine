@@ -46,6 +46,9 @@ namespace MirageEngine
 		std::shared_ptr<T> AddComponent();
 
 		template <typename T>
+		void AddComponent(std::shared_ptr<MirageEngine::Core::Components::Component> _component);
+
+		template <typename T>
 		std::shared_ptr<T> GetComponent();
 
 
@@ -57,12 +60,6 @@ namespace MirageEngine
 		// Game Object Custom Methods
 		void AddChild(std::shared_ptr<GameObject> _child, bool _isStatic = false, bool _isActive = true);
 		void SetActive(bool _isActive);
-
-		void AddComponent(std::shared_ptr<MirageEngine::Core::Components::Component> _component)
-		{
-			_component->m_Owner = this;
-			m_Components.push_back(_component);
-		}
 
 		void AddComponentFromMeta(entt::meta_any _compInstance);
 
