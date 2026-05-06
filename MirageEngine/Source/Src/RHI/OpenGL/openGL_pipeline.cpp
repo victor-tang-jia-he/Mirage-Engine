@@ -18,14 +18,14 @@ void MirageRHI::OpenGLPipeline::Create(std::shared_ptr<IShader> _vertShader, std
     glAttachShader(m_Program, m_FragmentShader->API_OpenGL().GetGLHandle());
     Link();
 
-	LOG(logTemp, LogRHIPipeline, "Pipeline Created with Program ID: ", m_Program);
+    LOG(logTemp, LogRHIPipeline, "Pipeline Created with Program ID: ", m_Program);
 }
 
 void MirageRHI::OpenGLPipeline::Destroy()
 {
     glDeleteProgram(m_Program);
 
-	LOG(logTemp, LogRHIPipeline, "Pipeline Destroyed with Program ID: ", m_Program);
+    LOG(logTemp, LogRHIPipeline, "Pipeline Destroyed with Program ID: ", m_Program);
 }
 
 bool MirageRHI::OpenGLPipeline::Link() const
@@ -34,7 +34,8 @@ bool MirageRHI::OpenGLPipeline::Link() const
 
     GLint success;
     glGetProgramiv(m_Program, GL_LINK_STATUS, &success);
-    if (!success) {
+    if (!success)
+    {
         GLint logLength;
         glGetProgramiv(m_Program, GL_INFO_LOG_LENGTH, &logLength);
         char* log = new char[logLength];
@@ -43,34 +44,24 @@ bool MirageRHI::OpenGLPipeline::Link() const
         delete[] log;
         return false;
     }
-    if (m_VertexShader->API_OpenGL().GetGLHandle()) {
+    if (m_VertexShader->API_OpenGL().GetGLHandle())
+    {
         glDetachShader(m_Program, m_VertexShader->API_OpenGL().GetGLHandle());
     }
-    if (m_FragmentShader->API_OpenGL().GetGLHandle()) {
+    if (m_FragmentShader->API_OpenGL().GetGLHandle())
+    {
         glDetachShader(m_Program, m_FragmentShader->API_OpenGL().GetGLHandle());
     }
     return true;
 }
 
-void MirageRHI::OpenGLPipeline::Bind() const
-{
-    glUseProgram(m_Program);
-}
+void MirageRHI::OpenGLPipeline::Bind() const { glUseProgram(m_Program); }
 
-void MirageRHI::OpenGLPipeline::Unbind() const
-{
-    glUseProgram(0);
-}
+void MirageRHI::OpenGLPipeline::Unbind() const { glUseProgram(0); }
 
-void MirageRHI::OpenGLPipeline::SetInt(const std::string& name, int value) const
-{
-    glUniform1i(glGetUniformLocation(m_Program, name.c_str()), value);
-}
+void MirageRHI::OpenGLPipeline::SetInt(const std::string& name, int value) const { glUniform1i(glGetUniformLocation(m_Program, name.c_str()), value); }
 
-void MirageRHI::OpenGLPipeline::SetFloat(const std::string& name, float value) const
-{
-    glUniform1f(glGetUniformLocation(m_Program, name.c_str()), value);
-}
+void MirageRHI::OpenGLPipeline::SetFloat(const std::string& name, float value) const { glUniform1f(glGetUniformLocation(m_Program, name.c_str()), value); }
 
 void MirageRHI::OpenGLPipeline::SetVec3(const std::string& name, const Vector3& value) const
 {
@@ -99,12 +90,9 @@ void MirageRHI::OpenGLPipeline::SetBool(const std::string& name, bool value) con
     GLint location = glGetUniformLocation(m_Program, name.c_str());
     if (location == -1)
     {
-		LOG(logWarning, LogRHIPipeline, "Uniform '", name, "' doesn't exist or is not used in Program ID: ", m_Program);
+        LOG(logWarning, LogRHIPipeline, "Uniform '", name, "' doesn't exist or is not used in Program ID: ", m_Program);
     }
     glUniform1i(location, static_cast<int>(value));
 }
 
-void MirageRHI::OpenGLPipeline::ApplyParameters()
-{
-    m_Parameters->API_OpenGL().ApplyParameters();
-}
+void MirageRHI::OpenGLPipeline::ApplyParameters() { m_Parameters->API_OpenGL().ApplyParameters(); }

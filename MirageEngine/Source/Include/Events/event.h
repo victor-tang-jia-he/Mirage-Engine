@@ -1,8 +1,5 @@
 #pragma once
-#include <vector>
-#include <functional>
-#include <unordered_map>
-#include <memory>
+
 #include <typeindex>
 
 namespace MirageEngine::Core::EventSystem
@@ -11,7 +8,7 @@ namespace MirageEngine::Core::EventSystem
     {
         public:
 
-            virtual ~IEvent()                       = default;
+            virtual ~IEvent() = default;
             virtual std::type_index GetType() const = 0;
     };
 
@@ -44,9 +41,13 @@ namespace MirageEngine::Core::EventSystem
             template <typename... Args> void Invoke(Args... args)
             {
                 auto it = m_Events.find(typeid(Event<Args...>));
-                if (it == m_Events.end()) return;
+                if (it == m_Events.end())
+                    return;
 
-                for (auto& ie : it->second) { static_cast<Event<Args...>*>(ie.get())->Trigger(args...); }
+                for (auto& ie : it->second)
+                {
+                    static_cast<Event<Args...>*>(ie.get())->Trigger(args...);
+                }
             }
 
             template <typename... Args> void Remove() { m_Events.erase(typeid(Event<Args...>)); }

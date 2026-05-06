@@ -4,55 +4,70 @@
 
 namespace MirageEngine
 {
-	namespace Core
-	{
-		namespace Components
-		{
-			class Transform
-			{
-			private:
-				Math::Vector3 m_LocalPosition{ 0.f,0.f,0.f };
-				Math::Vector3 m_LocalScale{ 1.f,1.f,1.f };
-				Math::Quaternion m_LocalRotation = Math::Quaternion::Identity();
+    namespace Core
+    {
+        namespace Components
+        {
+            class Transform
+            {
+                private:
 
-				Math::Matrix4 m_LocalMatrix = Math::Matrix4::Identity();
-				Math::Matrix4 m_WorldMatrix = Math::Matrix4::Identity();
+                    Math::Vector3 m_LocalPosition{ 0.f, 0.f, 0.f };
+                    Math::Vector3 m_LocalScale{ 1.f, 1.f, 1.f };
+                    Math::Quaternion m_LocalRotation = Math::Quaternion::Identity();
 
-				bool m_bDirty = true;
+                    Math::Matrix4 m_LocalMatrix = Math::Matrix4::Identity();
+                    Math::Matrix4 m_WorldMatrix = Math::Matrix4::Identity();
 
-				// utility
-				Math::Vector3 Rotate(const Math::Quaternion& _q, const Math::Vector3& _v) const;
+                    bool m_bDirty = true;
 
-			public:
-				Transform() = default;
-				Transform(Math::Vector3 _position, Math::Quaternion _rotation, Math::Vector3 _scale);
-				void Init();
-				void Update();
+                    // utility
+                    Math::Vector3 Rotate(const Math::Quaternion& _q, const Math::Vector3& _v) const;
 
-				void LookAt(const Math::Vector3& _target);
+                public:
 
-				Math::Vector3 Forward() const;
-				Math::Vector3 Up() const;
-				Math::Vector3 Right() const;
-				Math::Vector3 Left() const;
+                    Transform() = default;
+                    Transform(Math::Vector3 _position, Math::Quaternion _rotation, Math::Vector3 _scale);
+                    void Init();
+                    void Update();
 
-				// Getters
-				Math::Matrix4 GetMatrix();
-				Math::Vector3 GetPosition() const { return m_LocalPosition; }
-				Math::Vector3 GetScale() const { return m_LocalScale; }
-				Math::Quaternion GetRotation()  const { return m_LocalRotation; }
-				Math::Vector3 GetRotationEuler() const { return m_LocalRotation.ToEulerAngle() ; }
-				const MirageEngine::Core::Math::Matrix4& GetWorldMatrix() const { return m_WorldMatrix; }
-				bool GetIsDirty() const { return m_bDirty; }
+                    void LookAt(const Math::Vector3& _target);
 
-				// Setters
-				void SetPosition(Math::Vector3 _pos);
-				void SetScale(Math::Vector3 _scale);
-				void SetRotation(Math::Quaternion _rotation);
-				void SetWorldMatrix(const Math::Matrix4& _world) { m_WorldMatrix = _world; m_bDirty = false; }
-				void SetDirty(bool _state) { m_bDirty = _state; }
-				void SetLocalMatrix(Math::Matrix4 _mat);
-			};
-		}
-	}
-}
+                    Math::Vector3 Forward() const;
+                    Math::Vector3 Up() const;
+                    Math::Vector3 Right() const;
+                    Math::Vector3 Left() const;
+
+                    // Getters
+                    Math::Matrix4 GetMatrix();
+
+                    Math::Vector3 GetPosition() const { return m_LocalPosition; }
+
+                    Math::Vector3 GetScale() const { return m_LocalScale; }
+
+                    Math::Quaternion GetRotation() const { return m_LocalRotation; }
+
+                    Math::Vector3 GetRotationEuler() const { return m_LocalRotation.ToEulerAngle(); }
+
+                    const MirageEngine::Core::Math::Matrix4& GetWorldMatrix() const { return m_WorldMatrix; }
+
+                    bool GetIsDirty() const { return m_bDirty; }
+
+                    // Setters
+                    void SetPosition(Math::Vector3 _pos);
+                    void SetScale(Math::Vector3 _scale);
+                    void SetRotation(Math::Quaternion _rotation);
+
+                    void SetWorldMatrix(const Math::Matrix4& _world)
+                    {
+                        m_WorldMatrix = _world;
+                        m_bDirty = false;
+                    }
+
+                    void SetDirty(bool _state) { m_bDirty = _state; }
+
+                    void SetLocalMatrix(Math::Matrix4 _mat);
+            };
+        } // namespace Components
+    } // namespace Core
+} // namespace MirageEngine

@@ -29,7 +29,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 cmake_host_system_information(RESULT HOSTNAME QUERY HOSTNAME)
 if ("${HOSTNAME}" STREQUAL "TheDarkPhoenix" )
     set(CMAKE_JOB_POOL_COMPILE compile_pool)
-    set_property(GLOBAL PROPERTY JOB_POOLS compile_pool=20)
+    set_property(GLOBAL PROPERTY JOB_POOLS compile_pool=24)
 endif()
 
 message(STATUS "Adding external Libraries...")

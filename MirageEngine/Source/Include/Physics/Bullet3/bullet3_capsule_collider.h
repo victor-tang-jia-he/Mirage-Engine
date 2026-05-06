@@ -7,15 +7,15 @@ namespace MirageEngine::Core::Physics
 {
     class Bullet3CapsuleCollider : public ICollider, public IBulletColliderData, public ICapsuleCollider
     {
-            using Vector3    = MirageEngine::Core::Math::Vector3;
+            using Vector3 = MirageEngine::Core::Math::Vector3;
             using Quaternion = MirageEngine::Core::Math::Quaternion;
 
         private:
 
             btCollisionShape* m_CollisionShape = nullptr;
-            float             m_Radius         = 1.f;
-            float             m_Height         = 2.f;
-            btTransform       m_LocalTransform;
+            float m_Radius = 1.f;
+            float m_Height = 2.f;
+            btTransform m_LocalTransform;
 
         public:
 

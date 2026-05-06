@@ -8,7 +8,6 @@
 #include <GLFW/glfw3.h>
 #include <entt/entt.hpp>
 
-
 using namespace MirageEngine;
 using namespace MirageEngine::Core;
 using namespace MirageEngine::Core::Components;
@@ -28,7 +27,8 @@ Camera::Camera(unsigned int _width, unsigned int _height, float _fov, float _nea
 
 void Camera::BindInput(std::shared_ptr<InputMapping> map)
 {
-    if (map == nullptr) return;
+    if (map == nullptr)
+        return;
 
     map->RegisterAxis2D("Camera", GLFW_KEY_D, GLFW_KEY_A, GLFW_KEY_W, GLFW_KEY_S);
     map->RegisterAxis1D("Camera", GLFW_KEY_LEFT_CONTROL, GLFW_KEY_SPACE);
@@ -36,8 +36,14 @@ void Camera::BindInput(std::shared_ptr<InputMapping> map)
     map->RegisterInput("CameraView", GLFW_MOUSE_BUTTON_2);
     std::function<void(CallbackInputInfo)> func = [this](CallbackInputInfo info)
     {
-        if (info.Held) { m_CameraVelocity = 5.f; }
-        else { m_CameraVelocity = 1.f; }
+        if (info.Held)
+        {
+            m_CameraVelocity = 5.f;
+        }
+        else
+        {
+            m_CameraVelocity = 1.f;
+        }
     };
 
     map->RegisterAction("Run", func);
@@ -58,15 +64,16 @@ void Camera::Move(Input::CallbackInputInfo info)
 
 void Camera::View(Input::CallbackInputInfo info)
 {
-    if (!info.Held) return;
+    if (!info.Held)
+        return;
     Vector2 mouseDelta = InputSystem::GetMouseDelta();
     float sensitivity = -0.1f;
 
     m_CameraPitch = m_CameraPitch + ToRad(mouseDelta.Y * sensitivity);
-    m_CameraYaw   = m_CameraYaw + ToRad(mouseDelta.X * sensitivity);
+    m_CameraYaw = m_CameraYaw + ToRad(mouseDelta.X * sensitivity);
 
     const float maxPitch = ToRad(89);
-    m_CameraPitch        = std::clamp(m_CameraPitch, -maxPitch, maxPitch);
+    m_CameraPitch = std::clamp(m_CameraPitch, -maxPitch, maxPitch);
 
     Quaternion rotationX = Quaternion({ 1.f, 0.f, 0 }, m_CameraPitch);
     Quaternion rotationY = Quaternion({ 0.f, 1.f, 0 }, m_CameraYaw);

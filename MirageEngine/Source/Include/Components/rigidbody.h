@@ -29,7 +29,7 @@ namespace MirageEngine
             enum class ERigidBodyType;
             enum class ECollisionGroup;
             enum class ECollisionResponse;
-        }
+        } // namespace Physics
 
         namespace Components
         {

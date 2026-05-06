@@ -24,7 +24,7 @@ Bullet3RigidBody::~Bullet3RigidBody()
 
 bool Bullet3RigidBody::Create(ICollider* _shape, ERigidBodyType _type)
 {
-    m_Type     = _type;
+    m_Type = _type;
     m_bIsDirty = false;
     if (!_shape)
     {
@@ -53,7 +53,7 @@ bool Bullet3RigidBody::Create(ICollider* _shape, ERigidBodyType _type)
     m_CurrentRigidBodyShapesBind.push_back(_shape);
     m_Compound->addChildShape(_shape->AsBullet3Collider()->GetTransform(), collisionShape);
 
-    btScalar  mass = m_Mass;
+    btScalar mass = m_Mass;
     btVector3 inertia(0, 0, 0);
 
     switch (_type)
@@ -73,7 +73,7 @@ bool Bullet3RigidBody::Create(ICollider* _shape, ERigidBodyType _type)
             break;
     }
 
-    btDefaultMotionState*                    motionState = new btDefaultMotionState(btTransform::getIdentity());
+    btDefaultMotionState* motionState = new btDefaultMotionState(btTransform::getIdentity());
     btRigidBody::btRigidBodyConstructionInfo rigidBodyCI(mass, motionState, collisionShape, inertia);
 
     m_rigidBody = new btRigidBody(rigidBodyCI);
@@ -102,7 +102,7 @@ void Bullet3RigidBody::UpdateTransform(MirageEngine::Core::Components::Transform
         UpdateCompound();
 
     // Update GameObject
-    btVector3    position = m_rigidBody->getWorldTransform().getOrigin();
+    btVector3 position = m_rigidBody->getWorldTransform().getOrigin();
     btQuaternion rotation = m_rigidBody->getWorldTransform().getRotation();
 
     _transform.SetPosition(MirageEngine::Core::Math::Vector3(position.getX(), position.getY(), position.getZ()));
@@ -127,9 +127,9 @@ void Bullet3RigidBody::OnTransformChanged(MirageEngine::Core::Components::Transf
     int numManifolds = PhysicsManager::Instance().GetWorldPhysics().lock()->API_Bullet3().GetWorld()->getDispatcher()->getNumManifolds();
     for (int i = 0; i < numManifolds; i++)
     {
-        btPersistentManifold*    manifold = PhysicsManager::Instance().GetWorldPhysics().lock()->API_Bullet3().GetWorld()->getDispatcher()->getManifoldByIndexInternal(i);
-        const btCollisionObject* objA     = manifold->getBody0();
-        const btCollisionObject* objB     = manifold->getBody1();
+        btPersistentManifold* manifold = PhysicsManager::Instance().GetWorldPhysics().lock()->API_Bullet3().GetWorld()->getDispatcher()->getManifoldByIndexInternal(i);
+        const btCollisionObject* objA = manifold->getBody0();
+        const btCollisionObject* objB = manifold->getBody1();
 
         if (objA == m_rigidBody || objB == m_rigidBody)
         {
@@ -144,7 +144,7 @@ void Bullet3RigidBody::SetScale(const Vector3& scale)
     if (m_CurrentScale == scale)
         return;
     m_CurrentScale = scale;
-    m_bIsDirty     = true;
+    m_bIsDirty = true;
 }
 
 void Bullet3RigidBody::SetType(ERigidBodyType _type)
@@ -231,16 +231,16 @@ void Bullet3RigidBody::UpdateCompound()
 
     for (ICollider* collider : m_CurrentRigidBodyShapesBind)
     {
-        btCollisionShape*    collisionShape     = collider->AsBullet3Collider()->GetShape();
+        btCollisionShape* collisionShape = collider->AsBullet3Collider()->GetShape();
         IBulletColliderData* collisionShapeData = collider->AsBullet3Collider();
         if (!collisionShape)
             continue;
         if (collider->GetIsDirty())
         {
             delete collisionShape;
-            collider->Create();                                         // Create a new shape
+            collider->Create();                                     // Create a new shape
         }
-        collisionShape     = collider->AsBullet3Collider()->GetShape(); // Get new shape created
+        collisionShape = collider->AsBullet3Collider()->GetShape(); // Get new shape created
         Vector3 finalScale = collider->GetScale() * m_CurrentScale;
         collisionShape->setLocalScaling(btVector3(finalScale.X, finalScale.Y, finalScale.Z));
         // Add to compound

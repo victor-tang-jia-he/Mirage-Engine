@@ -1,14 +1,15 @@
 #pragma once
 
 #ifdef _WIN32
-#include <windows.h>
+#    include <windows.h>
 using LibHandle = HMODULE;
 #else
-#include <dlfcn.h>
+#    include <dlfcn.h>
 using LibHandle = void*;
 #endif
 
-inline LibHandle LoadSharedLibrary(const char* name) {
+inline LibHandle LoadSharedLibrary(const char* name)
+{
 #ifdef _WIN32
     return LoadLibraryA(name);
 #else
@@ -16,7 +17,8 @@ inline LibHandle LoadSharedLibrary(const char* name) {
 #endif
 }
 
-inline void* GetSymbol(LibHandle lib, const char* symbol) {
+inline void* GetSymbol(LibHandle lib, const char* symbol)
+{
 #ifdef _WIN32
     return (void*)GetProcAddress(lib, symbol);
 #else
@@ -24,8 +26,10 @@ inline void* GetSymbol(LibHandle lib, const char* symbol) {
 #endif
 }
 
-inline void UnloadSharedLibrary(LibHandle lib) {
-    if (lib) {
+inline void UnloadSharedLibrary(LibHandle lib)
+{
+    if (lib)
+    {
 #ifdef _WIN32
         FreeLibrary(lib);
 #else

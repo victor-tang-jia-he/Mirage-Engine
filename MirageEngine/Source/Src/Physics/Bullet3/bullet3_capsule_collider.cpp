@@ -14,9 +14,10 @@ Bullet3CapsuleCollider::~Bullet3CapsuleCollider()
 
 void Bullet3CapsuleCollider::Create()
 {
-    m_bIsDirty       = false;
+    m_bIsDirty = false;
     m_CollisionShape = new btCapsuleShape(m_Radius, m_Height);
-    if (m_Offset.IsNull() && m_Rot.IsNull()) return;
+    if (m_Offset.IsNull() && m_Rot.IsNull())
+        return;
 
     m_LocalTransform.setIdentity();
     m_LocalTransform.setOrigin(btVector3(m_Offset.X, m_Offset.Y, m_Offset.Z));
@@ -26,22 +27,24 @@ void Bullet3CapsuleCollider::Create()
 
 void Bullet3CapsuleCollider::SetOffset(Vector3 offset, Quaternion _rotation)
 {
-    m_Offset   = offset;
-    m_Rot      = _rotation;
+    m_Offset = offset;
+    m_Rot = _rotation;
     m_bIsDirty = true;
 }
 
 void Bullet3CapsuleCollider::SetRadius(float _radius)
 {
-    if (m_Radius == _radius) return;
-    m_Radius   = _radius;
+    if (m_Radius == _radius)
+        return;
+    m_Radius = _radius;
     m_bIsDirty = true;
 }
 
 void Bullet3CapsuleCollider::SetHeight(float _height)
 {
-    if (m_Height == _height) return;
-    m_Height   = _height;
+    if (m_Height == _height)
+        return;
+    m_Height = _height;
     m_bIsDirty = true;
 }
 

@@ -1,6 +1,6 @@
 #include <cstdlib>
 #include <vector3.h>
-#include <string>
+
 #include "Components/utility_agent.h"
 #include "GameObject/game_object.h"
 #include "application.h"
@@ -12,95 +12,99 @@ using namespace MirageEngine::Core::Math;
 
 namespace MirageEngine::Core::Components
 {
-	UtilityAgent::~UtilityAgent()
-	{
-		for (AIAction* action : m_actions) {
-			delete action;
-		}
-		m_actions.clear();
-	}
+    UtilityAgent::~UtilityAgent()
+    {
+        for (AIAction* action : m_actions)
+        {
+            delete action;
+        }
+        m_actions.clear();
+    }
 
-	void UtilityAgent::OnStart()
-	{
-		srand(static_cast <unsigned> (time(0)));
+    void UtilityAgent::OnStart()
+    {
+        srand(static_cast<unsigned>(time(0)));
 
-		if (m_Grid == nullptr)
-		{
-			Application* app = Application::Instance();
-			if (app)
-			{
-				m_Grid = app->GetSceneGraph()->FindComponentInScene<InfluenceGrid>();
-			}
-		}
+        if (m_Grid == nullptr)
+        {
+            Application* app = Application::Instance();
+            if (app)
+            {
+                m_Grid = app->GetSceneGraph()->FindComponentInScene<InfluenceGrid>();
+            }
+        }
 
-		m_DecisionTimer = static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / m_DecisionInterval));
-	}
+        m_DecisionTimer = static_cast<float>(rand()) / (static_cast<float>(RAND_MAX / m_DecisionInterval));
+    }
 
-	void UtilityAgent::OnUpdate(float _dt)
-	{
-		m_DecisionTimer -= _dt;
-		if (m_DecisionTimer <= 0.0f)
-		{
-			Decide();
-			m_DecisionTimer = m_DecisionInterval;
-		}
-		if (m_CurrentAction != nullptr)
-			m_CurrentAction->Execute(_dt);
-	}
-	entt::id_type UtilityAgent::GetType() const { return entt::type_id<UtilityAgent>().hash(); }
-	void UtilityAgent::Decide()
-	{
-		if (m_Grid)
-		{
-			Vector3 pos = GetOwner()->GetPosition();
-			int cellX, cellY;
-			m_Grid->WorldToGrid(pos, cellX, cellY);
+    void UtilityAgent::OnUpdate(float _dt)
+    {
+        m_DecisionTimer -= _dt;
+        if (m_DecisionTimer <= 0.0f)
+        {
+            Decide();
+            m_DecisionTimer = m_DecisionInterval;
+        }
+        if (m_CurrentAction != nullptr)
+            m_CurrentAction->Execute(_dt);
+    }
 
-			if (m_Grid->IsInBounds(cellX, cellY))
-			{
-				int currentIndex = m_Grid->GetIndex(cellX, cellY);
-				const std::vector<InfluenceCell>& cells = m_Grid->GetCells();
+    entt::id_type UtilityAgent::GetType() const { return entt::type_id<UtilityAgent>().hash(); }
 
-				size_t numChannels = m_Grid->GetChannelsNames().size();
-				m_CurrentCellIntensity.resize(numChannels);
-				for (int i = 0; i < numChannels; i++)
-				{
-					m_CurrentCellIntensity[i] = cells[currentIndex].channels[i];
-				}
+    void UtilityAgent::Decide()
+    {
+        if (m_Grid)
+        {
+            Vector3 pos = GetOwner()->GetPosition();
+            int cellX, cellY;
+            m_Grid->WorldToGrid(pos, cellX, cellY);
 
-				AIAction* bestAction = nullptr;
-				float highestScore = -1.0f;
-				m_LastScores.clear();
-				for (AIAction* action : m_actions)
-				{
-					float score = action->Evaluate();
-					if (action == m_CurrentAction)
-						score += m_Inertia;
-					m_LastScores.push_back(score);
+            if (m_Grid->IsInBounds(cellX, cellY))
+            {
+                int currentIndex = m_Grid->GetIndex(cellX, cellY);
+                const std::vector<InfluenceCell>& cells = m_Grid->GetCells();
 
-					if (score > highestScore)
-					{
-						highestScore = score;
-						bestAction = action;
-					}
-				}
-				
-				if (bestAction != m_CurrentAction)
-				{
-					if (m_CurrentAction)
-						m_CurrentAction->OnStop();
-					m_CurrentAction = bestAction;
-					if (m_CurrentAction)
-						m_CurrentAction->OnStart();
-					m_LastDecisionReason = m_CurrentAction ? m_CurrentAction->GetName() + "with score" + std::to_string(highestScore) : "None";
-				}
-			}
-		}
-	}
+                size_t numChannels = m_Grid->GetChannelsNames().size();
+                m_CurrentCellIntensity.resize(numChannels);
+                for (int i = 0; i < numChannels; i++)
+                {
+                    m_CurrentCellIntensity[i] = cells[currentIndex].channels[i];
+                }
 
-	float UtilityAgent::GetIntensity(int _channelIndex) const {
-		if (_channelIndex >= 0 && _channelIndex < m_CurrentCellIntensity.size())
-			return m_CurrentCellIntensity[_channelIndex];
-		return 0.0f;
-	}
-}
+                AIAction* bestAction = nullptr;
+                float highestScore = -1.0f;
+                m_LastScores.clear();
+                for (AIAction* action : m_actions)
+                {
+                    float score = action->Evaluate();
+                    if (action == m_CurrentAction)
+                        score += m_Inertia;
+                    m_LastScores.push_back(score);
+
+                    if (score > highestScore)
+                    {
+                        highestScore = score;
+                        bestAction = action;
+                    }
+                }
+
+                if (bestAction != m_CurrentAction)
+                {
+                    if (m_CurrentAction)
+                        m_CurrentAction->OnStop();
+                    m_CurrentAction = bestAction;
+                    if (m_CurrentAction)
+                        m_CurrentAction->OnStart();
+                    m_LastDecisionReason = m_CurrentAction ? m_CurrentAction->GetName() + "with score" + std::to_string(highestScore) : "None";
+                }
+            }
+        }
+    }
+
+    float UtilityAgent::GetIntensity(int _channelIndex) const
+    {
+        if (_channelIndex >= 0 && _channelIndex < m_CurrentCellIntensity.size())
+            return m_CurrentCellIntensity[_channelIndex];
+        return 0.0f;
+    }
+} // namespace MirageEngine::Core::Components

@@ -6,29 +6,32 @@ namespace MirageRHI
 {
     class OpenGLCommandBuffer : public ICommandBuffer
     {
-    public:
-        // Wrapper so doesn't need initialisation
-        void Create() override {}
-        void Destroy() override {}
+        public:
 
-        OpenGLCommandBuffer& API_OpenGL() override { return *this; }
+            // Wrapper so doesn't need initialisation
+            void Create() override {}
 
-        // PlaceHolder Function (empty)
-        void BeginDraw(std::shared_ptr<IRenderPass> _renderPass, uint32_t _FBO) override;
-        void EndDraw() override {}
+            void Destroy() override {}
 
-        // Binding Functions
-        void BindPipeline(std::shared_ptr<IPipeline> _pipeline) override;
-        void BindBuffer(std::shared_ptr<IBuffer> _buffer) override;
-        void BindTextureFromID(uint32_t _ID) override;
+            OpenGLCommandBuffer& API_OpenGL() override { return *this; }
 
-        void ApplyPipelineParameters(std::shared_ptr<IPipeline> _pipeline) override;
-        void ApplyVertexLayout(std::shared_ptr<IVertexLayout> _vertexLayout) override;
+            // PlaceHolder Function (empty)
+            void BeginDraw(std::shared_ptr<IRenderPass> _renderPass, uint32_t _FBO) override;
 
-        // Draw Binded Buffers
-        void Draw(uint32_t _indexCount, DrawMode _mode = DrawMode::Triangles) override;
+            void EndDraw() override {}
 
-        // Swap Buffers
-        void SubmitAndPresent(std::shared_ptr<ISwapChain> _swapchain, std::shared_ptr<ISurface> _surface) override;
+            // Binding Functions
+            void BindPipeline(std::shared_ptr<IPipeline> _pipeline) override;
+            void BindBuffer(std::shared_ptr<IBuffer> _buffer) override;
+            void BindTextureFromID(uint32_t _ID) override;
+
+            void ApplyPipelineParameters(std::shared_ptr<IPipeline> _pipeline) override;
+            void ApplyVertexLayout(std::shared_ptr<IVertexLayout> _vertexLayout) override;
+
+            // Draw Binded Buffers
+            void Draw(uint32_t _indexCount, DrawMode _mode = DrawMode::Triangles) override;
+
+            // Swap Buffers
+            void SubmitAndPresent(std::shared_ptr<ISwapChain> _swapchain, std::shared_ptr<ISurface> _surface) override;
     };
-}
+} // namespace MirageRHI

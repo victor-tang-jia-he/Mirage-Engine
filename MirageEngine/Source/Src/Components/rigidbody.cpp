@@ -4,13 +4,14 @@
 #include <Physics/common_enum.h>
 #include <Logs/log.h>
 
-
 DEFINE_LOG_CATEGORY(LogComponentRigidBody)
 
 using namespace MirageEngine::Core::Components;
 using namespace MirageEngine::Core;
 
-Rigidbody::Rigidbody(ICCollider* _shape, Physics::ERigidBodyType _type) { m_Rigidbody = Physics::PhysicsManager::Instance().CreateRigidBody(_shape->GetCollision(), _type); 
+Rigidbody::Rigidbody(ICCollider* _shape, Physics::ERigidBodyType _type)
+{
+    m_Rigidbody = Physics::PhysicsManager::Instance().CreateRigidBody(_shape->GetCollision(), _type);
 
     m_Rigidbody->OnSimulated = [this]()
     {

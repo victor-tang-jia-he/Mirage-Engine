@@ -2,7 +2,6 @@
 #include <Resources/resource_interface.h>
 #include <RHI/i_pipeline.h>
 
-
 DECLARE_LOG_CATEGORY_EXTERN(LogPipeline)
 
 namespace MirageRHI
@@ -18,10 +17,10 @@ namespace MirageEngine::Core::Resources
     {
         private:
 
-            std::shared_ptr<MirageRHI::IPipeline>           PipelineBind           = nullptr;
-            std::shared_ptr<MirageRHI::IPipelineParameters> PipelineParameters     = nullptr;
-            std::shared_ptr<Shader>                         AttachedVertexShader   = nullptr;
-            std::shared_ptr<Shader>                         AttachedFragmentShader = nullptr;
+            std::shared_ptr<MirageRHI::IPipeline> PipelineBind = nullptr;
+            std::shared_ptr<MirageRHI::IPipelineParameters> PipelineParameters = nullptr;
+            std::shared_ptr<Shader> AttachedVertexShader = nullptr;
+            std::shared_ptr<Shader> AttachedFragmentShader = nullptr;
 
             bool m_bUploaded = false;
 
@@ -44,13 +43,13 @@ namespace MirageEngine::Core::Resources
             void SetNewVertexShader(std::shared_ptr<Shader> _newVertexShader)
             {
                 AttachedVertexShader = _newVertexShader;
-                m_bUploaded          = false; // Mark for re-upload
+                m_bUploaded = false; // Mark for re-upload
             }
 
             void SetNewFragmentShader(std::shared_ptr<Shader> _newFragmentShader)
             {
                 AttachedFragmentShader = _newFragmentShader;
-                m_bUploaded            = false; // Mark for re-upload
+                m_bUploaded = false; // Mark for re-upload
             }
     };
 } // namespace MirageEngine::Core::Resources

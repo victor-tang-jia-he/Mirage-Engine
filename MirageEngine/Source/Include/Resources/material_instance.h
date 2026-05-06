@@ -1,8 +1,6 @@
 #pragma once
-#include <unordered_map>
-#include <string>
+
 #include <Resources/resource_interface.h>
-#include <memory>
 
 namespace MirageRHI
 {
@@ -21,7 +19,7 @@ namespace MirageEngine::Core::Resources
     {
             friend class ResourceManager;
 
-            std::shared_ptr<Material>                    m_Material;
+            std::shared_ptr<Material> m_Material;
             std::shared_ptr<MirageRHI::IUniformBuffer> m_UniformBuffers;
 
             std::unordered_map<std::string, std::shared_ptr<Texture>> m_Textures;

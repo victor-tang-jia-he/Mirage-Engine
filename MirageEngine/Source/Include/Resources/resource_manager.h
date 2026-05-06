@@ -1,16 +1,11 @@
 #pragma once
 
-#include <vector>
-#include <unordered_map>
-#include <string>
 #include <Resources/resource_interface.h>
 #include <RHI/i_shader.h>
-#include <memory>
+
 #include <vector3.h>
 #include <filesystem>
 #include <Scripting/engine_script_api.h>
-
-
 
 DECLARE_LOG_CATEGORY_EXTERN(LogResourceManager)
 
@@ -40,7 +35,7 @@ namespace MirageEngine::Core::Resources
         private:
 
             std::unordered_map<std::string, std::shared_ptr<IResource>> m_Resources;
-            std::unordered_map<std::string, std::shared_ptr<Shader>>    m_ShaderCache;
+            std::unordered_map<std::string, std::shared_ptr<Shader>> m_ShaderCache;
 
             std::shared_ptr<MirageRHI::IRenderInterface> m_Rhi = nullptr;
 
@@ -57,7 +52,8 @@ namespace MirageEngine::Core::Resources
 
             static ResourceManager& Instance()
             {
-                if (!m_Instance) m_Instance = new ResourceManager();
+                if (!m_Instance)
+                    m_Instance = new ResourceManager();
                 return *m_Instance;
             }
 
@@ -124,10 +120,10 @@ namespace MirageEngine::Core::Resources
             // Resource access
             // -------------------------------------------------------------------------
 
-            std::shared_ptr<Texture>  GetTexture(const std::string& _name);
-            std::shared_ptr<Shader>   GetVertexShader(const std::string& _name);
-            std::shared_ptr<Shader>   GetFragmentShader(const std::string& _name);
-            std::shared_ptr<Mesh>     GetMesh(const std::string& _name);
+            std::shared_ptr<Texture> GetTexture(const std::string& _name);
+            std::shared_ptr<Shader> GetVertexShader(const std::string& _name);
+            std::shared_ptr<Shader> GetFragmentShader(const std::string& _name);
+            std::shared_ptr<Mesh> GetMesh(const std::string& _name);
             std::shared_ptr<Material> GetMaterial(const std::string& _name);
             std::shared_ptr<MaterialInstance> GetMaterialInstance(const std::string& _name);
 
@@ -140,7 +136,8 @@ namespace MirageEngine::Core::Resources
             /// <returns>True if the resource was found and the cast succeeded, false otherwise.</returns>
             template <typename T> static bool TryGet(const std::string& _name, T*& out)
             {
-                if (!std::is_base_of_v<MirageEngine::Core::Resources::IResource, T>) return false;
+                if (!std::is_base_of_v<MirageEngine::Core::Resources::IResource, T>)
+                    return false;
 
                 ResourceManager& resourceManager = ResourceManager::Instance();
 
@@ -197,7 +194,8 @@ namespace MirageEngine::Core::Resources
                 auto it = m_Resources.find(_name);
                 if (it != m_Resources.end())
                 {
-                    if (std::shared_ptr<T> resource = std::dynamic_pointer_cast<T>(it->second)) return resource;
+                    if (std::shared_ptr<T> resource = std::dynamic_pointer_cast<T>(it->second))
+                        return resource;
 
                     LOG(logWarning, LogResourceManager, "Resource type mismatch for name: ", _name);
                 }

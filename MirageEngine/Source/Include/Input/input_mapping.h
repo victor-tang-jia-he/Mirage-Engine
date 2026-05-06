@@ -1,7 +1,5 @@
 #pragma once
 
-#include <unordered_map>
-
 #include <Events/event.h>
 #include <Components/component.h>
 #include <vector2.h>
@@ -26,8 +24,8 @@ namespace MirageEngine::Core
 
         struct AxisBind1D
         {
-                int   KeyPositive;
-                int   KeyNegative;
+                int KeyPositive;
+                int KeyNegative;
                 float Value = 0.f;
         };
 
@@ -39,19 +37,19 @@ namespace MirageEngine::Core
 
         struct CallbackInputInfo
         {
-                bool Pressed  = false;
-                bool Held     = false;
+                bool Pressed = false;
+                bool Held = false;
                 bool Released = false;
 
-                float         Axis1D = 0.f;
+                float Axis1D = 0.f;
                 Math::Vector2 Axis2D = { 0, 0 };
         };
 
         struct InputBind
         {
                 EventSystem::EventDispatcher Dispatcher;
-                CallbackInputInfo            InputInfo;
-                int                          HeldCount = 0;
+                CallbackInputInfo InputInfo;
+                int HeldCount = 0;
         };
 
         struct InputMapping : public Components::Component, public std::enable_shared_from_this<InputMapping>

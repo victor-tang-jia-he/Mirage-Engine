@@ -15,31 +15,19 @@ void MirageRHI::OpenGLCommandBuffer::BeginDraw(std::shared_ptr<IRenderPass> _ren
     _renderPass->API_OpenGL().Begin();
 }
 
-void MirageRHI::OpenGLCommandBuffer::BindPipeline(std::shared_ptr<IPipeline> _pipeline)
-{
-	_pipeline->API_OpenGL().Bind();
-}
+void MirageRHI::OpenGLCommandBuffer::BindPipeline(std::shared_ptr<IPipeline> _pipeline) { _pipeline->API_OpenGL().Bind(); }
 
-void MirageRHI::OpenGLCommandBuffer::BindBuffer(std::shared_ptr<IBuffer> _buffer)
-{
-	_buffer->API_OpenGL().Bind();
-}
+void MirageRHI::OpenGLCommandBuffer::BindBuffer(std::shared_ptr<IBuffer> _buffer) { _buffer->API_OpenGL().Bind(); }
 
 void MirageRHI::OpenGLCommandBuffer::BindTextureFromID(uint32_t _ID)
 {
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, _ID);
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, _ID);
 }
 
-void MirageRHI::OpenGLCommandBuffer::ApplyPipelineParameters(std::shared_ptr<IPipeline> _pipeline)
-{
-	_pipeline->API_OpenGL().ApplyParameters();
-}
+void MirageRHI::OpenGLCommandBuffer::ApplyPipelineParameters(std::shared_ptr<IPipeline> _pipeline) { _pipeline->API_OpenGL().ApplyParameters(); }
 
-void MirageRHI::OpenGLCommandBuffer::ApplyVertexLayout(std::shared_ptr<IVertexLayout> _vertexLayout)
-{
-    _vertexLayout->API_OpenGL().SetLayout();
-}
+void MirageRHI::OpenGLCommandBuffer::ApplyVertexLayout(std::shared_ptr<IVertexLayout> _vertexLayout) { _vertexLayout->API_OpenGL().SetLayout(); }
 
 void MirageRHI::OpenGLCommandBuffer::Draw(uint32_t _indexCount, DrawMode _mode)
 {
@@ -49,9 +37,15 @@ void MirageRHI::OpenGLCommandBuffer::Draw(uint32_t _indexCount, DrawMode _mode)
     GLenum glMode;
     switch (_mode)
     {
-    case DrawMode::Lines:  glMode = GL_LINES;     break;
-    case DrawMode::Points: glMode = GL_POINTS;    break;
-    default:               glMode = GL_TRIANGLES; break;
+        case DrawMode::Lines:
+            glMode = GL_LINES;
+            break;
+        case DrawMode::Points:
+            glMode = GL_POINTS;
+            break;
+        default:
+            glMode = GL_TRIANGLES;
+            break;
     }
 
     // If no element array buffer is bound, assume non-indexed draw (ex : fullscreen triangle)
@@ -68,6 +62,6 @@ void MirageRHI::OpenGLCommandBuffer::Draw(uint32_t _indexCount, DrawMode _mode)
 
 void MirageRHI::OpenGLCommandBuffer::SubmitAndPresent(std::shared_ptr<ISwapChain> _swapChain, std::shared_ptr<ISurface> _surface)
 {
-	_swapChain->API_OpenGL().Present(_surface->API_OpenGL());
-	_swapChain->IsScreenResized(_surface);
+    _swapChain->API_OpenGL().Present(_surface->API_OpenGL());
+    _swapChain->IsScreenResized(_surface);
 }

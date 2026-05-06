@@ -77,10 +77,10 @@ void Renderer::RenderScene(SceneGraph _sceneGraph)
         m_UniformBuffer->SetProjection(_sceneGraph.GetActiveCamera()->GetPerspective());
     }
 
-	for (std::shared_ptr<GameObject> root : _sceneGraph.GetRootObjects())
-	{
-		RenderObjectRecursive(root);
-	}
+    for (std::shared_ptr<GameObject> root : _sceneGraph.GetRootObjects())
+    {
+        RenderObjectRecursive(root);
+    }
 }
 
 void Renderer::RenderScreen()
@@ -104,18 +104,24 @@ void Renderer::EndFrame()
 
 uint32_t Renderer::GetFramebufferTextureID() const
 {
-    if (m_SwapChain) { return m_SwapChain->AcquireCurrentImage(); }
+    if (m_SwapChain)
+    {
+        return m_SwapChain->AcquireCurrentImage();
+    }
     return 0;
 }
 
 void Renderer::InitWindow()
 {
-    if (!glfwInit()) { LOG(logFatal, LogMirageRenderer, "Failed to init GLFW!"); }
+    if (!glfwInit())
+    {
+        LOG(logFatal, LogMirageRenderer, "Failed to init GLFW!");
+    }
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-    m_Width  = 1920;
+    m_Width = 1920;
     m_Height = 1080;
 
     m_Window = glfwCreateWindow(m_Width, m_Height, "Mirage Engine", nullptr, nullptr);
@@ -126,7 +132,10 @@ void Renderer::InitWindow()
     }
 
     glfwMakeContextCurrent(m_Window);
-    if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) { LOG(logFatal, LogMirageRenderer, "Failed to init GLAD!"); }
+    if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
+    {
+        LOG(logFatal, LogMirageRenderer, "Failed to init GLAD!");
+    }
 
     glViewport(0, 0, m_Width, m_Height);
 
@@ -153,21 +162,22 @@ void MirageEngine::Renderer::APISelection()
             m_RenderInterface = std::make_shared<MirageRHI::OpenGLRenderInterface>();
             LOG(logInfo, LogMirageRenderer, "Selected RHI API : OpenGL");
             break;
-        default: LOG(logFatal, LogMirageRenderer, "Unsupported API");
+        default:
+            LOG(logFatal, LogMirageRenderer, "Unsupported API");
     }
 }
 
 void MirageEngine::Renderer::ClassInstantiation()
 {
-    m_Instance                 = m_RenderInterface->InstantiateInstance();
-    m_Surface                  = m_RenderInterface->InstantiateSurface();
-    m_Device                   = m_RenderInterface->InstantiateDevice();
-    m_SwapChain                = m_RenderInterface->InstantiateSwapChain();
-    m_RenderPass               = m_RenderInterface->InstantiateRenderPass();
+    m_Instance = m_RenderInterface->InstantiateInstance();
+    m_Surface = m_RenderInterface->InstantiateSurface();
+    m_Device = m_RenderInterface->InstantiateDevice();
+    m_SwapChain = m_RenderInterface->InstantiateSwapChain();
+    m_RenderPass = m_RenderInterface->InstantiateRenderPass();
     m_ScreenPipelineParameters = m_RenderInterface->InstantiatePipelineParameters();
-    m_ScreenPipeline           = m_RenderInterface->InstantiatePipeline();
-    m_UniformBuffer            = m_RenderInterface->InstantiateUniformBuffer();
-    m_CommandBuffer            = m_RenderInterface->InstantiateCommandBuffer();
+    m_ScreenPipeline = m_RenderInterface->InstantiatePipeline();
+    m_UniformBuffer = m_RenderInterface->InstantiateUniformBuffer();
+    m_CommandBuffer = m_RenderInterface->InstantiateCommandBuffer();
 
     LOG(logTemp, LogMirageRenderer, "All Classes successfully Instantiated");
 }
@@ -242,10 +252,10 @@ void Renderer::DrawMesh(std::shared_ptr<MirageEngine::Core::Components::MeshRend
 
     m_CommandBuffer->BindPipeline(_meshRenderer->GetMaterial()->GetMaterial()->GetPipeline());
     m_CommandBuffer->ApplyPipelineParameters(_meshRenderer->GetMaterial()->GetMaterial()->GetPipeline());
-	_meshRenderer->GetMaterial()->Bind();
+    _meshRenderer->GetMaterial()->Bind();
     m_UniformBuffer->UpdateUniformBuffer(_meshRenderer->GetMaterial()->GetMaterial()->GetPipeline(), _meshTransform.GetWorldMatrix());
-	m_CommandBuffer->BindBuffer(_meshRenderer->GetMesh()->GetVertexBuffer());
+    m_CommandBuffer->BindBuffer(_meshRenderer->GetMesh()->GetVertexBuffer());
     m_CommandBuffer->ApplyVertexLayout(_meshRenderer->GetMesh()->GetVertexLayout());
-	m_CommandBuffer->BindBuffer(_meshRenderer->GetMesh()->GetIndexBuffer());
-	m_CommandBuffer->Draw((uint32_t)_meshRenderer->GetMesh()->GetIndicesCount());
+    m_CommandBuffer->BindBuffer(_meshRenderer->GetMesh()->GetIndexBuffer());
+    m_CommandBuffer->Draw((uint32_t)_meshRenderer->GetMesh()->GetIndicesCount());
 }

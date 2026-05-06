@@ -84,10 +84,7 @@ namespace MirageEngine::DebugDraw
         m_VertexBufferObject->Update(m_Lines.data(), m_Lines.size() * sizeof(LineVertex));
     }
 
-    void DebugDraw::Flush()
-    {
-        m_Lines.clear();
-    }
+    void DebugDraw::Flush() { m_Lines.clear(); }
 
     // ------------------------------------------------------------------ dtor
 

@@ -14,7 +14,8 @@ Bullet3SphereCollider::~Bullet3SphereCollider()
 void Bullet3SphereCollider::Create()
 {
     m_CollisionShape = new btSphereShape(m_Radius);
-    if (m_Offset.IsNull() && m_Rot.IsNull()) return;
+    if (m_Offset.IsNull() && m_Rot.IsNull())
+        return;
 
     m_LocalTransform.setIdentity();
     m_LocalTransform.setOrigin(btVector3(m_Offset.X, m_Offset.Y, m_Offset.Z));
@@ -24,16 +25,18 @@ void Bullet3SphereCollider::Create()
 
 void Bullet3SphereCollider::SetOffset(Vector3 _offset, Quaternion _rotation)
 {
-    if (!m_CollisionShape) return;
+    if (!m_CollisionShape)
+        return;
 
-    m_Rot      = _rotation;
-    m_Offset   = _offset;
+    m_Rot = _rotation;
+    m_Offset = _offset;
     m_bIsDirty = true;
 }
 
 void Bullet3SphereCollider::SetRadius(float _radius)
 {
-    if (m_Radius == _radius) return;
+    if (m_Radius == _radius)
+        return;
     m_Radius = _radius;
 }
 

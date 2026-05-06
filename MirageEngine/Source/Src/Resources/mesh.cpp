@@ -7,7 +7,8 @@ DEFINE_LOG_CATEGORY(LogMesh)
 
 using namespace MirageEngine::Core::Resources;
 
-Mesh::Mesh(std::shared_ptr<MirageRHI::IVertexLayout> _vao, std::shared_ptr<IBuffer> _vb, std::shared_ptr<IBuffer> _ib, std::vector<LitVertex>&& _vertices, std::vector<uint32_t>&& _indices, size_t _count)
+Mesh::Mesh(
+    std::shared_ptr<MirageRHI::IVertexLayout> _vao, std::shared_ptr<IBuffer> _vb, std::shared_ptr<IBuffer> _ib, std::vector<LitVertex>&& _vertices, std::vector<uint32_t>&& _indices, size_t _count)
     : m_VertexLayout(_vao)
     , m_VertexBuffer(_vb)
     , m_IndexBuffer(_ib)
@@ -25,7 +26,7 @@ Mesh::~Mesh()
 {
     m_IndexCount = 0;
     m_VertexBuffer = nullptr;
-    m_IndexBuffer  = nullptr;
+    m_IndexBuffer = nullptr;
     LOG(logTemp, LogMesh, "Mesh ", p_Name, " destroyed !");
 }
 
@@ -79,7 +80,4 @@ void MirageEngine::Core::Resources::Mesh::CreateLitVertexLayout()
     m_VertexLayout->AddAttribute(UVAttr, 2);
 }
 
-void MirageEngine::Core::Resources::Mesh::ClearVertexLayout()
-{
-    m_VertexLayout->ClearAttributes();
-}
+void MirageEngine::Core::Resources::Mesh::ClearVertexLayout() { m_VertexLayout->ClearAttributes(); }

@@ -23,11 +23,10 @@ namespace MirageEngine::Core::Physics
         Group7 = 1 << 7,
         All = Default | Group1 | Group2 | Group3 | Group4 | Group5 | Group6 | Group7
     };
+
     constexpr int operator+(ECollisionGroup g) { return static_cast<int>(g); }
-    constexpr ECollisionGroup operator|(ECollisionGroup a, ECollisionGroup b)
-    {
-        return static_cast<ECollisionGroup>(static_cast<int>(a) | static_cast<int>(b));
-    }
+
+    constexpr ECollisionGroup operator|(ECollisionGroup a, ECollisionGroup b) { return static_cast<ECollisionGroup>(static_cast<int>(a) | static_cast<int>(b)); }
     enum class ECollisionResponse
     {
         Ignore,

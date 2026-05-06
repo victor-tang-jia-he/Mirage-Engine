@@ -3,54 +3,56 @@
 #include <nlohmann/json.hpp>
 #include <entt/entt.hpp>
 
-
-
 DECLARE_LOG_CATEGORY_EXTERN(LogSerializer)
 
 using json = nlohmann::json;
 
 namespace MirageEngine
 {
-	class SceneGraph;
-	class GameObject;
+    class SceneGraph;
+    class GameObject;
 
-	namespace Core
-	{
-		namespace Components
-		{
-			class Component;
-			class Transform;
-		}
-		namespace Math
-		{
-			class Vector3;
-			class Quaternion;
-		}
-		namespace Resources
-		{
-			class IResource;
-		}
-	}
+    namespace Core
+    {
+        namespace Components
+        {
+            class Component;
+            class Transform;
+        } // namespace Components
 
-	class Serializer
-	{
-	public:
-		// Save SceneGraph as a Json file
-		static void SaveScene(SceneGraph _sceneGraph);
+        namespace Math
+        {
+            class Vector3;
+            class Quaternion;
+        } // namespace Math
 
-	private:
-		static json SerializeScene(SceneGraph _sceneGraph);
-		static json SerializeGameObject(std::shared_ptr<GameObject> _gameObject, json _jParent);
+        namespace Resources
+        {
+            class IResource;
+        }
+    } // namespace Core
 
-		static json SerializeComponent(std::shared_ptr<Core::Components::Component> _component, json _Owner);
-		static json SerializeTransform(Core::Components::Transform _transform);
+    class Serializer
+    {
+        public:
 
-		// Serializes Components reflected meta data
-		static json SerializeMetaData(entt::meta_type _type, entt::meta_data _data, void* _instancePtr);
+            // Save SceneGraph as a Json file
+            static void SaveScene(SceneGraph _sceneGraph);
 
-		static json SerializeVector3(Core::Math::Vector3 _vector3);
-		static json SerializeQuaternion(Core::Math::Quaternion _quaternion);
+        private:
 
-		static bool ConvertJsonToFile(json _jTarget);
-	};
-}
+            static json SerializeScene(SceneGraph _sceneGraph);
+            static json SerializeGameObject(std::shared_ptr<GameObject> _gameObject, json _jParent);
+
+            static json SerializeComponent(std::shared_ptr<Core::Components::Component> _component, json _Owner);
+            static json SerializeTransform(Core::Components::Transform _transform);
+
+            // Serializes Components reflected meta data
+            static json SerializeMetaData(entt::meta_type _type, entt::meta_data _data, void* _instancePtr);
+
+            static json SerializeVector3(Core::Math::Vector3 _vector3);
+            static json SerializeQuaternion(Core::Math::Quaternion _quaternion);
+
+            static bool ConvertJsonToFile(json _jTarget);
+    };
+} // namespace MirageEngine

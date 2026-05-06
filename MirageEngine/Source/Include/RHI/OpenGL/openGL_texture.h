@@ -6,15 +6,17 @@ namespace MirageRHI
 {
     class OpenGLTexture : public ITexture
     {
-	private:
-        uint32_t m_Texture = 0;
+        private:
 
-    public:
-        void Create(const void* _data, TextureDesc _desc) override;
-        void Destroy() override;
+            uint32_t m_Texture = 0;
 
-        void Bind() const override;
+        public:
 
-        OpenGLTexture& API_OpenGL() override { return *this; }
+            void Create(const void* _data, TextureDesc _desc) override;
+            void Destroy() override;
+
+            void Bind() const override;
+
+            OpenGLTexture& API_OpenGL() override { return *this; }
     };
-}
+} // namespace MirageRHI

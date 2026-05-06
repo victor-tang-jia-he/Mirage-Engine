@@ -56,12 +56,14 @@ json Serializer::SerializeGameObject(std::shared_ptr<GameObject> _gameObject, js
     jGameObject["transform"] = SerializeTransform(_gameObject->Transform);
 
     // Recursivly serialize all gameobjects children
-    for (std::shared_ptr<GameObject> child : _gameObject->GetChildren()) {
+    for (std::shared_ptr<GameObject> child : _gameObject->GetChildren())
+    {
         jGameObject["children"].emplace_back(SerializeGameObject(child, jGameObject));
     }
 
     // Serialize all gameobjects components
-    for (std::shared_ptr<Components::Component> component : _gameObject->GetComponents()) {
+    for (std::shared_ptr<Components::Component> component : _gameObject->GetComponents())
+    {
         jGameObject["components"].emplace_back(SerializeComponent(component, jGameObject));
     }
 
@@ -113,7 +115,8 @@ json MirageEngine::Serializer::SerializeMetaData(entt::meta_type _type, entt::me
     auto actualType = value.type();
 
     const char* label = _data.name(); // The string name we gave in .data("Name")
-    if (!label) label = "Property";
+    if (!label)
+        label = "Property";
 
     if (actualType == entt::resolve<std::string>())
     {
@@ -166,7 +169,7 @@ json MirageEngine::Serializer::SerializeMetaData(entt::meta_type _type, entt::me
     }
     else if (actualType.is_pointer_like())
     {
-        if (entt::meta_any ref = *value; ref) 
+        if (entt::meta_any ref = *value; ref)
         {
             if (Core::Components::Component* component = ref.try_cast<Core::Components::Component>())
             {
@@ -179,7 +182,7 @@ json MirageEngine::Serializer::SerializeMetaData(entt::meta_type _type, entt::me
         }
     }
     else
-    {   
+    {
         LOG(logTemp, LogSerializer, "Ignored Meta Data : ", label);
     }
 

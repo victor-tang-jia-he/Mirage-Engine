@@ -34,6 +34,9 @@ void MirageEngine::Core::Resources::MaterialInstance::Bind()
 
 void MirageEngine::Core::Resources::MaterialInstance::SetTexture(const std::string& _name, std::shared_ptr<Texture> _texture)
 {
-    if (!_texture) { LOG(logError, LogMaterial, "Undefine Texture for ", _name); }
+    if (!_texture)
+    {
+        LOG(logError, LogMaterial, "Undefine Texture for ", _name);
+    }
     m_Textures.try_emplace(_name, _texture);
 }

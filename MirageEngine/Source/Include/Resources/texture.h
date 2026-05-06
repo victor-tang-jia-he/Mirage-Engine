@@ -1,44 +1,41 @@
 #pragma once
 #include <Resources/resource_interface.h>
 
-
 DECLARE_LOG_CATEGORY_EXTERN(LogTexture)
 
 namespace MirageRHI
 {
-	class ITexture;
+    class ITexture;
 }
 
 namespace MirageEngine::Core::Resources
 {
-	class Texture : public IResource
-	{
-	private:
+    class Texture : public IResource
+    {
+        private:
 
-		std::shared_ptr<MirageRHI::ITexture> m_TextureBuffer = nullptr;
+            std::shared_ptr<MirageRHI::ITexture> m_TextureBuffer = nullptr;
 
-		int m_Width = 0;
-		int m_Height = 0;
-		int m_Channel = 0;
-		int m_Format = NAN;
-		unsigned char* m_Data = nullptr;
-		bool m_bIsUploaded = false;
+            int m_Width = 0;
+            int m_Height = 0;
+            int m_Channel = 0;
+            int m_Format = NAN;
+            unsigned char* m_Data = nullptr;
+            bool m_bIsUploaded = false;
 
-	public:
+        public:
 
-		Texture(std::shared_ptr<MirageRHI::ITexture> _textureBuffer, int& _width, int& _height, int& _channel, int& _format, unsigned char* _data)
-			: m_TextureBuffer(_textureBuffer),  
-			m_Width(_width),  
-			m_Height(_height),  
-			m_Channel(_channel), 
-			m_Format(_format), 
-			m_Data(_data)
-		{
-		};
+            Texture(std::shared_ptr<MirageRHI::ITexture> _textureBuffer, int& _width, int& _height, int& _channel, int& _format, unsigned char* _data)
+                : m_TextureBuffer(_textureBuffer)
+                , m_Width(_width)
+                , m_Height(_height)
+                , m_Channel(_channel)
+                , m_Format(_format)
+                , m_Data(_data) {};
 
-		~Texture();
-		void Bind();
+            ~Texture();
+            void Bind();
 
-		std::shared_ptr<MirageRHI::ITexture> GetTextureBuffer() const { return m_TextureBuffer; }
-	};
-} // namespace MirageEngine
+            std::shared_ptr<MirageRHI::ITexture> GetTextureBuffer() const { return m_TextureBuffer; }
+    };
+} // namespace MirageEngine::Core::Resources

@@ -8,15 +8,15 @@ using namespace MirageEngine::Core::Math;
 
 void MirageRHI::OpenGLUniformBuffer::Create()
 {
-	m_View = Matrix4::Identity();
-	m_Proj = Matrix4::Identity();
+    m_View = Matrix4::Identity();
+    m_Proj = Matrix4::Identity();
 
-	LOG(logTemp, LogRHIUniformBuffer, "Uniform Buffer Created.");
+    LOG(logTemp, LogRHIUniformBuffer, "Uniform Buffer Created.");
 }
 
 void MirageRHI::OpenGLUniformBuffer::UpdateUniformBuffer(std::shared_ptr<IPipeline> _pipeline, MirageEngine::Core::Math::Matrix4 _model)
 {
-	_pipeline->API_OpenGL().SetMat4("model", _model);
-	_pipeline->API_OpenGL().SetMat4("view", m_View);
-	_pipeline->API_OpenGL().SetMat4("proj", m_Proj);
+    _pipeline->API_OpenGL().SetMat4("model", _model);
+    _pipeline->API_OpenGL().SetMat4("view", m_View);
+    _pipeline->API_OpenGL().SetMat4("proj", m_Proj);
 }

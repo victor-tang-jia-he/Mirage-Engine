@@ -15,9 +15,9 @@ namespace MirageEngine::Core::Physics
 
         private:
 
-            btRigidBody*                     m_rigidBody    = nullptr;
-            std::shared_ptr<btCompoundShape> m_Compound     = nullptr;
-            Vector3                          m_CurrentScale = { 1, 1, 1 };
+            btRigidBody* m_rigidBody = nullptr;
+            std::shared_ptr<btCompoundShape> m_Compound = nullptr;
+            Vector3 m_CurrentScale = { 1, 1, 1 };
 
         public:
 

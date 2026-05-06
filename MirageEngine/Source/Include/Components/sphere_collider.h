@@ -34,7 +34,7 @@ namespace MirageEngine
                     entt::id_type GetType() const override { return 0; }
 
                     // Sphere only parameter
-                    void  SetRadius(float _radius);
+                    void SetRadius(float _radius);
                     float GetRadius() const;
 
                     // Global collider parameter
@@ -43,8 +43,8 @@ namespace MirageEngine
                     void SetRotation(Math::Quaternion _rotation);
                     void SetOffset(Math::Vector3 _offset, Math::Quaternion _rotation);
 
-                    Math::Vector3    GetScale() const;
-                    Math::Vector3    GetTranslate() const;
+                    Math::Vector3 GetScale() const;
+                    Math::Vector3 GetTranslate() const;
                     Math::Quaternion GetRotation() const;
 
                     Physics::ICollider* GetCollision() const override { return m_Collider; }
