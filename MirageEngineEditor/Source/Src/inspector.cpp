@@ -231,6 +231,38 @@ namespace Mirage
 				ImGui::TreePop();
 			}
 		}
+		else if (actualType.is_enum())
+		{
+			int currentValue = 0;
+			std::string previewName = "Unknown";
+
+			for (auto [id, enumData] : actualType.data())
+			{
+				if (enumData.get({}).cast<int>() == value.cast<int>())
+				{
+					previewName = enumData.name();
+					break;
+				}
+			}
+
+			if (ImGui::BeginCombo(label, previewName.c_str()))
+			{
+				for (auto [id, enumData] : actualType.data())
+				{
+					bool isSelected = (enumData.get({}).cast<int>() == value.cast<int>());
+
+					if (ImGui::Selectable(enumData.name(), isSelected))
+					{
+						_data.set(instance, enumData.get({}));
+					}
+
+					if (isSelected)
+						ImGui::SetItemDefaultFocus();
+				}
+				ImGui::EndCombo();
+			}
+
+		}
 	}
 
 	void Inspector::DrawNestedProperty(entt::meta_data _childData, entt::meta_any& _parentInstance)

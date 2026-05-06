@@ -6,8 +6,8 @@ namespace MirageEngine::AI
 {
 	class ResponsiveCurve
 	{
-		enum class CurveType { Linear, Exponential, Logistic};
-
+	public:
+		enum class CurveType { Linear, Exponential, Logistic };
 	private:
 		CurveType m_Type = CurveType::Linear;
 		float m_Slope = 1.0f;
@@ -26,6 +26,7 @@ namespace MirageEngine::AI
 		float GetXOffset() { return m_XOffset; }
 		float GetYOffset() { return m_YOffset; }
 		bool GetInverted() { return m_Inverted; }
+		CurveType GetType() { return m_Type; }
 
 		// Setters
 		void SetSlope(float _newValue) { m_Slope = _newValue; }
@@ -33,5 +34,6 @@ namespace MirageEngine::AI
 		void SetXOffset(float _newValue) { m_XOffset = _newValue; }
 		void SetYOffset(float _newValue) { m_YOffset = _newValue; }
 		void SetInverted(bool _isInverted) { m_Inverted = _isInverted; }
+		void SetType(CurveType _type) { m_Type = _type; }
 	};
 }

@@ -229,11 +229,18 @@ void RegisterMeta::RegisterResponsiveCurveMeta()
 	entt::meta_factory<AI::ResponsiveCurve> curve{};
 	curve.type(entt::type_id<AI::ResponsiveCurve>().hash(), "ResponsiveCurve");
 
+	entt::meta_factory<AI::ResponsiveCurve::CurveType> enumFactory{};
+	enumFactory.type(entt::type_id<AI::ResponsiveCurve::CurveType>().hash(), "CurveType");
+	enumFactory.data<AI::ResponsiveCurve::CurveType::Linear>("Linear");
+	enumFactory.data<AI::ResponsiveCurve::CurveType::Exponential>("Exponential");
+	enumFactory.data<AI::ResponsiveCurve::CurveType::Logistic>("Logistic");
+
 	curve.data<&AI::ResponsiveCurve::SetSlope, &AI::ResponsiveCurve::GetSlope>("Slope");
 	curve.data<&AI::ResponsiveCurve::SetExponent, &AI::ResponsiveCurve::GetExponent>("Exponent");
 	curve.data<&AI::ResponsiveCurve::SetXOffset, &AI::ResponsiveCurve::GetXOffset>("X Offset");
 	curve.data<&AI::ResponsiveCurve::SetYOffset, &AI::ResponsiveCurve::GetYOffset>("Y Offset");
 	curve.data<&AI::ResponsiveCurve::SetInverted, &AI::ResponsiveCurve::GetInverted>("Inverted");
+	curve.data<&AI::ResponsiveCurve::SetType, &AI::ResponsiveCurve::GetType>("Curve Type");
 }
 
 void RegisterMeta::RegisterNavAgentMeta()
