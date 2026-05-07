@@ -3,6 +3,7 @@
 #include <iostream>
 
 #include "GameObject/game_object.h"
+#include <Scripting/engine_script_api.h>
 
 // class GameObject;
 namespace MirageEngine::Core::Components
@@ -14,7 +15,7 @@ namespace MirageEngine
 {
     class Renderer;
 
-    class SceneGraph
+    class ENGINE_API SceneGraph
     {
         public:
         protected:

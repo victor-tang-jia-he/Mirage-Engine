@@ -33,5 +33,9 @@ namespace MirageEngine::Core::Components
         }
     }
 
-    entt::id_type MirageEngine::Core::Components::InfluenceEmitter::GetType() const { return entt::type_id<InfluenceEmitter>().hash(); }
+    entt::id_type MirageEngine::Core::Components::InfluenceEmitter::GetType() const 
+    { 
+        return entt::type_id<InfluenceEmitter>().hash(); 
+    }
+
 } // namespace MirageEngine::Core::Components

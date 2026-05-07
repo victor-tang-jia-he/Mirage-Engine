@@ -24,7 +24,8 @@ int main()
     // --- Initialization ---
     MirageEngine::Core::Scripting::ScriptManager::Instance().Init();
     application.InitApp();
-    MirageEngine::RegisterMeta().RegisterAllMeta();
+    std::cout << "Context address: " << &entt::locator<entt::meta_ctx>::value_or() << std::endl;
+    MirageEngine::RegisterMeta().RegisterAllMeta(entt::locator<entt::meta_ctx>::handle());
     editor.Init(application.m_Renderer.GetWindowHandle(), &application.m_Renderer, application.GetSceneGraph());
     MirageEngine::TimeManager::Init();
     Debug_Draw.Init(application.m_Renderer.GetRenderInterfaceHandle());
@@ -57,7 +58,7 @@ int main()
         // Used to display the scene in the editor viewport
         uint32_t textureID = application.m_Renderer.GetFramebufferTextureID();
         // Display the editor panels and pass the framebuffer texture ID to the viewport for rendering the scene
-        editor.Update(textureID);
+        editor.OnUpdate(textureID);
 
         application.m_Renderer.EndFrame();
     }

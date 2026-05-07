@@ -4,34 +4,38 @@
 
 namespace MirageEngine
 {
-    class RegisterMeta
-    {
-        public:
+	class RegisterMeta
+	{
+	public:
+		RegisterMeta();
+		~RegisterMeta();
 
-            RegisterMeta();
-            ~RegisterMeta();
+		void RegisterAllMeta(entt::locator<entt::meta_ctx>::node_type handle);
 
-            void RegisterAllMeta();
+	private:
+		void RegisterGameObjectMeta();
 
-        private:
+		void RegisterTransformMeta();
 
-            void RegisterGameObjectMeta();
+		void RegisterMeshRendererMeta();
+		void RegisterCameraMeta();
+		void RegisterInputMappingMeta();
 
-            void RegisterTransformMeta();
+		void RegisterMeshMeta();
+		void RegisterTextureMeta();
+		void RegisterMaterialMeta();
+		void RegisterShaderMeta();
 
-            void RegisterMeshRendererMeta();
-            void RegisterCameraMeta();
-            void RegisterInputMappingMeta();
-            void RegisterInfluenceGridMeta();
-            void RegisterInfluenceEmitterMeta();
+		void RegisterInfluenceGridMeta();
+		void RegisterInfluenceEmitterMeta();
+		void RegisterResponsiveCurveMeta();
+		void RegisterNavAgentMeta();
+		void RegisterUtilityAgentMeta();
 
-            void RegisterMeshMeta();
-            void RegisterTextureMeta();
-            void RegisterMaterialMeta();
-            void RegisterShaderMeta();
+		template<typename T>
+		void RegisterSharedPtr();
 
-            template <typename T> void RegisterSharedPtr();
-    };
-} // namespace MirageEngine
+	};
+}
 
 #include "register_meta.inl"

@@ -6,6 +6,8 @@
 // Input
 #include <Input/input_system.h>
 
+#include <Scripting/engine_script_api.h>
+
 namespace MirageEngine
 {
     namespace Core
@@ -18,7 +20,7 @@ namespace MirageEngine
     } // namespace Core
 } // namespace MirageEngine
 
-class Application
+class ENGINE_API Application
 {
     public:
 

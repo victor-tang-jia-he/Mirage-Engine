@@ -1,8 +1,13 @@
 #pragma once
 #include <iostream>
-
+#include <vector>
 #include <vector3.h>
 #include "Components/component.h"
+
+namespace entt
+{
+    using id_type = std::uint32_t;
+}
 
 namespace MirageEngine::Core::Components
 {
@@ -65,7 +70,11 @@ namespace MirageEngine::Core::Components
 
             int GetChannelsIndex(std::string _name) const;
 
-            std::vector<std::string> GetChannelsNames() const { return m_ChannelsNames; }
+            std::vector<std::string>& GetChannelsNames() { return m_ChannelsNames; }
+
+            int GetResX() const { return m_ResolutionX; }
+
+            int GetResY() const { return m_ResolutionY; }
 
             // Setters
             void SetWidth(float _w) { m_GridWidth = _w; }
@@ -75,5 +84,7 @@ namespace MirageEngine::Core::Components
             void SetCellSize(float _s) { m_CellSize = _s; }
 
             void SetDecayRate(float _d) { m_DecayRate = _d; }
+
+            void SetChannelsNames(const std::vector<std::string>& _names);
     };
 } // namespace MirageEngine::Core::Components

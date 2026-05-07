@@ -1,6 +1,7 @@
 #pragma once
 #include <quaternion.h>
 #include <Components/component.h>
+#include <Scripting/engine_script_api.h>
 
 namespace MirageEngine
 {
@@ -8,7 +9,7 @@ namespace MirageEngine
     {
         namespace Components
         {
-            class Transform
+            class ENGINE_API Transform
             {
                 private:
 

@@ -1,6 +1,7 @@
 #pragma once
 #include <Components/transform.h>
 #include "component.h"
+#include <Scripting/engine_script_api.h>
 
 namespace MirageEngine
 {
@@ -14,7 +15,7 @@ namespace MirageEngine
 
         namespace Components
         {
-            class Camera : public Component
+            class ENGINE_API Camera : public Component
             {
                 private:
 

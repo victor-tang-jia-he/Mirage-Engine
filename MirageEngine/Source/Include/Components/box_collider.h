@@ -2,6 +2,7 @@
 
 #include <Components/physics_components_interface.h>
 #include <Components/component.h>
+#include <Scripting/engine_script_api.h>
 
 namespace MirageEngine
 {
@@ -22,7 +23,7 @@ namespace MirageEngine
 
         namespace Components
         {
-            class BoxCollider : public Component, public ICCollider
+            class ENGINE_API BoxCollider : public Component, public ICCollider
             {
                     Physics::ICollider* m_Collider;
 

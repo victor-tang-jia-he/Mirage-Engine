@@ -30,7 +30,7 @@ namespace Mirage
 		}
 	}
 
-	void Mirage::EditorApp::Update(uint32_t _textureID)
+	void Mirage::EditorApp::OnUpdate(uint32_t _textureID)
 	{
 		UIWrapper::BeginFrame();
 		m_MainMenuBar.DrawBar();
