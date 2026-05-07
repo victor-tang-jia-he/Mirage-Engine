@@ -7,7 +7,11 @@ DECLARE_LOG_CATEGORY_EXTERN(LogInspector)
 namespace MirageEngine
 {
 	class SceneGraph;
-	namespace Core::Components { class Component; }
+	namespace Core::Components 
+	{ 
+		class Component;
+            class UtilityAgent;
+	}
 	class GameObject;
 }
 
@@ -49,5 +53,7 @@ namespace Mirage
 		void ResolveShader(entt::meta_any _value);
 
 		void RenderAddComponentPopup(std::shared_ptr<MirageEngine::GameObject> _selectedObj);
+
+		void DrawAIMonitor(MirageEngine::Core::Components::UtilityAgent* _agent);
 	};
 }

@@ -67,6 +67,9 @@ namespace MirageEngine::Core::Components
 		float GetIntensityByName(const std::string& _name) const;
 		float GetInternalStat(const std::string& _name);
 		const std::string& GetLastDecisionReason() const { return m_LastDecisionReason; }
+        const std::vector<float>& GetLastScores() const { return m_LastScores; }
+        const std::vector<float>& GetSensors() const { return m_CurrentCellIntensity; }
+        const std::unordered_map<std::string, float>& GetInternalStatsMap() const { return m_InternalStats; }
 
 		// Setters
 		void SetDecisionInterval(float _newDecisionInterval) { m_DecisionInterval = _newDecisionInterval; }

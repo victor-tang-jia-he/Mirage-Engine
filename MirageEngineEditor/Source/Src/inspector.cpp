@@ -26,8 +26,9 @@
 #include <Input/input_mapping.h>
 #include <AI/influence_grid.h>
 #include <AI/responsive_curve.h>
+#include <AI/ai_action.h>
 #include <Components/nav_agent.h>
- #include <Logs/log.h>
+#include <Logs/log.h>
 
 DEFINE_LOG_CATEGORY_WITH_COLOR(LogInspector, Loggers::Color::CYAN);
 
@@ -124,6 +125,11 @@ namespace Mirage
 							}
 						}
 						ImGui::EndTable();
+
+						if (auto* agent = dynamic_cast<UtilityAgent*>(comp.get()))
+						{
+							DrawAIMonitor(agent);
+						}
 					}
 					ImGui::PopID();
 				}
@@ -686,4 +692,64 @@ namespace Mirage
 			ImGui::EndPopup();
 		}
 	}
+
+	void Inspector::DrawAIMonitor(UtilityAgent* _agent)
+        {
+            if (!_agent)
+                return;
+
+            ImGui::Spacing();
+            ImGui::TextColored(ImVec4(0, 1, 1, 1), "--- AI REAL-TIME MONITOR ---");
+
+            if (ImGui::CollapsingHeader("Sensors (Grid Perception)", ImGuiTreeNodeFlags_DefaultOpen))
+            {
+                InfluenceGrid* grid = _agent->GetInfluenceGrid();
+                const auto& sensors = _agent->GetSensors();
+
+                for (size_t i = 0; i < sensors.size(); ++i)
+                {
+                    std::string name = (grid && i < grid->GetChannelsNames().size()) ? grid->GetChannelsNames()[i] : "Channel " + std::to_string(i);
+
+                    ImGui::TextUnformatted(name.c_str());
+                    ImGui::SameLine(100);
+                    ImGui::ProgressBar(sensors[i], ImVec2(-1, 0));
+                }
+            }
+
+            if (ImGui::CollapsingHeader("Internal Stats (Blackboard)", ImGuiTreeNodeFlags_DefaultOpen))
+            {
+                for (auto const& [name, val] : _agent->GetInternalStatsMap())
+                {
+                    ImGui::Text("%s : %.2f", name.c_str(), val);
+                }
+            }
+
+            if (ImGui::CollapsingHeader("Decision Scores", ImGuiTreeNodeFlags_DefaultOpen))
+            {
+                const auto& scores = _agent->GetLastScores();
+                const auto& actions = _agent->GetActions();
+
+                if (!scores.empty() && scores.size() == actions.size())
+                {
+                    for (size_t i = 0; i < actions.size(); ++i)
+                    {
+                        float s = scores[i];
+                        std::string actionName = actions[i]->GetName();
+
+                        bool isActive = (_agent->GetLastDecisionReason().find(actionName) != std::string::npos);
+                        if (isActive)
+                            ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1, 1, 0, 1));
+
+                        ImGui::Text("%s", actionName.c_str());
+                        ImGui::SameLine(100);
+                        ImGui::SliderFloat(("##" + actionName).c_str(), &s, 0.0f, 1.2f, "%.3f", ImGuiSliderFlags_NoInput);
+
+                        if (isActive)
+                            ImGui::PopStyleColor();
+                    }
+                }
+                ImGui::Separator();
+                ImGui::TextWrapped("Reason: %s", _agent->GetLastDecisionReason().c_str());
+            }
+        }
 }
