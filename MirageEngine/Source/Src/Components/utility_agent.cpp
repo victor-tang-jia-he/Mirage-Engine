@@ -38,6 +38,15 @@ namespace MirageEngine::Core::Components
 
 	void UtilityAgent::OnUpdate(float _dt)
 	{
+		if (m_Grid == nullptr)
+		{
+			Application* app = Application::Instance();
+			if (app)
+			{
+				m_Grid = app->GetSceneGraph()->FindComponentInScene<InfluenceGrid>();
+			}
+		}
+
 		m_DecisionTimer -= _dt;
 		if (m_DecisionTimer <= 0.0f)
 		{
