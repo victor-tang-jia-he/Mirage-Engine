@@ -13,10 +13,8 @@ namespace Mirage
 		switch (_tag)
 		{
 			case DragDropTag::CONTENT_BROWSER_ITEM:
-				LOG(logTemp, LogDragDrop, "Returning tag string for CONTENT_BROWSER_ITEM");
 				return "CONTENT_BROWSER_ITEM";
 			case DragDropTag::HIERARCHY_ITEM:
-				LOG(logTemp, LogDragDrop, "Returning tag string for HIERARCHY_ITEM");
 				return "HIERARCHY_ITEM";
 			default:
 				return "UNKNOWN";

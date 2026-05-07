@@ -52,5 +52,11 @@ namespace Mirage
 		// Widgets
 		static void CreateSeparatorText(const char* _separatorName);
 		static void CreateColorPicker(Math::Vector3* _color);
+
+	private:
+		// Design
+		static void ApplyThemeColors();
+		static void ShowThemeColorEditor();
+		static ImVec4 Color(unsigned char _r, unsigned char _g, unsigned char _b, unsigned char _a = 255);
 	};
 }

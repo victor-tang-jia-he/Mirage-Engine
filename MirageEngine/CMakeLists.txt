@@ -47,7 +47,7 @@ set_target_properties(MirageEngine PROPERTIES
 )
 
 # Copy all asset in the build
-set(ASSETS_SOURCE "${CMAKE_SOURCE_DIR}/MirageEngine/Assets")
+set(ASSETS_SOURCE "${CMAKE_SOURCE_DIR}/Assets")
 set(ASSETS_DEST "${MIRAGE_BIN_OUTPUT_DIR}/Assets")
 
 if(EXISTS ${ASSETS_SOURCE})

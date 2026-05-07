@@ -33,6 +33,7 @@ namespace Mirage
 		io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
 		//io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
 		ImGui::StyleColorsDark();
+		ApplyThemeColors();
 
 		// Load custom font
 		ImFont* font = io.Fonts->AddFontFromFileTTF("./Assets/TextFonts/ZenDots-Regular.ttf", 16);
@@ -45,8 +46,6 @@ namespace Mirage
 			io.FontDefault = font;
 			LOG(logTemp, LogUIWrapper, "Custom font loaded successfully");
 		}
-
-		ImColor textColor = ImColor(255, 255, 255);
 
 		ImGuizmo::SetImGuiContext(context);
 
@@ -72,6 +71,7 @@ namespace Mirage
 		ImGuizmo::BeginFrame();
 		ImGui::DockSpaceOverViewport(0, ImGui::GetMainViewport(), ImGuiDockNodeFlags_PassthruCentralNode);
 		//ImGui::ShowDemoWindow();
+		ShowThemeColorEditor();
 	}
 
 	void UIWrapper::EndFrame()
@@ -241,5 +241,220 @@ namespace Mirage
 			ImGui::SameLine();
 		}
 		return clicked;
+	}
+
+	void UIWrapper::ApplyThemeColors()
+	{
+		ImGuiStyle& style = ImGui::GetStyle();
+
+		// Primary colors
+		style.Colors[ImGuiCol_WindowBg]						= Color(49, 0, 76, 255);
+		style.Colors[ImGuiCol_ChildBg]						= Color(29, 0, 76, 255);
+		style.Colors[ImGuiCol_PopupBg]						= Color(20, 20, 20, 255);
+		style.Colors[ImGuiCol_Border];
+		style.Colors[ImGuiCol_BorderShadow];
+		style.Colors[ImGuiCol_FrameBg];
+		style.Colors[ImGuiCol_MenuBarBg];
+		style.Colors[ImGuiCol_ScrollbarBg];
+		style.Colors[ImGuiCol_TitleBg];
+		style.Colors[ImGuiCol_TitleBgActive];
+		style.Colors[ImGuiCol_TitleBgCollapsed];
+
+		// Interactive elements - hover/active states
+		style.Colors[ImGuiCol_FrameBgHovered];
+		style.Colors[ImGuiCol_FrameBgActive];
+		style.Colors[ImGuiCol_ScrollbarGrab];
+		style.Colors[ImGuiCol_ScrollbarGrabHovered];
+		style.Colors[ImGuiCol_ScrollbarGrabActive];
+		style.Colors[ImGuiCol_SliderGrab];
+		style.Colors[ImGuiCol_SliderGrabActive];
+
+		// Buttons
+		style.Colors[ImGuiCol_Button];
+		style.Colors[ImGuiCol_ButtonHovered];
+		style.Colors[ImGuiCol_ButtonActive];
+
+		// Headers and separators
+		style.Colors[ImGuiCol_Header];
+		style.Colors[ImGuiCol_HeaderHovered];
+		style.Colors[ImGuiCol_HeaderActive];
+		style.Colors[ImGuiCol_Separator];
+		style.Colors[ImGuiCol_SeparatorHovered];
+		style.Colors[ImGuiCol_SeparatorActive];
+
+		// Tabs
+		style.Colors[ImGuiCol_Tab];
+		style.Colors[ImGuiCol_TabHovered]					= Color(255, 128, 16, 185);
+		style.Colors[ImGuiCol_TabActive]					= Color(228, 35, 31, 211);
+		style.Colors[ImGuiCol_TabUnfocused];
+		style.Colors[ImGuiCol_TabUnfocusedActive]			= Color(255, 212, 8, 157);
+		style.Colors[ImGuiCol_TabSelectedOverline];
+		style.Colors[ImGuiCol_TabDimmedSelectedOverline];
+
+		// Resize grip
+		style.Colors[ImGuiCol_ResizeGrip];
+		style.Colors[ImGuiCol_ResizeGripHovered];
+		style.Colors[ImGuiCol_ResizeGripActive];
+
+		// Plots and tables
+		style.Colors[ImGuiCol_PlotLines];
+		style.Colors[ImGuiCol_PlotLinesHovered];
+		style.Colors[ImGuiCol_PlotHistogram];
+		style.Colors[ImGuiCol_PlotHistogramHovered];
+		style.Colors[ImGuiCol_TableHeaderBg];
+		style.Colors[ImGuiCol_TableBorderStrong];
+		style.Colors[ImGuiCol_TableBorderLight];
+		style.Colors[ImGuiCol_TableRowBg];
+		style.Colors[ImGuiCol_TableRowBgAlt];
+
+		// Docking
+		style.Colors[ImGuiCol_DockingPreview];
+		style.Colors[ImGuiCol_DockingEmptyBg];
+
+		// Navigation and modals
+		style.Colors[ImGuiCol_CheckMark];
+		style.Colors[ImGuiCol_DragDropTarget];
+		style.Colors[ImGuiCol_DragDropTargetBg];
+		style.Colors[ImGuiCol_NavHighlight];
+		style.Colors[ImGuiCol_NavCursor];
+		style.Colors[ImGuiCol_NavWindowingHighlight];
+		style.Colors[ImGuiCol_NavWindowingDimBg];
+		style.Colors[ImGuiCol_ModalWindowDimBg];
+
+		// Text colors
+		style.Colors[ImGuiCol_Text];
+		style.Colors[ImGuiCol_TextDisabled];
+		style.Colors[ImGuiCol_TextLink];
+		style.Colors[ImGuiCol_TextSelectedBg];
+		style.Colors[ImGuiCol_TreeLines];
+		style.Colors[ImGuiCol_UnsavedMarker];
+		style.Colors[ImGuiCol_InputTextCursor];
+	}
+
+	void UIWrapper::ShowThemeColorEditor()
+	{
+		static bool isOpen = true;
+		if (!ImGui::Begin("ImGui Color Editor", &isOpen, ImGuiWindowFlags_AlwaysAutoResize))
+		{
+			ImGui::End();
+			return;
+		}
+
+		ImGuiStyle& style = ImGui::GetStyle();
+		ImVec4* colors = style.Colors;
+
+		// Array of all ImGuiCol enum names
+		static const char* colorNames[] = {
+			"Text",
+			"TextDisabled",
+			"WindowBg",
+			"ChildBg",
+			"PopupBg",
+			"Border",
+			"BorderShadow",
+			"FrameBg",
+			"FrameBgHovered",
+			"FrameBgActive",
+			"TitleBg",
+			"TitleBgActive",
+			"TitleBgCollapsed",
+			"MenuBarBg",
+			"ScrollbarBg",
+			"ScrollbarGrab",
+			"ScrollbarGrabHovered",
+			"ScrollbarGrabActive",
+			"CheckMark",
+			"SliderGrab",
+			"SliderGrabActive",
+			"Button",
+			"ButtonHovered",
+			"ButtonActive",
+			"Header",
+			"HeaderHovered",
+			"HeaderActive",
+			"Separator",
+			"SeparatorHovered",
+			"SeparatorActive",
+			"ResizeGrip",
+			"ResizeGripHovered",
+			"ResizeGripActive",
+			"InputTextCursor",
+			"TabHovered",
+			"Tab",
+			"TabSelected",
+			"TabSelectedOverline",
+			"TabDimmed",
+			"TabDimmedSelected",
+			"TabDimmedSelectedOverline",
+			"DockingPreview",
+			"DockingEmptyBg",
+			"PlotLines",
+			"PlotLinesHovered",
+			"PlotHistogram",
+			"PlotHistogramHovered",
+			"TableHeaderBg",
+			"TableBorderStrong",
+			"TableBorderLight",
+			"TableRowBg",
+			"TableRowBgAlt",
+			"TextLink",
+			"TextSelectedBg",
+			"TreeLines",
+			"DragDropTarget",
+			"DragDropTargetBg",
+			"UnsavedMarker",
+			"NavCursor",
+			"NavWindowingHighlight",
+			"NavWindowingDimBg",
+			"ModalWindowDimBg",
+		};
+
+		if (ImGui::BeginTable("ColorEditorTable", 2, ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg))
+		{
+			ImGui::TableSetupColumn("Color Name", ImGuiTableColumnFlags_WidthStretch, 0.4f);
+			ImGui::TableSetupColumn("Color Picker", ImGuiTableColumnFlags_WidthStretch, 0.6f);
+			ImGui::TableHeadersRow();
+
+			for (int i = 0; i < ImGuiCol_COUNT; i++)
+			{
+				ImGui::TableNextRow();
+				ImGui::TableSetColumnIndex(0);
+				ImGui::Text("%s", colorNames[i]);
+
+				ImGui::TableSetColumnIndex(1);
+				ImGui::PushID(i);
+				ImGui::ColorEdit4(
+					"##color_edit",
+					(float*)&colors[i],
+					ImGuiColorEditFlags_AlphaBar |
+					ImGuiColorEditFlags_DisplayRGB |
+					ImGuiColorEditFlags_NoLabel
+				);
+				ImGui::PopID();
+			}
+
+			ImGui::EndTable();
+		}
+
+		// Reset button
+		ImGui::Spacing();
+		ImGui::Separator();
+		if (ImGui::Button("Reset to Dark Theme", ImVec2(-1, 0)))
+		{
+			ImGui::StyleColorsDark();
+			ApplyThemeColors();
+		}
+
+		ImGui::End();
+	}
+
+	ImVec4 UIWrapper::Color(unsigned char _r, unsigned char _g, unsigned char _b, unsigned char _a)
+	{
+		return ImVec4(
+			float(_r) / 255.f,
+			float(_g) / 255.f,
+			float(_b) / 255.f,
+			float(_a) / 255.f
+		);
 	}
 }
