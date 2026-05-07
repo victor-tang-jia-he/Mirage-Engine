@@ -100,6 +100,14 @@ namespace MirageEngine
         m_RootsList.clear();
     }
 
+    void SceneGraph::CallAllOnStart()
+    {
+        for (std::shared_ptr<GameObject> root : m_RootsList)
+        {
+            CallAllOnStartRecursive(root);
+        }
+    }
+
     void SceneGraph::CallAllUpdate(float dt)
     {
         for (std::shared_ptr<GameObject> root : m_RootsList)
@@ -121,6 +129,19 @@ namespace MirageEngine
         for (std::shared_ptr<GameObject> root : m_RootsList)
         {
             CallAllFixedUpdateRecursive(root, dt);
+        }
+    }
+
+    void SceneGraph::CallAllOnStartRecursive(std::shared_ptr<GameObject> _obj)
+    {
+        for (auto& component : _obj->GetComponents())
+        {
+            component->OnStart();
+        }
+
+        for (std::shared_ptr<GameObject> child : _obj->GetChildren())
+        {
+            CallAllOnStartRecursive(child);
         }
     }
 

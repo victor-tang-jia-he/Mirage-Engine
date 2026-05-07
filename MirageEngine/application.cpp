@@ -29,7 +29,15 @@
 
 // Script Manager
 #include <Scripting/script_manager.h>
+
 #include <DebugDraw/debug_draw.h>
+
+// Light include
+#include <Light/light_manager.h>
+#include <Light/directional_light.h>
+#include <Light/spot_light.h>
+#include <Light/point_light.h>
+#include <Light/i_light.h>
 
 using namespace MirageEngine::Core::Input;
 using namespace MirageEngine::Core::EventSystem;
@@ -183,6 +191,15 @@ void Application::InitGameObject()
     floorGO->SetScale(Vector3(10, 1, 10));
 
     // =========================
+    //  Light object
+    // =========================
+
+    child2->AddComponent<DirectionalLight>()->Intensity = 0.5f;
+    child2->AddComponent<PointLight>()->Intensity = 1.5f;
+    child2->AddComponent<SpotLight>()->Intensity = 1.5f;
+
+
+    // =========================
     //  Resources
     // =========================
     ResourceManager& rm = ResourceManager::Instance();
@@ -190,14 +207,26 @@ void Application::InitGameObject()
     std::shared_ptr<Texture> texCat = rm.GetTexture("cat");
     std::shared_ptr<Texture> texMirage = rm.GetTexture("Mirage");
 
-    std::shared_ptr<Material> mat = rm.CreateMaterial("TestMaterial", "Assets/Defaults/default.vert", "Assets/Defaults/default.frag", 0);
+    std::shared_ptr<Material> mat = rm.CreateMaterial("TestMaterial", "Assets/Shaders/light.vert", "Assets/Shaders/light.frag", 0);
 
     std::shared_ptr<MaterialInstance> mat1 = rm.CreateMaterialInstance("TestMaterialinstance", mat);
+    // Set texture
+    //mat1->SetTexture("albedoMap", texCat);
+    mat1->SetTexture("normalMap", texCat);
+    //mat1->SetTexture("metallicMap", texCat);
+    //mat1->SetTexture("roughnessMap", texCat);
+    //mat1->SetTexture("aoMap", texCat);
+
+    // Set PBR Setting
+    mat1->SetVec3("albedo", { 255.0f, 255.0f, 0.0f });
+    mat1->SetFloat("metallic", 0.5f);
+    mat1->SetFloat("roughness", 0.5f);
+    mat1->SetFloat("ao", 0.5f);
+
     std::shared_ptr<MaterialInstance> mat2 = rm.CreateMaterialInstance("TestMaterialinstance2", mat);
 
     texCat->Bind();
-    mat1->SetTexture("ourTexture", texCat);
-    mat2->SetTexture("ourTexture", texMirage);
+    mat2->SetTexture("normalMap", texMirage);
 
     renderer1->SetMaterial(mat1);
     renderer2->SetMaterial(mat2);

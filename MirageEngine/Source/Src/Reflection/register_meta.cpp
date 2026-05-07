@@ -28,16 +28,13 @@ using namespace MirageEngine::Core::Components;
 
 using namespace entt::literals; // for _hs (hash)
 
-RegisterMeta::RegisterMeta()
-{
-    entt::meta_any empty{};
-    entt::meta_any other{ std::in_place_type<void> };
-}
+RegisterMeta::RegisterMeta() {}
 
 RegisterMeta::~RegisterMeta() {}
 
-void RegisterMeta::RegisterAllMeta()
+void RegisterMeta::RegisterAllMeta(entt::locator<entt::meta_ctx>::node_type handle)
 {
+    entt::locator<entt::meta_ctx>::reset(handle);
     RegisterGameObjectMeta();
 
     RegisterTransformMeta();

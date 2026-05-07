@@ -54,8 +54,10 @@ namespace MirageEngine
             void RenderScreen();
             // Manages the end of the frame, such as presenting the rendered image and swapping buffers
             void EndFrame();
-            // REdners a list of line
+            // Renders a list of line
             void RenderLine();
+            // Renders all light
+            void ComputeLights(std::shared_ptr<MirageRHI::IPipeline> _pipeline);
 
             // --- Getters ---
             // Used to display the scene in the editor viewport

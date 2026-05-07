@@ -73,6 +73,17 @@ void MirageRHI::OpenGLPipeline::SetVec3(const std::string& name, const Vector3& 
     glUniform3fv(location, 1, array);
 }
 
+void MirageRHI::OpenGLPipeline::SetVec4(const std::string& name, const Vector4& value) const
+{
+    int location = glGetUniformLocation(m_Program, name.c_str());
+    float array[4];
+    array[0] = value.X;
+    array[1] = value.Y;
+    array[2] = value.Z;
+    array[3] = value.W;
+    glUniform4fv(location, 1, array);
+}
+
 void MirageRHI::OpenGLPipeline::SetMat3(const std::string& name, const Matrix3& mat) const
 {
     int location = glGetUniformLocation(m_Program, name.c_str());

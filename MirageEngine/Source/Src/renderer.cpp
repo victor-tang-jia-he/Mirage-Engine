@@ -14,6 +14,13 @@
 #include <Resources/material.h>
 #include <Resources/material_instance.h>
 
+// Light include
+#include <Light/light_manager.h>
+#include <Light/directional_light.h>
+#include <Light/spot_light.h>
+#include <Light/point_light.h>
+#include <Light/i_light.h>
+
 DEFINE_LOG_CATEGORY(LogMirageRenderer)
 
 using namespace MirageEngine;
@@ -75,6 +82,7 @@ void Renderer::RenderScene(SceneGraph _sceneGraph)
     {
         m_UniformBuffer->SetView(_sceneGraph.GetActiveCamera()->GetView());
         m_UniformBuffer->SetProjection(_sceneGraph.GetActiveCamera()->GetPerspective());
+        m_UniformBuffer->SetCamPos(_sceneGraph.GetActiveCamera()->Transform().GetPosition());
     }
 
     for (std::shared_ptr<GameObject> root : _sceneGraph.GetRootObjects())
@@ -245,15 +253,87 @@ void MirageEngine::Renderer::RenderLine()
     Debug_Draw.Flush();
 }
 
+void MirageEngine::Renderer::ComputeLights(std::shared_ptr<MirageRHI::IPipeline> _pipeline)
+{
+    int directionalLightCounter = 0;
+    int pointLightCounter = 0;
+    int spotLightCounter = 0;
+
+    std::vector<std::weak_ptr<MirageEngine::DirectionalLight>> dirList = Light_Manager.GetDirectionalLights();
+    std::vector<std::weak_ptr<MirageEngine::PointLight>> pointList = Light_Manager.GetPointLights();
+    std::vector<std::weak_ptr<MirageEngine::SpotLight>> spotList = Light_Manager.GetSpotLights();
+
+    for (auto it = dirList.begin(); it != dirList.end(); ++it)
+    {
+        if (it->expired())
+            continue;
+
+        std::shared_ptr<MirageEngine::DirectionalLight> light = it->lock();
+        std::string base = "DirectionalLights[" + std::to_string(directionalLightCounter) + "]";
+        if (light)
+        {
+            _pipeline->SetVec3(base + ".direction", light->Direction);
+            _pipeline->SetVec4(base + ".color", light->Color);
+            _pipeline->SetFloat(base + ".intensity", light->Intensity);
+        }
+
+        directionalLightCounter++;
+    }
+
+    for (auto it = pointList.begin(); it != pointList.end(); ++it)
+    {
+        if (it->expired())
+            continue;
+
+        std::shared_ptr<MirageEngine::PointLight> light = it->lock();
+        std::string base = "PointLights[" + std::to_string(pointLightCounter) + "]";
+        if (light)
+        {
+            _pipeline->SetVec3(base + ".position", light->GetOwner()->GetPosition());
+            _pipeline->SetVec4(base + ".color", light->Color);
+            _pipeline->SetFloat(base + ".intensity", light->Intensity);
+        }
+
+        pointLightCounter++;
+    }
+
+    for (auto it = spotList.begin(); it != spotList.end(); ++it)
+    {
+        if (it->expired())
+            continue;
+
+        std::shared_ptr<SpotLight> light = it->lock();
+        std::string base = "SpotLights[" + std::to_string(spotLightCounter) + "]";
+        if (light)
+        {
+            _pipeline->SetVec3(base + ".position", light->Position);
+            _pipeline->SetVec3(base + ".direction", light->Direction);
+            _pipeline->SetVec4(base + ".color", light->Color);
+            _pipeline->SetFloat(base + ".intensity", light->Intensity);
+            _pipeline->SetFloat(base + ".innerCutoff", light->InnerCutoff);
+            _pipeline->SetFloat(base + ".outerCutoff", light->OuterCutoff);
+        }
+        spotLightCounter++;
+    }
+    _pipeline->SetInt("DirectionalLightCount", directionalLightCounter);
+    _pipeline->SetInt("PointLightCount", pointLightCounter);
+    _pipeline->SetInt("SpotLightCount", spotLightCounter);
+
+    LOG(logInfo, LogMirageRenderer, "Light count : ", directionalLightCounter + pointLightCounter + spotLightCounter);
+}
+
 void Renderer::DrawMesh(std::shared_ptr<MirageEngine::Core::Components::MeshRenderer> _meshRenderer, const MirageEngine::Core::Components::Transform& _meshTransform)
 {
     if (!_meshRenderer->GetMesh() || !_meshRenderer->GetMaterial())
         return;
 
-    m_CommandBuffer->BindPipeline(_meshRenderer->GetMaterial()->GetMaterial()->GetPipeline());
-    m_CommandBuffer->ApplyPipelineParameters(_meshRenderer->GetMaterial()->GetMaterial()->GetPipeline());
+    std::shared_ptr<MirageRHI::IPipeline> pipeline = _meshRenderer->GetMaterial()->GetMaterial()->GetPipeline();
+
+    m_CommandBuffer->BindPipeline(pipeline);
+    m_CommandBuffer->ApplyPipelineParameters(pipeline);
     _meshRenderer->GetMaterial()->Bind();
-    m_UniformBuffer->UpdateUniformBuffer(_meshRenderer->GetMaterial()->GetMaterial()->GetPipeline(), _meshTransform.GetWorldMatrix());
+    ComputeLights(pipeline);
+    m_UniformBuffer->UpdateUniformBuffer(pipeline, _meshTransform.GetWorldMatrix());
     m_CommandBuffer->BindBuffer(_meshRenderer->GetMesh()->GetVertexBuffer());
     m_CommandBuffer->ApplyVertexLayout(_meshRenderer->GetMesh()->GetVertexLayout());
     m_CommandBuffer->BindBuffer(_meshRenderer->GetMesh()->GetIndexBuffer());

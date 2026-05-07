@@ -11,7 +11,7 @@ namespace MirageEngine
             RegisterMeta();
             ~RegisterMeta();
 
-            void RegisterAllMeta();
+            void RegisterAllMeta(entt::locator<entt::meta_ctx>::node_type handle);
 
         private:
 

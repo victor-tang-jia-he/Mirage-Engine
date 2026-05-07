@@ -15,7 +15,7 @@
 
 int main()
 {
-    Loggers::EnableImmediateFlush(true);   // Enable immediate flushing of log messages for real-time output during initialization
+    Loggers::EnableImmediateFlush(false);  // Enable immediate flushing of log messages for real-time output during initialization
     Loggers::EnableFileWriting(true);      // Enable writing logs to file during initialization to capture any issues that may occur before the main loop starts.
     Loggers::EnableTimeOnEveryLog(false);  // Disable time show as it take verbosal the log.
     Loggers::EnableFileNameAndLine(false); // Disable file name and line of the log , can be enable if necessary.
@@ -24,11 +24,16 @@ int main()
     // --- Initialization ---
     MirageEngine::Core::Scripting::ScriptManager::Instance().Init();
     application.InitApp();
-    MirageEngine::RegisterMeta().RegisterAllMeta();
+    auto& ctx = entt::locator<entt::meta_ctx>::value_or();
+    std::cout << "Context address: " << &ctx << std::endl;
+    MirageEngine::RegisterMeta().RegisterAllMeta(entt::locator<entt::meta_ctx>::handle());
     editor.Init(application.m_Renderer.GetWindowHandle(), &application.m_Renderer, application.GetSceneGraph());
     MirageEngine::TimeManager::Init();
     Debug_Draw.Init(application.m_Renderer.GetRenderInterfaceHandle());
     float dt;
+    bool OnStart = false;
+
+    application.GetSceneGraph()->CallAllOnStart();
     while (application.m_Renderer.IsRunning())
     {
         Debug_Draw.Line({ 0, 0, 0 }, { 1, 0, 0 }, { 1, 0, 0, 1 }); // ligne rouge
