@@ -10,7 +10,7 @@ using namespace MirageEngine::Core::Physics;
 
 Bullet3RigidBody::~Bullet3RigidBody()
 {
-    PhysicsManager::Instance().UnregisterRigidBody(shared_from_this());
+    PhysicsManager::Instance().UnregisterRigidBody(this);
     if (m_rigidBody)
     {
         delete m_rigidBody->getMotionState();
@@ -199,7 +199,7 @@ void Bullet3RigidBody::UpdateCompound()
     using namespace MirageEngine::Core::Math;
     if (!m_rigidBody || !m_Compound) return;
 
-    PhysicsManager::Instance().UnregisterRigidBody(shared_from_this()); // Un register the current rigidbody from the world
+    PhysicsManager::Instance().UnregisterRigidBody(this); // Un register the current rigidbody from the world
 
     m_Compound.reset();                                   // Destroy old one
     m_Compound = std::make_shared<btCompoundShape>();     // Create a new one

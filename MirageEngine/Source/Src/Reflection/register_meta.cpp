@@ -10,6 +10,8 @@
 #include <Components/capsule_collider.h>
 #include <Components/rigidbody.h>
 
+#include <Physics/common_enum.h>
+
 //#include <Components/input_mapping.h>
 #include <Components/influence_emitter.h>
 #include <AI/influence_grid.h>
@@ -229,6 +231,32 @@ void MirageEngine::RegisterMeta::RegisterRigidbodyMeta()
 	rigidBody.data<&Rigidbody::SetCollisionResponse, &Rigidbody::GetCollisionResponse>("Collision Response");
 
 	rigidBody.func<&Rigidbody::AttachMeta>("Attach"_hs);
+
+	// Enums
+	entt::meta_factory<Physics::ERigidBodyType>{}
+	.type("ERigidBodyType"_hs, "ERigidBodyType")
+		.data<Physics::ERigidBodyType::Static>("Static"_hs)
+		.data<Physics::ERigidBodyType::Dynamic>("Dynamic"_hs)
+		.data<Physics::ERigidBodyType::Kinematic>("Kinematic"_hs);
+
+	entt::meta_factory<Physics::ECollisionGroup>{}
+	.type("ECollisionGroup"_hs, "ECollisionGroup")
+		.data<Physics::ECollisionGroup::All>("All"_hs)
+		.data<Physics::ECollisionGroup::Default>("Default"_hs)
+		.data<Physics::ECollisionGroup::Group1>("Group1"_hs)
+		.data<Physics::ECollisionGroup::Group2>("Group2"_hs)
+		.data<Physics::ECollisionGroup::Group3>("Group3"_hs)
+		.data<Physics::ECollisionGroup::Group4>("Group4"_hs)
+		.data<Physics::ECollisionGroup::Group5>("Group5"_hs)
+		.data<Physics::ECollisionGroup::Group6>("Group6"_hs)
+		.data<Physics::ECollisionGroup::Group7>("Group7"_hs)
+		.data<Physics::ECollisionGroup::None>("None"_hs);
+
+	entt::meta_factory<Physics::ECollisionResponse>{}
+	.type("ECollisionResponse"_hs, "ECollisionResponse")
+		.data<Physics::ECollisionResponse::Block>("Block"_hs)
+		.data<Physics::ECollisionResponse::Ignore>("Ignore"_hs)
+		.data<Physics::ECollisionResponse::Overlap>("Overlap"_hs);
 }
 
 void RegisterMeta::RegisterMeshMeta()

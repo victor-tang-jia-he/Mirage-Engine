@@ -17,7 +17,7 @@ void Bullet3WorldPhysics::AddRigidBody(std::shared_ptr<IRigidBody> _body, EColli
 	m_World->addRigidBody(_body->API_Bullet3().GetBullet3RigidBody(), +_group, +_mask);
 }
 
-void Bullet3WorldPhysics::RemoveRigidBody(std::shared_ptr<IRigidBody> _body)
+void Bullet3WorldPhysics::RemoveRigidBody(IRigidBody* _body)
 {
 	if (_body == nullptr) return;
 	if (m_World == nullptr)

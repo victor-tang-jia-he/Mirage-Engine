@@ -171,6 +171,13 @@ json MirageEngine::Serializer::SerializeMetaData(entt::meta_type _type, entt::me
             jMetaData = *boolData;
         }
     }
+    else if (actualType.is_enum())
+    {
+        if (Core::Components::Transform* transformData = value.try_cast<Core::Components::Transform>())
+        {
+            jMetaData = SerializeTransform(*transformData);
+        }
+    }
     else if (actualType == entt::resolve<Core::Components::Transform>())
     {
         if (Core::Components::Transform* transformData = value.try_cast<Core::Components::Transform>())

@@ -104,10 +104,10 @@ void PhysicsManager::RegisterRigidBody(std::shared_ptr<IRigidBody> _body, EColli
         return;
     }
     m_worldPhysics->AddRigidBody(_body, _group, _mask);
-    m_WorldRigidbodys.push_back(_body);
+    m_WorldRigidbodys.push_back(_body.get());
 }
 
-void PhysicsManager::UnregisterRigidBody(std::shared_ptr<IRigidBody> _body)
+void PhysicsManager::UnregisterRigidBody(IRigidBody* _body)
 {
     if (m_worldPhysics.get() == nullptr)
     {
