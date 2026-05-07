@@ -171,6 +171,12 @@ void MirageEngine::Deserializer::DeserializeMetaData(entt::meta_type _type, entt
         _data.set(_instance, booleanData);
         return;
     }
+    else if (actualType.is_enum())
+    {
+        int enumData = _jComponent[_data.name()].get<int>();
+        _data.set(_instance, enumData);
+        return;
+    }
     else if (actualType == entt::resolve<Core::Components::Transform>())
     {
         json transformData = _jComponent[_data.name()];

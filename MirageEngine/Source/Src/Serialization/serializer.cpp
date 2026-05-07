@@ -5,7 +5,8 @@
 #include <GameObject/game_object.h>
 #include <Components/component.h>
 #include <Components/transform.h>
-#include <Components/camera.h>
+
+#include <Physics/common_enum.h>
 
 #include <Resources/mesh.h>
 #include <Resources/material.h>
@@ -127,6 +128,7 @@ json MirageEngine::Serializer::SerializeMetaData(entt::meta_type _type, entt::me
         if (std::string* stringData = value.try_cast<std::string>())
         {
             jMetaData = *stringData;
+            return jMetaData;
         }
     }
     else if (actualType == entt::resolve<Math::Vector3>())
@@ -134,6 +136,7 @@ json MirageEngine::Serializer::SerializeMetaData(entt::meta_type _type, entt::me
         if (Math::Vector3* vector3Data = value.try_cast<Math::Vector3>())
         {
             jMetaData = SerializeVector3(*vector3Data);
+            return jMetaData;
         }
     }
     else if (actualType == entt::resolve<Math::Quaternion>())
@@ -141,6 +144,7 @@ json MirageEngine::Serializer::SerializeMetaData(entt::meta_type _type, entt::me
         if (Math::Quaternion* quaternionData = value.try_cast<Math::Quaternion>())
         {
             jMetaData = SerializeQuaternion(*quaternionData);
+            return jMetaData;
         }
     }
     else if (actualType == entt::resolve<float>())
@@ -148,6 +152,7 @@ json MirageEngine::Serializer::SerializeMetaData(entt::meta_type _type, entt::me
         if (float* floatData = value.try_cast<float>())
         {
             jMetaData = *floatData;
+            return jMetaData;
         }
     }
     else if (actualType == entt::resolve<int>())
@@ -155,6 +160,7 @@ json MirageEngine::Serializer::SerializeMetaData(entt::meta_type _type, entt::me
         if (int* intData = value.try_cast<int>())
         {
             jMetaData = *intData;
+            return jMetaData;
         }
     }
     else if (actualType == entt::resolve<unsigned int>())
@@ -162,6 +168,7 @@ json MirageEngine::Serializer::SerializeMetaData(entt::meta_type _type, entt::me
         if (unsigned int* unsignedIntData = value.try_cast<unsigned int>())
         {
             jMetaData = *unsignedIntData;
+            return jMetaData;
         }
     }
     else if (actualType == entt::resolve<bool>())
@@ -169,13 +176,15 @@ json MirageEngine::Serializer::SerializeMetaData(entt::meta_type _type, entt::me
         if (bool* boolData = value.try_cast<bool>())
         {
             jMetaData = *boolData;
+            return jMetaData;
         }
     }
     else if (actualType.is_enum())
     {
-        if (Core::Components::Transform* transformData = value.try_cast<Core::Components::Transform>())
+        if (value.allow_cast<int>())
         {
-            jMetaData = SerializeTransform(*transformData);
+            jMetaData = value.cast<int>();
+            return jMetaData;
         }
     }
     else if (actualType == entt::resolve<Core::Components::Transform>())
@@ -183,6 +192,7 @@ json MirageEngine::Serializer::SerializeMetaData(entt::meta_type _type, entt::me
         if (Core::Components::Transform* transformData = value.try_cast<Core::Components::Transform>())
         {
             jMetaData = SerializeTransform(*transformData);
+            return jMetaData;
         }
     }
     else if (actualType.is_pointer_like())
@@ -203,12 +213,11 @@ json MirageEngine::Serializer::SerializeMetaData(entt::meta_type _type, entt::me
             }
 
             jMetaData = jPointer;
+            return jMetaData;
         }
     }
-    else
-    {   
-        LOG(logTemp, LogSerializer, "Ignored Meta Data : ", label);
-    }
+
+    LOG(logWarning, LogSerializer, "Ignored Meta Data : ", label);
 
     return jMetaData;
 }
