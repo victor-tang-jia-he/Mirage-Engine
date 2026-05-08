@@ -37,6 +37,7 @@ namespace MirageRHI
             void SetInt(const std::string& _name, int _value) const override;
             void SetFloat(const std::string& _name, float _value) const override;
             void SetVec3(const std::string& _name, const MirageEngine::Core::Math::Vector3& _value) const override;
+            void SetVec4(const std::string& _name, const MirageEngine::Core::Math::Vector4& _value) const override;
             void SetMat3(const std::string& _name, const MirageEngine::Core::Math::Matrix3& _mat) const override;
             void SetMat4(const std::string& _name, const MirageEngine::Core::Math::Matrix4& _mat) const override;
             void SetBool(const std::string& _name, bool _value) const override;

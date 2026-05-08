@@ -7,7 +7,7 @@ namespace MirageEngine::Core::Scripting
 {
     void ScriptManager::Init()
     {
-#ifdef DEBUG
+#ifndef NDEBUG
         m_BIsDebug = true;
 #endif // DEBUG
 
@@ -221,7 +221,7 @@ namespace MirageEngine::Core::Scripting
         cmd += " /OUT:" + outDll;
         cmd += " /IMPLIB:" + impLib;
         cmd += m_BIsDebug ? " /DEBUG /PDB:" + outPdb : "";
-        cmd += m_BIsDebug ? " \"" + m_EngineLibPath.string() + "\"" : " \"" + std::string("./Libs/MirageEngine_Debug.lib") + "\"";
+        cmd += m_BIsDebug ? " \"" + std::string("./Libs/MirageEngine_Debug.lib") + "\"" : " \"" + m_EngineLibPath.string() + "\"";
 
         FILE* pipe = _popen(cmd.c_str(), "r");
         if (!pipe)

@@ -52,6 +52,7 @@ namespace MirageEngine
             std::shared_ptr<GameObject>
                 CreateObject3D(const std::string& _name = "Obj", const std::string& _mesh = "cube", std::shared_ptr<GameObject> _parent = nullptr, MirageEngine::Renderer* _renderer = nullptr);
 
+            void CallAllOnStart();
             void CallAllUpdate(float dt);
             void CallAllLateUpdate(float dt);
             void CallAllFixedUpdate(float dt);
@@ -102,6 +103,7 @@ namespace MirageEngine
 
             void WorldMatrixRecursive(std::shared_ptr<GameObject> _obj, Core::Math::Matrix4& _parentMatrix, bool _forceUpdate);
 
+            void CallAllOnStartRecursive(std::shared_ptr<GameObject> _obj);
             void CallAllUpdateRecursive(std::shared_ptr<GameObject> _obj, float dt);
             void CallAllLateUpdateRecursive(std::shared_ptr<GameObject> _obj, float dt);
             void CallAllFixedUpdateRecursive(std::shared_ptr<GameObject> _obj, float dt);
