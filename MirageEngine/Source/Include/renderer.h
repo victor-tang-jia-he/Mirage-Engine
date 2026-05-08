@@ -35,7 +35,9 @@ namespace MirageEngine
             std::shared_ptr<MirageRHI::IRenderPass> m_RenderPass = nullptr;
             std::shared_ptr<MirageRHI::IPipelineParameters> m_ScreenPipelineParameters = nullptr;
             std::shared_ptr<MirageRHI::IPipeline> m_ScreenPipeline = nullptr;
-            std::shared_ptr<MirageRHI::IUniformBuffer> m_UniformBuffer = nullptr;
+            std::shared_ptr<MirageRHI::IUniformBuffer> m_PerFrameUBO = nullptr;
+            std::shared_ptr<MirageRHI::IUniformBuffer> m_PerObjectUBO = nullptr;
+            std::shared_ptr<MirageRHI::IUniformBuffer> m_LightUBO = nullptr;
             std::shared_ptr<MirageRHI::ICommandBuffer> m_CommandBuffer = nullptr;
 
         public:
@@ -57,7 +59,7 @@ namespace MirageEngine
             // Renders a list of line
             void RenderLine();
             // Renders all light
-            void ComputeLights(std::shared_ptr<MirageRHI::IPipeline> _pipeline);
+            void ComputeLights();
 
             // --- Getters ---
             // Used to display the scene in the editor viewport

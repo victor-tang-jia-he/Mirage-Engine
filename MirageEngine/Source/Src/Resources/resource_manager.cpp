@@ -229,7 +229,13 @@ std::shared_ptr<Material> ResourceManager::CreateMaterial(const std::string& _na
     pipelineparameter->Create(MirageRHI::CullingType::None, true); // Default setting
 
     std::shared_ptr<MirageRHI::IPipeline> pipeline = rm.m_Rhi->InstantiatePipeline();
-    pipeline->Create(vert->ShaderBind, frag->ShaderBind, pipelineparameter);
+    pipeline->Create(
+        vert->ShaderBind, frag->ShaderBind, pipelineparameter,
+        {
+            { "PerFrame",   MirageRHI::UBOBinding::PerFrame  },
+            { "PerObject",  MirageRHI::UBOBinding::PerObject },
+            { "LightBlock", MirageRHI::UBOBinding::Lights    },
+    });
 
     std::shared_ptr<Material> material = std::make_shared<Material>();
     material->p_Name = newAssetName;
@@ -260,7 +266,7 @@ std::shared_ptr<MaterialInstance> ResourceManager::CreateMaterialInstance(const 
     }
 
     std::shared_ptr<MirageRHI::IUniformBuffer> ubo = rm.m_Rhi->InstantiateUniformBuffer();
-    ubo->Create();
+    ubo->Create(MirageRHI::UBOBinding::Material, sizeof(MirageRHI::MaterialData));
 
     std::shared_ptr<MaterialInstance> matInstance = std::make_shared<MaterialInstance>(mat, std::move(ubo));
 
@@ -270,8 +276,9 @@ std::shared_ptr<MaterialInstance> ResourceManager::CreateMaterialInstance(const 
     return matInstance;
 }
 
-std::shared_ptr<Pipeline>
-    ResourceManager::CreatePipeline(const std::string& _name, const std::string& _pathFrag, const std::string& _pathVertex, std::shared_ptr<MirageRHI::IPipelineParameters> _pipelineParamter)
+std::shared_ptr<Pipeline> ResourceManager::CreatePipeline(
+    const std::string& _name, const std::string& _pathFrag, const std::string& _pathVertex, std::shared_ptr<MirageRHI::IPipelineParameters> _pipelineParamter,
+    std::vector<MirageRHI::UBOBlockInfo> _uboBlockInfo)
 {
     ResourceManager& rm = ResourceManager::Instance();
 
@@ -293,7 +300,7 @@ std::shared_ptr<Pipeline>
     std::shared_ptr<Shader> vert
         = rm.m_ShaderCache.contains(_pathVertex) ? rm.m_ShaderCache[_pathVertex] : ResourceManager::CreateShader("ShaderVertex", _pathVertex, MirageRHI::IShader::ShaderType::Vertex);
 
-    std::shared_ptr<Pipeline> pipeline = std::make_shared<Pipeline>(rm.m_Rhi->InstantiatePipeline(), _pipelineParamter, vert, frag);
+    std::shared_ptr<Pipeline> pipeline = std::make_shared<Pipeline>(rm.m_Rhi->InstantiatePipeline(), _pipelineParamter, vert, frag, _uboBlockInfo);
     pipeline->p_Name = newAssetName;
     pipeline->p_Path = ""; // No path for pipeline as it's created from shaders
     rm.m_Resources.emplace(newAssetName, pipeline);

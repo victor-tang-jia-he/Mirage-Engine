@@ -10,6 +10,13 @@ namespace MirageRHI
 {
     class OpenGLPipeline;
     class IShader;
+    enum class UBOBinding : unsigned int;
+
+    struct UBOBlockInfo
+    {
+            const char* name;
+            UBOBinding binding;
+    };
 
     class IPipeline
     {
@@ -17,7 +24,9 @@ namespace MirageRHI
 
             virtual ~IPipeline() = default;
 
-            virtual void Create(std::shared_ptr<IShader> _vertShader, std::shared_ptr<IShader> _fragShader, std::shared_ptr<IPipelineParameters> _pipelineParameters) = 0;
+            virtual void
+                Create(std::shared_ptr<IShader> _vertShader, std::shared_ptr<IShader> _fragShader, std::shared_ptr<IPipelineParameters> _pipelineParameters, std::vector<UBOBlockInfo> _blocks = {})
+                = 0;
             virtual void Destroy() = 0;
 
             virtual OpenGLPipeline& API_OpenGL() { throw std::runtime_error("Bad API Call : object is not an OpenGLPipeline"); }

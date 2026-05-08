@@ -4,11 +4,7 @@ in vec2 TexCoords;
 in vec3 WorldPos;
 in vec3 Normal;
 
-// material parameters
-uniform vec3  albedo;
-uniform float metallic;
-uniform float roughness;
-uniform float ao;
+
 
 // Textured PBR
 uniform sampler2D albedoMap;
@@ -18,7 +14,9 @@ uniform sampler2D roughnessMap;
 uniform sampler2D aoMap;
 
 // lights
-#define MAX_LIGHTS 32
+#define MAX_DIR_LIGHTS   4
+#define MAX_POINT_LIGHTS 16
+#define MAX_SPOT_LIGHTS  8
 
 // directional
 struct LightDirectional
@@ -47,15 +45,38 @@ struct LightSpot
     float outerCutoff;
 };
 
-uniform LightDirectional DirectionalLights[MAX_LIGHTS];
-uniform LightPoint PointLights[MAX_LIGHTS];
-uniform LightSpot SpotLights[MAX_LIGHTS];
+// material parameters
+layout(std140) uniform Material
+{
+    vec3  albedo;
+    float metallic;
+    float roughness;
+    float ao;
+};
 
-uniform int DirectionalLightCount;
-uniform int PointLightCount;
-uniform int SpotLightCount;
+layout(std140) uniform PerFrame
+{
+    mat4 view;
+    mat4 projection;
+    vec3 camPos;
+    float padding;
+};
 
-uniform vec3 camPos;
+layout(std140) uniform PerObject
+{
+    mat4 model;
+    mat4 normalMatrix;
+};
+
+layout(std140) uniform LightBlock
+{
+    LightDirectional dirLights[MAX_DIR_LIGHTS];
+    LightPoint pointLights[MAX_POINT_LIGHTS];
+    LightSpot spotLights[MAX_SPOT_LIGHTS];
+    int dirCount;
+    int pointCount;
+    int spotCount;
+};
 
 const float PI = 3.14159265359;
   
@@ -168,41 +189,41 @@ void main()
     vec3 Lo = vec3(0.0);
 
     // Directional light
-    for(int i = 0; i < DirectionalLightCount; ++i)
+    for(int i = 0; i < dirCount; ++i)
     {
-        vec3 L = normalize(-DirectionalLights[i].direction);
+        vec3 L = normalize(-dirLights[i].direction);
 
-        vec3 radiance = DirectionalLights[i].color.rgb * DirectionalLights[i].intensity;
+        vec3 radiance = dirLights[i].color.rgb * dirLights[i].intensity;
 
         Lo += CalculateLight(radiance, L, N, V, albedo, metallic, roughness, F0);
     }
 
     // Point Light
-    for(int i = 0; i < PointLightCount; ++i) 
+    for(int i = 0; i < pointCount; ++i) 
     {
         // calculate per-light radiance
-        vec3 L = normalize(PointLights[i].position - WorldPos);
+        vec3 L = normalize(pointLights[i].position - WorldPos);
 
-        float distance = length(PointLights[i].position - WorldPos);
+        float distance = length(pointLights[i].position - WorldPos);
 
         float attenuation = 1.0 / (distance * distance);
 
-        vec3 radiance = PointLights[i].color.rgb * PointLights[i].intensity * attenuation; 
+        vec3 radiance = pointLights[i].color.rgb * pointLights[i].intensity * attenuation; 
 
         Lo += CalculateLight(radiance, L, N, V, albedo, metallic, roughness, F0);
     }   
 
     // Spot Light
-    for(int i = 0; i < SpotLightCount; ++i) 
+    for(int i = 0; i < spotCount; ++i) 
     {
         // calculate per-light radiance
-        vec3 L = normalize(SpotLights[i].position - WorldPos);
-        float distance    = length(SpotLights[i].position - WorldPos);
+        vec3 L = normalize(spotLights[i].position - WorldPos);
+        float distance    = length(spotLights[i].position - WorldPos);
         float attenuation = 1.0 / (distance * distance);
-        float theta       = dot(L, normalize(-SpotLights[i].direction));
-        float epsilon     = SpotLights[i].innerCutoff - SpotLights[i].outerCutoff;
-        float coneEffect  = clamp((theta - SpotLights[i].outerCutoff) / epsilon, 0.0, 1.0);
-        vec3 radiance     = SpotLights[i].color.rgb * attenuation * coneEffect;        
+        float theta       = dot(L, normalize(-spotLights[i].direction));
+        float epsilon     = spotLights[i].innerCutoff - spotLights[i].outerCutoff;
+        float coneEffect  = clamp((theta - spotLights[i].outerCutoff) / epsilon, 0.0, 1.0);
+        vec3 radiance     = spotLights[i].color.rgb * attenuation * coneEffect;        
 
         Lo += CalculateLight(radiance, L, N, V, albedo, metallic, roughness, F0);
     }   

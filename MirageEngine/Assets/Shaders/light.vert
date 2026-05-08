@@ -7,16 +7,24 @@ out vec2 TexCoords;
 out vec3 WorldPos;
 out vec3 Normal;
 
-uniform mat4 proj;
-uniform mat4 view;
-uniform mat4 model;
-uniform mat4 normalMatrix;
+layout(std140) uniform PerFrame
+{
+    mat4 view;
+    mat4 projection;
+    vec3 camPos;
+    float padding;
+};
+
+layout(std140) uniform PerObject
+{
+    mat4 model;
+    mat4 normalMatrix;
+};
 
 void main()
 {
     TexCoords = aTexCoords;
-    WorldPos = vec3(model * vec4(aPos, 1.0));
-    Normal = mat3(normalMatrix) * aNormal;   
-
-    gl_Position =  proj * view * vec4(WorldPos, 1.0);
+    WorldPos  = vec3(model * vec4(aPos, 1.0));
+    Normal    = mat3(normalMatrix) * aNormal;   
+    gl_Position = projection * view * vec4(WorldPos, 1.0);
 }

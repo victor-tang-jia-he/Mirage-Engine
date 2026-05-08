@@ -27,7 +27,7 @@ void Pipeline::Bind()
     if (!m_bUploaded)
     {
         m_bUploaded = true;
-        PipelineBind->Create(AttachedVertexShader->ShaderBind, AttachedFragmentShader->ShaderBind, PipelineParameters);
+        PipelineBind->Create(AttachedVertexShader->ShaderBind, AttachedFragmentShader->ShaderBind, PipelineParameters, UboBlockInfo);
         LOG(logTemp, LogPipeline, "Uploading Pipeline : ", p_Name);
     }
     else

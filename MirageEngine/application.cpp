@@ -12,6 +12,7 @@
 #include <Resources/material_instance.h>
 #include <Resources/texture.h>
 #include <Resources/shader.h>
+#include <RHI/ubo_structs.h>
 
 // GameObject & Components
 #include <GameObject/game_object.h>
@@ -207,7 +208,7 @@ void Application::InitGameObject()
     std::shared_ptr<Texture> texCat = rm.GetTexture("cat");
     std::shared_ptr<Texture> texMirage = rm.GetTexture("Mirage");
 
-    std::shared_ptr<Material> mat = rm.CreateMaterial("TestMaterial", "Assets/Shaders/light.vert", "Assets/Shaders/light.frag", 0);
+    std::shared_ptr<Material> mat = rm.CreateMaterial("TestMaterial", "Assets/Shaders/light.vert", "Assets/Shaders/light.frag", sizeof(MirageRHI::MaterialData));
 
     std::shared_ptr<MaterialInstance> mat1 = rm.CreateMaterialInstance("TestMaterialinstance", mat);
     // Set texture

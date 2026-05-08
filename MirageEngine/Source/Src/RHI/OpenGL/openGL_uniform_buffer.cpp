@@ -6,21 +6,23 @@ DEFINE_LOG_CATEGORY(LogRHIUniformBuffer)
 
 using namespace MirageEngine::Core::Math;
 
-void MirageRHI::OpenGLUniformBuffer::Create()
+namespace MirageRHI
 {
-    m_View = Matrix4::Identity();
-    m_Proj = Matrix4::Identity();
+    void MirageRHI::OpenGLUniformBuffer::Create(UBOBinding _binding, size_t _size)
+    {
+        m_Binding = _binding;
 
-    LOG(logTemp, LogRHIUniformBuffer, "Uniform Buffer Created.");
-}
+        glGenBuffers(1, &m_UniformBufferId);
+        glBindBuffer(GL_UNIFORM_BUFFER, m_UniformBufferId);
+        glBufferData(GL_UNIFORM_BUFFER, _size, NULL, GL_DYNAMIC_DRAW);        
+        glBindBufferBase(GL_UNIFORM_BUFFER, (int)_binding, m_UniformBufferId);
+        glBindBuffer(GL_UNIFORM_BUFFER, 0);
+    }
 
-void MirageRHI::OpenGLUniformBuffer::SetCamPos(MirageEngine::Core::Math::Vector3 _camPos) { m_CamPos = _camPos; }
-
-void MirageRHI::OpenGLUniformBuffer::UpdateUniformBuffer(std::shared_ptr<IPipeline> _pipeline, MirageEngine::Core::Math::Matrix4 _model)
-{
-    _pipeline->API_OpenGL().SetVec3("camPos", m_CamPos);
-    _pipeline->API_OpenGL().SetMat4("model", _model);
-    _pipeline->API_OpenGL().SetMat4("view", m_View);
-    _pipeline->API_OpenGL().SetMat4("proj", m_Proj);
-    _pipeline->API_OpenGL().SetMat4("normalMatrix", _model.Inverse().Transpose());
-}
+    void OpenGLUniformBuffer::Upload(const void* _data, size_t _size)
+    {
+        glBindBuffer(GL_UNIFORM_BUFFER, m_UniformBufferId);
+        glBufferSubData(GL_UNIFORM_BUFFER, 0, _size, _data);
+        glBindBuffer(GL_UNIFORM_BUFFER, 0);
+    }
+} // namespace MirageRHI

@@ -21,7 +21,8 @@ namespace MirageRHI
 
         public:
 
-            void Create(std::shared_ptr<IShader> _vertShader, std::shared_ptr<IShader> _fragShader, std::shared_ptr<IPipelineParameters> _pipelineParameters) override;
+            void Create(
+                std::shared_ptr<IShader> _vertShader, std::shared_ptr<IShader> _fragShader, std::shared_ptr<IPipelineParameters> _pipelineParameters, std::vector<UBOBlockInfo> _blocks = {}) override;
             void Destroy() override;
 
             OpenGLPipeline& API_OpenGL() override { return *this; }
@@ -31,6 +32,7 @@ namespace MirageRHI
 
             // Program Binding
             void Bind() const;
+
             void Unbind() const;
 
             // Set Shader Parameters
@@ -47,5 +49,9 @@ namespace MirageRHI
 
             // Getters
             GLuint GetProgramGLHandle() const { return m_Program; }
+
+        private:
+
+            void BindUBOBlocks(std::vector<UBOBlockInfo> _blocks);
     };
 } // namespace MirageRHI

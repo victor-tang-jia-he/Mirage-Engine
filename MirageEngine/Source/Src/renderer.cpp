@@ -42,7 +42,9 @@ void Renderer::Shutdown()
     LOG(logInfo, LogMirageRenderer, "Shutting down Renderer...");
 
     m_CommandBuffer->Destroy();
-    m_UniformBuffer->Destroy();
+    m_PerFrameUBO->Destroy();
+    m_PerObjectUBO->Destroy();
+    m_LightUBO->Destroy();
     m_ScreenPipeline->Destroy();
     m_ScreenPipelineParameters->Destroy();
     m_RenderPass->Destroy();
@@ -53,7 +55,9 @@ void Renderer::Shutdown()
 
     m_RenderInterface.reset();
     m_CommandBuffer.reset();
-    m_UniformBuffer.reset();
+    m_PerFrameUBO.reset();
+    m_PerObjectUBO.reset();
+    m_LightUBO.reset();
     m_ScreenPipeline.reset();
     m_ScreenPipelineParameters.reset();
     m_RenderPass.reset();
@@ -80,9 +84,9 @@ void Renderer::RenderScene(SceneGraph _sceneGraph)
 {
     if (_sceneGraph.GetActiveCamera())
     {
-        m_UniformBuffer->SetView(_sceneGraph.GetActiveCamera()->GetView());
-        m_UniformBuffer->SetProjection(_sceneGraph.GetActiveCamera()->GetPerspective());
-        m_UniformBuffer->SetCamPos(_sceneGraph.GetActiveCamera()->Transform().GetPosition());
+        std::shared_ptr<MirageEngine::Core::Components::Camera> cam = _sceneGraph.GetActiveCamera();
+        MirageRHI::PerFrameData frame{ cam->GetView(), cam->GetPerspective(), cam->Transform().GetPosition(), 0.0f };
+        m_PerFrameUBO->Upload(&frame, sizeof(MirageRHI::PerFrameData));
     }
 
     for (std::shared_ptr<GameObject> root : _sceneGraph.GetRootObjects())
@@ -184,7 +188,9 @@ void MirageEngine::Renderer::ClassInstantiation()
     m_RenderPass = m_RenderInterface->InstantiateRenderPass();
     m_ScreenPipelineParameters = m_RenderInterface->InstantiatePipelineParameters();
     m_ScreenPipeline = m_RenderInterface->InstantiatePipeline();
-    m_UniformBuffer = m_RenderInterface->InstantiateUniformBuffer();
+    m_PerFrameUBO = m_RenderInterface->InstantiateUniformBuffer();
+    m_PerObjectUBO = m_RenderInterface->InstantiateUniformBuffer();
+    m_LightUBO = m_RenderInterface->InstantiateUniformBuffer();
     m_CommandBuffer = m_RenderInterface->InstantiateCommandBuffer();
 
     LOG(logTemp, LogMirageRenderer, "All Classes successfully Instantiated");
@@ -198,7 +204,9 @@ void MirageEngine::Renderer::ClassCreation()
     m_SwapChain->Create(2, m_Width, m_Height);
     m_RenderPass->Create(Vector4(0.f, 0.5f, 0.5f, 1.0f), 1.0f);
     ScreenPipelineCreation();
-    m_UniformBuffer->Create();
+    m_PerFrameUBO->Create(MirageRHI::UBOBinding::PerFrame, sizeof(MirageRHI::PerFrameData));
+    m_PerObjectUBO->Create(MirageRHI::UBOBinding::PerObject, sizeof(MirageRHI::PerObjectData));
+    m_LightUBO->Create(MirageRHI::UBOBinding::Lights, sizeof(MirageRHI::LightUBOData));
     m_CommandBuffer->Create();
 
     LOG(logTemp, LogMirageRenderer, "All Classes successfully Created");
@@ -246,78 +254,59 @@ void MirageEngine::Renderer::RenderLine()
     m_CommandBuffer->BindPipeline(Debug_Draw.m_Pipeline);
     m_CommandBuffer->ApplyPipelineParameters(Debug_Draw.m_Pipeline);
     Debug_Draw.UpdateVertexBuffer();
-    m_UniformBuffer->UpdateUniformBuffer(Debug_Draw.m_Pipeline, Matrix4::Identity());
+    MirageRHI::PerObjectData obj{ Matrix4::Identity(), Matrix4::Identity() };
+    m_PerObjectUBO->Upload(&obj, sizeof(MirageRHI::PerObjectData));
     m_CommandBuffer->BindBuffer(Debug_Draw.m_VertexBufferObject);
     m_CommandBuffer->ApplyVertexLayout(Debug_Draw.m_VertexAttributeObject);
     m_CommandBuffer->Draw((uint32_t)Debug_Draw.m_Lines.size(), MirageRHI::DrawMode::Lines);
     Debug_Draw.Flush();
 }
 
-void MirageEngine::Renderer::ComputeLights(std::shared_ptr<MirageRHI::IPipeline> _pipeline)
+void Renderer::ComputeLights()
 {
-    int directionalLightCounter = 0;
-    int pointLightCounter = 0;
-    int spotLightCounter = 0;
+    MirageRHI::LightUBOData data{};
 
-    std::vector<std::weak_ptr<MirageEngine::DirectionalLight>> dirList = Light_Manager.GetDirectionalLights();
-    std::vector<std::weak_ptr<MirageEngine::PointLight>> pointList = Light_Manager.GetPointLights();
-    std::vector<std::weak_ptr<MirageEngine::SpotLight>> spotList = Light_Manager.GetSpotLights();
+    std::vector<std::weak_ptr<DirectionalLight>> dirList = Light_Manager.GetDirectionalLights();
+    std::vector<std::weak_ptr<PointLight>> pointList = Light_Manager.GetPointLights();
+    std::vector<std::weak_ptr<SpotLight>> spotList = Light_Manager.GetSpotLights();
 
-    for (auto it = dirList.begin(); it != dirList.end(); ++it)
+    for (std::weak_ptr<DirectionalLight>& weak : dirList)
     {
-        if (it->expired())
+        if (weak.expired())
             continue;
-
-        std::shared_ptr<MirageEngine::DirectionalLight> light = it->lock();
-        std::string base = "DirectionalLights[" + std::to_string(directionalLightCounter) + "]";
-        if (light)
-        {
-            _pipeline->SetVec3(base + ".direction", light->Direction);
-            _pipeline->SetVec4(base + ".color", light->Color);
-            _pipeline->SetFloat(base + ".intensity", light->Intensity);
-        }
-
-        directionalLightCounter++;
+        std::shared_ptr<DirectionalLight> light = weak.lock();
+        MirageRHI::DirectionalLightData& d = data.dirLights[data.dirCount++];
+        d.color = light->Color;
+        d.direction = light->Direction;
+        d.intensity = light->Intensity;
     }
 
-    for (auto it = pointList.begin(); it != pointList.end(); ++it)
+    for (std::weak_ptr<PointLight>& weak : pointList)
     {
-        if (it->expired())
+        if (weak.expired())
             continue;
-
-        std::shared_ptr<MirageEngine::PointLight> light = it->lock();
-        std::string base = "PointLights[" + std::to_string(pointLightCounter) + "]";
-        if (light)
-        {
-            _pipeline->SetVec3(base + ".position", light->GetOwner()->GetPosition());
-            _pipeline->SetVec4(base + ".color", light->Color);
-            _pipeline->SetFloat(base + ".intensity", light->Intensity);
-        }
-
-        pointLightCounter++;
+        std::shared_ptr<PointLight> light = weak.lock();
+        MirageRHI::PointLightData& p = data.pointLights[data.pointCount++];
+        p.color = light->Color;
+        p.position = light->GetOwner()->GetPosition();
+        p.intensity = light->Intensity;
     }
 
-    for (auto it = spotList.begin(); it != spotList.end(); ++it)
+    for (std::weak_ptr<SpotLight>& weak : spotList)
     {
-        if (it->expired())
+        if (weak.expired())
             continue;
-
-        std::shared_ptr<SpotLight> light = it->lock();
-        std::string base = "SpotLights[" + std::to_string(spotLightCounter) + "]";
-        if (light)
-        {
-            _pipeline->SetVec3(base + ".position", light->Position);
-            _pipeline->SetVec3(base + ".direction", light->Direction);
-            _pipeline->SetVec4(base + ".color", light->Color);
-            _pipeline->SetFloat(base + ".intensity", light->Intensity);
-            _pipeline->SetFloat(base + ".innerCutoff", light->InnerCutoff);
-            _pipeline->SetFloat(base + ".outerCutoff", light->OuterCutoff);
-        }
-        spotLightCounter++;
+        std::shared_ptr<SpotLight> light = weak.lock();
+        MirageRHI::SpotLightData& s = data.spotLights[data.spotCount++];
+        s.color = light->Color;
+        s.position = light->Position;
+        s.direction = light->Direction;
+        s.intensity = light->Intensity;
+        s.innerCutoff = light->InnerCutoff;
+        s.outerCutoff = light->OuterCutoff;
     }
-    _pipeline->SetInt("DirectionalLightCount", directionalLightCounter);
-    _pipeline->SetInt("PointLightCount", pointLightCounter);
-    _pipeline->SetInt("SpotLightCount", spotLightCounter);
+
+    m_LightUBO->Upload(&data, sizeof(MirageRHI::LightUBOData));
 }
 
 void Renderer::DrawMesh(std::shared_ptr<MirageEngine::Core::Components::MeshRenderer> _meshRenderer, const MirageEngine::Core::Components::Transform& _meshTransform)
@@ -326,12 +315,13 @@ void Renderer::DrawMesh(std::shared_ptr<MirageEngine::Core::Components::MeshRend
         return;
 
     std::shared_ptr<MirageRHI::IPipeline> pipeline = _meshRenderer->GetMaterial()->GetMaterial()->GetPipeline();
+    MirageRHI::PerObjectData obj{ _meshTransform.GetWorldMatrix(), _meshTransform.GetWorldMatrix().Inverse().Transpose() };
 
     m_CommandBuffer->BindPipeline(pipeline);
     m_CommandBuffer->ApplyPipelineParameters(pipeline);
     _meshRenderer->GetMaterial()->Bind();
-    ComputeLights(pipeline);
-    m_UniformBuffer->UpdateUniformBuffer(pipeline, _meshTransform.GetWorldMatrix());
+    ComputeLights();
+    m_PerObjectUBO->Upload(&obj, sizeof(MirageRHI::PerObjectData));
     m_CommandBuffer->BindBuffer(_meshRenderer->GetMesh()->GetVertexBuffer());
     m_CommandBuffer->ApplyVertexLayout(_meshRenderer->GetMesh()->GetVertexLayout());
     m_CommandBuffer->BindBuffer(_meshRenderer->GetMesh()->GetIndexBuffer());

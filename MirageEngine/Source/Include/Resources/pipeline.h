@@ -21,6 +21,7 @@ namespace MirageEngine::Core::Resources
             std::shared_ptr<MirageRHI::IPipelineParameters> PipelineParameters = nullptr;
             std::shared_ptr<Shader> AttachedVertexShader = nullptr;
             std::shared_ptr<Shader> AttachedFragmentShader = nullptr;
+            std::vector<MirageRHI::UBOBlockInfo> UboBlockInfo{};
 
             bool m_bUploaded = false;
 
@@ -28,11 +29,12 @@ namespace MirageEngine::Core::Resources
 
             Pipeline(
                 std::shared_ptr<MirageRHI::IPipeline> _pipelineBind, std::shared_ptr<MirageRHI::IPipelineParameters> _pipelineParameters, std::shared_ptr<Shader> _vertexShader,
-                std::shared_ptr<Shader> _fragmentShader)
+                std::shared_ptr<Shader> _fragmentShader, std::vector<MirageRHI::UBOBlockInfo> _uboBlockInfo)
                 : PipelineBind(_pipelineBind)
                 , PipelineParameters(_pipelineParameters)
                 , AttachedVertexShader(_vertexShader)
                 , AttachedFragmentShader(_fragmentShader)
+                , UboBlockInfo(_uboBlockInfo)
             {
             }
 

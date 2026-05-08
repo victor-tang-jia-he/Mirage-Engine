@@ -16,6 +16,7 @@ namespace MirageRHI
     class IBuffer;
     class IRenderInterface;
     struct IPipelineParameters;
+    struct UBOBlockInfo;
 } // namespace MirageRHI
 
 namespace MirageEngine::Core::Resources
@@ -113,8 +114,9 @@ namespace MirageEngine::Core::Resources
             /// </summary>
             /// <param name="_name">Unique identifier for the material.</param>
             /// <returns>Pointer to the created Material, or nullptr on failure.</returns>
-            static std::shared_ptr<Pipeline>
-                CreatePipeline(const std::string& _name, const std::string& _pathFrag, const std::string& _pathVertex, std::shared_ptr<MirageRHI::IPipelineParameters> _pipelineParamter);
+            static std::shared_ptr<Pipeline> CreatePipeline(
+                const std::string& _name, const std::string& _pathFrag, const std::string& _pathVertex, std::shared_ptr<MirageRHI::IPipelineParameters> _pipelineParamter,
+                std::vector<MirageRHI::UBOBlockInfo> _uboBlockInfo);
 
             // -------------------------------------------------------------------------
             // Resource access
