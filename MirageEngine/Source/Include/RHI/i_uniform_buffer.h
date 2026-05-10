@@ -16,11 +16,11 @@ namespace MirageRHI
 
     enum class UBOBinding : unsigned int
     {
-        None = 0,
-        PerFrame = 1,
-        PerObject = 2,
-        Lights = 3,
-        Material = 4,
+        PerFrame = 0,
+        PerObject = 1,
+        Lights = 2,
+        Material = 3,
+        None = 100
     };
 
     class IUniformBuffer
@@ -28,8 +28,8 @@ namespace MirageRHI
         public:
 
             virtual ~IUniformBuffer() = default;
-            virtual void Create(UBOBinding _binding, size_t _size) = 0; 
-            virtual void Upload(const void* _data, size_t _size) = 0;   
+            virtual void Create(UBOBinding _binding, size_t _size) = 0;
+            virtual void Upload(const void* _data, size_t _size) = 0;
             virtual void Destroy() = 0;
 
             virtual OpenGLUniformBuffer& API_OpenGL() { throw std::runtime_error("Bad API Call"); }

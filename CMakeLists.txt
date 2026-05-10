@@ -5,7 +5,7 @@ cmake_minimum_required(VERSION 3.20)
 project(CustomEngine)
 
 # Create global variable (project-level) to store output directory
-set(MIRAGE_BIN_OUTPUT_DIR "${CMAKE_BINARY_DIR}/Bin/${CMAKE_CXX_COMPILER_ID}_$<CONFIG>")
+set(MIRAGE_BIN_OUTPUT_DIR "${CMAKE_BINARY_DIR}/Bin/")
 
 
 

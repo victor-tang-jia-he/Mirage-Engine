@@ -120,8 +120,8 @@ void MirageRHI::OpenGLPipeline::BindUBOBlocks(std::vector<UBOBlockInfo> _blocks)
         GLuint index = glGetUniformBlockIndex(m_Program, block.name);
         if (index != GL_INVALID_INDEX)
         {
-            glUniformBlockBinding(m_Program, index, (int)block.binding);
             LOG(logWarning, LogRHIPipeline, "Invalid index used in Program ID: ", m_Program);
+            glUniformBlockBinding(m_Program, index, (int)block.binding);
         }
     }
 }

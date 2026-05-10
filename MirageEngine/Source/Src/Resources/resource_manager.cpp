@@ -201,7 +201,8 @@ std::shared_ptr<Mesh> ResourceManager::CreateMesh(const std::string& _name, cons
     return mesh;
 }
 
-std::shared_ptr<Material> ResourceManager::CreateMaterial(const std::string& _name, const std::string& _pathVertex, const std::string& _pathFrag, size_t _uniformBufferSize)
+std::shared_ptr<Material>
+    ResourceManager::CreateMaterial(const std::string& _name, const std::string& _pathVertex, const std::string& _pathFrag, size_t _uniformBufferSize, std::vector<MirageRHI::UBOBlockInfo> _shader_blocks)
 {
     ResourceManager& rm = ResourceManager::Instance();
 
@@ -229,13 +230,7 @@ std::shared_ptr<Material> ResourceManager::CreateMaterial(const std::string& _na
     pipelineparameter->Create(MirageRHI::CullingType::None, true); // Default setting
 
     std::shared_ptr<MirageRHI::IPipeline> pipeline = rm.m_Rhi->InstantiatePipeline();
-    pipeline->Create(
-        vert->ShaderBind, frag->ShaderBind, pipelineparameter,
-        {
-            { "PerFrame",   MirageRHI::UBOBinding::PerFrame  },
-            { "PerObject",  MirageRHI::UBOBinding::PerObject },
-            { "LightBlock", MirageRHI::UBOBinding::Lights    },
-    });
+    pipeline->Create(vert->ShaderBind, frag->ShaderBind, pipelineparameter, _shader_blocks);
 
     std::shared_ptr<Material> material = std::make_shared<Material>();
     material->p_Name = newAssetName;

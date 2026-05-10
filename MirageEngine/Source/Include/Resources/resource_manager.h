@@ -106,7 +106,8 @@ namespace MirageEngine::Core::Resources
             /// </summary>
             /// <param name="_name">Unique identifier for the material.</param>
             /// <returns>Pointer to the created Material, or nullptr on failure.</returns>
-            static std::shared_ptr<Material> CreateMaterial(const std::string& _name, const std::string& _pathVertex, const std::string& _pathFrag, size_t _uniformBufferSize);
+            static std::shared_ptr<Material>
+                CreateMaterial(const std::string& _name, const std::string& _pathVertex, const std::string& _pathFrag, size_t _uniformBufferSize,std::vector<MirageRHI::UBOBlockInfo> _shader_blocks);
 
             static std::shared_ptr<MaterialInstance> CreateMaterialInstance(const std::string& _name, std::shared_ptr<Material> mat);
             /// <summary>

@@ -39,6 +39,7 @@
 #include <Light/spot_light.h>
 #include <Light/point_light.h>
 #include <Light/i_light.h>
+#include <i_uniform_buffer.h>
 
 using namespace MirageEngine::Core::Input;
 using namespace MirageEngine::Core::EventSystem;
@@ -208,7 +209,13 @@ void Application::InitGameObject()
     std::shared_ptr<Texture> texCat = rm.GetTexture("cat");
     std::shared_ptr<Texture> texMirage = rm.GetTexture("Mirage");
 
-    std::shared_ptr<Material> mat = rm.CreateMaterial("TestMaterial", "Assets/Shaders/light.vert", "Assets/Shaders/light.frag", sizeof(MirageRHI::MaterialData));
+    std::shared_ptr<Material> mat = rm.CreateMaterial(
+        "TestMaterial", "Assets/Shaders/light.vert", "Assets/Shaders/light.frag", 0,
+        {
+            { "PerFrame",   MirageRHI::UBOBinding::PerFrame  },
+            { "PerObject",  MirageRHI::UBOBinding::PerObject },
+            { "LightBlock", MirageRHI::UBOBinding::Lights    },
+    });
 
     std::shared_ptr<MaterialInstance> mat1 = rm.CreateMaterialInstance("TestMaterialinstance", mat);
     // Set texture

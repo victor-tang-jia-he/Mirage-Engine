@@ -11,6 +11,7 @@ namespace MirageRHI
     class IPipeline;
     class IPipelineParameters;
     class IVertexLayout;
+    class IUniformBuffer;
 } // namespace MirageRHI
 
 namespace MirageEngine
@@ -45,6 +46,7 @@ namespace MirageEngine::DebugDraw
 
             std::shared_ptr<MirageRHI::IPipelineParameters> m_Pipelineparameter;
             std::shared_ptr<MirageRHI::IPipeline> m_Pipeline;
+            std::shared_ptr<MirageRHI::IUniformBuffer> m_DebugUBO = nullptr;
             uint32_t m_MaxLine = 10000;
 
             std::vector<LineVertex> m_Lines;

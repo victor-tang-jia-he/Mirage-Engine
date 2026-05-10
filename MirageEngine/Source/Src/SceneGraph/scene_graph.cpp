@@ -11,6 +11,7 @@
 #include "renderer.h"
 
 #include "Components/camera.h"
+#include <i_uniform_buffer.h>
 
 using namespace MirageEngine::Core::Math;
 using namespace MirageEngine::Core::Resources;
@@ -39,7 +40,7 @@ namespace MirageEngine
         meshRenderer->SetMesh(rm.GetMesh(_mesh));
 
         std::shared_ptr<Texture> texture = rm.GetTexture("White");
-        std::shared_ptr<Material> material = rm.CreateMaterial("TestMaterial", "default", "default", 0); // using default shader (fallback)
+        std::shared_ptr<Material> material = rm.CreateMaterial("TestMaterial", "default", "default", 0, {}); // using default shader (fallback)
         std::shared_ptr<MaterialInstance> matInstance = rm.CreateMaterialInstance("WhiteInstance", material);
 
         if (texture)

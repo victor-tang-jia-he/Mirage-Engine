@@ -16,6 +16,7 @@
 #include <Resources/resource_manager.h>
 
 #include <matrix4.h>
+#include <i_uniform_buffer.h>
 
 namespace MirageEngine::DebugDraw
 {
@@ -65,7 +66,17 @@ namespace MirageEngine::DebugDraw
         m_Pipelineparameter->Create(MirageRHI::CullingType::None, false); // Default setting
 
         m_Pipeline = _rhi->InstantiatePipeline();
-        m_Pipeline->Create(vert->ShaderBind, frag->ShaderBind, m_Pipelineparameter);
+        m_Pipeline->Create(
+            vert->ShaderBind, frag->ShaderBind, m_Pipelineparameter,
+            {
+                { "PerFrame", MirageRHI::UBOBinding::PerFrame }
+        });
+
+        // ------------------------------------------------------------------ Uniform Buffer
+        m_DebugUBO = _rhi->InstantiateUniformBuffer();
+
+        m_DebugUBO->Create(MirageRHI::UBOBinding::PerFrame, sizeof(MirageRHI::PerFrameData));
+
     }
 
     // ------------------------------------------------------------------ API

@@ -87,6 +87,7 @@ void Renderer::RenderScene(SceneGraph _sceneGraph)
         std::shared_ptr<MirageEngine::Core::Components::Camera> cam = _sceneGraph.GetActiveCamera();
         MirageRHI::PerFrameData frame{ cam->GetView(), cam->GetPerspective(), cam->Transform().GetPosition(), 0.0f };
         m_PerFrameUBO->Upload(&frame, sizeof(MirageRHI::PerFrameData));
+        Debug_Draw.m_DebugUBO->Upload(&frame, sizeof(MirageRHI::PerFrameData));
     }
 
     for (std::shared_ptr<GameObject> root : _sceneGraph.GetRootObjects())
@@ -254,8 +255,6 @@ void MirageEngine::Renderer::RenderLine()
     m_CommandBuffer->BindPipeline(Debug_Draw.m_Pipeline);
     m_CommandBuffer->ApplyPipelineParameters(Debug_Draw.m_Pipeline);
     Debug_Draw.UpdateVertexBuffer();
-    MirageRHI::PerObjectData obj{ Matrix4::Identity(), Matrix4::Identity() };
-    m_PerObjectUBO->Upload(&obj, sizeof(MirageRHI::PerObjectData));
     m_CommandBuffer->BindBuffer(Debug_Draw.m_VertexBufferObject);
     m_CommandBuffer->ApplyVertexLayout(Debug_Draw.m_VertexAttributeObject);
     m_CommandBuffer->Draw((uint32_t)Debug_Draw.m_Lines.size(), MirageRHI::DrawMode::Lines);
