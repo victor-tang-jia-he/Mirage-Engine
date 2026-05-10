@@ -9,9 +9,8 @@
 
 namespace MirageEngine::Core::Resources
 {
-    MaterialInstance::MaterialInstance(std::shared_ptr<Material> _material, std::shared_ptr<MirageRHI::IUniformBuffer> _ubos)
+    MaterialInstance::MaterialInstance(std::shared_ptr<Material> _material)
         : m_Material(_material)
-        , m_UniformBuffers(std::move(_ubos))
     {
     }
 

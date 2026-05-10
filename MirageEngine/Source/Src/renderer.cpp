@@ -88,6 +88,7 @@ void Renderer::RenderScene(SceneGraph _sceneGraph)
         MirageRHI::PerFrameData frame{ cam->GetView(), cam->GetPerspective(), cam->Transform().GetPosition(), 0.0f };
         m_PerFrameUBO->Upload(&frame, sizeof(MirageRHI::PerFrameData));
         Debug_Draw.m_DebugUBO->Upload(&frame, sizeof(MirageRHI::PerFrameData));
+        ComputeLights();
     }
 
     for (std::shared_ptr<GameObject> root : _sceneGraph.GetRootObjects())
@@ -103,6 +104,7 @@ void Renderer::RenderScreen()
     m_CommandBuffer->BeginDraw(m_RenderPass, 0);
 
     m_CommandBuffer->BindPipeline(m_ScreenPipeline);
+
     m_CommandBuffer->ApplyPipelineParameters(m_ScreenPipeline);
     m_CommandBuffer->BindTextureFromID(0);
 
@@ -304,7 +306,6 @@ void Renderer::ComputeLights()
         s.innerCutoff = light->InnerCutoff;
         s.outerCutoff = light->OuterCutoff;
     }
-
     m_LightUBO->Upload(&data, sizeof(MirageRHI::LightUBOData));
 }
 
@@ -319,7 +320,6 @@ void Renderer::DrawMesh(std::shared_ptr<MirageEngine::Core::Components::MeshRend
     m_CommandBuffer->BindPipeline(pipeline);
     m_CommandBuffer->ApplyPipelineParameters(pipeline);
     _meshRenderer->GetMaterial()->Bind();
-    ComputeLights();
     m_PerObjectUBO->Upload(&obj, sizeof(MirageRHI::PerObjectData));
     m_CommandBuffer->BindBuffer(_meshRenderer->GetMesh()->GetVertexBuffer());
     m_CommandBuffer->ApplyVertexLayout(_meshRenderer->GetMesh()->GetVertexLayout());

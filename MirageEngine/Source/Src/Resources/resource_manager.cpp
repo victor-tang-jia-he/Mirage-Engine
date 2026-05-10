@@ -260,10 +260,7 @@ std::shared_ptr<MaterialInstance> ResourceManager::CreateMaterialInstance(const 
         newAssetName = rm.GenerateUniqueAssetName(_name);
     }
 
-    std::shared_ptr<MirageRHI::IUniformBuffer> ubo = rm.m_Rhi->InstantiateUniformBuffer();
-    ubo->Create(MirageRHI::UBOBinding::Material, sizeof(MirageRHI::MaterialData));
-
-    std::shared_ptr<MaterialInstance> matInstance = std::make_shared<MaterialInstance>(mat, std::move(ubo));
+    std::shared_ptr<MaterialInstance> matInstance = std::make_shared<MaterialInstance>(mat);
 
     matInstance->p_Name = newAssetName;
     matInstance->p_Path = ""; // No path for material instance as it's created from material

@@ -36,7 +36,7 @@ namespace MirageEngine::Core::Resources
 
         public:
 
-            MaterialInstance(std::shared_ptr<Material> _material, std::shared_ptr<MirageRHI::IUniformBuffer> _ubos);
+            MaterialInstance(std::shared_ptr<Material> _material);
             ~MaterialInstance();
 
             void Bind();

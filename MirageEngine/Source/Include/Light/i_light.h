@@ -15,7 +15,7 @@ namespace MirageEngine
 
     struct ALIGN16 Light
     {
-            MirageEngine::Core::Math::Vector4 Color = { 1, 1, 1, 1 };
+            MirageEngine::Core::Math::Vector4 Color = { 1,1,1,1 };
             float Intensity = 0.5f;
             LightType Type = LightType::None;
     };

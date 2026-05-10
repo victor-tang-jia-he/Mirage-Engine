@@ -14,15 +14,20 @@ namespace MirageRHI
 
         glGenBuffers(1, &m_UniformBufferId);
         glBindBuffer(GL_UNIFORM_BUFFER, m_UniformBufferId);
-        glBufferData(GL_UNIFORM_BUFFER, _size, NULL, GL_DYNAMIC_DRAW);        
+        glBufferData(GL_UNIFORM_BUFFER, _size, NULL, GL_DYNAMIC_DRAW);
         glBindBufferBase(GL_UNIFORM_BUFFER, (int)_binding, m_UniformBufferId);
         glBindBuffer(GL_UNIFORM_BUFFER, 0);
     }
 
-    void OpenGLUniformBuffer::Upload(const void* _data, size_t _size)
+    void OpenGLUniformBuffer::Upload(const void* data, size_t size)
     {
         glBindBuffer(GL_UNIFORM_BUFFER, m_UniformBufferId);
-        glBufferSubData(GL_UNIFORM_BUFFER, 0, _size, _data);
-        glBindBuffer(GL_UNIFORM_BUFFER, 0);
+
+        void* ptr = glMapBufferRange(GL_UNIFORM_BUFFER, 0, size, GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_BUFFER_BIT | GL_MAP_UNSYNCHRONIZED_BIT);
+
+        if (ptr)
+            memcpy(ptr, data, size);
+
+        glUnmapBuffer(GL_UNIFORM_BUFFER);
     }
 } // namespace MirageRHI

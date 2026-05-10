@@ -40,7 +40,7 @@ namespace MirageEngine
         meshRenderer->SetMesh(rm.GetMesh(_mesh));
 
         std::shared_ptr<Texture> texture = rm.GetTexture("White");
-        std::shared_ptr<Material> material = rm.CreateMaterial("TestMaterial", "default", "default", 0, {}); // using default shader (fallback)
+        std::shared_ptr<Material> material = rm.GetMaterial("default"); // using default shader (fallback)
         std::shared_ptr<MaterialInstance> matInstance = rm.CreateMaterialInstance("WhiteInstance", material);
 
         if (texture)
@@ -260,11 +260,9 @@ namespace MirageEngine
             //_child->Transform.SetLocalMatrix(newLoc);
             _child->SetPosition(newLoc.GetTranslation());
             _child->SetRotation(newLoc.GetRotation());
-            std::cout << "New Local calculated. Scale: " << newLoc.GetScale().X << std::endl;
         }
         else
         {
-            std::cout << "Root" << std::endl;
             //_child->Transform.SetLocalMatrix(childWorldBefore);
             _child->SetPosition(childWorldBefore.GetTranslation());
             _child->SetRotation(childWorldBefore.GetRotation());

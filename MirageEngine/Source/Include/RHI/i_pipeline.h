@@ -10,7 +10,7 @@ namespace MirageRHI
 {
     class OpenGLPipeline;
     class IShader;
-    enum class UBOBinding : unsigned int;
+    enum class UBOBinding : int;
 
     struct UBOBlockInfo
     {

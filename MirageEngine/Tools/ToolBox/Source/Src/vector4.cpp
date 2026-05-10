@@ -175,8 +175,6 @@ bool Vector4::operator==(const Vector4& _other) const { return X == _other.X && 
 
 bool Vector4::operator!=(const Vector4& _other) const { return !(*this == _other); }
 
-Vector3 MirageEngine::Core::Math::Vector4::operator=(const Vector4& vec4) { return Vector3(X, Y, Z); }
-
 Vector4 MirageEngine::Core::Math::operator*(float _scalar, const Vector4& _vec) { return { _vec.X * _scalar, _vec.Y * _scalar, _vec.Z * _scalar, _vec.W * _scalar }; }
 
 Vector4::operator Vector3() const { return Vector3(X, Y, Z); }

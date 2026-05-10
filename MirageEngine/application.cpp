@@ -196,9 +196,9 @@ void Application::InitGameObject()
     //  Light object
     // =========================
 
-    //child2->AddComponent<DirectionalLight>()->Intensity = 0.5f;
-    child2->AddComponent<PointLight>()->Intensity = 1.5f;
-    //child2->AddComponent<SpotLight>()->Intensity = 1.5f;
+    auto light2 = child2->AddComponent<PointLight>();
+    light2->Intensity = 0.5f;
+    light2->Color = { 1,1,1,1 };
 
 
     // =========================
@@ -210,12 +210,13 @@ void Application::InitGameObject()
     std::shared_ptr<Texture> texMirage = rm.GetTexture("Mirage");
 
     std::shared_ptr<Material> mat = rm.CreateMaterial(
-        "TestMaterial", "Assets/Shaders/light.vert", "Assets/Shaders/light.frag", 0,
+        "default", "Assets/Shaders/light.vert", "Assets/Shaders/light.frag", 0,
         {
             { "PerFrame",   MirageRHI::UBOBinding::PerFrame  },
             { "PerObject",  MirageRHI::UBOBinding::PerObject },
             { "LightBlock", MirageRHI::UBOBinding::Lights    },
     });
+
 
     std::shared_ptr<MaterialInstance> mat1 = rm.CreateMaterialInstance("TestMaterialinstance", mat);
     // Set texture
@@ -226,10 +227,10 @@ void Application::InitGameObject()
     //mat1->SetTexture("aoMap", texCat);
 
     // Set PBR Setting
-    mat1->SetVec3("albedo", { 255.0f, 255.0f, 0.0f });
-    mat1->SetFloat("metallic", 0.5f);
-    mat1->SetFloat("roughness", 0.5f);
-    mat1->SetFloat("ao", 0.5f);
+    mat1->SetVec3("albedo", { 1, 1, 1 });
+    mat1->SetFloat("metallic", 1);
+    mat1->SetFloat("roughness", 1);
+    mat1->SetFloat("ao", 1);
 
     std::shared_ptr<MaterialInstance> mat2 = rm.CreateMaterialInstance("TestMaterialinstance2", mat);
 
