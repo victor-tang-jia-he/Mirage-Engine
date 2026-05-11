@@ -4,7 +4,9 @@
 #include "common_enum.h"
 #include <GameObject/game_object.h>
 #include <vector3.h>
-
+namespace MirageEngine::Core::Components {
+    class Transform;
+}
 namespace MirageEngine::Core::Physics
 {
     class Bullet3RigidBody;
@@ -34,7 +36,7 @@ namespace MirageEngine::Core::Physics
             IRigidBody()          = default;
             virtual ~IRigidBody() = default;
 
-            virtual bool Create(std::shared_ptr<ICollider> _shape, ERigidBodyType _type) = 0;
+            virtual bool Create(std::shared_ptr<ICollider> _shape, ERigidBodyType _type, MirageEngine::Core::Components::Transform& _newTransform) = 0;
 
             virtual void UpdateTransform(MirageEngine::Core::Components::Transform& _transform) = 0;
 

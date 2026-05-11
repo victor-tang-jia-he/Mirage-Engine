@@ -38,7 +38,7 @@ namespace MirageEngine::Core::Physics
 
 			std::weak_ptr<IWorldPhysics> GetWorldPhysics() const { return m_worldPhysics; }
 
-            std::shared_ptr<IRigidBody> CreateRigidBody(std::shared_ptr<ICollider> _shape, ERigidBodyType _type);
+            std::shared_ptr<IRigidBody> CreateRigidBody(std::shared_ptr<ICollider> _shape, ERigidBodyType _type, MirageEngine::Core::Components::Transform _newTransform = MirageEngine::Core::Components::Transform());
 
             std::shared_ptr<ICollider> CreateCollider(ECollisionShapeType _shapeType);
 

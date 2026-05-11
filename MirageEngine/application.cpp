@@ -97,7 +97,7 @@ void Application::InitGameObject()
     dynamicRB->SetCollisionResponse(ECollisionResponse::Block);
 
     std::shared_ptr<BoxCollider> staticCollider = std::make_shared<BoxCollider>();
-    std::shared_ptr<Rigidbody>   staticRB       = std::make_shared<Rigidbody>(staticCollider.get(), ERigidBodyType::Static);
+    std::shared_ptr<Rigidbody>   staticRB       = std::make_shared<Rigidbody>(staticCollider.get(), ERigidBodyType::Dynamic);
 
     staticRB->SetCollisionGroup(ECollisionGroup::Group2);
     staticRB->SetCollisionMask(ECollisionGroup::All);
@@ -186,13 +186,12 @@ void Application::InitGameObject()
 
 void Application::ShutDown()
 {
-    MirageEngine::Core::Input::InputSystem::Shutdown();
-    MirageEngine::Core::Resources::ResourceManager::Instance().Shutdown();
-    MirageEngine::Core::Physics::PhysicsManager::Instance().Shutdown();
-
     m_Renderer.Shutdown();
-    m_SceneGraph.Clean();
+    m_SceneGraph.ClearScene();
     m_EditorMapping.reset();
     m_PlayMapping.reset();
     m_EngineCamera.reset();
+    MirageEngine::Core::Input::InputSystem::Shutdown();
+    MirageEngine::Core::Resources::ResourceManager::Instance().Shutdown();
+    MirageEngine::Core::Physics::PhysicsManager::Instance().Shutdown();
 }

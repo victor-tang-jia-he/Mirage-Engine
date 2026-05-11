@@ -196,7 +196,7 @@ else()
 endif()
 
 set(IMGUIZMO_SOURCES
-    ${IMGUIZMO_DIR}/ImGuizmo.cpp
+    ${IMGUIZMO_DIR}/src/ImGuizmo.cpp
 )
 
 # Combine all sources

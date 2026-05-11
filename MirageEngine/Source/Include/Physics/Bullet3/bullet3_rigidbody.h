@@ -24,7 +24,7 @@ namespace MirageEngine::Core::Physics
             Bullet3RigidBody() = default;
             ~Bullet3RigidBody() override;
 
-            bool Create(std::shared_ptr<ICollider> _shape, ERigidBodyType _type) override;
+            bool Create(std::shared_ptr<ICollider> _shape, ERigidBodyType _type, MirageEngine::Core::Components::Transform& _newTransform) override;
 
             void UpdateTransform(Transform& _transform) override;
             void OnTransformChanged(Transform& _newTransform) override;

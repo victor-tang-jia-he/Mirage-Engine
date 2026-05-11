@@ -3,6 +3,8 @@
 #include "bullet3_pch.h"
 #include "../i_world_physics.h"
 
+DECLARE_LOG_CATEGORY_EXTERN(LogBullet3WorldPhysics)
+
 namespace MirageEngine::Core::Physics
 {
 	class IRigidBody;
@@ -19,23 +21,17 @@ namespace MirageEngine::Core::Physics
 
 	public:
 
-		Bullet3WorldPhysics()
-		{
-			m_CollisionConfig = new btDefaultCollisionConfiguration();
-			m_Dispatcher = new btCollisionDispatcher(m_CollisionConfig);
-			m_Broadphase = new btDbvtBroadphase();
-			m_Solver = new btSequentialImpulseConstraintSolver();
-			m_World = new btDiscreteDynamicsWorld(m_Dispatcher, m_Broadphase, m_Solver, m_CollisionConfig);
-			m_World->setGravity(btVector3(0, -9.81f, 0)); // default gravity
-		}
+		Bullet3WorldPhysics();
 
-		~Bullet3WorldPhysics() override {}
+		~Bullet3WorldPhysics() override;
 
 		void AddRigidBody(std::shared_ptr<IRigidBody> _body, ECollisionGroup _group, ECollisionGroup _mask) override;
 
 		void RemoveRigidBody(IRigidBody* _body) override;
 
-		void Update(float _deltaTime) override { m_World->stepSimulation(_deltaTime); }
+		void Update(float _deltaTime) override {
+			m_World->stepSimulation(_deltaTime);
+		}
 
 		btDiscreteDynamicsWorld* GetWorld() const { return m_World; }
 

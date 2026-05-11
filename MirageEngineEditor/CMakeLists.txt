@@ -1,4 +1,4 @@
-﻿# Project executable
+# Project executable
 add_executable(MirageEngineEditor)
 
 # Sources
@@ -20,7 +20,7 @@ target_sources(MirageEngineEditor PRIVATE ${MIRAGE_ENGINE_EDITOR_SOURCES} ${MIRA
 # Include directories
 target_include_directories(MirageEngineEditor PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/Source/Include
-    ${CMAKE_SOURCE_DIR}/Libraries/ImGuizmo
+    ${CMAKE_SOURCE_DIR}/Libraries/ImGuizmo/src
 )
 
 # Link engine and third-party

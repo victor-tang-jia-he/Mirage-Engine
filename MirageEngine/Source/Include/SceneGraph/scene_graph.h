@@ -32,13 +32,6 @@ namespace MirageEngine
 
         ~SceneGraph() = default;
 
-		void Clean()
-		{
-            m_SelectedObject.reset();
-            m_Registry.clear();
-            m_RootsList.clear();
-		}
-
 		std::shared_ptr<GameObject> CreateGameObject(const std::string& _name, std::shared_ptr<GameObject> _parent = nullptr);
 		void AddGameObject(std::shared_ptr<GameObject> _newGameObject);
 		void RemoveGameObject(std::shared_ptr<GameObject> _obj);											

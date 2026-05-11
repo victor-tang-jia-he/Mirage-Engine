@@ -36,7 +36,7 @@ MirageEngine::Core::Components::Rigidbody::Rigidbody(GameObject* _owner)
             }
         }
     }
-    m_Rigidbody = Physics::PhysicsManager::Instance().CreateRigidBody(shape->GetCollision(), Physics::ERigidBodyType::Dynamic);
+    m_Rigidbody = Physics::PhysicsManager::Instance().CreateRigidBody(shape->GetCollision(), Physics::ERigidBodyType::Dynamic, m_Owner->Transform);
 
     m_Rigidbody->OnSimulated = [this]()
         {

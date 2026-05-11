@@ -8,118 +8,148 @@ PhysicsManager* m_Instance = nullptr;
 
 PhysicsManager& PhysicsManager::Instance()
 {
-    if (m_Instance == nullptr) { m_Instance = new PhysicsManager(); }
-    return *m_Instance;
+	if (m_Instance == nullptr) { m_Instance = new PhysicsManager(); }
+	return *m_Instance;
 }
 
 void PhysicsManager::Shutdown()
 {
-    m_WorldRigidbodys.clear();
-    delete m_Instance;
-    m_Instance = nullptr;
+	m_WorldRigidbodys.clear();
+	m_worldPhysics.reset();
+	delete m_Instance;
+	m_Instance = nullptr;
 }
 
 void PhysicsManager::Initialize(EPhysicsEngine _physicsEngine)
 {
-    // set up physics engine
-    m_physicsEngine = _physicsEngine;
-    m_WorldRigidbodys.clear();
-    m_worldPhysics.reset(); // clean up previous physics engine if exists
-    LOG(logInfo, LogPhysics, "Physics Engine initialized : ", m_physicsEngine == EPhysicsEngine::Bullet3 ? "Bullet physics" : "Undefined physics Engine");
-    switch (m_physicsEngine)
-    {
-        case EPhysicsEngine::Bullet3: m_worldPhysics = std::make_shared<Bullet3WorldPhysics>(); break;
-        default                     : break;
-    }
+	// set up physics engine
+	m_physicsEngine = _physicsEngine;
+	m_WorldRigidbodys.clear();
+	m_worldPhysics.reset(); // clean up previous physics engine if exists
+	LOG(logInfo, LogPhysics, "Physics Engine initialized : ", m_physicsEngine == EPhysicsEngine::Bullet3 ? "Bullet physics" : "Undefined physics Engine");
+	switch (m_physicsEngine)
+	{
+	case EPhysicsEngine::Bullet3: m_worldPhysics = std::make_shared<Bullet3WorldPhysics>(); break;
+	default: break;
+	}
 }
 
 void PhysicsManager::Update(float _deltaTime)
 {
-    if (m_worldPhysics.get() == nullptr)
-    {
-        LOG(logWarning, LogPhysics, "Cannot Update : physics engine not initialized");
-        return;
-    }
+	if (!m_worldPhysics)
+	{
+		LOG(logFatal, LogPhysics, "Physics world is NULL (not initialized)");
+		return;
+	}
+	if (_deltaTime <= 0.0f)
+	{
+		LOG(logWarning, LogPhysics, "DeltaTime is 0 or negative -> simulation may not run");
+	}
 
-    m_worldPhysics->Update(_deltaTime);
+	if (_deltaTime > 0.1f)
+	{
+		LOG(logWarning, LogPhysics, "DeltaTime too high -> unstable physics possible");
+	}
+	if (m_WorldRigidbodys.empty())
+	{
+		LOG(logWarning, LogPhysics, "No rigidbodies registered in world");
+	}
 
-    for (IRigidBody* rb : m_WorldRigidbodys)
-    {
-        if (rb->OnSimulated)
-            rb->OnSimulated();
-    }
+	m_worldPhysics->Update(_deltaTime);
+	LOG(logInfo, LogPhysics, "World ptr: ", m_worldPhysics.get());
+	int simulatedCount = 0;
+	int skippedCount = 0;
+
+	for (IRigidBody* rb : m_WorldRigidbodys)
+	{
+		if (!rb)
+		{
+			LOG(logError, LogPhysics, "Null rigidbody detected in world list");
+			continue;
+		}
+
+		if (rb->OnSimulated)
+		{
+			simulatedCount++;
+			rb->OnSimulated();
+		}
+		else
+		{
+			skippedCount++;
+		}
+	}
 }
 
-std::shared_ptr<IRigidBody> PhysicsManager::CreateRigidBody(std::shared_ptr<ICollider> _shape, ERigidBodyType _type)
+std::shared_ptr<IRigidBody> PhysicsManager::CreateRigidBody(std::shared_ptr<ICollider> _shape, ERigidBodyType _type, MirageEngine::Core::Components::Transform _newTransform)
 {
-    if (_shape.get() == nullptr)
-    {
-        LOG(logWarning, LogPhysics, "Cannot create rigid body : shape is null");
-        return nullptr;
-    }
-    std::shared_ptr<Physics::IRigidBody> body;
-    switch (m_physicsEngine)
-    {
-    case EPhysicsEngine::Bullet3:
-        body = std::make_shared<Bullet3RigidBody>();
-        break;
-    default:
-        break;
-    }
-    if (body != nullptr) { body->Create(_shape, _type); }
-    else
-    {
-        LOG(logWarning, LogPhysics, "Cannot create rigid body : physics engine not initialized");
-        return nullptr;
-    }
-    return body;
+	if (_shape.get() == nullptr)
+	{
+		LOG(logWarning, LogPhysics, "Cannot create rigid body : shape is null");
+		return nullptr;
+	}
+	std::shared_ptr<Physics::IRigidBody> body;
+	switch (m_physicsEngine)
+	{
+	case EPhysicsEngine::Bullet3:
+		body = std::make_shared<Bullet3RigidBody>();
+		break;
+	default:
+		break;
+	}
+	if (body != nullptr) { body->Create(_shape, _type, _newTransform); }
+	else
+	{
+		LOG(logWarning, LogPhysics, "Cannot create rigid body : physics engine not initialized");
+		return nullptr;
+	}
+	return body;
 }
 
 std::shared_ptr<ICollider> PhysicsManager::CreateCollider(ECollisionShapeType _shapeType)
 {
-    std::shared_ptr<Physics::ICollider> collider;
-    switch (m_physicsEngine)
-    {
-        case EPhysicsEngine::Bullet3:
-            switch (_shapeType)
-            {
-            case ECollisionShapeType::Box:
-                collider = std::make_shared<Bullet3BoxCollider>();
-                break;
-            case ECollisionShapeType::Sphere:
-                collider = std::make_shared<Bullet3SphereCollider>();
-                break;
-            case ECollisionShapeType::Capsule:
-                collider = std::make_shared<Bullet3CapsuleCollider>();
-                break;
-            default:
-                break;
-            }
-            break;
-        default: break;
-    }
-    if (collider.get() != nullptr) { collider->Create(); }
-    return collider;
+	std::shared_ptr<Physics::ICollider> collider;
+	switch (m_physicsEngine)
+	{
+	case EPhysicsEngine::Bullet3:
+		switch (_shapeType)
+		{
+		case ECollisionShapeType::Box:
+			collider = std::make_shared<Bullet3BoxCollider>();
+			break;
+		case ECollisionShapeType::Sphere:
+			collider = std::make_shared<Bullet3SphereCollider>();
+			break;
+		case ECollisionShapeType::Capsule:
+			collider = std::make_shared<Bullet3CapsuleCollider>();
+			break;
+		default:
+			break;
+		}
+		break;
+	default: break;
+	}
+	if (collider.get() != nullptr) { collider->Create(); }
+	return collider;
 }
 
 void PhysicsManager::RegisterRigidBody(std::shared_ptr<IRigidBody> _body, ECollisionGroup _group, ECollisionGroup _mask)
 {
-    if (m_worldPhysics.get() == nullptr)
-    {
-        LOG(logWarning, LogPhysics, "Cannot register rigid body : physics engine not initialized");
-        return;
-    }
-    m_worldPhysics->AddRigidBody(_body, _group, _mask);
-    m_WorldRigidbodys.push_back(_body.get());
+	if (m_worldPhysics.get() == nullptr)
+	{
+		LOG(logWarning, LogPhysics, "Cannot register rigid body : physics engine not initialized");
+		return;
+	}
+	m_worldPhysics->AddRigidBody(_body, _group, _mask);
+	m_WorldRigidbodys.push_back(_body.get());
 }
 
 void PhysicsManager::UnregisterRigidBody(IRigidBody* _body)
 {
-    if (m_worldPhysics.get() == nullptr)
-    {
-        LOG(logWarning, LogPhysics, "Cannot unregister rigid body : physics engine not initialized");
-        return;
-    }
-    m_worldPhysics->RemoveRigidBody(_body);
-    m_WorldRigidbodys.erase(std::remove(m_WorldRigidbodys.begin(), m_WorldRigidbodys.end(), _body), m_WorldRigidbodys.end());
+	if (m_worldPhysics.get() == nullptr)
+	{
+		LOG(logWarning, LogPhysics, "Cannot unregister rigid body : physics engine not initialized");
+		return;
+	}
+	m_worldPhysics->RemoveRigidBody(_body);
+	m_WorldRigidbodys.erase(std::remove(m_WorldRigidbodys.begin(), m_WorldRigidbodys.end(), _body), m_WorldRigidbodys.end());
 }
