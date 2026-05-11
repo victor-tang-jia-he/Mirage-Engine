@@ -280,23 +280,23 @@ void Renderer::ComputeLights()
         std::shared_ptr<PointLight> light = weak.lock();
         MirageRHI::PointLightData& p = data.pointLights[data.pointCount++];
         p.color = light->Color;
-        p.position = light->GetOwner()->GetPosition();
+        p.position = light->GetOwner()->Transform.GetWorldMatrix().GetTranslation();
         p.intensity = light->Intensity;
     }
 
-    for (std::weak_ptr<SpotLight>& weak : spotList)
-    {
-        if (weak.expired())
-            continue;
-        std::shared_ptr<SpotLight> light = weak.lock();
-        MirageRHI::SpotLightData& s = data.spotLights[data.spotCount++];
-        s.color = light->Color;
-        s.position = light->Position;
-        s.direction = light->Direction;
-        s.intensity = light->Intensity;
-        s.innerCutoff = light->InnerCutoff;
-        s.outerCutoff = light->OuterCutoff;
-    }
+    //for (std::weak_ptr<SpotLight>& weak : spotList)
+    //{
+    //    if (weak.expired())
+    //        continue;
+    //    std::shared_ptr<SpotLight> light = weak.lock();
+    //    MirageRHI::SpotLightData& s = data.spotLights[data.spotCount++];
+    //    s.color = light->Color;
+    //    s.position = light->GetOwner()->Transform.GetWorldMatrix().GetTranslation();
+    //    s.direction = light->Direction;
+    //    s.intensity = light->Intensity;
+    //    s.innerCutoff = light->InnerCutoff;
+    //    s.outerCutoff = light->OuterCutoff;
+    //}
     m_LightUBO->Upload(&data, sizeof(MirageRHI::LightUBOData));
 }
 
@@ -311,25 +311,6 @@ void Renderer::DrawMesh(std::shared_ptr<MirageEngine::Core::Components::MeshRend
     m_CommandBuffer->BindPipeline(pipeline);
     m_CommandBuffer->ApplyPipelineParameters(pipeline);
     _meshRenderer->GetMaterial()->Bind();
-
-    //for (const MirageEngine::Core::Resources::LitVertex& vertex : _meshRenderer->GetMesh()->m_Vertex)
-    //{
-    //    const Matrix4 worldMatrix = _meshRenderer->GetOwner()->Transform.GetWorldMatrix();
-
-    //    const Matrix3 normalMatrix = worldMatrix.GetSubMatrix(3,3).Inverse().Transpose();
-
-    //    for (const MirageEngine::Core::Resources::LitVertex& vertex : _meshRenderer->GetMesh()->m_Vertex)
-    //    {
-    //        Vector3 start = worldMatrix * (vertex.Position);
-
-    //        Vector3 normal = normalMatrix * vertex.Normal.Normalized();
-
-    //        Vector3 end = start + normal * 1.f;
-
-    //        Debug_Draw.Line(start, end, Vector4(0.f, 1.f, 0.f, 1.f));
-    //    }
-    //}
-
     m_PerObjectUBO->Upload(&obj, sizeof(MirageRHI::PerObjectData));
     m_CommandBuffer->BindBuffer(_meshRenderer->GetMesh()->GetVertexBuffer());
     m_CommandBuffer->ApplyVertexLayout(_meshRenderer->GetMesh()->GetVertexLayout());

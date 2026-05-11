@@ -7,7 +7,7 @@ namespace MirageEngine
 {
     struct ALIGN16 DirectionalLight : public Light, public MirageEngine::Core::Components::Component, public std::enable_shared_from_this<DirectionalLight>
     {
-            MirageEngine::Core::Math::Vector3 Direction = { 0, 1, 0 };
+            MirageEngine::Core::Math::Vector3 Direction = { 0, -1, 0 };
 
             DirectionalLight();
             ~DirectionalLight() = default;

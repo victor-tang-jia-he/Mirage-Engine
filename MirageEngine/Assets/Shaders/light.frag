@@ -170,9 +170,8 @@ vec3 CalculateLight(
 }
 
 void main()
-{		    
-
-vec3 albedo     = pow(texture(albedoMap, TexCoords).rgb, vec3(2.2));
+{		  
+    vec3 albedo     = pow(texture(albedoMap, TexCoords).rgb, vec3(2.2));
     vec3 normal     = GetNormalFromNormalMap();
     float metallic  = texture(metallicMap, TexCoords).r;
     float roughness = texture(roughnessMap, TexCoords).r;
@@ -211,6 +210,31 @@ vec3 albedo     = pow(texture(albedoMap, TexCoords).rgb, vec3(2.2));
         float NdotL = max(dot(N, L), 0.0);                
         Lo += (kD * albedo / PI + specular) * radiance * NdotL; 
     }   
+
+    // Directional Light
+    for(int i = 0; i < dirCount; ++i)  
+    {
+        vec3 L = normalize(-dirLights[i].direction);
+        vec3 H = normalize(V + L);
+        float attenuation = 1.0;
+        
+        // cook-torrance brdf
+        float NDF = DistributionGGX(N, H, roughness);        
+        float G   = GeometrySmith(N, V, L, roughness);      
+        vec3 F    = FresnelSchlick(max(dot(H, V), 0.0), F0);       
+        
+        vec3 kS = F;
+        vec3 kD = vec3(1.0) - kS;
+        kD *= 1.0 - metallic;	  
+        
+        vec3 numerator    = NDF * G * F;
+        float denominator = 4.0 * max(dot(N, V), 0.0) * max(dot(N, L), 0.0) + 0.0001;
+        vec3 specular     = numerator / denominator;  
+            
+        // add to outgoing radiance Lo
+        float NdotL = max(dot(N, L), 0.0);                
+        Lo += (kD * albedo / PI + specular) * NdotL; 
+    }
   
     vec3 ambient = vec3(0.03) * albedo * ao;
     vec3 color = ambient + Lo;

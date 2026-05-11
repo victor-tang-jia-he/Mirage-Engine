@@ -9,7 +9,7 @@ namespace MirageEngine
     struct ALIGN16 SpotLight : public Light, public MirageEngine::Core::Components::Component, public std::enable_shared_from_this<SpotLight>
     {
             MirageEngine::Core::Math::Vector3 Position;
-            MirageEngine::Core::Math::Vector3 Direction;
+            MirageEngine::Core::Math::Vector3 Direction = { 0, -1, 0 };
             float InnerCutoff = 0;
             float OuterCutoff = 0;
 
