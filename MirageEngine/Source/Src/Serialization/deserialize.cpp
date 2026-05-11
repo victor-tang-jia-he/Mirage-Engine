@@ -3,6 +3,7 @@
 #include "GameObject/game_object.h"
 #include "Components/component.h"
 #include "Components/camera.h"
+#include "Components/rigidbody.h"
 #include "vector3.h"
 #include "quaternion.h"
 
@@ -59,6 +60,12 @@ void MirageEngine::Deserializer::DeserializeGameObject(json _jGameObject, std::s
     _savedScene->AddGameObject(savedGameObject);
 
     DeserializeTransform(_jGameObject["Transform"], savedGameObject);
+
+    auto rigidbody = savedGameObject->GetComponent<Core::Components::Rigidbody>();
+    if (rigidbody)
+    {
+        rigidbody->OnTransformChanged(savedGameObject->Transform);
+    }
 }
 
 void MirageEngine::Deserializer::DeserializeComponent(json _jComponent, std::shared_ptr<GameObject> _Owner)

@@ -83,17 +83,17 @@ std::shared_ptr<ICollider> PhysicsManager::CreateCollider(ECollisionShapeType _s
         case EPhysicsEngine::Bullet3:
             switch (_shapeType)
             {
-            case ECollisionShapeType::Box    : 
+            case ECollisionShapeType::Box:
                 collider = std::make_shared<Bullet3BoxCollider>();
                 break;
-                case ECollisionShapeType::Sphere :
-                    collider = std::make_shared<Bullet3SphereCollider>();
-                    break;
-                case ECollisionShapeType::Capsule:
-                    collider = std::make_shared<Bullet3CapsuleCollider>();
-                    break;
-                default                          :
-                    break;
+            case ECollisionShapeType::Sphere:
+                collider = std::make_shared<Bullet3SphereCollider>();
+                break;
+            case ECollisionShapeType::Capsule:
+                collider = std::make_shared<Bullet3CapsuleCollider>();
+                break;
+            default:
+                break;
             }
             break;
         default: break;

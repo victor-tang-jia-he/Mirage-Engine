@@ -8,7 +8,7 @@ DEFINE_LOG_CATEGORY(LogBullet3Rigidbody)
 
 using namespace MirageEngine::Core::Physics;
 
-Bullet3RigidBody::~Bullet3RigidBody() // possibleme a cause de ça
+Bullet3RigidBody::~Bullet3RigidBody()
 {
     PhysicsManager::Instance().UnregisterRigidBody(this);
     if (m_rigidBody)
@@ -68,10 +68,13 @@ bool Bullet3RigidBody::Create(std::shared_ptr<ICollider> _shape, ERigidBodyType 
 
     m_rigidBody = std::make_shared<btRigidBody>(rigidBodyCI);
 
-    if (_type == ERigidBodyType::Static) m_rigidBody->setCollisionFlags(m_rigidBody->getCollisionFlags() | btCollisionObject::CF_STATIC_OBJECT);
-    else if (_type == ERigidBodyType::Kinematic) m_rigidBody->setCollisionFlags(m_rigidBody->getCollisionFlags() | btCollisionObject::CF_KINEMATIC_OBJECT);
+    if (_type == ERigidBodyType::Static) 
+        m_rigidBody->setCollisionFlags(m_rigidBody->getCollisionFlags() | btCollisionObject::CF_STATIC_OBJECT);
+    else if (_type == ERigidBodyType::Kinematic) 
+        m_rigidBody->setCollisionFlags(m_rigidBody->getCollisionFlags() | btCollisionObject::CF_KINEMATIC_OBJECT);
 
     PhysicsManager::Instance().RegisterRigidBody(shared_from_this(), m_CollisionMask, m_CollisionGroup);
+
     return true;
 }
 
