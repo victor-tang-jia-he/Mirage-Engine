@@ -149,6 +149,26 @@ namespace Mirage
 
 		RenderAddComponentPopup(selectedObj);
 
+		if (ImGui::BeginDragDropTarget())
+                {
+                    if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM"))
+                    {
+                        std::filesystem::path path = (const char*)payload->Data;
+                        std::string name = path.stem().string();
+                        std::string ext = path.extension().string();
+
+                        if (ext == ".h")
+                        {
+                            auto type = entt::resolve(entt::hashed_string{ name.c_str() });
+                            if (type)
+                            {
+                                LOG(logInfo, LogInspector, "Adding Script Component: %s", name.c_str());
+                            }
+                        }
+                    }
+                    ImGui::EndDragDropTarget();
+                }
+
 		UIWrapper::EndWindow();
 	}
 

@@ -32,7 +32,7 @@ namespace MirageEngine::Core
 			void OnStart() override;
 			void OnUpdate(float _dt) override;
             entt::id_type GetType() const override;
-
+			 
 			void SetDestination(Vector3 _newDestination);
 
 			// Getters

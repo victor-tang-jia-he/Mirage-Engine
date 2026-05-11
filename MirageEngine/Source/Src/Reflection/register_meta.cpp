@@ -272,6 +272,6 @@ void RegisterMeta::RegisterUtilityAgentMeta()
 
 	utilityAgent.data<&UtilityAgent::SetDecisionInterval, &UtilityAgent::GetDecisionInterval>("Decision Interval");
 	utilityAgent.data<&UtilityAgent::SetInertia, &UtilityAgent::GetInertia>("Inertia");
-
+    utilityAgent.data<&UtilityAgent::SetTargetGrid, &UtilityAgent::GetTargetGrid>("Grid");
 	utilityAgent.data<nullptr, &UtilityAgent::GetLastDecisionReason>("Status");
 }

@@ -47,6 +47,19 @@ namespace MirageEngine::Core::Components
 			}
 		}
 
+		 if (m_actions.empty())
+         {
+             auto allComps = GetOwner()->GetComponents();
+             for (auto& comp : allComps)
+             {
+                 AI::AIAction* action = dynamic_cast<AI::AIAction*>(comp.get());
+                 if (action)
+                 {
+                     AddAction(action);
+                 }
+             }
+         }
+
 		m_DecisionTimer -= _dt;
 		if (m_DecisionTimer <= 0.0f)
 		{
@@ -56,7 +69,7 @@ namespace MirageEngine::Core::Components
 		if (m_CurrentAction != nullptr)
 			m_CurrentAction->Execute(TimeManager::GetDeltaTime());
 	}
-
+		
 	entt::id_type UtilityAgent::GetType() const
 	{ 
 		return entt::type_id<UtilityAgent>().hash(); 
@@ -101,8 +114,6 @@ namespace MirageEngine::Core::Components
 				
 				if (bestAction != m_CurrentAction)
 				{
-					if (m_CurrentAction)
-						m_CurrentAction->OnStop();
 					m_CurrentAction = bestAction;
 					if (m_CurrentAction)
 						m_CurrentAction->OnStart();
