@@ -270,11 +270,18 @@ Matrix3 Matrix3::operator*=(float _n)
     return *this;
 }
 
-Vector3 Matrix3::operator*(const Vector3& v)
+Vector3 Matrix3::operator*(const Vector3& _v)
 {
     return Vector3(
-        (*this)(0, 0) * v.X + (*this)(0, 1) * v.Y + (*this)(0, 2) * v.Z, (*this)(1, 0) * v.X + (*this)(1, 1) * v.Y + (*this)(1, 2) * v.Z,
-        (*this)(2, 0) * v.X + (*this)(2, 1) * v.Y + (*this)(2, 2) * v.Z);
+        (*this)(0, 0) * _v.X + (*this)(0, 1) * _v.Y + (*this)(0, 2) * _v.Z, (*this)(1, 0) * _v.X + (*this)(1, 1) * _v.Y + (*this)(1, 2) * _v.Z,
+        (*this)(2, 0) * _v.X + (*this)(2, 1) * _v.Y + (*this)(2, 2) * _v.Z);
+}
+
+Vector3 Matrix3::operator*(const Vector3& _v) const
+{
+    return Vector3(
+        (*this)(0, 0) * _v.X + (*this)(0, 1) * _v.Y + (*this)(0, 2) * _v.Z, (*this)(1, 0) * _v.X + (*this)(1, 1) * _v.Y + (*this)(1, 2) * _v.Z,
+        (*this)(2, 0) * _v.X + (*this)(2, 1) * _v.Y + (*this)(2, 2) * _v.Z);
 }
 
 bool Matrix3::operator==(const Matrix3& _other) const

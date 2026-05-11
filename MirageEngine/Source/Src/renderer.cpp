@@ -87,7 +87,7 @@ void Renderer::RenderScene(SceneGraph _sceneGraph)
         std::shared_ptr<MirageEngine::Core::Components::Camera> cam = _sceneGraph.GetActiveCamera();
         MirageRHI::PerFrameData frame{ cam->GetView(), cam->GetPerspective(), cam->Transform().GetPosition(), 0.0f };
         m_PerFrameUBO->Upload(&frame, sizeof(MirageRHI::PerFrameData));
-        Debug_Draw.m_DebugUBO->Upload(&frame, sizeof(MirageRHI::PerFrameData));
+        Debug_Draw.UpdateUBO(&frame, sizeof(MirageRHI::PerFrameData));
         ComputeLights();
     }
 
@@ -252,16 +252,7 @@ void Renderer::RenderObjectRecursive(std::shared_ptr<MirageEngine::GameObject> _
     }
 }
 
-void MirageEngine::Renderer::RenderLine()
-{
-    m_CommandBuffer->BindPipeline(Debug_Draw.m_Pipeline);
-    m_CommandBuffer->ApplyPipelineParameters(Debug_Draw.m_Pipeline);
-    Debug_Draw.UpdateVertexBuffer();
-    m_CommandBuffer->BindBuffer(Debug_Draw.m_VertexBufferObject);
-    m_CommandBuffer->ApplyVertexLayout(Debug_Draw.m_VertexAttributeObject);
-    m_CommandBuffer->Draw((uint32_t)Debug_Draw.m_Lines.size(), MirageRHI::DrawMode::Lines);
-    Debug_Draw.Flush();
-}
+void MirageEngine::Renderer::RenderLine() { Debug_Draw.Flush(m_CommandBuffer); }
 
 void Renderer::ComputeLights()
 {
@@ -320,6 +311,25 @@ void Renderer::DrawMesh(std::shared_ptr<MirageEngine::Core::Components::MeshRend
     m_CommandBuffer->BindPipeline(pipeline);
     m_CommandBuffer->ApplyPipelineParameters(pipeline);
     _meshRenderer->GetMaterial()->Bind();
+
+    //for (const MirageEngine::Core::Resources::LitVertex& vertex : _meshRenderer->GetMesh()->m_Vertex)
+    //{
+    //    const Matrix4 worldMatrix = _meshRenderer->GetOwner()->Transform.GetWorldMatrix();
+
+    //    const Matrix3 normalMatrix = worldMatrix.GetSubMatrix(3,3).Inverse().Transpose();
+
+    //    for (const MirageEngine::Core::Resources::LitVertex& vertex : _meshRenderer->GetMesh()->m_Vertex)
+    //    {
+    //        Vector3 start = worldMatrix * (vertex.Position);
+
+    //        Vector3 normal = normalMatrix * vertex.Normal.Normalized();
+
+    //        Vector3 end = start + normal * 1.f;
+
+    //        Debug_Draw.Line(start, end, Vector4(0.f, 1.f, 0.f, 1.f));
+    //    }
+    //}
+
     m_PerObjectUBO->Upload(&obj, sizeof(MirageRHI::PerObjectData));
     m_CommandBuffer->BindBuffer(_meshRenderer->GetMesh()->GetVertexBuffer());
     m_CommandBuffer->ApplyVertexLayout(_meshRenderer->GetMesh()->GetVertexLayout());

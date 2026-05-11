@@ -10,6 +10,7 @@
 #include <RHI/i_pipeline_parameters.h>
 #include <RHI/i_vertex_layout.h>
 #include <RHI/i_buffer.h>
+#include <RHI/i_command_buffer.h>
 
 // resource Include
 #include <Resources/shader.h>
@@ -95,7 +96,18 @@ namespace MirageEngine::DebugDraw
         m_VertexBufferObject->Update(m_Lines.data(), m_Lines.size() * sizeof(LineVertex));
     }
 
-    void DebugDraw::Flush() { m_Lines.clear(); }
+    void DebugDraw::UpdateUBO(const void* data, size_t size) { m_DebugUBO->Upload(data, size); }
+
+    void DebugDraw::Flush(std::shared_ptr<MirageRHI::ICommandBuffer> _commandBuffer)
+    {
+        _commandBuffer->BindPipeline(m_Pipeline);
+        _commandBuffer->ApplyPipelineParameters(m_Pipeline);
+        UpdateVertexBuffer();
+        _commandBuffer->BindBuffer(m_VertexBufferObject);
+        _commandBuffer->ApplyVertexLayout(m_VertexAttributeObject);
+        _commandBuffer->Draw((uint32_t)m_Lines.size(), MirageRHI::DrawMode::Lines);
+        m_Lines.clear();
+    }
 
     // ------------------------------------------------------------------ dtor
 

@@ -11,6 +11,7 @@ namespace MirageRHI
     class IPipeline;
     class IPipelineParameters;
     class IVertexLayout;
+    class ICommandBuffer;
     class IUniformBuffer;
 } // namespace MirageRHI
 
@@ -37,8 +38,6 @@ namespace MirageEngine::DebugDraw
 
     class ENGINE_API DebugDraw
     {
-            friend class MirageEngine::Renderer;
-
         private:
 
             std::shared_ptr<MirageRHI::IBuffer> m_VertexBufferObject;
@@ -62,7 +61,8 @@ namespace MirageEngine::DebugDraw
             void Init(std::shared_ptr<MirageRHI::IRenderInterface> _rhi);
             void Line(MirageEngine::Core::Math::Vector3 _a, MirageEngine::Core::Math::Vector3 _b, MirageEngine::Core::Math::Vector4 _color);
             void UpdateVertexBuffer();
-            void Flush();
+            void UpdateUBO(const void* data, size_t size);
+            void Flush(std::shared_ptr<MirageRHI::ICommandBuffer> _commandBuffer);
             ~DebugDraw();
     };
 } // namespace MirageEngine::DebugDraw

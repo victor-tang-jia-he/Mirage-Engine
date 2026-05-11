@@ -34,12 +34,12 @@ namespace MirageEngine::Core::Resources
             std::shared_ptr<IBuffer> m_IndexBuffer = nullptr;
 
             std::vector<uint32_t> m_Index;
-            std::vector<LitVertex> m_Vertex;
             size_t m_IndexCount = 0;
 
             bool m_bIsUpload = false;
 
         public:
+            std::vector<LitVertex> m_Vertex;
 
             Mesh(
                 std::shared_ptr<MirageRHI::IVertexLayout> _vao, std::shared_ptr<IBuffer> _vb, std::shared_ptr<IBuffer> _ib, std::vector<LitVertex>&& _vertices, std::vector<uint32_t>&& _indices,

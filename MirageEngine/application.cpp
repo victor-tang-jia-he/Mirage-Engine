@@ -190,7 +190,7 @@ void Application::InitGameObject()
 
     floorGO->SetPosition(Vector3(0, -3, 0));
     floorGO->SetRotation(rotationQ);
-    floorGO->SetScale(Vector3(10, 1, 10));
+    //floorGO->SetScale(Vector3(10, 1, 10));
 
     // =========================
     //  Light object
@@ -206,7 +206,7 @@ void Application::InitGameObject()
     // =========================
     ResourceManager& rm = ResourceManager::Instance();
 
-    std::shared_ptr<Texture> texCat = rm.GetTexture("cat");
+    std::shared_ptr<Texture> texCat = rm.GetTexture("merwann_diffuse");
     std::shared_ptr<Texture> texMirage = rm.GetTexture("Mirage");
 
     std::shared_ptr<Material> mat = rm.CreateMaterial(
@@ -240,7 +240,7 @@ void Application::InitGameObject()
     renderer1->SetMaterial(mat1);
     renderer2->SetMaterial(mat2);
 
-    std::shared_ptr<Mesh> cubeMesh = rm.GetMesh("cube");
+    std::shared_ptr<Mesh> cubeMesh = rm.GetMesh("merwann_prime");
     cubeMesh->Bind();
 
     renderer1->SetMesh(cubeMesh);

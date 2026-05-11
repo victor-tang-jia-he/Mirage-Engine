@@ -170,14 +170,14 @@ vec3 CalculateLight(
 }
 
 void main()
-{		
-    vec3 albedo     = pow(texture(albedoMap, TexCoords).rgb, vec3(2.2));
+{		    
+
+vec3 albedo     = pow(texture(albedoMap, TexCoords).rgb, vec3(2.2));
+    vec3 normal     = GetNormalFromNormalMap();
     float metallic  = texture(metallicMap, TexCoords).r;
     float roughness = texture(roughnessMap, TexCoords).r;
-    roughness = max(roughness, 0.05);
     float ao        = texture(aoMap, TexCoords).r;
-
-    vec3 N = normalize(GetNormalFromNormalMap());
+    vec3 N = normalize(Normal);
     vec3 V = normalize(camPos - WorldPos);
 
     vec3 F0 = vec3(0.04); 
@@ -185,45 +185,31 @@ void main()
 	           
     // reflectance equation
     vec3 Lo = vec3(0.0);
-
-    // Directional light
-    for(int i = 0; i < dirCount; ++i)
-    {
-        vec3 L = normalize(-dirLights[i].direction);
-
-        vec3 radiance = dirLights[i].color.rgb * dirLights[i].intensity;
-
-        Lo += CalculateLight(radiance, L, N, V, albedo, metallic, roughness, F0);
-    }
-
-    // Point Light
-    for(int i = 0; i < pointCount; ++i) 
+    for(int i = 0; i < pointCount; ++i)  
     {
         // calculate per-light radiance
         vec3 L = normalize(pointLights[i].position - WorldPos);
-
-        float distance = length(pointLights[i].position - WorldPos);
-
+        vec3 H = normalize(V + L);
+        float distance    = length(pointLights[i].position - WorldPos);
         float attenuation = 1.0 / (distance * distance);
-
-        vec3 radiance = pointLights[i].color.rgb * pointLights[i].intensity * attenuation; 
-
-        Lo += CalculateLight(radiance, L, N, V, albedo, metallic, roughness, F0);
-    }   
-
-    // Spot Light
-    for(int i = 0; i < spotCount; ++i) 
-    {
-        // calculate per-light radiance
-        vec3 L = normalize(spotLights[i].position - WorldPos);
-        float distance    = length(spotLights[i].position - WorldPos);
-        float attenuation = 1.0 / (distance * distance);
-        float theta       = dot(L, normalize(-spotLights[i].direction));
-        float epsilon     = spotLights[i].innerCutoff - spotLights[i].outerCutoff;
-        float coneEffect  = clamp((theta - spotLights[i].outerCutoff) / epsilon, 0.0, 1.0);
-        vec3 radiance     = spotLights[i].color.rgb * attenuation * coneEffect;        
-
-        Lo += CalculateLight(radiance, L, N, V, albedo, metallic, roughness, F0);
+        vec3 radiance     = pointLights[i].color.rgb * attenuation;        
+        
+        // cook-torrance brdf
+        float NDF = DistributionGGX(N, H, roughness);        
+        float G   = GeometrySmith(N, V, L, roughness);      
+        vec3 F    = FresnelSchlick(max(dot(H, V), 0.0), F0);       
+        
+        vec3 kS = F;
+        vec3 kD = vec3(1.0) - kS;
+        kD *= 1.0 - metallic;	  
+        
+        vec3 numerator    = NDF * G * F;
+        float denominator = 4.0 * max(dot(N, V), 0.0) * max(dot(N, L), 0.0) + 0.0001;
+        vec3 specular     = numerator / denominator;  
+            
+        // add to outgoing radiance Lo
+        float NdotL = max(dot(N, L), 0.0);                
+        Lo += (kD * albedo / PI + specular) * radiance * NdotL; 
     }   
   
     vec3 ambient = vec3(0.03) * albedo * ao;
@@ -233,4 +219,4 @@ void main()
     color = pow(color, vec3(1.0/2.2));  
    
     FragColor = vec4(color, 1.0);
-}
+}  
