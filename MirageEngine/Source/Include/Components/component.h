@@ -33,6 +33,7 @@ namespace MirageEngine
                     virtual void OnUpdate(float dt) {};
                     virtual void OnLateUpdate(float dt) {};
                     virtual void OnFixedUpdate(float dt) {};
+                    virtual void OnDrawLine() {};
 
                     virtual void OnCreate() {}
 

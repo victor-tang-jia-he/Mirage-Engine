@@ -15,7 +15,7 @@
 
 int main()
 {
-    Loggers::EnableImmediateFlush(true);  // Enable immediate flushing of log messages for real-time output during initialization
+    Loggers::EnableImmediateFlush(true);   // Enable immediate flushing of log messages for real-time output during initialization
     Loggers::EnableFileWriting(true);      // Enable writing logs to file during initialization to capture any issues that may occur before the main loop starts.
     Loggers::EnableTimeOnEveryLog(false);  // Disable time show as it take verbosal the log.
     Loggers::EnableFileNameAndLine(false); // Disable file name and line of the log , can be enable if necessary.
@@ -46,6 +46,7 @@ int main()
             application.GetSceneGraph()->CallAllLateUpdate(dt);
             application.GetSceneGraph()->CallAllFixedUpdate(dt);
         }
+        application.GetSceneGraph()->CallAllDrawLine();
         application.GetSceneGraph()->UpdateAllWorldMatrices();
 
         // --- Render ---

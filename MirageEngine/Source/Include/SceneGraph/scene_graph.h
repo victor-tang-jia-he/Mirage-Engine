@@ -57,6 +57,7 @@ namespace MirageEngine
             void CallAllUpdate(float dt);
             void CallAllLateUpdate(float dt);
             void CallAllFixedUpdate(float dt);
+            void CallAllDrawLine();
 
             void UpdateWorldMatrix(std::shared_ptr<GameObject> _startObject);
             void UpdateAllWorldMatrices();
@@ -108,5 +109,6 @@ namespace MirageEngine
             void CallAllUpdateRecursive(std::shared_ptr<GameObject> _obj, float dt);
             void CallAllLateUpdateRecursive(std::shared_ptr<GameObject> _obj, float dt);
             void CallAllFixedUpdateRecursive(std::shared_ptr<GameObject> _obj, float dt);
+            void CallAllDrawLineRecursive(std::shared_ptr<GameObject> _obj);
     };
 } // namespace MirageEngine

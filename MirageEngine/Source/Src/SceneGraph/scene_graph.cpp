@@ -137,6 +137,14 @@ namespace MirageEngine
         }
     }
 
+    void SceneGraph::CallAllDrawLine()
+    {
+        for (std::shared_ptr<GameObject> root : m_RootsList)
+        {
+            CallAllDrawLineRecursive(root);
+        }
+    }
+
     void SceneGraph::CallAllOnStartRecursive(std::shared_ptr<GameObject> _obj)
     {
         for (auto& component : _obj->GetComponents())
@@ -186,6 +194,19 @@ namespace MirageEngine
         for (std::shared_ptr<GameObject> child : _obj->GetChildren())
         {
             CallAllFixedUpdateRecursive(child, dt);
+        }
+    }
+
+    void SceneGraph::CallAllDrawLineRecursive(std::shared_ptr<GameObject> _obj)
+    {
+        for (auto& component : _obj->GetComponents())
+        {
+            component->OnDrawLine();
+        }
+
+        for (std::shared_ptr<GameObject> child : _obj->GetChildren())
+        {
+            CallAllDrawLineRecursive(child);
         }
     }
 

@@ -40,6 +40,7 @@ namespace MirageEngine::Core::Components
 
             void OnStart() override;
             void OnUpdate(float _dt) override;
+            void OnDrawLine() override;
             entt::id_type GetType() const override;
 
             void Bake();
@@ -55,7 +56,7 @@ namespace MirageEngine::Core::Components
 
             Core::Math::Vector3 GetCellWorldPosition(int x, int y) const;
 
-            void RenderGrid();
+            void RenderGrid() const;
 
             // Getters
             float GetWidth() const { return m_GridWidth; }
