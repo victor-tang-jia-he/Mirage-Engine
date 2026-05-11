@@ -1,46 +1,50 @@
 #pragma once
 
-#include <vector>
-#include <string>
 #include <stdexcept>
 
-namespace entt {
-	using id_type = std::uint32_t;
+namespace entt
+{
+    using id_type = std::uint32_t;
 }
+
 namespace MirageEngine
 {
-	class GameObject;
-	namespace Core
-	{
-		namespace Components
-		{
-			class Component
-			{
-				friend class MirageEngine::GameObject;
+    class GameObject;
 
-			protected:
-				std::string m_ComponentName;
-				GameObject* m_Owner;
+    namespace Core
+    {
+        namespace Components
+        {
+            class Component
+            {
+                    friend class MirageEngine::GameObject;
 
-			public:
-				Component() = default;
-				virtual ~Component() = default;
+                protected:
 
-				virtual void OnStart() {};
-				virtual void OnUpdate(float dt) {};
-				virtual void OnLateUpdate(float dt) {};
-				virtual void OnFixedUpdate(float dt) {};
+                    std::string m_ComponentName;
+                    GameObject* m_Owner;
 
-				virtual void OnCreate() {}
-				virtual void OnDestroy() {}
+                public:
 
+                    Component() = default;
+                    virtual ~Component() = default;
 
-				virtual entt::id_type GetType() const = 0;
+                    virtual void OnStart() {};
+                    virtual void OnUpdate(float dt) {};
+                    virtual void OnLateUpdate(float dt) {};
+                    virtual void OnFixedUpdate(float dt) {};
 
-				// Getters
-				std::string GetName() const { return m_ComponentName; }
-				GameObject* GetOwner() const { return m_Owner; }
-			};
-		}
-	}
-}
+                    virtual void OnCreate() {}
+
+                    virtual void OnDestroy() {}
+
+                    virtual entt::id_type GetType() const = 0;
+
+                    // Getters
+                    std::string GetName() const { return m_ComponentName; }
+
+                    GameObject* GetOwner() const { return m_Owner; }
+            };
+        } // namespace Components
+    } // namespace Core
+} // namespace MirageEngine

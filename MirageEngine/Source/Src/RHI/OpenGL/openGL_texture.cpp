@@ -22,24 +22,22 @@ void MirageRHI::OpenGLTexture::Create(const void* _data, TextureDesc _desc)
 
     glTexImage2D(GL_TEXTURE_2D, 0, format, _desc.width, _desc.height, 0, format, GL_UNSIGNED_BYTE, _data);
 
-	if (_desc.mipmaps)
+    if (_desc.mipmaps)
         glGenerateMipmap(GL_TEXTURE_2D);
 
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, 0);
 
-	LOG(logTemp, LogRHITexture, "Texture Created with ID: ", m_Texture, " (", _desc.width, "x", _desc.height, ", Channels: ", _desc.channel, ", Mipmaps: ", _desc.mipmaps ? "Yes" : "No", ")");
+    LOG(logTemp, LogRHITexture, "Texture Created with ID: ", m_Texture, " (", _desc.width, "x", _desc.height, ", Channels: ", _desc.channel, ", Mipmaps: ", _desc.mipmaps ? "Yes" : "No", ")");
 }
 
 void MirageRHI::OpenGLTexture::Destroy()
 {
-    if (m_Texture == 0) return;
-    LOG(logTemp, LogRHITexture, "Texture Destroyed with ID: ", m_Texture); 
+    if (m_Texture == 0)
+        return;
+    LOG(logTemp, LogRHITexture, "Texture Destroyed with ID: ", m_Texture);
     glDeleteTextures(1, &m_Texture);
-    m_Texture = 0;                                                         
+    m_Texture = 0;
 }
 
-void MirageRHI::OpenGLTexture::Bind() const
-{
-    glBindTexture(GL_TEXTURE_2D, m_Texture);
-}
+void MirageRHI::OpenGLTexture::Bind() const { glBindTexture(GL_TEXTURE_2D, m_Texture); }

@@ -24,19 +24,19 @@ namespace MirageEngine::Core::Physics
             std::vector<IRigidBody*> m_WorldRigidbodys;
 
             std::shared_ptr<IWorldPhysics> m_worldPhysics = nullptr;
-        public:
 
+        public:
 
             static PhysicsManager& Instance();
 
             void Shutdown();
 
-            PhysicsManager()  = default;
+            PhysicsManager() = default;
             ~PhysicsManager() = default;
             void Initialize(EPhysicsEngine _physicsEngine = EPhysicsEngine::Bullet3);
             void Update(float _deltaTime);
 
-			std::weak_ptr<IWorldPhysics> GetWorldPhysics() const { return m_worldPhysics; }
+            std::weak_ptr<IWorldPhysics> GetWorldPhysics() const { return m_worldPhysics; }
 
             IRigidBody* CreateRigidBody(ICollider* _shape, ERigidBodyType _type);
 

@@ -12,9 +12,10 @@ Bullet3BoxCollider::~Bullet3BoxCollider()
 
 void Bullet3BoxCollider::Create()
 {
-    m_bIsDirty       = false;
+    m_bIsDirty = false;
     m_CollisionShape = new btBoxShape(btVector3(m_HalfExtents.X, m_HalfExtents.Y, m_HalfExtents.Z));
-    if (m_Offset.IsNull() && m_Rot.IsNull()) return;
+    if (m_Offset.IsNull() && m_Rot.IsNull())
+        return;
 
     m_LocalTransform.setIdentity();
     m_LocalTransform.setOrigin(btVector3(m_Offset.X, m_Offset.Y, m_Offset.Z));
@@ -24,17 +25,18 @@ void Bullet3BoxCollider::Create()
 
 void Bullet3BoxCollider::SetOffset(Vector3 _offset, Quaternion _rotation)
 {
-    m_Offset   = _offset;
-    m_Rot      = _rotation;
+    m_Offset = _offset;
+    m_Rot = _rotation;
     m_bIsDirty = true;
 }
 
 void Bullet3BoxCollider::SetHalfExtents(const Vector3& halfExtents)
 {
-    if (m_HalfExtents == halfExtents) return;
+    if (m_HalfExtents == halfExtents)
+        return;
 
     m_HalfExtents = halfExtents;
-    m_bIsDirty    = true;
+    m_bIsDirty = true;
 }
 
 Vector3 Bullet3BoxCollider::GetHalfExtents() const { return m_HalfExtents; }

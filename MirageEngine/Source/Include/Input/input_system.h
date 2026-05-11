@@ -26,7 +26,7 @@ namespace MirageEngine::Core
             protected:
             private:
 
-                static std::shared_ptr<InputMapping>   m_CurrentMap;
+                static std::shared_ptr<InputMapping> m_CurrentMap;
                 static std::unordered_set<std::string> m_HeldButton;
 
                 InputSystem& operator=(const InputSystem&) = delete;
@@ -36,8 +36,8 @@ namespace MirageEngine::Core
 
             public:
 
-                InputSystem()                   = delete;
-                ~InputSystem()                  = delete;
+                InputSystem() = delete;
+                ~InputSystem() = delete;
                 InputSystem(const InputSystem&) = delete;
 
                 static void Initialize(std::shared_ptr<InputMapping> _map = nullptr);
@@ -57,7 +57,9 @@ namespace MirageEngine::Core
                 static std::shared_ptr<InputMapping> GetCurrentMapping() { return m_CurrentMap; }
 
                 static void SetCurrentMapping(std::shared_ptr<InputMapping> _map);
+
             private:
+
                 // Axis retrieval functions
                 static void GetAxis1DFromKey(const std::string& _name, int _key, int _action, float& _currentValue);
                 static void GetAxis2DFromKey(const std::string& _name, int _key, int _action, Math::Vector2& _currentValue);

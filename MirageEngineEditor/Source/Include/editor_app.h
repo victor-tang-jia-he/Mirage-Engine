@@ -31,7 +31,7 @@ namespace Mirage
 
 	public:
 		void Init(void* _windowHandle, MirageEngine::Renderer* _renderer, MirageEngine::SceneGraph* _engineSceneGraph);
-		void Update(uint32_t _textureID);
+		void OnUpdate(uint32_t _textureID);
 		void Shutdown();
 
 		void HandlePlayMode();

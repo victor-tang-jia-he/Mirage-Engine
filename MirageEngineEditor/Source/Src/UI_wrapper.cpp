@@ -333,12 +333,7 @@ namespace Mirage
 
 	void UIWrapper::ShowThemeColorEditor()
 	{
-		static bool isOpen = true;
-		if (!ImGui::Begin("ImGui Color Editor", &isOpen, ImGuiWindowFlags_AlwaysAutoResize))
-		{
-			ImGui::End();
-			return;
-		}
+        UIWrapper::BeginWindow("ImGui Color Editor");
 
 		ImGuiStyle& style = ImGui::GetStyle();
 		ImVec4* colors = style.Colors;

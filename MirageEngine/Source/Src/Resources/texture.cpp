@@ -1,6 +1,6 @@
 #include <Resources/texture.h>
 #include <RHI/i_texture.h>
-#include <string>
+
 #include <Logs/log.h>
 
 DEFINE_LOG_CATEGORY(LogTexture)
@@ -10,8 +10,10 @@ using namespace MirageRHI;
 
 Texture::~Texture()
 {
-    if (m_Data != nullptr) free(m_Data);
-    if (m_TextureBuffer) m_TextureBuffer->Destroy();
+    if (m_Data != nullptr)
+        free(m_Data);
+    if (m_TextureBuffer)
+        m_TextureBuffer->Destroy();
 }
 
 void Texture::Bind()

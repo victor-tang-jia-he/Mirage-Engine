@@ -14,22 +14,24 @@ namespace MirageEngine::Core::Physics
     {
         protected:
 
-            using Vector3   = MirageEngine::Core::Math::Vector3;
+            using Vector3 = MirageEngine::Core::Math::Vector3;
             using Transform = MirageEngine::Core::Components::Transform;
 
-            float              m_Mass     = 1.f;
-            Vector3            m_Velocity = Vector3(0.f);
-            ERigidBodyType     m_Type;
-            ECollisionGroup    m_CollisionGroup   = ECollisionGroup::Default;
-            ECollisionGroup    m_CollisionMask    = ECollisionGroup::All;
+            float m_Mass = 1.f;
+            Vector3 m_Velocity = Vector3(0.f);
+            ERigidBodyType m_Type;
+            ECollisionGroup m_CollisionGroup = ECollisionGroup::Default;
+            ECollisionGroup m_CollisionMask = ECollisionGroup::All;
             ECollisionResponse m_CollisionRespond = ECollisionResponse::Block;
-            bool               m_bIsDirty         = true;
+            bool m_bIsDirty = true;
 
             std::vector<ICollider*> m_CurrentRigidBodyShapesBind;
+
         public:
+
             std::function<void()> OnSimulated;
 
-            IRigidBody()          = default;
+            IRigidBody() = default;
             virtual ~IRigidBody() = default;
 
             virtual bool Create(ICollider* _shape, ERigidBodyType _type) = 0;
@@ -37,7 +39,7 @@ namespace MirageEngine::Core::Physics
             virtual void UpdateTransform(MirageEngine::Core::Components::Transform& _transform) = 0;
 
             virtual void OnTransformChanged(MirageEngine::Core::Components::Transform& _newTransform) = 0;
-            virtual void SetType(ERigidBodyType _type)                                                = 0;
+            virtual void SetType(ERigidBodyType _type) = 0;
 
             virtual void AddCollider(ICollider* _newCollider) = 0;
             virtual void RemoveCollider(ICollider* _collider) = 0;
@@ -47,19 +49,19 @@ namespace MirageEngine::Core::Physics
             void SetCollisionGroup(ECollisionGroup _group)
             {
                 m_CollisionGroup = _group;
-                m_bIsDirty       = true;
+                m_bIsDirty = true;
             }
 
             void SetCollisionMask(ECollisionGroup _mask)
             {
                 m_CollisionMask = _mask;
-                m_bIsDirty      = true;
+                m_bIsDirty = true;
             }
 
             void SetCollisionResponse(ECollisionResponse response)
             {
                 m_CollisionRespond = response;
-                m_bIsDirty         = true;
+                m_bIsDirty = true;
             }
 
             ECollisionGroup GetCollisionGroup() const { return m_CollisionGroup; }

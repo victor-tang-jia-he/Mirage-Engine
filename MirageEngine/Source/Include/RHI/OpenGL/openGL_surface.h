@@ -7,22 +7,27 @@ namespace MirageRHI
     // Stores glfw context (window)
     class OpenGLSurface : public ISurface
     {
-    private:
-        GLFWwindow* m_Context = nullptr;
-        int m_Width = 0;
-        int m_Height = 0;
+        private:
 
-    public:
-        void Create(GLFWwindow* _context, int _width, int _height) override;
-        void Destroy() override {}
+            GLFWwindow* m_Context = nullptr;
+            int m_Width = 0;
+            int m_Height = 0;
 
-        OpenGLSurface& API_OpenGL() override { return *this; }
+        public:
 
-        void SetSize(int _width, int _height);
+            void Create(GLFWwindow* _context, int _width, int _height) override;
 
-        // Getters
-        GLFWwindow* GetContextGLHandle() const { return m_Context; }
-        int GetWidth() const { return m_Width; }
-        int GetHeight() const { return m_Height; }
+            void Destroy() override {}
+
+            OpenGLSurface& API_OpenGL() override { return *this; }
+
+            void SetSize(int _width, int _height);
+
+            // Getters
+            GLFWwindow* GetContextGLHandle() const { return m_Context; }
+
+            int GetWidth() const { return m_Width; }
+
+            int GetHeight() const { return m_Height; }
     };
-}
+} // namespace MirageRHI

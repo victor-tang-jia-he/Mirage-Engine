@@ -5,7 +5,7 @@ cmake_minimum_required(VERSION 3.20)
 project(CustomEngine)
 
 # Create global variable (project-level) to store output directory
-set(MIRAGE_BIN_OUTPUT_DIR "${CMAKE_BINARY_DIR}/Bin/${CMAKE_CXX_COMPILER_ID}_$<CONFIG>")
+set(MIRAGE_BIN_OUTPUT_DIR "${CMAKE_BINARY_DIR}/Bin/")
 
 
 
@@ -29,7 +29,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 cmake_host_system_information(RESULT HOSTNAME QUERY HOSTNAME)
 if ("${HOSTNAME}" STREQUAL "TheDarkPhoenix" )
     set(CMAKE_JOB_POOL_COMPILE compile_pool)
-    set_property(GLOBAL PROPERTY JOB_POOLS compile_pool=20)
+    set_property(GLOBAL PROPERTY JOB_POOLS compile_pool=24)
 endif()
 
 message(STATUS "Adding external Libraries...")

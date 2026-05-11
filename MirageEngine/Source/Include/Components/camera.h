@@ -1,6 +1,7 @@
 #pragma once
 #include <Components/transform.h>
 #include "component.h"
+#include <Scripting/engine_script_api.h>
 
 namespace MirageEngine
 {
@@ -12,20 +13,21 @@ namespace MirageEngine
             struct CallbackInputInfo;
         } // namespace Input
 
-		namespace Components
-		{
-			class Camera : public Component
-			{
-			private:
-				// Clipping Planes
-				float m_Near = 0.f;
-				float m_Far = 0.f;
-				unsigned int m_Width = 0;
-				unsigned int m_Height = 0;
-				float m_Fov = 90.f;
-				float m_CameraVelocity = 1.f;
-                float m_CameraYaw;
- 				float m_CameraPitch;
+        namespace Components
+        {
+            class ENGINE_API Camera : public Component
+            {
+                private:
+
+                    // Clipping Planes
+                    float m_Near = 0.f;
+                    float m_Far = 0.f;
+                    unsigned int m_Width = 0;
+                    unsigned int m_Height = 0;
+                    float m_Fov = 90.f;
+                    float m_CameraVelocity = 1.f;
+                    float m_CameraYaw;
+                    float m_CameraPitch;
 
                     MirageEngine::Core::Components::Transform m_transform;
 

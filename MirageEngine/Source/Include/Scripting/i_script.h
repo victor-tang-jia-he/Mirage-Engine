@@ -4,18 +4,19 @@
 
 namespace MirageEngine::Core::Scripting
 {
-	class IScript : public Components::Component
-	{
-	public:
-		virtual ~IScript() = default;
+    class IScript : public Components::Component
+    {
+        public:
 
-		virtual void OnStart() {};
-		virtual void OnUpdate(float dt) {};
-		virtual void OnFixedUpdate(float dt) {};
-		virtual void OnDestroy() {};
+            virtual ~IScript() = default;
 
-		virtual const char* GetName() const = 0;
+            virtual void OnStart() {};
+            virtual void OnUpdate(float dt) {};
+            virtual void OnFixedUpdate(float dt) {};
+            virtual void OnDestroy() {};
 
-		virtual entt::id_type GetType() const override { return 1; };
-	};
-}
+            virtual const char* GetName() const = 0;
+
+            virtual entt::id_type GetType() const override { return 1; };
+    };
+} // namespace MirageEngine::Core::Scripting

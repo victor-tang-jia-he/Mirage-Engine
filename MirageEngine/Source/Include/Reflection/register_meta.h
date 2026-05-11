@@ -6,34 +6,35 @@ DECLARE_LOG_CATEGORY_EXTERN(LogRegisterMeta);
 
 namespace MirageEngine
 {
-	class RegisterMeta
-	{
-	public:
-		RegisterMeta();
-		~RegisterMeta();
+    class RegisterMeta
+    {
+        public:
 
-		void RegisterAllMeta();
+            RegisterMeta();
+            ~RegisterMeta();
 
-	private:
-		void RegisterGameObjectMeta();
+            void RegisterAllMeta(entt::locator<entt::meta_ctx>::node_type handle);
 
-		void RegisterTransformMeta();
+            void RegisterTransformMeta();
 
-		void RegisterMeshRendererMeta();
-		void RegisterCameraMeta();
-		void RegisterInputMappingMeta();
-		void RegisterInfluenceGridMeta();
-		void RegisterInfluenceEmitterMeta();
+            void RegisterGameObjectMeta();
+            void RegisterMeshRendererMeta();
+            void RegisterCameraMeta();
+            void RegisterInputMappingMeta();
 
-		void RegisterMeshMeta();
-		void RegisterTextureMeta();
-		void RegisterMaterialMeta();
-		void RegisterShaderMeta();
+            void RegisterMeshMeta();
+            void RegisterTextureMeta();
+            void RegisterMaterialMeta();
+            void RegisterShaderMeta();
 
-		template<typename T>
-		void RegisterSharedPtr();
+            void RegisterInfluenceGridMeta();
+            void RegisterInfluenceEmitterMeta();
+            void RegisterResponsiveCurveMeta();
+            void RegisterNavAgentMeta();
+            void RegisterUtilityAgentMeta();
 
-	};
-}
+            template <typename T> void RegisterSharedPtr();
+    };
+} // namespace MirageEngine
 
 #include "register_meta.inl"

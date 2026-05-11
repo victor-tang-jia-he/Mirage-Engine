@@ -1,9 +1,7 @@
 #pragma once
 #include <vector3.h>
-#include <unordered_map>
-#include <Resources/resource_interface.h>
 
-#include <memory>
+#include <Resources/resource_interface.h>
 
 DECLARE_LOG_CATEGORY_EXTERN(LogMaterial)
 
@@ -23,9 +21,9 @@ namespace MirageEngine::Core::Resources
             friend class ResourceManager;
 
             std::shared_ptr<MirageRHI::IPipeline> pipeline;
-            std::shared_ptr<MirageRHI::IShader>   vertexShader;
-            std::shared_ptr<MirageRHI::IShader>   fragmentShader;
-            size_t                                uniformBufferSize;
+            std::shared_ptr<MirageRHI::IShader> vertexShader;
+            std::shared_ptr<MirageRHI::IShader> fragmentShader;
+            size_t uniformBufferSize;
 
         public:
 

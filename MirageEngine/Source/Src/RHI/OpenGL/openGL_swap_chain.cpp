@@ -20,7 +20,7 @@ void MirageRHI::OpenGLSwapChain::Create(uint32_t _frameAmount, uint32_t _width, 
         m_FrameBuffers.push_back(newFrameBuffer);
     }
 
-	LOG(logTemp, LogRHISwapChain, "SwapChain Created with ", _frameAmount, " framebuffers of size: ", _width, "x", _height);
+    LOG(logTemp, LogRHISwapChain, "SwapChain Created with ", _frameAmount, " framebuffers of size: ", _width, "x", _height);
 }
 
 void MirageRHI::OpenGLSwapChain::Destroy()
@@ -32,7 +32,7 @@ void MirageRHI::OpenGLSwapChain::Destroy()
     }
     m_FrameBuffers.clear();
 
-	LOG(logTemp, LogRHISwapChain, "SwapChain Destroyed and all framebuffers released.");
+    LOG(logTemp, LogRHISwapChain, "SwapChain Destroyed and all framebuffers released.");
 }
 
 void MirageRHI::OpenGLSwapChain::IsScreenResized(std::shared_ptr<ISurface> _surface)
@@ -54,18 +54,12 @@ void MirageRHI::OpenGLSwapChain::RecreateSwapchain(std::shared_ptr<ISurface> _su
     }
     glViewport(0, 0, _newWidth, _newHeight);
 
-	LOG(logTemp, LogRHISwapChain, "SwapChain Recreated with new size: ", _newWidth, "x", _newHeight);
+    LOG(logTemp, LogRHISwapChain, "SwapChain Recreated with new size: ", _newWidth, "x", _newHeight);
 }
 
-uint32_t MirageRHI::OpenGLSwapChain::AcquireCurrentFBO()
-{
-    return m_FrameBuffers.at(currentFrame)->GetOpenGLHandle();
-}
+uint32_t MirageRHI::OpenGLSwapChain::AcquireCurrentFBO() { return m_FrameBuffers.at(currentFrame)->GetOpenGLHandle(); }
 
-uint32_t MirageRHI::OpenGLSwapChain::AcquireCurrentImage()
-{
-    return m_FrameBuffers.at(currentFrame)->GetFrameTextureID();
-}
+uint32_t MirageRHI::OpenGLSwapChain::AcquireCurrentImage() { return m_FrameBuffers.at(currentFrame)->GetFrameTextureID(); }
 
 void MirageRHI::OpenGLSwapChain::Present(OpenGLSurface _surface)
 {
@@ -73,5 +67,3 @@ void MirageRHI::OpenGLSwapChain::Present(OpenGLSurface _surface)
 
     currentFrame = (currentFrame + 1) % m_FrameBuffers.size();
 }
-
-

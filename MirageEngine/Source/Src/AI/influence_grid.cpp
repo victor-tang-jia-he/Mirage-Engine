@@ -11,16 +11,17 @@ namespace MirageEngine::Core::Components
 {
 	void InfluenceGrid::OnStart()
 	{
-		Bake();
+		Bake();	
 	}
 
 	void InfluenceGrid::OnUpdate(float _dt)
 	{
 		UpdateDecay(_dt);
 	}
-	entt::id_type InfluenceGrid::GetType() const
-	{
-		return entt::type_id<InfluenceGrid>().hash();
+
+    entt::id_type InfluenceGrid::GetType() const 
+	{ 
+		return entt::type_id<InfluenceGrid>().hash(); 
 	}
 
 	void InfluenceGrid::Bake()
@@ -77,7 +78,7 @@ namespace MirageEngine::Core::Components
 
 	void InfluenceGrid::AddInfluenceArea(Vector3 pos, float radius, float value, int _channelIndex)
 	{
-		if (IsInBounds(pos.X, pos.Z))
+		if(IsInBounds(pos.X, pos.Z))
 		{
 			int centerX, centerY;
 			WorldToGrid(pos, centerX, centerY);
@@ -111,6 +112,13 @@ namespace MirageEngine::Core::Components
 			cell.channels.push_back(0.0f);
 	}
 
+	void InfluenceGrid::SetChannelsNames(const std::vector<std::string>& _names)
+	{
+		m_ChannelsNames = _names;
+		for (InfluenceCell& cell : m_Cells)
+			cell.channels.resize(m_ChannelsNames.size(), 0.0f);
+	}
+
 	Vector3 InfluenceGrid::GetCellWorldPosition(int _x, int _y) const
 	{
 		return Vector3(m_Origin.X + _x * m_CellSize + m_CellSize * 0.5f, m_Origin.Y, m_Origin.Z + _y * m_CellSize + m_CellSize * 0.5f);
@@ -123,7 +131,7 @@ namespace MirageEngine::Core::Components
 			if (m_ChannelsNames[i] == _name)
 				return static_cast<int>(i);
 		}
-		return -1;
+		return -1; 
 	}
 
 	void InfluenceGrid::RenderGrid()

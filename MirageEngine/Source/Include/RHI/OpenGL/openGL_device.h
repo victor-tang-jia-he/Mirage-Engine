@@ -6,12 +6,14 @@ namespace MirageRHI
 {
     class OpenGLDevice : public IDevice
     {
-    public:
-        void Create() override {}
-        void Destroy() override {}
+        public:
 
-        OpenGLDevice& API_OpenGL() override { return *this; }
+            void Create() override {}
 
-        void WaitIdle() override {}
+            void Destroy() override {}
+
+            OpenGLDevice& API_OpenGL() override { return *this; }
+
+            void WaitIdle() override {}
     };
-}
+} // namespace MirageRHI

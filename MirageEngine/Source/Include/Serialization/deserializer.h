@@ -3,51 +3,53 @@
 #include <nlohmann/json.hpp>
 #include <entt/entt.hpp>
 
-
-
 DECLARE_LOG_CATEGORY_EXTERN(LogSerializer)
 
 using json = nlohmann::json;
 
 namespace MirageEngine
 {
-	class SceneGraph;
-	class GameObject;
+    class SceneGraph;
+    class GameObject;
 
-	namespace Core
-	{
-		namespace Components
-		{
-			class Component;
-			class Transform;
-		}
-		namespace Math
-		{
-			class Vector3;
-			class Quaternion;
-		}
-		namespace Resources
-		{
-			class IResource;
-		}
-	}
+    namespace Core
+    {
+        namespace Components
+        {
+            class Component;
+            class Transform;
+        } // namespace Components
 
-	class Deserializer
-	{
-	public:
-		json SerializeScene(SceneGraph _sceneGraph);
+        namespace Math
+        {
+            class Vector3;
+            class Quaternion;
+        } // namespace Math
 
-	private:
-		json SerializeGameObject(std::shared_ptr<GameObject> _gameObject, json _jParent);
+        namespace Resources
+        {
+            class IResource;
+        }
+    } // namespace Core
 
-		json SerializeComponent(std::shared_ptr<Core::Components::Component> _component, json _Owner);
-		json SerializeTransform(Core::Components::Transform _transform);
+    class Deserializer
+    {
+        public:
 
-		json SerializeMetaData(entt::meta_type _type, entt::meta_data _data, void* _instancePtr);
+            json SerializeScene(SceneGraph _sceneGraph);
 
-		json SerializeVector3(Core::Math::Vector3 _vector3);
-		json SerializeQuaternion(Core::Math::Quaternion _quaternion);
+        private:
 
-		json SerializeResource(Core::Resources::IResource* _resource);
-	};
-}
+            json SerializeGameObject(std::shared_ptr<GameObject> _gameObject, json _jParent);
+
+            json SerializeComponent(std::shared_ptr<Core::Components::Component> _component, json _Owner);
+            json SerializeTransform(Core::Components::Transform _transform);
+
+            json SerializeMetaData(entt::meta_type _type, entt::meta_data _data, void* _instancePtr);
+
+            json SerializeVector3(Core::Math::Vector3 _vector3);
+            json SerializeQuaternion(Core::Math::Quaternion _quaternion);
+
+            json SerializeResource(Core::Resources::IResource* _resource);
+    };
+} // namespace MirageEngine

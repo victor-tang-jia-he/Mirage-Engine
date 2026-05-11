@@ -1,7 +1,6 @@
 #include <Physics/physics_manager.h>
 #include <Logs/log.h>
 
-
 DEFINE_LOG_CATEGORY(LogPhysics);
 
 using namespace MirageEngine::Core::Physics;
@@ -10,7 +9,10 @@ PhysicsManager* m_Instance = nullptr;
 
 PhysicsManager& PhysicsManager::Instance()
 {
-    if (m_Instance == nullptr) { m_Instance = new PhysicsManager(); }
+    if (m_Instance == nullptr)
+    {
+        m_Instance = new PhysicsManager();
+    }
     return *m_Instance;
 }
 
@@ -30,8 +32,11 @@ void PhysicsManager::Initialize(EPhysicsEngine _physicsEngine)
     LOG(logInfo, LogPhysics, "Physics Engine initialized : ", m_physicsEngine == EPhysicsEngine::Bullet3 ? "Bullet physics" : "Undefined physics Engine");
     switch (m_physicsEngine)
     {
-        case EPhysicsEngine::Bullet3: m_worldPhysics = std::make_shared<Bullet3WorldPhysics>(); break;
-        default                     : break;
+        case EPhysicsEngine::Bullet3:
+            m_worldPhysics = std::make_shared<Bullet3WorldPhysics>();
+            break;
+        default:
+            break;
     }
 }
 
@@ -62,10 +67,16 @@ IRigidBody* PhysicsManager::CreateRigidBody(ICollider* _shape, ERigidBodyType _t
     IRigidBody* body = nullptr;
     switch (m_physicsEngine)
     {
-        case EPhysicsEngine::Bullet3: body = new Bullet3RigidBody(); break;
-        default                     : break;
+        case EPhysicsEngine::Bullet3:
+            body = new Bullet3RigidBody();
+            break;
+        default:
+            break;
     }
-    if (body != nullptr) { body->Create(_shape, _type); }
+    if (body != nullptr)
+    {
+        body->Create(_shape, _type);
+    }
     else
     {
         LOG(logWarning, LogPhysics, "Cannot create rigid body : physics engine not initialized");
@@ -82,15 +93,26 @@ ICollider* PhysicsManager::CreateCollider(ECollisionShapeType _shapeType)
         case EPhysicsEngine::Bullet3:
             switch (_shapeType)
             {
-                case ECollisionShapeType::Box    : collider = new Bullet3BoxCollider(); break;
-                case ECollisionShapeType::Sphere : collider = new Bullet3SphereCollider(); break;
-                case ECollisionShapeType::Capsule: collider = new Bullet3CapsuleCollider(); break;
-                default                          : break;
+                case ECollisionShapeType::Box:
+                    collider = new Bullet3BoxCollider();
+                    break;
+                case ECollisionShapeType::Sphere:
+                    collider = new Bullet3SphereCollider();
+                    break;
+                case ECollisionShapeType::Capsule:
+                    collider = new Bullet3CapsuleCollider();
+                    break;
+                default:
+                    break;
             }
             break;
-        default: break;
+        default:
+            break;
     }
-    if (collider != nullptr) { collider->Create(); }
+    if (collider != nullptr)
+    {
+        collider->Create();
+    }
     return collider;
 }
 
