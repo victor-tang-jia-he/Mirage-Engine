@@ -53,6 +53,12 @@ namespace MirageEngine::Core::Components
 		_Owner->AddComponent<UtilityAgent>(compPtr);
 	}
 
+	void MirageEngine::Core::Components::UtilityAgent::AttachNew(std::shared_ptr<GameObject> _owner)
+	{
+		std::shared_ptr<UtilityAgent> compPtr = std::make_shared<UtilityAgent>(_owner.get());
+		_owner->AddComponent<UtilityAgent>(compPtr);
+	}
+
 	void UtilityAgent::Decide()
 	{
 		if (m_Grid)

@@ -8,14 +8,12 @@ DEFINE_LOG_CATEGORY(LogBullet3Rigidbody)
 
 using namespace MirageEngine::Core::Physics;
 
-Bullet3RigidBody::~Bullet3RigidBody()
+Bullet3RigidBody::~Bullet3RigidBody() // possibleme a cause de ça
 {
     PhysicsManager::Instance().UnregisterRigidBody(this);
     if (m_rigidBody)
     {
         delete m_rigidBody->getMotionState();
-        delete m_rigidBody;
-        m_rigidBody = nullptr;
     }
     if (m_Compound) m_Compound.reset();
 }
@@ -68,7 +66,7 @@ bool Bullet3RigidBody::Create(std::shared_ptr<ICollider> _shape, ERigidBodyType 
     btDefaultMotionState*                    motionState = new btDefaultMotionState(btTransform::getIdentity());
     btRigidBody::btRigidBodyConstructionInfo rigidBodyCI(mass, motionState, collisionShape, inertia);
 
-    m_rigidBody = new btRigidBody(rigidBodyCI);
+    m_rigidBody = std::make_shared<btRigidBody>(rigidBodyCI);
 
     if (_type == ERigidBodyType::Static) m_rigidBody->setCollisionFlags(m_rigidBody->getCollisionFlags() | btCollisionObject::CF_STATIC_OBJECT);
     else if (_type == ERigidBodyType::Kinematic) m_rigidBody->setCollisionFlags(m_rigidBody->getCollisionFlags() | btCollisionObject::CF_KINEMATIC_OBJECT);
@@ -115,9 +113,9 @@ void Bullet3RigidBody::OnTransformChanged(MirageEngine::Core::Components::Transf
         const btCollisionObject* objA     = manifold->getBody0();
         const btCollisionObject* objB     = manifold->getBody1();
 
-        if (objA == m_rigidBody || objB == m_rigidBody)
+        if (objA == m_rigidBody.get() || objB == m_rigidBody.get())
         {
-            const btCollisionObject* other = (objA == m_rigidBody) ? objB : objA;
+            const btCollisionObject* other = (objA == m_rigidBody.get()) ? objB : objA;
             const_cast<btCollisionObject*>(other)->activate(true);
         }
     }

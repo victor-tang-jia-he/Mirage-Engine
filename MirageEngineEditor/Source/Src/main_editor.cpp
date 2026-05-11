@@ -27,6 +27,7 @@ int main()
 		MirageEngine::Core::Input::InputSystem::UpdateHeldInput();
 		if (editor.IsPlaying() && !editor.IsPaused())
 			MirageEngine::Core::Physics::PhysicsManager::Instance().Update(MirageEngine::TimeManager::GetDeltaTime());
+		auto& insta = MirageEngine::Core::Physics::PhysicsManager::Instance();
 		application.GetSceneGraph()->UpdateAllWorldMatrices();
 
 		// --- Render ---

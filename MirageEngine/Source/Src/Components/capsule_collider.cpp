@@ -20,6 +20,12 @@ void MirageEngine::Core::Components::CapsuleCollider::AttachMeta(std::shared_ptr
     _Owner->AddComponent<CapsuleCollider>(compPtr);
 }
 
+void MirageEngine::Core::Components::CapsuleCollider::AttachNew(std::shared_ptr<GameObject> _owner)
+{
+    std::shared_ptr<CapsuleCollider> compPtr = std::make_shared<CapsuleCollider>(_owner.get());
+    _owner->AddComponent<CapsuleCollider>(compPtr);
+}
+
 void CapsuleCollider::SetRadius(float _radius) { m_Collider->As<ICapsuleCollider>()->SetRadius(_radius); }
 
 void CapsuleCollider::SetHeight(float _height) { m_Collider->As<ICapsuleCollider>()->SetHeight(_height); }

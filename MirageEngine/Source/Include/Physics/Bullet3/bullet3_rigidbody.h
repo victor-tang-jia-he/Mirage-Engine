@@ -15,7 +15,7 @@ namespace MirageEngine::Core::Physics
 
         private:
 
-            btRigidBody*                     m_rigidBody    = nullptr;
+            std::shared_ptr<btRigidBody>     m_rigidBody    = nullptr;
             std::shared_ptr<btCompoundShape> m_Compound     = nullptr;
             Vector3                          m_CurrentScale = { 1, 1, 1 };
 
@@ -38,7 +38,7 @@ namespace MirageEngine::Core::Physics
 
             void UpdateCompound();
 
-            btRigidBody* GetBullet3RigidBody() const { return m_rigidBody; }
+            btRigidBody* GetBullet3RigidBody() const { return m_rigidBody.get(); }
 
             Bullet3RigidBody& API_Bullet3() override { return *this; }
     };

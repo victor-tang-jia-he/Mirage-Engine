@@ -115,6 +115,7 @@ void RegisterMeta::RegisterMeshRendererMeta()
 	meshRenderer.data<&MeshRenderer::SetMaterial, &MeshRenderer::GetMaterial>("Material");
 
 	meshRenderer.func<&MeshRenderer::AttachMeta>("Attach"_hs);
+	meshRenderer.func<&MeshRenderer::AttachNew>("AttachNew"_hs);
 }
 
 void RegisterMeta::RegisterCameraMeta()
@@ -135,6 +136,7 @@ void RegisterMeta::RegisterCameraMeta()
 	camera.data<&Camera::SetRotation, &Camera::GetRotation>("Rotation");
 
 	camera.func<&Camera::AttachMeta>("Attach"_hs);
+	camera.func<&Camera::AttachNew>("AttachNew"_hs);
 }
 
 void RegisterMeta::RegisterInputMappingMeta()
@@ -161,6 +163,7 @@ void RegisterMeta::RegisterInputMappingMeta()
 	inputMapping.func<&InputMapping::Remove>("RemoveKey");
 
 	inputMapping.func<&InputMapping::AttachMeta>("Attach"_hs);
+	inputMapping.func<&InputMapping::AttachNew>("AttachNew"_hs);
 }
 
 void MirageEngine::RegisterMeta::RegisterBoxColliderMeta()
@@ -178,6 +181,7 @@ void MirageEngine::RegisterMeta::RegisterBoxColliderMeta()
 	boxCollider.data<&BoxCollider::SetScale, &BoxCollider::GetScale>("Scale");
 
 	boxCollider.func<&BoxCollider::AttachMeta>("Attach"_hs);
+	boxCollider.func<&BoxCollider::AttachNew>("AttachNew"_hs);
 }
 
 void MirageEngine::RegisterMeta::RegisterSphereColliderMeta()
@@ -195,6 +199,7 @@ void MirageEngine::RegisterMeta::RegisterSphereColliderMeta()
 	sphereCollided.data<&SphereCollider::SetScale, &SphereCollider::GetScale>("Scale");
 
 	sphereCollided.func<&SphereCollider::AttachMeta>("Attach"_hs);
+	sphereCollided.func<&SphereCollider::AttachNew>("AttachNew"_hs);
 }
 
 void MirageEngine::RegisterMeta::RegisterCapsuleColliderMeta()
@@ -213,6 +218,7 @@ void MirageEngine::RegisterMeta::RegisterCapsuleColliderMeta()
 	capsuleCollider.data<&CapsuleCollider::SetScale, &CapsuleCollider::GetScale>("Scale");
 
 	capsuleCollider.func<&CapsuleCollider::AttachMeta>("Attach"_hs);
+	capsuleCollider.func<&CapsuleCollider::AttachNew>("AttachNew"_hs);
 }
 
 void MirageEngine::RegisterMeta::RegisterRigidbodyMeta()
@@ -231,6 +237,7 @@ void MirageEngine::RegisterMeta::RegisterRigidbodyMeta()
 	rigidBody.data<&Rigidbody::SetCollisionResponse, &Rigidbody::GetCollisionResponse>("Collision Response");
 
 	rigidBody.func<&Rigidbody::AttachMeta>("Attach"_hs);
+	rigidBody.func<&Rigidbody::AttachNew>("AttachNew"_hs);
 
 	// Enums
 	entt::meta_factory<Physics::ERigidBodyType>{}
@@ -349,4 +356,5 @@ void RegisterMeta::RegisterInfluenceEmitterMeta()
 	influenceEmitter.data<&InfluenceEmitter::SetTargetGrid, &InfluenceEmitter::GetTargetGrid>("Grid");
 
 	influenceEmitter.func<&InfluenceEmitter::AttachMeta>("Attach"_hs);
+	influenceEmitter.func<&InfluenceEmitter::AttachNew>("AttachNew"_hs);
 }

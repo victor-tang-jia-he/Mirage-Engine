@@ -27,6 +27,7 @@ namespace MirageEngine
 		// Game Object variables
 		std::string m_Name = "";
 		std::vector<std::shared_ptr<MirageEngine::Core::Components::Component>> m_Components;
+		std::shared_ptr<MirageEngine::Core::Components::Component> m_LastAddedComponent;
 		std::vector<std::shared_ptr<GameObject>> m_Children;
 		std::weak_ptr<GameObject> m_Parent;
 		uint64_t m_ID;
@@ -61,7 +62,7 @@ namespace MirageEngine
 		void AddChild(std::shared_ptr<GameObject> _child, bool _isStatic = false, bool _isActive = true);
 		void SetActive(bool _isActive);
 
-		void AddComponentFromMeta(entt::meta_any _compInstance);
+		void AddComponentFromMeta(entt::meta_any& _compInstance);
 
 		void RemoveComponent(std::shared_ptr<MirageEngine::Core::Components::Component> _component);
 
@@ -80,6 +81,7 @@ namespace MirageEngine
 		bool GetIsActive() const { return m_bIsActive; }
 		bool GetIsDirty() const { return m_bIsDirty; }
 		std::vector<std::shared_ptr<MirageEngine::Core::Components::Component>> GetComponents() const { return m_Components; }
+		std::shared_ptr<MirageEngine::Core::Components::Component> GetLastAddedComponent() const { return m_LastAddedComponent; }
 		MirageEngine::Core::Math::Vector3 GetPosition() const { return Transform.GetPosition(); }
 		MirageEngine::Core::Math::Quaternion GetRotation() const { return Transform.GetRotation(); }
 		MirageEngine::Core::Math::Vector3 GetScale() const { return Transform.GetScale(); }

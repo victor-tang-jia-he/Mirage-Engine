@@ -23,8 +23,8 @@ void PhysicsManager::Initialize(EPhysicsEngine _physicsEngine)
 {
     // set up physics engine
     m_physicsEngine = _physicsEngine;
+    m_WorldRigidbodys.clear();
     m_worldPhysics.reset(); // clean up previous physics engine if exists
-
     LOG(logInfo, LogPhysics, "Physics Engine initialized : ", m_physicsEngine == EPhysicsEngine::Bullet3 ? "Bullet physics" : "Undefined physics Engine");
     switch (m_physicsEngine)
     {
@@ -42,6 +42,12 @@ void PhysicsManager::Update(float _deltaTime)
     }
 
     m_worldPhysics->Update(_deltaTime);
+
+    for (IRigidBody* rb : m_WorldRigidbodys)
+    {
+        if (rb->OnSimulated)
+            rb->OnSimulated();
+    }
 }
 
 std::shared_ptr<IRigidBody> PhysicsManager::CreateRigidBody(std::shared_ptr<ICollider> _shape, ERigidBodyType _type)

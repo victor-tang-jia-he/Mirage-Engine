@@ -28,6 +28,8 @@ namespace MirageEngine::Core::Physics
             std::vector<ICollider*> m_CurrentRigidBodyShapesBind;
 
         public:
+            
+            std::function<void()> OnSimulated;
 
             IRigidBody()          = default;
             virtual ~IRigidBody() = default;

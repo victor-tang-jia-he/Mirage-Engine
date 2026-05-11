@@ -14,6 +14,10 @@ using namespace MirageEngine::Core;
 Rigidbody::Rigidbody(ICCollider* _shape, Physics::ERigidBodyType _type) 
 {
     m_Rigidbody = Physics::PhysicsManager::Instance().CreateRigidBody(_shape->GetCollision(), _type);
+    m_Rigidbody->OnSimulated = [this]()
+        {
+            m_Rigidbody->UpdateTransform(GetOwner()->Transform);
+        };
 }
 
 MirageEngine::Core::Components::Rigidbody::Rigidbody(GameObject* _owner)
@@ -33,6 +37,16 @@ MirageEngine::Core::Components::Rigidbody::Rigidbody(GameObject* _owner)
         }
     }
     m_Rigidbody = Physics::PhysicsManager::Instance().CreateRigidBody(shape->GetCollision(), Physics::ERigidBodyType::Dynamic);
+
+    m_Rigidbody->OnSimulated = [this]()
+        {
+            m_Rigidbody->UpdateTransform(GetOwner()->Transform);
+        };
+}
+
+MirageEngine::Core::Components::Rigidbody::~Rigidbody()
+{
+    LOG(logWarning, LogComponentRigidBody, "RIGIDBODY DESTROYED : ", m_Owner->GetName());
 }
 
 void Rigidbody::Update() { m_Rigidbody->UpdateTransform(GetOwner()->Transform); }
@@ -40,8 +54,13 @@ void Rigidbody::Update() { m_Rigidbody->UpdateTransform(GetOwner()->Transform); 
 void MirageEngine::Core::Components::Rigidbody::AttachMeta(std::shared_ptr<GameObject> _Owner)
 {
     std::shared_ptr<Rigidbody> compPtr = std::make_shared<Rigidbody>(*this);
-    compPtr->m_ComponentName = typeid(Rigidbody).name();
     _Owner->AddComponent<Rigidbody>(compPtr);
+}
+
+void MirageEngine::Core::Components::Rigidbody::AttachNew(std::shared_ptr<GameObject> _owner)
+{
+    std::shared_ptr<Rigidbody> compPtr = std::make_shared<Rigidbody>(_owner.get());
+    _owner->AddComponent<Rigidbody>(compPtr);
 }
 
 void Rigidbody::OnTransformChanged(Components::Transform& _newTransform) { m_Rigidbody->OnTransformChanged(_newTransform); }

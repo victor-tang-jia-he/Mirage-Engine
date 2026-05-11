@@ -20,6 +20,12 @@ void MirageEngine::Core::Components::BoxCollider::AttachMeta(std::shared_ptr<Gam
     _Owner->AddComponent<BoxCollider>(compPtr);
 }
 
+void MirageEngine::Core::Components::BoxCollider::AttachNew(std::shared_ptr<GameObject> _owner)
+{
+    std::shared_ptr<BoxCollider> compPtr = std::make_shared<BoxCollider>(_owner.get());
+    _owner->AddComponent<BoxCollider>(compPtr);
+}
+
 void BoxCollider::SetHalfExtents(const Math::Vector3& _halfExtents) { m_Collider->As<IBoxCollider>()->SetHalfExtents(_halfExtents); }
 
 Math::Vector3 BoxCollider::GetHalfExtents() { return m_Collider->As<IBoxCollider>()->GetHalfExtents(); }

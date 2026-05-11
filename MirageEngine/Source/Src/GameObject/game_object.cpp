@@ -2,7 +2,7 @@
 #include <Components/component.h>
 #include <Components/transform.h>
 #include <atomic>
-#include <Components/rigidbody.h>.h>
+#include <Components/rigidbody.h>
 #include <Components/camera.h>
 
 DEFINE_LOG_CATEGORY(LogGameObject)
@@ -69,7 +69,7 @@ void MirageEngine::GameObject::SetActive(bool _isActive)
 	}
 }
 
-void MirageEngine::GameObject::AddComponentFromMeta(entt::meta_any _compInstance)
+void MirageEngine::GameObject::AddComponentFromMeta(entt::meta_any& _compInstance)
 {
 	entt::meta_type compType = _compInstance.type();
 

@@ -26,12 +26,16 @@ std::shared_ptr<SceneGraph> MirageEngine::Deserializer::LoadSceneFromFile(std::s
 
 std::shared_ptr<SceneGraph> MirageEngine::Deserializer::DeserializeScene(json _jSceneGraph)
 {
+    LOG(logInfo, LogDeserializer, "Loading Scene...");
+
     std::shared_ptr<SceneGraph> savedScene = std::make_shared<SceneGraph>();
 
     for (json jGameObject : _jSceneGraph["Roots"])
     {
         DeserializeGameObject(jGameObject, nullptr, savedScene);
     }
+
+    LOG(logInfo, LogDeserializer, "Scene loaded successfully");
 
     return savedScene;
 }
@@ -69,8 +73,21 @@ void MirageEngine::Deserializer::DeserializeComponent(json _jComponent, std::sha
         return;
     }
 
-    entt::meta_any compInstance = metaType.construct(_Owner.get());
+    entt::meta_func compFunc = metaType.func("AttachNew"_hs);
+    if (!compFunc)
+    {
+        LOG(logError, LogDeserializer, "No Meta AttachNew function registered for type : ", metaType.name());
+        return;
+    }
 
+    entt::meta_any result = compFunc.invoke({}, _Owner);
+    if (!result)
+    {
+        LOG(logError, LogDeserializer, "Meta Invoke failed for type : ", metaType.name());
+        return;
+    }
+
+    entt::meta_any compInstance = metaType.from_void(_Owner->GetLastAddedComponent().get());
     if (!compInstance) {
         LOG(logError, LogDeserializer, "Failed to construct Meta Instance for type : ", metaType.name());
         return;
@@ -81,8 +98,6 @@ void MirageEngine::Deserializer::DeserializeComponent(json _jComponent, std::sha
         // Converts the Json data into corresponding Engine data and adds it to the Components Meta Instance
         DeserializeMetaData(metaType, data, compInstance, _jComponent);
     }
-
-    _Owner->AddComponentFromMeta(compInstance);
 }
 
 entt::meta_any MirageEngine::Deserializer::DeserializeTransform(json _jComponent, std::shared_ptr<GameObject> _Owner)

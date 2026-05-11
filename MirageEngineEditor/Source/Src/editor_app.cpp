@@ -9,6 +9,7 @@
 #include "renderer.h"
 #include "Serialization/serializer.h"
 #include "Serialization/deserializer.h"
+#include "Physics/physics_manager.h"
 
 namespace Mirage
 {
@@ -71,12 +72,14 @@ namespace Mirage
 			MirageEngine::Serializer::SaveScene(*m_SceneGraph);
 			m_IsPlaying = true;
 		}
-		if (ImGui::IsKeyPressed(ImGuiKey_L))
+		if (ImGui::IsKeyPressed(ImGuiKey_L) && m_IsPlaying)
 		{
 			m_IsPaused = !m_IsPaused;
 		}
 		if (ImGui::IsKeyPressed(ImGuiKey_M) && m_IsPlaying)
 		{
+			m_SceneGraph->ClearScene();
+			MirageEngine::Core::Physics::PhysicsManager::Instance().Initialize();
 			*m_SceneGraph = *MirageEngine::Deserializer::LoadSceneFromFile("scene.json");
 			m_IsStoped = true;
 		}

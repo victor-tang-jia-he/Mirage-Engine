@@ -42,7 +42,7 @@ namespace MirageEngine
 
                     Rigidbody(ICCollider* _shape, Physics::ERigidBodyType _type);
                     Rigidbody(GameObject* _owner);
-                    ~Rigidbody() {}
+                    ~Rigidbody();
 
                     entt::id_type GetType() const override { return entt::type_id<Rigidbody>().hash(); }
 
@@ -50,6 +50,7 @@ namespace MirageEngine
                     void Update() override;
 
                     void AttachMeta(std::shared_ptr<GameObject> _Owner);
+                    static void AttachNew(std::shared_ptr<GameObject> _owner);
 
                     void OnTransformChanged(Components::Transform& _newTransform);
                     void SetRigidBodyType(Physics::ERigidBodyType _type);

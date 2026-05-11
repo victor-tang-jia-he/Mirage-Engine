@@ -24,3 +24,9 @@ void MirageEngine::Core::Components::Camera::AttachMeta(std::shared_ptr<GameObje
     std::shared_ptr<Camera> compPtr = std::make_shared<Camera>(*this);
     _Owner->AddComponent<Camera>(compPtr);
 }
+
+void MirageEngine::Core::Components::Camera::AttachNew(std::shared_ptr<GameObject> _owner)
+{
+    std::shared_ptr<Camera> compPtr = std::make_shared<Camera>(_owner.get());
+    _owner->AddComponent<Camera>(compPtr);
+}

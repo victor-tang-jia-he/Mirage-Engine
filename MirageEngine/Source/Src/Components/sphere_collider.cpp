@@ -22,6 +22,12 @@ void MirageEngine::Core::Components::SphereCollider::AttachMeta(std::shared_ptr<
     _Owner->AddComponent<SphereCollider>(compPtr);
 }
 
+void MirageEngine::Core::Components::SphereCollider::AttachNew(std::shared_ptr<GameObject> _owner)
+{
+    std::shared_ptr<SphereCollider> compPtr = std::make_shared<SphereCollider>(_owner.get());
+    _owner->AddComponent<SphereCollider>(compPtr);
+}
+
 void SphereCollider::SetRadius(float _radius) { m_Collider->As<ISphereCollider>()->SetRadius(_radius); }
 
 float SphereCollider::GetRadius() const { return m_Collider->As<ISphereCollider>()->GetRadius(); }

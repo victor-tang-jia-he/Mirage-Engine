@@ -38,4 +38,10 @@ namespace MirageEngine::Core::Components
 		std::shared_ptr<InfluenceEmitter> compPtr = std::make_shared<InfluenceEmitter>(*this);
 		_Owner->AddComponent<InfluenceEmitter>(compPtr);
 	}
+
+	void MirageEngine::Core::Components::InfluenceEmitter::AttachNew(std::shared_ptr<GameObject> _owner)
+	{
+		std::shared_ptr<InfluenceEmitter> compPtr = std::make_shared<InfluenceEmitter>(_owner.get());
+		_owner->AddComponent<InfluenceEmitter>(compPtr);
+	}
 }

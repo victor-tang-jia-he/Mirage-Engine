@@ -98,6 +98,7 @@ namespace MirageEngine::Core
                 void Update() override {}
 
                 void AttachMeta(std::shared_ptr<GameObject> _Owner);
+                static void AttachNew(std::shared_ptr<GameObject> _owner);
         };
     } // namespace Input
 } // namespace MirageEngine::Core

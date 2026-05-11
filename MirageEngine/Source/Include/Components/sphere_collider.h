@@ -37,6 +37,7 @@ namespace MirageEngine
                     virtual void Update() override {}
 
                     void AttachMeta(std::shared_ptr<GameObject> _Owner);
+                    static void AttachNew(std::shared_ptr<GameObject> _owner);
 
                     entt::id_type GetType() const override { return entt::type_id<SphereCollider>().hash(); }
 

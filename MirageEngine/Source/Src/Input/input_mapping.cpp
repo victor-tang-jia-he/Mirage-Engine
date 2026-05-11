@@ -20,6 +20,12 @@ namespace MirageEngine::Core::Input
         _Owner->AddComponent<InputMapping>(compPtr);
     }
 
+    void InputMapping::AttachNew(std::shared_ptr<GameObject> _owner)
+    {
+        std::shared_ptr<InputMapping> compPtr = std::make_shared<InputMapping>(_owner.get());
+        _owner->AddComponent<InputMapping>(compPtr);
+    }
+
     void InputMapping::RegisterInput(const std::string& _name, int _actionInput)
     {
         // Register all input to the list Key To String
