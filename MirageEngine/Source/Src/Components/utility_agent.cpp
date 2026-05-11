@@ -117,7 +117,7 @@ namespace MirageEngine::Core::Components
 					m_CurrentAction = bestAction;
 					if (m_CurrentAction)
 						m_CurrentAction->OnStart();
-					m_LastDecisionReason = m_CurrentAction ? m_CurrentAction->GetName() + "with score" + std::to_string(highestScore) : "None";
+                    m_LastDecisionReason = m_CurrentAction ? std::string(m_CurrentAction->GetName()) + " with score " + std::to_string(highestScore) : "None";
 				}
 			}
 		}

@@ -20,6 +20,20 @@ namespace MirageEngine::Core::Components
             if (app)
             {
                 m_Grid = app->GetSceneGraph()->FindComponentInScene<InfluenceGrid>();
+                if (m_Grid)
+                {
+                    std::cout << "[ENGINE] SUCCESS: Grid found by Lazy Loading! Address: " << m_Grid << std::endl;
+                }
+                else
+                {
+                    static float timer = 0;
+                    timer += TimeManager::GetDeltaTime();
+                    if (timer > 2.0f)
+                    {
+                        std::cout << "[ENGINE] SEARCHING: Still no grid in scene..." << std::endl;
+                        timer = 0;
+                    }
+                }
             }
         }
 

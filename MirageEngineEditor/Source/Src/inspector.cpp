@@ -556,30 +556,57 @@ namespace Mirage
 	}
 
 	bool Inspector::ResolveComponent(entt::meta_any _value, const char* _label, entt::meta_data _data, entt::meta_any& _instance)
-	{
-		//if (entt::meta_any ref = *_value; ref)
-		//{
-		//	if (Core::Components::Component* component = ref.try_cast<Core::Components::Component>())
-		//	{
-		//		const char* componentLabel = component ? "Component Assigned" : "None";
-		//		ImGui::TextUnformatted(_label);
-		//		ImGui::SameLine();
-		//		ImGui::Button(componentLabel, ImVec2(-1, 0));
-		//		return true;
-		//	}
-		//}
-		//return false;
+        {
+            bool hasValue = false;
+            std::string btnLabel = "None (Drop GameObject)";
 
-		std::string btnLabel = "None (Drop here)";
-		entt::meta_any ref = *_value;
-		if (ref) btnLabel = "Assigned";
+            if (_value)
+            {
+                auto ptrType = _value.type();
+                if (ptrType.is_pointer())
+                {
+                    entt::meta_any inner = *_value;                    
+                    hasValue = (bool)inner;                          
+                    if (hasValue)
+                        btnLabel = std::string(ptrType.info().name());
+                }
+            }
 
-		ImGui::TextUnformatted(_label);
-		ImGui::SameLine();
-		ImGui::Button((btnLabel + "##" + _label).c_str(), ImVec2(-1, 0));
+            ImGui::TextUnformatted(_label);
+            ImGui::SameLine();
+            if (hasValue)
+                ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.3f, 0.5f, 0.3f, 1.0f));
+            ImGui::Button((btnLabel + "##" + _label).c_str(), ImVec2(-1, 0));
+            if (hasValue)
+                ImGui::PopStyleColor();
 
-		return true;
-	}
+            if (ImGui::BeginDragDropTarget())
+            {
+                if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("HIERARCHY_ITEM"))
+                {
+                    GameObject* droppedGO = *(GameObject**)payload->Data;
+                    auto targetPointerType = _data.type();
+                    auto baseType = targetPointerType.is_pointer() ? targetPointerType.remove_pointer() : targetPointerType;
+
+                    for (auto& comp : droppedGO->GetComponents())
+                    {
+                        auto compMetaType = entt::resolve(comp->GetType());
+                        if (compMetaType == baseType)
+                        {
+                            entt::meta_any typedPointer = targetPointerType.from_void(comp.get());
+                            if (_data.set(_instance, typedPointer))
+                                std::cout << "[DROP] SUCCESS: Linked to " << _label << std::endl;
+                            else
+                                std::cout << "[DROP] ERROR: Setter failed." << std::endl;
+                            break;
+                        }
+                    }
+                }
+                ImGui::EndDragDropTarget();
+            }
+
+            return true;
+        }
 
 	bool Inspector::ResolveResource(entt::meta_any _value, const char* _label, entt::meta_data _data, entt::meta_any& _instance)
 	{

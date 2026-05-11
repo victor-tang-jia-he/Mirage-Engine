@@ -56,6 +56,7 @@ namespace MirageEngine
             void SetActive(bool _isActive);
 
             void AddComponent(std::shared_ptr<MirageEngine::Core::Components::Component> _component);
+            void AddComponentByName(std::string className);
 
             void RemoveComponent(std::shared_ptr<MirageEngine::Core::Components::Component> _component);
 
