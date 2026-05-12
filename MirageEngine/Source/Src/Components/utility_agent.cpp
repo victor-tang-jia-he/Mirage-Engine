@@ -148,4 +148,9 @@ namespace MirageEngine::Core::Components
 			return m_InternalStats[_name];
 		return 0.0f;
 	}
+
+	void UtilityAgent::SetActions(const std::vector<AIAction*>& _newActions)
+        {
+            m_actions = _newActions;
+        }
 }

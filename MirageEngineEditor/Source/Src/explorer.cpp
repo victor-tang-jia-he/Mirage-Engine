@@ -438,7 +438,6 @@ namespace Mirage
 				}
 				if (ImGui::MenuItem("Rename"))
 				{
-					//strncpy_s(m_RenameBuffer, m_EntryToProcess->Name.c_str(), sizeof(m_RenameBuffer));
 					m_NextModalToOpen = "RenameModal";
 				}
 			}

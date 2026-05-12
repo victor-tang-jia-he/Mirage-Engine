@@ -62,6 +62,7 @@ namespace MirageEngine::Core::Components
 		float GetDecisionInterval() const { return m_DecisionInterval; }
 		float GetInertia() const { return m_Inertia; }
 		std::vector<AIAction*> GetActions() { return m_actions; }
+        std::vector<AIAction*>& GetActionsRef() { return m_actions; }
 		InfluenceGrid* GetInfluenceGrid() const { return m_Grid; }
 		float GetIntensity(int _channelIndex) const;
 		float GetIntensityByName(const std::string& _name) const;
@@ -78,5 +79,6 @@ namespace MirageEngine::Core::Components
 		void SetInfluenceGrid(InfluenceGrid* _newGrid) { m_Grid = _newGrid; }
 		void SetInternalStat(const std::string& _name, float _value) { m_InternalStats[_name] = _value; }
 		void SetTargetGrid(InfluenceGrid* _grid) { m_Grid = _grid; }
+		void SetActions(const std::vector<AIAction*>& _newActions);
 	};
 }

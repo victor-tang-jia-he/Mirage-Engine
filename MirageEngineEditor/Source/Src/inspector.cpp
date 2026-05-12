@@ -246,13 +246,21 @@ namespace Mirage
 		{
 			if (ImGui::TreeNode(label)) {
 				auto view = value.as_sequence_container();
+				auto itemType = view.value_type();
 				int index = 0;
 
-				if (ImGui::Button("+ Add New Element")) {
-					if (view.value_type() == entt::resolve<float>())
-						view.insert(view.end(), 0.0f);
-					else if (view.value_type() == entt::resolve<std::string>())
-						view.insert(view.end(), std::string("NewChannel"));
+				if (ImGui::Button("+ Add New Element"))
+				{
+                    if (itemType == entt::resolve<float>())
+                        view.insert(view.end(), 0.0f);
+                    else if (itemType == entt::resolve<std::string>())
+                        view.insert(view.end(), std::string("NewElement"));
+                    else if (itemType.is_pointer_like()) 
+                    {
+                        AI::AIAction* nullAction = nullptr;
+                        entt::meta_any nullAny{ nullAction };
+                        view.insert(view.end(), nullAny);
+                    }
 
 					_data.set(instance, value);
 				}
@@ -274,26 +282,82 @@ namespace Mirage
 						std::string itemLabel = "##" + std::to_string(index);
 						entt::meta_any item = *it;
 
-						if (item.type() == entt::resolve<float>()) {
+						if (item.type() == entt::resolve<float>()) 
+						{
 							float val = item.cast<float>();
-							if (ImGui::DragFloat(itemLabel.c_str(), &val, 0.1f)) {
+							if (ImGui::DragFloat(itemLabel.c_str(), &val, 0.1f)) 
+							{
 								it = view.erase(it);
 								it = view.insert(it, val); 
 								_data.set(instance, value);
 							}
 						}
-						else if (item.type() == entt::resolve<std::string>()) {
+						else if (item.type() == entt::resolve<std::string>()) 
+						{
 							std::string str = item.cast<std::string>();
 							char buffer[256];
 							memset(buffer, 0, sizeof(buffer));
 							strncpy(buffer, str.c_str(), sizeof(buffer) - 1);
 
-							if (ImGui::InputText(itemLabel.c_str(), buffer, 256)) {
+							if (ImGui::InputText(itemLabel.c_str(), buffer, 256)) 
+							{
 								it = view.erase(it);
 								it = view.insert(it, std::string(buffer));
 								_data.set(instance, value);
 							}
 						}
+                        else if (itemType.is_pointer_like())
+                        {
+                            void* rawPtr = nullptr;
+                            if (item)
+                            {
+                                if (auto* p = item.try_cast<void*>())
+                                    rawPtr = *p;
+                            }
+
+                            std::string ptrLabel = rawPtr ? "Action Assigned" : "None (Drop)";
+
+                            if (rawPtr)
+                                ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.3f, 0.5f, 0.3f, 1.0f));
+                            ImGui::Button(ptrLabel.c_str(), ImVec2(-1, 0));
+                            if (rawPtr)
+                                ImGui::PopStyleColor();
+
+                            if (ImGui::BeginDragDropTarget())
+                            {
+								if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("HIERARCHY_ITEM"))
+                                {
+                                    GameObject* droppedGO = *(GameObject**)payload->Data;
+                                    auto baseType = itemType.remove_pointer();
+
+                                    for (auto& comp : droppedGO->GetComponents())
+                                    {
+                                        if (entt::resolve(comp->GetType()).info().hash() == baseType.info().hash() || dynamic_cast<AI::AIAction*>(comp.get()))
+                                        {
+                                            it = view.erase(it);
+                                            view.insert(it, comp.get());
+                                            _data.set(instance, value);
+                                            std::cout << "[IA] Action linked successfully!" << std::endl;
+                                            break;
+                                        }
+                                    }
+                                }
+                                else if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM"))
+                                {
+                                    if (payload->Data && payload->DataSize > 0)
+                                    {
+                                        const char* rawPath = static_cast<const char*>(payload->Data);
+                                        std::filesystem::path scriptPath(rawPath);
+                                        std::string scriptName = scriptPath.stem().string();
+
+                                        std::cout << "[DROP] Script from content browser: " << scriptName << std::endl;
+                                        std::cout << "[DROP] Script instanciation not yet implemented for: " << scriptName << std::endl;
+                                    }
+                                }
+                                
+                                ImGui::EndDragDropTarget();
+                            }
+                        }
 						++it;
 						index++;
 					}
