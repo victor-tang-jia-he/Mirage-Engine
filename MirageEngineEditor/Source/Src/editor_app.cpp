@@ -8,6 +8,8 @@
 #include "gizmo.h"
 #include "renderer.h"
 #include "Serialization/serializer.h"
+#include "Serialization/deserializer.h"
+#include "Physics/physics_manager.h"
 
 #include <Logs/log.h>
 
@@ -33,6 +35,9 @@ namespace Mirage
 			panel->InitPanel();
 			LOG(logTemp, LogEditorApp, "Initializing panel: ", panel->GetTitle());
 		}
+
+		m_EditorCamera = std::make_shared<MirageEditor::EditorCamera>();
+		m_EditorCamera->BindDefaultInput();
 	}
 
 	void Mirage::EditorApp::OnUpdate(uint32_t _textureID)
@@ -48,8 +53,8 @@ namespace Mirage
 			}
 		}
 
-		MirageEditor::Gizmo::EditView(m_SceneGraph);
-		MirageEditor::Gizmo::EditTransform(m_SceneGraph);
+		MirageEditor::Gizmo::EditView(m_SceneGraph); // Disabled
+		MirageEditor::Gizmo::EditTransform(m_SceneGraph, m_EditorCamera);
 
 		HandlePlayMode();
 
@@ -75,13 +80,16 @@ namespace Mirage
 			m_IsPlaying = true;
 			LOG(logTemp, LogEditorApp, "Play mode started");
 		}
-		if (ImGui::IsKeyPressed(ImGuiKey_L))
+		if (ImGui::IsKeyPressed(ImGuiKey_L) && m_IsPlaying)
 		{
 			m_IsPaused = !m_IsPaused;
 			LOG(logTemp, LogEditorApp, m_IsPaused ? "Play mode paused" : "Play mode resumed");
 		}
 		if (ImGui::IsKeyPressed(ImGuiKey_M) && m_IsPlaying)
 		{
+			m_SceneGraph->ClearScene();
+			MirageEngine::Core::Physics::PhysicsManager::Instance().Initialize();
+			*m_SceneGraph = *MirageEngine::Deserializer::LoadSceneFromFile("scene.json");
 			m_IsStoped = true;
 			LOG(logTemp, LogEditorApp, "Play mode stopping");
 		}

@@ -3,7 +3,9 @@
 #include <Components/transform.h>
 #include <atomic>
 #include <Components/rigidbody.h>
+#include <Components/camera.h>
 #include <Scripting/script_manager.h>
+#include <entt/entt.hpp>
 #include <Logs/log.h>
 
 DEFINE_LOG_CATEGORY(LogGameObject)
@@ -11,6 +13,8 @@ DEFINE_LOG_CATEGORY(LogGameObject)
 using namespace MirageEngine::Core::Components;
 using namespace MirageEngine::Core::Math;
 using namespace MirageEngine::Core::Scripting;
+
+using namespace entt::literals;
 
 static std::atomic<uint64_t> s_NextID = 1;
 
@@ -46,42 +50,10 @@ MirageEngine::GameObject::~GameObject()
 
 void MirageEngine::GameObject::AddChild(std::shared_ptr<GameObject> _child, bool _isStatic, bool _isActive)
 {
-    // if (_child->GetParent() != nullptr)
-    //	_child->GetParent()->RemoveChild(_child);
-
-    //_child->SetParent(this);
     m_Children.push_back(_child);
 
     _child->m_bIsStatic = _isStatic;
     _child->m_bIsActive = _isActive;
-}
-
-// MirageEngine::GameObject::~GameObject()
-//{
-//	for (auto& component : m_Components)
-//	{
-//		delete component;
-//	}
-//	m_Components.clear();
-//	for (auto& child : m_Children)
-//	{
-//		delete child;
-//	}
-//	m_Children.clear();
-// }
-
-void MirageEngine::GameObject::SetActive(bool _isActive)
-{
-    if (_isActive)
-    {
-        m_bIsActive = true;
-        std::cout << "GameObject is now active." << std::endl;
-    }
-    else
-    {
-        m_bIsActive = false;
-        std::cout << "GameObject is now inactive." << std::endl;
-    }
 }
 
 void MirageEngine::GameObject::AddComponent(std::shared_ptr<MirageEngine::Core::Components::Component> _component)
@@ -92,6 +64,25 @@ void MirageEngine::GameObject::AddComponent(std::shared_ptr<MirageEngine::Core::
         m_ScriptNames.push_back(script->GetName());
     }
     m_Components.push_back(_component);
+}
+
+void MirageEngine::GameObject::AddComponentFromMeta(entt::meta_any& _compInstance)
+{
+	entt::meta_type compType = _compInstance.type();
+
+	entt::meta_func compFunc = compType.func("Attach"_hs);
+	if (!compFunc)
+	{
+		LOG(logWarning, LogGameObject, "No Meta Attach function registered for type : ", compType.name());
+		return;
+	}
+
+	entt::meta_any result = compFunc.invoke(_compInstance, shared_from_this());
+
+	if (!result) 
+	{
+		LOG(logError, LogGameObject, "Meta Invoke failed for type : ", compType.name());
+	}
 }
 
 void MirageEngine::GameObject::RemoveComponent(std::shared_ptr<MirageEngine::Core::Components::Component> _component)

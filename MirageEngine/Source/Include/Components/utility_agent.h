@@ -46,12 +46,16 @@ namespace MirageEngine::Core::Components
 
 	public:
 		UtilityAgent() = default;
+		UtilityAgent(GameObject* _owner) {}
 		virtual ~UtilityAgent();
 
-		void OnStart() override;
-		void OnUpdate(float _dt) override;
+		void AttachMeta(std::shared_ptr<GameObject> _Owner);
+		static void AttachNew(std::shared_ptr<GameObject> _owner);
 
 		entt::id_type GetType() const override;
+		
+		void OnStart() override;
+		void OnUpdate(float _dt) override;
 
 		void AddAction(AIAction* _action) { m_actions.push_back(_action); }
 		void Decide();

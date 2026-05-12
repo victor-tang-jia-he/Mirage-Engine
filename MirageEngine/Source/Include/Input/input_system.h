@@ -54,7 +54,7 @@ namespace MirageEngine::Core
 
                 static void CursorPosCallback(GLFWwindow*, double _xpos, double _ypos);
 
-                static std::shared_ptr<InputMapping> GetCurrentMapping() { return m_CurrentMap; }
+                static std::shared_ptr<InputMapping> GetCurrentMapping();
 
                 static void SetCurrentMapping(std::shared_ptr<InputMapping> _map);
 

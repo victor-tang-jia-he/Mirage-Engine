@@ -53,7 +53,7 @@ int main()
         // --- Render ---
         application.m_Renderer.BeginFrame();
 
-        application.m_Renderer.RenderScene(application.m_SceneGraph);
+        application.m_Renderer.RenderScene(application.m_SceneGraph, editor.GetEditorCamera());
         application.m_Renderer.RenderLine();
         application.m_Renderer.RenderScreen();
 

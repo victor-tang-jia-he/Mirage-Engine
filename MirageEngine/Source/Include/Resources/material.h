@@ -36,5 +36,7 @@ namespace MirageEngine::Core::Resources
             std::shared_ptr<MirageRHI::IShader> GetFragmentShader() { return fragmentShader; }
 
             size_t GetUniformBufferSize() const { return uniformBufferSize; }
+
+            static std::shared_ptr<Material> const GetFromManager(std::string _name);
     };
 } // namespace MirageEngine::Core::Resources

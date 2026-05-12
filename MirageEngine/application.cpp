@@ -67,7 +67,6 @@ void Application::InitApp()
 void Application::InitScene()
 {
     m_EngineCamera = std::make_shared<Camera>(1920, 1080, 90.f, 0.1f, 100.f, Vector3(0.f, 0.f, -3.f));
-    m_SceneGraph.SetEditorCamera(m_EngineCamera);
 }
 
 void Application::InitInput()
@@ -85,8 +84,6 @@ void Application::InitInput()
     glfwSetKeyCallback(window, InputSystem::KeyCallback);
     glfwSetMouseButtonCallback(window, InputSystem::MouseButtonCallback);
     glfwSetCursorPosCallback(window, InputSystem::CursorPosCallback);
-    // bind camera
-    m_EngineCamera->BindInput(m_EditorMapping);
 }
 
 using namespace MirageEngine::Core::Resources;
@@ -148,8 +145,8 @@ void Application::InitGameObject()
     cameraGO->AddComponent<Camera>();
     cameraGO->AddComponent<InputMapping>();
     cameraGO->AddComponent<MeshRenderer>();
-    cameraGO->AddComponent(dynamicCollider);
-    cameraGO->AddComponent(dynamicRB);
+    cameraGO->AddComponent<SphereCollider>(dynamicCollider);
+    cameraGO->AddComponent<Rigidbody>(dynamicRB);
 
     std::shared_ptr<Camera> cam = cameraGO->GetComponent<Camera>();
     std::shared_ptr<InputMapping> input = cameraGO->GetComponent<InputMapping>();
@@ -168,7 +165,6 @@ void Application::InitGameObject()
 
     input->RegisterAction("Reload", func);
 
-    cam->BindInput(input);
     cam->SetNear(0.1f);
     cam->SetFar(100.f);
     cam->SetFov(60.f);
@@ -180,8 +176,8 @@ void Application::InitGameObject()
     // =========================
     //  Floor object
     // =========================
-    floorGO->AddComponent(staticCollider);
-    floorGO->AddComponent(staticRB);
+    floorGO->AddComponent<BoxCollider>(staticCollider);
+    floorGO->AddComponent<Rigidbody>(staticRB);
     floorGO->AddComponent<MeshRenderer>();
 
     std::shared_ptr<MeshRenderer> renderer2 = floorGO->GetComponent<MeshRenderer>();
@@ -263,14 +259,13 @@ void Application::InitGameObject()
 
 void Application::ShutDown()
 {
+    m_SceneGraph.ClearScene();
+    m_Renderer.Shutdown();
+    m_EditorMapping.reset();
+    m_PlayMapping.reset();
+    m_EngineCamera.reset();
     MirageEngine::Core::Input::InputSystem::Shutdown();
     MirageEngine::Core::Resources::ResourceManager::Instance().Shutdown();
     MirageEngine::Core::Physics::PhysicsManager::Instance().Shutdown();
     Debug_Draw.ShutDown();
-
-    m_Renderer.Shutdown();
-    m_SceneGraph.Clean();
-    m_EditorMapping.reset();
-    m_PlayMapping.reset();
-    m_EngineCamera.reset();
 }

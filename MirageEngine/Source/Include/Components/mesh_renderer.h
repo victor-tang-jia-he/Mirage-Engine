@@ -20,14 +20,17 @@ namespace MirageEngine
                 public:
 
                     MeshRenderer() = default;
-
+					MeshRenderer(GameObject* _owner) {}
                     MeshRenderer(std::shared_ptr<MirageEngine::Core::Resources::Mesh> _mesh, std::shared_ptr<MirageEngine::Core::Resources::MaterialInstance> _material)
                         : m_Mesh(_mesh)
                         , m_Material(_material)
                     {
                     }
 
-                    entt::id_type GetType() const override;
+                    void AttachMeta(std::shared_ptr<GameObject> _Owner);
+					static void AttachNew(std::shared_ptr<GameObject> _owner);
+
+					entt::id_type GetType() const override;
 
                     // Getters
                     std::shared_ptr<MirageEngine::Core::Resources::Mesh> GetMesh() const { return m_Mesh; }

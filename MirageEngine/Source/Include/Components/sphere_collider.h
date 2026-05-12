@@ -24,14 +24,18 @@ namespace MirageEngine
         {
             class SphereCollider : public Component, public ICCollider
             {
-                    Physics::ICollider* m_Collider;
+                std::shared_ptr<Physics::ICollider> m_Collider;
 
                 public:
 
                     SphereCollider();
-                    ~SphereCollider();
+                    SphereCollider(GameObject* _owner);
+                    ~SphereCollider() = default;
 
-                    entt::id_type GetType() const override { return 0; }
+                    void AttachMeta(std::shared_ptr<GameObject> _Owner);
+                    static void AttachNew(std::shared_ptr<GameObject> _owner);
+
+                    entt::id_type GetType() const override;
 
                     // Sphere only parameter
                     void SetRadius(float _radius);
@@ -47,7 +51,7 @@ namespace MirageEngine
                     Math::Vector3 GetTranslate() const;
                     Math::Quaternion GetRotation() const;
 
-                    Physics::ICollider* GetCollision() const override { return m_Collider; }
+                    std::shared_ptr<Physics::ICollider> GetCollision() const override { return m_Collider; }
             };
         } // namespace Components
     } // namespace Core

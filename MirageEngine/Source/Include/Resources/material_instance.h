@@ -41,6 +41,8 @@ namespace MirageEngine::Core::Resources
 
             void Bind();
 
+            static std::shared_ptr<MaterialInstance> const GetFromManager(std::string _name);
+
             std::shared_ptr<Material> GetMaterial() const { return m_Material; }
 
             void SetTexture(const std::string& _name, std::shared_ptr<Texture> _texture);

@@ -16,14 +16,17 @@ namespace MirageEngine::Core::Components
 
             InfluenceGrid* m_Grid = nullptr;
 
-        public:
+	public:
+		InfluenceEmitter() = default;
+		InfluenceEmitter(GameObject* _owner) {}
+		virtual ~InfluenceEmitter() = default;
+		void AttachMeta(std::shared_ptr<GameObject> _Owner);
+		static void AttachNew(std::shared_ptr<GameObject> _owner);
 
-            InfluenceEmitter() = default;
-            virtual ~InfluenceEmitter() = default;
+        entt::id_type GetType() const override;
 
             void OnStart() override;
             void OnUpdate(float _dt) override;
-            entt::id_type GetType() const override;
 
             // Getters
             std::string GetInfluenceType() const { return m_ChannelName; }

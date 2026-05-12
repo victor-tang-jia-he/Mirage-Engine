@@ -1,14 +1,36 @@
 #include <Components/capsule_collider.h>
 #include <quaternion.h>
 #include <Physics/physics_manager.h>
+#include <entt/entt.hpp>
 
 using namespace MirageEngine::Core::Components;
 using namespace MirageEngine::Core::Physics;
 using namespace MirageEngine::Core;
 
-CapsuleCollider::CapsuleCollider() { m_Collider = PhysicsManager::Instance().CreateCollider(ECollisionShapeType::Sphere); }
+CapsuleCollider::CapsuleCollider() { m_Collider = PhysicsManager::Instance().CreateCollider(ECollisionShapeType::Capsule); }
 
-CapsuleCollider::~CapsuleCollider() { delete m_Collider; }
+MirageEngine::Core::Components::CapsuleCollider::CapsuleCollider(GameObject* _owner)
+    : Component(_owner)
+{
+    m_Collider = PhysicsManager::Instance().CreateCollider(ECollisionShapeType::Capsule);
+}
+
+void MirageEngine::Core::Components::CapsuleCollider::AttachMeta(std::shared_ptr<GameObject> _Owner)
+{
+    std::shared_ptr<CapsuleCollider> compPtr = std::make_shared<CapsuleCollider>(*this);
+    _Owner->AddComponent<CapsuleCollider>(compPtr);
+}
+
+void MirageEngine::Core::Components::CapsuleCollider::AttachNew(std::shared_ptr<GameObject> _owner)
+{
+    std::shared_ptr<CapsuleCollider> compPtr = std::make_shared<CapsuleCollider>(_owner.get());
+    _owner->AddComponent<CapsuleCollider>(compPtr);
+}
+
+entt::id_type MirageEngine::Core::Components::CapsuleCollider::GetType() const
+{
+    return entt::type_id<CapsuleCollider>().hash();
+}
 
 void CapsuleCollider::SetRadius(float _radius) { m_Collider->As<ICapsuleCollider>()->SetRadius(_radius); }
 

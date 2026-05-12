@@ -15,7 +15,7 @@ namespace MirageEngine::Core::Physics
 
         private:
 
-            btRigidBody* m_rigidBody = nullptr;
+            std::shared_ptr<btRigidBody> m_rigidBody = nullptr;
             std::shared_ptr<btCompoundShape> m_Compound = nullptr;
             Vector3 m_CurrentScale = { 1, 1, 1 };
 
@@ -24,7 +24,7 @@ namespace MirageEngine::Core::Physics
             Bullet3RigidBody() = default;
             ~Bullet3RigidBody() override;
 
-            bool Create(ICollider* _shape, ERigidBodyType _type) override;
+            bool Create(std::shared_ptr<ICollider> _shape, ERigidBodyType _type, MirageEngine::Core::Components::Transform& _newTransform) override;
 
             void UpdateTransform(Transform& _transform) override;
             void OnTransformChanged(Transform& _newTransform) override;
@@ -33,12 +33,12 @@ namespace MirageEngine::Core::Physics
 
             void SetScale(const Vector3& scale);
 
-            void AddCollider(ICollider* _newCollider) override;
+            void AddCollider(std::shared_ptr<ICollider> _newCollider) override;
             void RemoveCollider(ICollider* _collider) override;
 
             void UpdateCompound();
 
-            btRigidBody* GetBullet3RigidBody() const { return m_rigidBody; }
+            btRigidBody* GetBullet3RigidBody() const { return m_rigidBody.get(); }
 
             Bullet3RigidBody& API_Bullet3() override { return *this; }
     };

@@ -23,6 +23,7 @@ namespace MirageEngine
     class ENGINE_API GameObject : public std::enable_shared_from_this<GameObject>
     {
         private:
+		std::shared_ptr<MirageEngine::Core::Components::Component> m_LastAddedComponent;
 
             // Game Object variables
             std::string m_Name = "";
@@ -45,18 +46,18 @@ namespace MirageEngine
 
             template <typename T> std::shared_ptr<T> AddComponent();
 
+			template <typename T> void AddComponent(std::shared_ptr<MirageEngine::Core::Components::Component> _component);
+
             template <typename T> std::shared_ptr<T> GetComponent();
 
             // Game Object Constructor.
             GameObject(std::shared_ptr<GameObject> _parent, std::string _name, bool _isStatic = false, bool _isActive = true);
             ~GameObject();
 
-            // Game Object Custom Methods
             void AddChild(std::shared_ptr<GameObject> _child, bool _isStatic = false, bool _isActive = true);
-            void SetActive(bool _isActive);
 
+			void AddComponentFromMeta(entt::meta_any& _compInstance);
             void AddComponent(std::shared_ptr<MirageEngine::Core::Components::Component> _component);
-
             void RemoveComponent(std::shared_ptr<MirageEngine::Core::Components::Component> _component);
 
             // Game Object Public Methods
@@ -85,6 +86,8 @@ namespace MirageEngine
             bool GetIsDirty() const { return m_bIsDirty; }
 
             std::vector<std::shared_ptr<MirageEngine::Core::Components::Component>> GetComponents() const { return m_Components; }
+            
+            std::shared_ptr<MirageEngine::Core::Components::Component> GetLastAddedComponent() const { return m_LastAddedComponent; }
 
             MirageEngine::Core::Math::Vector3 GetPosition() const { return Transform.GetPosition(); }
 

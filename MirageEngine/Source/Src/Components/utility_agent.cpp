@@ -48,9 +48,21 @@ namespace MirageEngine::Core::Components
 			m_CurrentAction->Execute(TimeManager::GetDeltaTime());
 	}
 
+	void UtilityAgent::AttachMeta(std::shared_ptr<GameObject> _Owner)
+	{
+		std::shared_ptr<UtilityAgent> compPtr = std::make_shared<UtilityAgent>(*this);
+		_Owner->AddComponent<UtilityAgent>(compPtr);
+	}
+
+	void MirageEngine::Core::Components::UtilityAgent::AttachNew(std::shared_ptr<GameObject> _owner)
+	{
+		std::shared_ptr<UtilityAgent> compPtr = std::make_shared<UtilityAgent>(_owner.get());
+		_owner->AddComponent<UtilityAgent>(compPtr);
+	}
+
 	entt::id_type UtilityAgent::GetType() const
-	{ 
-		return entt::type_id<UtilityAgent>().hash(); 
+	{
+		return entt::type_id<UtilityAgent>().hash();
 	}
 
 	void UtilityAgent::Decide()

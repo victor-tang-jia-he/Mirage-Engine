@@ -1,6 +1,7 @@
 #include <Resources/material_instance.h>
 #include <Resources/material.h>
 #include <Resources/texture.h>
+#include <Resources/resource_manager.h>
 
 #include <RHI/i_pipeline.h>
 #include <RHI/i_shader.h>
@@ -20,6 +21,11 @@ namespace MirageEngine::Core::Resources
         m_UniformBuffers.reset();
         m_Textures.clear();
     }
+    
+    std::shared_ptr<MirageEngine::Core::Resources::MaterialInstance> const MirageEngine::Core::Resources::MaterialInstance::GetFromManager(std::string _name)
+	{
+    	return MirageEngine::Core::Resources::ResourceManager::Instance().GetMaterialInstance(_name);
+	}
 
     void MaterialInstance::SetTexture(const std::string& _name, std::shared_ptr<Texture> _texture)
     {

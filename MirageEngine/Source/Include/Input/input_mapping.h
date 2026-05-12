@@ -67,7 +67,7 @@ namespace MirageEngine::Core
                 std::unordered_map<std::string, AxisBind2D> m_Axis2D;
 
                 InputMapping() = default;
-
+                InputMapping(GameObject* _owner) {}
                 ~InputMapping() override;
 
                 entt::id_type GetType() const override;
@@ -89,6 +89,9 @@ namespace MirageEngine::Core
                 void Clear() { m_Map.clear(); }
 
                 void BindMapping();
+
+                void AttachMeta(std::shared_ptr<GameObject> _Owner);
+                static void AttachNew(std::shared_ptr<GameObject> _owner);
         };
     } // namespace Input
 } // namespace MirageEngine::Core

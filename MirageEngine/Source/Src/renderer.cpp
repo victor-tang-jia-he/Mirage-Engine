@@ -2,6 +2,7 @@
 #include <GLFW/glfw3.h>
 
 #include "renderer.h"
+#include <Camera/i_camera.h>
 #include <DebugDraw/debug_draw.h>
 
 #include <Logs/log.h>
@@ -80,12 +81,11 @@ void Renderer::BeginFrame()
     m_CommandBuffer->BeginDraw(m_RenderPass, currentFBO);
 }
 
-void Renderer::RenderScene(SceneGraph _sceneGraph)
+void Renderer::RenderScene(SceneGraph _sceneGraph, std::shared_ptr<Core::ICamera> _camera)
 {
-    if (_sceneGraph.GetActiveCamera())
+    if (_camera)
     {
-        std::shared_ptr<MirageEngine::Core::Components::Camera> cam = _sceneGraph.GetActiveCamera();
-        MirageRHI::PerFrameData frame{ cam->GetView(), cam->GetPerspective(), cam->Transform().GetPosition(), 0.0f };
+        MirageRHI::PerFrameData frame{ _camera->GetView(), _camera->GetPerspective(), _camera->GetPosition(), 0.0f };
         m_PerFrameUBO->Upload(&frame, sizeof(MirageRHI::PerFrameData));
         Debug_Draw.UpdateUBO(&frame, sizeof(MirageRHI::PerFrameData));
         ComputeLights();

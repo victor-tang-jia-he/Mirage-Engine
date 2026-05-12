@@ -133,6 +133,11 @@ namespace MirageEngine::Core::Input
         m_LastMousePos = current;
     }
 
+    std::shared_ptr<InputMapping> InputSystem::GetCurrentMapping()
+    {
+        return m_CurrentMap;
+    }
+
     MirageEngine::Core::Math::Vector2 InputSystem::GetMouseDelta()
     {
         MirageEngine::Core::Math::Vector2 delta = m_MouseDelta;

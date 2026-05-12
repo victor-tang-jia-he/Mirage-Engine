@@ -11,11 +11,16 @@ namespace MirageEngine
     class SceneGraph;
     class GameObject;
 
-    namespace Core::Components
-    {
-        class Transform;
-        class MeshRenderer;
-    } // namespace Core::Components
+	namespace Core
+	{
+		class ICamera;
+
+		namespace Components
+		{
+				class Transform;
+				class MeshRenderer;
+		}
+	}
 
     class Renderer
     {
@@ -51,7 +56,7 @@ namespace MirageEngine
             // Manages the beginning of the frame, such as polling events and acquiring the current framebuffer
             void BeginFrame();
             // Renders the given SceneGraph, by rendering all its root GameObjects and their children recursively
-            void RenderScene(SceneGraph _sceneGraph);
+            void RenderScene(SceneGraph _sceneGraph, std::shared_ptr<Core::ICamera> _camera);
             // Sets the current framebuffer as the render target and displays the rendered image on the screen
             void RenderScreen();
             // Manages the end of the frame, such as presenting the rendered image and swapping buffers

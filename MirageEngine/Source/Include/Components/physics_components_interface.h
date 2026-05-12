@@ -1,4 +1,5 @@
 #pragma once
+#include <iostream>
 
 namespace MirageEngine::Core
 {
@@ -13,7 +14,7 @@ namespace MirageEngine::Core
         {
             public:
 
-                virtual Physics::ICollider* GetCollision() const { return nullptr; }
+                virtual std::shared_ptr<Physics::ICollider> GetCollision() const = 0;
         };
     } // namespace Components
 } // namespace MirageEngine::Core

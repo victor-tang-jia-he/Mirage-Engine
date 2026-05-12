@@ -29,6 +29,9 @@ namespace MirageEngine
 
                     Transform() = default;
                     Transform(Math::Vector3 _position, Math::Quaternion _rotation, Math::Vector3 _scale);
+                    
+                    void AttachMeta(std::shared_ptr<GameObject> _Owner);
+                    
                     void Init();
                     void Update();
 

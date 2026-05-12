@@ -43,5 +43,7 @@ namespace MirageEngine::Core::Resources
 		int GetHeight() const { return m_Height; }
 
             std::shared_ptr<MirageRHI::ITexture> GetTextureBuffer() const { return m_TextureBuffer; }
-    };
-} // namespace MirageEngine::Core::Resources
+
+		std::shared_ptr<Texture> const GetFromManager();
+	};
+} // namespace MirageEngine

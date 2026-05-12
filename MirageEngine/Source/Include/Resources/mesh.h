@@ -53,6 +53,8 @@ namespace MirageEngine::Core::Resources
 
             std::shared_ptr<MirageRHI::IBuffer> GetVertexBuffer() const { return m_VertexBuffer; }
 
+		static std::shared_ptr<Mesh> const GetFromManager(std::string _name);
+
             std::shared_ptr<MirageRHI::IBuffer> GetIndexBuffer() const { return m_IndexBuffer; }
 
             size_t GetIndicesCount() const { return m_IndexCount; }

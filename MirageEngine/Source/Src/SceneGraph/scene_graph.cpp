@@ -35,6 +35,15 @@ namespace MirageEngine
         return newObject;
     }
 
+    void SceneGraph::AddGameObject(std::shared_ptr<GameObject> _newGameObject)
+    {
+        uint64_t objectID = _newGameObject->GetID();
+        auto [it, success] = m_Registry.try_emplace(objectID, _newGameObject);
+
+        this->SetParent(_newGameObject->GetParent(), _newGameObject);
+        m_LastCreatedObject = _newGameObject;
+    }
+
     std::shared_ptr<GameObject> SceneGraph::CreateObject3D(const std::string& _name, const std::string& _mesh, std::shared_ptr<GameObject> _parent, MirageEngine::Renderer* _renderer)
     {
         std::shared_ptr<GameObject> newObject = CreateGameObject(_name, _parent);
@@ -105,6 +114,11 @@ namespace MirageEngine
         m_RootsList.clear();
     }
 
+    std::shared_ptr<GameObject> SceneGraph::FindGameObject(uint64_t _id) const
+    {
+        return m_Registry.contains(_id) ? m_Registry.at(_id) : nullptr;
+    }
+    
     void SceneGraph::CallAllOnStart()
     {
         for (std::shared_ptr<GameObject> root : m_RootsList)
@@ -246,24 +260,13 @@ namespace MirageEngine
             current = current->GetParent();
         }
 
-        while (current != nullptr)
+        if (_child->GetParent() == nullptr) 
         {
-            auto currentShared = current;
-
-            if (currentShared == _child)
-            {
-				LOG(logError, LogSceneGraph, "Error: Circular dependency detected!");
-                return false;
-            }
-
-            current = currentShared->GetParent();
-        }
-
-        if (_child->GetParent() == nullptr)
             std::erase(m_RootsList, _child);
-        else
-        {
-            _child->GetParent()->RemoveChild(_child);
+        }
+        else 
+        { 
+            _child->GetParent()->RemoveChild(_child); 
         }
 
         if (_parent == nullptr)

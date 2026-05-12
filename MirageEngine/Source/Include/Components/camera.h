@@ -1,6 +1,7 @@
 #pragma once
 #include <Components/transform.h>
 #include "component.h"
+#include <Camera/i_camera.h>
 #include <Scripting/engine_script_api.h>
 
 namespace MirageEngine
@@ -13,10 +14,10 @@ namespace MirageEngine
             struct CallbackInputInfo;
         } // namespace Input
 
-        namespace Components
-        {
-            class ENGINE_API Camera : public Component
-            {
+		namespace Components
+		{
+			class ENGINE_API Camera : public Component, public ICamera , public std::enable_shared_from_this<Camera>
+			{
                 private:
 
                     // Clipping Planes
@@ -34,49 +35,14 @@ namespace MirageEngine
                 public:
 
                     Camera() = default;
+                    Camera(GameObject* _owner) : Component(_owner) {};
                     Camera(unsigned int _width, unsigned int _height, float _fov, float _near, float _far, const MirageEngine::Core::Math::Vector3 _position);
                     ~Camera() = default;
 
+                    void AttachMeta(std::shared_ptr<GameObject> _Owner);
+                    static void AttachNew(std::shared_ptr<GameObject> _owner);
+
                     entt::id_type GetType() const override;
-
-                    MirageEngine::Core::Components::Transform& Transform() { return m_transform; }
-
-                    MirageEngine::Core::Math::Matrix4 GetPerspective() const { return MirageEngine::Core::Math::Matrix4::GetPerspectiveMatrix(m_Width, m_Height, m_Near, m_Far, m_Fov); }
-
-                    MirageEngine::Core::Math::Matrix4 GetView() const
-                    {
-                        return MirageEngine::Core::Math::Matrix4::LookAt(m_transform.GetPosition(), m_transform.GetPosition() + m_transform.Forward(), m_transform.Up());
-                    }
-
-                    // SetParameter
-                    void SetNear(float _near) { m_Near = _near; }
-
-                    void SetFar(float _far) { m_Far = _far; }
-
-                    void SetWidth(unsigned int _width) { m_Width = _width; }
-
-                    void SetHeight(unsigned int _height) { m_Height = _height; }
-
-                    void SetFov(float _fov) { m_Fov = _fov; }
-
-                    // Getters
-                    float GetNear() const { return m_Near; }
-
-                    float GetFar() const { return m_Far; }
-
-                    float GetFov() const { return m_Fov; }
-
-                    unsigned int GetWidth() const { return m_Width; }
-
-                    unsigned int GetHeight() const { return m_Height; }
-
-                    // debug
-                    void BindInput(std::shared_ptr<MirageEngine::Core::Input::InputMapping> map);
-
-                private:
-
-                    void Move(Input::CallbackInputInfo info);
-                    void View(Input::CallbackInputInfo info);
             };
         } // namespace Components
     } // namespace Core

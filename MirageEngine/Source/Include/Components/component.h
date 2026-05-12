@@ -5,6 +5,7 @@
 namespace entt
 {
     using id_type = std::uint32_t;
+    class meta_any;
 }
 
 namespace MirageEngine
@@ -27,6 +28,7 @@ namespace MirageEngine
                 public:
 
                     Component() = default;
+                    Component(GameObject* _owner) : m_Owner(_owner) {}
                     virtual ~Component() = default;
 
                     virtual void OnStart() {};

@@ -1,14 +1,38 @@
 #include <Components/sphere_collider.h>
 #include <quaternion.h>
 #include <Physics/physics_manager.h>
+#include <entt/entt.hpp>
 
 using namespace MirageEngine::Core::Components;
 using namespace MirageEngine::Core::Physics;
 using namespace MirageEngine::Core;
 
-SphereCollider::SphereCollider() { m_Collider = PhysicsManager::Instance().CreateCollider(ECollisionShapeType::Sphere); }
+SphereCollider::SphereCollider() 
+{ 
+    m_Collider = PhysicsManager::Instance().CreateCollider(ECollisionShapeType::Sphere);
+}
 
-SphereCollider::~SphereCollider() { delete m_Collider; }
+MirageEngine::Core::Components::SphereCollider::SphereCollider(GameObject* _owner)
+{
+    m_Collider = PhysicsManager::Instance().CreateCollider(ECollisionShapeType::Sphere);
+}
+
+void MirageEngine::Core::Components::SphereCollider::AttachMeta(std::shared_ptr<GameObject> _Owner)
+{
+    std::shared_ptr<SphereCollider> compPtr = std::make_shared<SphereCollider>(*this);
+    _Owner->AddComponent<SphereCollider>(compPtr);
+}
+
+void MirageEngine::Core::Components::SphereCollider::AttachNew(std::shared_ptr<GameObject> _owner)
+{
+    std::shared_ptr<SphereCollider> compPtr = std::make_shared<SphereCollider>(_owner.get());
+    _owner->AddComponent<SphereCollider>(compPtr);
+}
+
+entt::id_type MirageEngine::Core::Components::SphereCollider::GetType() const
+{
+    return entt::type_id<SphereCollider>().hash();
+}
 
 void SphereCollider::SetRadius(float _radius) { m_Collider->As<ISphereCollider>()->SetRadius(_radius); }
 
