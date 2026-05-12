@@ -16,7 +16,7 @@ Rigidbody::Rigidbody(ICCollider* _shape, Physics::ERigidBodyType _type)
     m_Rigidbody = Physics::PhysicsManager::Instance().CreateRigidBody(_shape->GetCollision(), _type);
     m_Rigidbody->OnSimulated = [this]()
         {
-            m_Rigidbody->UpdateTransform(GetOwner()->Transform);
+            m_Rigidbody->UpdateTransform(m_Owner->Transform);
         };
 }
 
@@ -40,13 +40,13 @@ MirageEngine::Core::Components::Rigidbody::Rigidbody(GameObject* _owner)
 
     m_Rigidbody->OnSimulated = [this]()
         {
-            m_Rigidbody->UpdateTransform(GetOwner()->Transform);
+            m_Rigidbody->UpdateTransform(m_Owner->Transform);
         };
 }
 
 MirageEngine::Core::Components::Rigidbody::~Rigidbody()
 {
-    LOG(logWarning, LogComponentRigidBody, "RIGIDBODY DESTROYED : ", m_Owner->GetName());
+    LOG(logTemp, LogComponentRigidBody, "Rigidbody destroyed : ", m_Owner->GetName());
 }
 
 void Rigidbody::Update() { m_Rigidbody->UpdateTransform(GetOwner()->Transform); }

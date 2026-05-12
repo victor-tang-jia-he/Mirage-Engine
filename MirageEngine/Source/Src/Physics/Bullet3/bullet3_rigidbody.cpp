@@ -147,6 +147,10 @@ void Bullet3RigidBody::UpdateTransform(MirageEngine::Core::Components::Transform
     // Update all compount
     if (m_bIsDirty) UpdateCompound();
 
+    btVector3 velocity(0, 0, 0);
+    velocity.setY(-9.81f);
+    //m_rigidBody->setLinearVelocity(velocity);
+
     // Update GameObject
     btVector3    position = m_rigidBody->getWorldTransform().getOrigin();
     btQuaternion rotation = m_rigidBody->getWorldTransform().getRotation();
@@ -156,7 +160,6 @@ void Bullet3RigidBody::UpdateTransform(MirageEngine::Core::Components::Transform
     m_Velocity = MirageEngine::Core::Math::Vector3(m_rigidBody->getLinearVelocity().getX(), m_rigidBody->getLinearVelocity().getY(), m_rigidBody->getLinearVelocity().getZ());
 
     m_rigidBody->activate(true);
-    SetMass(5);
 }
 
 void Bullet3RigidBody::OnTransformChanged(MirageEngine::Core::Components::Transform& _newTransform)
@@ -294,9 +297,14 @@ void Bullet3RigidBody::UpdateCompound()
 
     switch (m_CollisionRespond)
     {
-        case ECollisionResponse::Overlap: m_rigidBody->setCollisionFlags(m_rigidBody->getCollisionFlags() | btCollisionObject::CF_NO_CONTACT_RESPONSE); break;
-        case ECollisionResponse::Block  : m_rigidBody->setCollisionFlags(m_rigidBody->getCollisionFlags() & ~btCollisionObject::CF_NO_CONTACT_RESPONSE); break;
-        default                         : break;
+    case ECollisionResponse::Overlap:
+        m_rigidBody->setCollisionFlags(m_rigidBody->getCollisionFlags() | btCollisionObject::CF_NO_CONTACT_RESPONSE);
+        break;
+    case ECollisionResponse::Block:
+        m_rigidBody->setCollisionFlags(m_rigidBody->getCollisionFlags() & ~btCollisionObject::CF_NO_CONTACT_RESPONSE);
+        break;
+    default:
+        break;
     }
     if (mass > 0.0f)
     {
@@ -307,7 +315,9 @@ void Bullet3RigidBody::UpdateCompound()
     }
     m_rigidBody->setCollisionShape(m_Compound.get());                                                                                                 // Set new compound to the rigidbody
     m_rigidBody->activate(true);
-    if (m_CollisionRespond == ECollisionResponse::Ignore) PhysicsManager::Instance().RegisterRigidBody(shared_from_this(), m_CollisionMask, ECollisionGroup::None); // Register back to the world
-    else PhysicsManager::Instance().RegisterRigidBody(shared_from_this(), m_CollisionMask, m_CollisionGroup);                                                       // Register back to the world
+    if (m_CollisionRespond == ECollisionResponse::Ignore) 
+        PhysicsManager::Instance().RegisterRigidBody(shared_from_this(), m_CollisionMask, ECollisionGroup::None); // Register back to the world
+    else 
+        PhysicsManager::Instance().RegisterRigidBody(shared_from_this(), m_CollisionMask, m_CollisionGroup);                                                       // Register back to the world
     m_bIsDirty = false;
 }

@@ -97,7 +97,7 @@ void Application::InitGameObject()
     dynamicRB->SetCollisionResponse(ECollisionResponse::Block);
 
     std::shared_ptr<BoxCollider> staticCollider = std::make_shared<BoxCollider>();
-    std::shared_ptr<Rigidbody>   staticRB       = std::make_shared<Rigidbody>(staticCollider.get(), ERigidBodyType::Dynamic);
+    std::shared_ptr<Rigidbody>   staticRB       = std::make_shared<Rigidbody>(staticCollider.get(), ERigidBodyType::Static);
 
     staticRB->SetCollisionGroup(ECollisionGroup::Group2);
     staticRB->SetCollisionMask(ECollisionGroup::All);

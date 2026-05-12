@@ -56,7 +56,6 @@ void PhysicsManager::Update(float _deltaTime)
 	}
 
 	m_worldPhysics->Update(_deltaTime);
-	LOG(logInfo, LogPhysics, "World ptr: ", m_worldPhysics.get());
 	int simulatedCount = 0;
 	int skippedCount = 0;
 

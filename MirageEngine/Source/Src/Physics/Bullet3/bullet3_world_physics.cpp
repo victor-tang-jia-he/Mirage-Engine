@@ -35,6 +35,7 @@ void Bullet3WorldPhysics::AddRigidBody(std::shared_ptr<IRigidBody> _body, EColli
 	}
 
 	// Add the rigid body to the Bullet3 world
+	_body->API_Bullet3().GetBullet3RigidBody()->forceActivationState(ACTIVE_TAG);
 	m_World->addRigidBody(_body->API_Bullet3().GetBullet3RigidBody(), +_group, +_mask);
 }
 
