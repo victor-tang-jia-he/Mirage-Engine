@@ -1,6 +1,6 @@
 #pragma once
 
-#include <EnTT/meta/meta.hpp>
+#include <entt/meta/meta.hpp>
 
 DECLARE_LOG_CATEGORY_EXTERN(LogRegisterMeta);
 

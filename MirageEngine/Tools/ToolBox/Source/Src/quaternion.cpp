@@ -1,7 +1,8 @@
-#include "Matrix4.h"
-#include "Quaternion.h"
+#include "matrix4.h"
+#include "quaternion.h"
 #include <iostream>
 #include <algorithm>
+#include <cmath>
 
 using namespace MirageEngine::Core::Math;
 

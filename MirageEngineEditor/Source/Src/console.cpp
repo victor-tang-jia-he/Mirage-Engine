@@ -12,7 +12,7 @@
 #include <Logs/log.h>
 
 DEFINE_LOG_CATEGORY_WITH_COLOR(logConsole, Loggers::Color::CYAN);
-DEFINE_LOG_CATEGORY(logConsoleInfo,);
+DEFINE_LOG_CATEGORY(logConsoleInfo);
 
 namespace Mirage
 {

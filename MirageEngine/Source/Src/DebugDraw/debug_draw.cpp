@@ -80,6 +80,18 @@ namespace MirageEngine::DebugDraw
 
     }
 
+    // ------------------------------------------------------------------ Destructor
+
+    void DebugDraw::ShutDown()
+    {
+        m_VertexAttributeObject->Destroy();
+        m_VertexBufferObject->Destroy();
+        m_Pipelineparameter->Destroy();
+        m_Pipeline->Destroy();
+        m_Lines.clear();
+    }
+
+
     // ------------------------------------------------------------------ API
 
     void DebugDraw::Line(Vector3 _a, Vector3 _b, Vector4 _color)
@@ -109,16 +121,8 @@ namespace MirageEngine::DebugDraw
         m_Lines.clear();
     }
 
-    // ------------------------------------------------------------------ dtor
-
     DebugDraw::~DebugDraw()
-    {
-        m_VertexAttributeObject->Destroy();
-        m_VertexBufferObject->Destroy();
-        m_Pipelineparameter->Destroy();
-        m_Pipeline->Destroy();
-        m_Lines.clear();
-    }
+    {  }
 
     // ------------------------------------------------------------------ helpers
 } // namespace MirageEngine::DebugDraw

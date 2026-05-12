@@ -7,6 +7,7 @@
 #include <sys/stat.h>
 #include <fstream> // For file output
 #include <csignal> // For signal handling
+#include <cstring>
 #include <filesystem>
 
 #include <sstream>
@@ -182,6 +183,7 @@ namespace Loggers
                     // Output the buffered log message to the console only in debug mode. In release mode, we skip this step to improve performance.
 #ifndef NDEBUG
                     std::clog << m_Buffer.str();
+                    std::clog.flush();
 #endif
 
                     // Write the log message to the file
@@ -316,9 +318,14 @@ namespace Loggers
         auto in_time_t = std::chrono::system_clock::to_time_t(now);
 
         std::tm buf;
-        localtime_s(&buf, &in_time_t);
-        char timeStr[20]; // Buffer to hold the formatted time string
 
+#ifdef _WIN32
+        localtime_s(&buf, &in_time_t);
+#else
+        localtime_r(&in_time_t, &buf);
+#endif
+
+        char timeStr[20];
         std::strftime(timeStr, sizeof(timeStr), "%F %T", &buf);
 
         return timeStr;

@@ -144,8 +144,8 @@ namespace MirageEngine::Core::Resources
 
                 ResourceManager& resourceManager = ResourceManager::Instance();
 
-                auto it = resourceManager->m_Resources.find(_name);
-                if (it != resourceManager->m_Resources.end())
+                auto it = resourceManager.m_Resources.find(_name);
+                if (it != resourceManager.m_Resources.end())
                 {
                     out = dynamic_cast<T*>(it->second.get());
                     return out != nullptr;

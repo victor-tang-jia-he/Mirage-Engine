@@ -2,7 +2,7 @@
 
 #include "UI_wrapper.h"
 #include "editor_app.h"
-#include "glad/glad.h"
+#include "Glad/glad.h"
 #include "GLFW/glfw3.h"
 #include "application.h"
 #include <time_manager.h>
@@ -24,7 +24,8 @@ int main()
     // --- Initialization ---
     MirageEngine::Core::Scripting::ScriptManager::Instance().Init();
     application.InitApp();
-    std::cout << "Context address: " << &entt::locator<entt::meta_ctx>::value_or() << std::endl;
+    
+    &entt::locator<entt::meta_ctx>::value_or(); // TODO : Remove for a better use of shared Context
     MirageEngine::RegisterMeta().RegisterAllMeta(entt::locator<entt::meta_ctx>::handle());
     editor.Init(application.m_Renderer.GetWindowHandle(), &application.m_Renderer, application.GetSceneGraph());
     MirageEngine::TimeManager::Init();

@@ -22,7 +22,7 @@ namespace MirageEngine::Core::Resources
             int m_Width = 0;
             int m_Height = 0;
             int m_Channel = 0;
-            int m_Format = NAN;
+            int m_Format = -1;
             unsigned char* m_Data = nullptr;
             bool m_bIsUploaded = false;
 

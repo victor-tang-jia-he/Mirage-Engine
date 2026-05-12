@@ -1,7 +1,7 @@
 #include "OpenGL/openGL_buffer.h"
 #include "OpenGL/openGL_pipeline.h"
 
-#include <glad/glad.h>
+#include <Glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <stb_image.h>
 #include <Logs/log.h>

@@ -72,14 +72,14 @@ add_custom_command(TARGET MirageEngine POST_BUILD
 
 
 set(ENGINE_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/Source/Include")
-set(TOOLBOX_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/Tools/Toolbox/Source/Include")
+set(TOOLBOX_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/Tools/ToolBox/Source/Include")
 
 add_custom_command(TARGET MirageEngine POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_directory
         "${ENGINE_INCLUDE_DIR}"
-        "$<TARGET_FILE_DIR:MirageEngine>/Include/Engine"
+        "${MIRAGE_BIN_OUTPUT_DIR}/Include/Engine"
 
     COMMAND ${CMAKE_COMMAND} -E copy_directory
         "${TOOLBOX_INCLUDE_DIR}"
-        "$<TARGET_FILE_DIR:MirageEngine>/Include/Toolbox"
+        "${MIRAGE_BIN_OUTPUT_DIR}/Include/ToolBox"
 )

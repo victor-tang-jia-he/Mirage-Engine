@@ -59,6 +59,7 @@ namespace MirageEngine::DebugDraw
             }
 
             void Init(std::shared_ptr<MirageRHI::IRenderInterface> _rhi);
+            void ShutDown();
             void Line(MirageEngine::Core::Math::Vector3 _a, MirageEngine::Core::Math::Vector3 _b, MirageEngine::Core::Math::Vector4 _color);
             void UpdateVertexBuffer();
             void UpdateUBO(const void* data, size_t size);

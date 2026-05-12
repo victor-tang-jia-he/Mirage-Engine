@@ -10,10 +10,10 @@ namespace MirageEngine::Core::Scripting
 
             virtual ~IScript() = default;
 
-            virtual void OnStart() {};
-            virtual void OnUpdate(float dt) {};
-            virtual void OnFixedUpdate(float dt) {};
-            virtual void OnDestroy() {};
+            virtual void OnStart() override {};
+            virtual void OnUpdate(float dt) override {};
+            virtual void OnFixedUpdate(float dt) override {};
+            virtual void OnDestroy() override {};
 
             virtual const char* GetName() const = 0;
 

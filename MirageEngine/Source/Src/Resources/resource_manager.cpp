@@ -113,7 +113,7 @@ std::shared_ptr<Texture> ResourceManager::CreateTexture(const std::string& _name
     int width = 0;
     int height = 0;
     int channel = 0;
-    int format = NAN;
+    int format = -1;
     unsigned char* data = nullptr;
     rm.LoadTextureUtility(_path, width, height, channel, format, data);
 

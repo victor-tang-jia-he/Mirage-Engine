@@ -1,4 +1,4 @@
-#include <glad/glad.h>
+#include <Glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <application.h>
 
@@ -266,6 +266,7 @@ void Application::ShutDown()
     MirageEngine::Core::Input::InputSystem::Shutdown();
     MirageEngine::Core::Resources::ResourceManager::Instance().Shutdown();
     MirageEngine::Core::Physics::PhysicsManager::Instance().Shutdown();
+    Debug_Draw.ShutDown();
 
     m_Renderer.Shutdown();
     m_SceneGraph.Clean();

@@ -2,6 +2,7 @@
 #include <array>
 #include <iostream>
 #include <assert.h>
+#include <cmath>
 
 using namespace MirageEngine::Core::Math;
 

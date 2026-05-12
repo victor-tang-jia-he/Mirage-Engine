@@ -1,5 +1,12 @@
 #pragma once
 #include <Scripting/i_script.h>
+#include <vector>
+#include <string>
+#include <unordered_map>
+#include <functional>
+#include <cstdint>
+
+using id_type = std::uint32_t;
 
 namespace MirageEngine::Core::Scripting
 {

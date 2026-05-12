@@ -33,10 +33,10 @@ namespace MirageEngine::Core::Scripting
             typedef IScript* (*PFN_CreateScriptByName)(const char*);
             typedef void (*PFN_DestroyScript)(IScript*);
 
-            void* m_GetScriptCountDLL = nullptr;
-            void* m_GetScriptNameDLL = nullptr;
-            void* m_CreateScriptByNameDLL = nullptr;
-            void* m_DestroyScriptDLL = nullptr;
+            PFN_GetScriptCount       m_GetScriptCountDLL = nullptr;
+            PFN_GetScriptName        m_GetScriptNameDLL = nullptr;
+            PFN_CreateScriptByName   m_CreateScriptByNameDLL = nullptr;
+            PFN_DestroyScript        m_DestroyScriptDLL = nullptr;
 
             // handle
             LibHandle hScripts = nullptr;

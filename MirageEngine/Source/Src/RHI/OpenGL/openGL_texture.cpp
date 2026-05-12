@@ -1,4 +1,4 @@
-#include <glad/glad.h>
+#include <Glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <Logs/log.h>
 
@@ -35,8 +35,24 @@ void MirageRHI::OpenGLTexture::Destroy()
 {
     if (m_Texture == 0)
         return;
-    LOG(logTemp, LogRHITexture, "Texture Destroyed with ID: ", m_Texture);
-    glDeleteTextures(1, &m_Texture);
+
+    if (glfwGetCurrentContext() == nullptr)
+    {
+        LOG(logWarning, LogRHITexture, "Texture ", m_Texture," not destroyed - no OpenGL context");
+        m_Texture = 0;
+        return;
+    }
+
+    if (glIsTexture(m_Texture))
+    {
+        LOG(logTemp, LogRHITexture, "Texture Destroyed with ID: ", m_Texture);
+        glDeleteTextures(1, &m_Texture);
+    }
+    else
+    {
+        LOG(logWarning, LogRHITexture, "Invalid texture ID: ", m_Texture);
+    }
+
     m_Texture = 0;
 }
 
