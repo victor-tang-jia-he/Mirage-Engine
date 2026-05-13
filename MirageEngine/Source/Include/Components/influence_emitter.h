@@ -30,11 +30,8 @@ namespace MirageEngine::Core::Components
 
             // Getters
             std::string GetInfluenceType() const { return m_ChannelName; }
-
             float GetRadius() const { return m_Radius; }
-
             float GetStrength() const { return m_Strength; }
-
             InfluenceGrid* GetTargetGrid() const { return m_Grid; }
 
             // Setters
@@ -43,11 +40,8 @@ namespace MirageEngine::Core::Components
                 m_ChannelName = _type;
                 m_CachedChannelIndex = -1;
             }
-
             void SetRadius(float _radius) { m_Radius = _radius; }
-
             void SetStrength(float _strength) { m_Strength = _strength; }
-
             void SetTargetGrid(InfluenceGrid* _grid) { m_Grid = _grid; }
     };
 } // namespace MirageEngine::Core::Components

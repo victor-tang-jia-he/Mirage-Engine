@@ -66,16 +66,23 @@ namespace MirageEngine::Core::Components
 		float GetDecisionInterval() const { return m_DecisionInterval; }
 		float GetInertia() const { return m_Inertia; }
 		std::vector<AIAction*> GetActions() { return m_actions; }
+        std::vector<AIAction*>& GetActionsRef() { return m_actions; }
 		InfluenceGrid* GetInfluenceGrid() const { return m_Grid; }
 		float GetIntensity(int _channelIndex) const;
 		float GetIntensityByName(const std::string& _name) const;
 		float GetInternalStat(const std::string& _name);
 		const std::string& GetLastDecisionReason() const { return m_LastDecisionReason; }
+        const std::vector<float>& GetLastScores() const { return m_LastScores; }
+        const std::vector<float>& GetSensors() const { return m_CurrentCellIntensity; }
+        const std::unordered_map<std::string, float>& GetInternalStatsMap() const { return m_InternalStats; }
+        InfluenceGrid* GetTargetGrid() { return m_Grid; }
 
 		// Setters
 		void SetDecisionInterval(float _newDecisionInterval) { m_DecisionInterval = _newDecisionInterval; }
 		void SetInertia(float _newInertia) { m_Inertia = _newInertia; }	
 		void SetInfluenceGrid(InfluenceGrid* _newGrid) { m_Grid = _newGrid; }
 		void SetInternalStat(const std::string& _name, float _value) { m_InternalStats[_name] = _value; }
+		void SetTargetGrid(InfluenceGrid* _grid) { m_Grid = _grid; }
+		void SetActions(const std::vector<AIAction*>& _newActions);
 	};
 }

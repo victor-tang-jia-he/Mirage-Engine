@@ -38,6 +38,28 @@ namespace MirageEngine::Core::Components
 
 	void UtilityAgent::OnUpdate(float _dt)
 	{
+		if (m_Grid == nullptr)
+		{
+			Application* app = Application::Instance();
+			if (app)
+			{
+				m_Grid = app->GetSceneGraph()->FindComponentInScene<InfluenceGrid>();
+			}
+		}
+
+		 if (m_actions.empty())
+         {
+             auto allComps = GetOwner()->GetComponents();
+             for (auto& comp : allComps)
+             {
+                 AI::AIAction* action = dynamic_cast<AI::AIAction*>(comp.get());
+                 if (action)
+                 {
+                     AddAction(action);
+                 }
+             }
+         }
+
 		m_DecisionTimer -= _dt;
 		if (m_DecisionTimer <= 0.0f)
 		{
@@ -104,12 +126,10 @@ namespace MirageEngine::Core::Components
 				
 				if (bestAction != m_CurrentAction)
 				{
-					if (m_CurrentAction)
-						m_CurrentAction->OnStop();
 					m_CurrentAction = bestAction;
 					if (m_CurrentAction)
 						m_CurrentAction->OnStart();
-					m_LastDecisionReason = m_CurrentAction ? m_CurrentAction->GetName() + "with score" + std::to_string(highestScore) : "None";
+                    m_LastDecisionReason = m_CurrentAction ? std::string(m_CurrentAction->GetName()) + " with score " + std::to_string(highestScore) : "None";
 				}
 			}
 		}
@@ -140,4 +160,9 @@ namespace MirageEngine::Core::Components
 			return m_InternalStats[_name];
 		return 0.0f;
 	}
+
+	void UtilityAgent::SetActions(const std::vector<AIAction*>& _newActions)
+        {
+            m_actions = _newActions;
+        }
 }

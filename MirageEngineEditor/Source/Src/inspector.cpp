@@ -26,8 +26,9 @@
 #include <Input/input_mapping.h>
 #include <AI/influence_grid.h>
 #include <AI/responsive_curve.h>
+#include <AI/ai_action.h>
 #include <Components/nav_agent.h>
- #include <Logs/log.h>
+#include <Logs/log.h>
 
 DEFINE_LOG_CATEGORY_WITH_COLOR(LogInspector, Loggers::Color::CYAN);
 
@@ -127,6 +128,11 @@ namespace Mirage
 							}
 						}
 						ImGui::EndTable();
+
+						if (auto* agent = dynamic_cast<UtilityAgent*>(comp.get()))
+						{
+							DrawAIMonitor(agent);
+						}
 					}
 					ImGui::PopID();
 				}
@@ -145,6 +151,26 @@ namespace Mirage
 		}
 
 		RenderAddComponentPopup(selectedObj);
+
+		if (ImGui::BeginDragDropTarget())
+                {
+                    if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM"))
+                    {
+                        std::filesystem::path path = (const char*)payload->Data;
+                        std::string name = path.stem().string();
+                        std::string ext = path.extension().string();
+
+                        if (ext == ".h")
+                        {
+                            auto type = entt::resolve(entt::hashed_string{ name.c_str() });
+                            if (type)
+                            {
+                                LOG(logInfo, LogInspector, "Adding Script Component: %s", name.c_str());
+                            }
+                        }
+                    }
+                    ImGui::EndDragDropTarget();
+                }
 
 		UIWrapper::EndWindow();
 	}
@@ -223,13 +249,21 @@ namespace Mirage
 		{
 			if (ImGui::TreeNode(label)) {
 				auto view = value.as_sequence_container();
+				auto itemType = view.value_type();
 				int index = 0;
 
-				if (ImGui::Button("+ Add New Element")) {
-					if (view.value_type() == entt::resolve<float>())
-						view.insert(view.end(), 0.0f);
-					else if (view.value_type() == entt::resolve<std::string>())
-						view.insert(view.end(), std::string("NewChannel"));
+				if (ImGui::Button("+ Add New Element"))
+				{
+                    if (itemType == entt::resolve<float>())
+                        view.insert(view.end(), 0.0f);
+                    else if (itemType == entt::resolve<std::string>())
+                        view.insert(view.end(), std::string("NewElement"));
+                    else if (itemType.is_pointer_like()) 
+                    {
+                        AI::AIAction* nullAction = nullptr;
+                        entt::meta_any nullAny{ nullAction };
+                        view.insert(view.end(), nullAny);
+                    }
 
 					_data.set(instance, value);
 				}
@@ -251,26 +285,82 @@ namespace Mirage
 						std::string itemLabel = "##" + std::to_string(index);
 						entt::meta_any item = *it;
 
-						if (item.type() == entt::resolve<float>()) {
+						if (item.type() == entt::resolve<float>()) 
+						{
 							float val = item.cast<float>();
-							if (ImGui::DragFloat(itemLabel.c_str(), &val, 0.1f)) {
+							if (ImGui::DragFloat(itemLabel.c_str(), &val, 0.1f)) 
+							{
 								it = view.erase(it);
 								it = view.insert(it, val); 
 								_data.set(instance, value);
 							}
 						}
-						else if (item.type() == entt::resolve<std::string>()) {
+						else if (item.type() == entt::resolve<std::string>()) 
+						{
 							std::string str = item.cast<std::string>();
 							char buffer[256];
 							memset(buffer, 0, sizeof(buffer));
 							strncpy(buffer, str.c_str(), sizeof(buffer) - 1);
 
-							if (ImGui::InputText(itemLabel.c_str(), buffer, 256)) {
+							if (ImGui::InputText(itemLabel.c_str(), buffer, 256)) 
+							{
 								it = view.erase(it);
 								it = view.insert(it, std::string(buffer));
 								_data.set(instance, value);
 							}
 						}
+                        else if (itemType.is_pointer_like())
+                        {
+                            void* rawPtr = nullptr;
+                            if (item)
+                            {
+                                if (auto* p = item.try_cast<void*>())
+                                    rawPtr = *p;
+                            }
+
+                            std::string ptrLabel = rawPtr ? "Action Assigned" : "None (Drop)";
+
+                            if (rawPtr)
+                                ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.3f, 0.5f, 0.3f, 1.0f));
+                            ImGui::Button(ptrLabel.c_str(), ImVec2(-1, 0));
+                            if (rawPtr)
+                                ImGui::PopStyleColor();
+
+                            if (ImGui::BeginDragDropTarget())
+                            {
+								if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("HIERARCHY_ITEM"))
+                                {
+                                    GameObject* droppedGO = *(GameObject**)payload->Data;
+                                    auto baseType = itemType.remove_pointer();
+
+                                    for (auto& comp : droppedGO->GetComponents())
+                                    {
+                                        if (entt::resolve(comp->GetType()).info().hash() == baseType.info().hash() || dynamic_cast<AI::AIAction*>(comp.get()))
+                                        {
+                                            it = view.erase(it);
+                                            view.insert(it, comp.get());
+                                            _data.set(instance, value);
+                                            std::cout << "[IA] Action linked successfully!" << std::endl;
+                                            break;
+                                        }
+                                    }
+                                }
+                                else if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM"))
+                                {
+                                    if (payload->Data && payload->DataSize > 0)
+                                    {
+                                        const char* rawPath = static_cast<const char*>(payload->Data);
+                                        std::filesystem::path scriptPath(rawPath);
+                                        std::string scriptName = scriptPath.stem().string();
+
+                                        std::cout << "[DROP] Script from content browser: " << scriptName << std::endl;
+                                        std::cout << "[DROP] Script instanciation not yet implemented for: " << scriptName << std::endl;
+                                    }
+                                }
+                                
+                                ImGui::EndDragDropTarget();
+                            }
+                        }
 						++it;
 						index++;
 					}
@@ -533,30 +623,57 @@ namespace Mirage
 	}
 
 	bool Inspector::ResolveComponent(entt::meta_any _value, const char* _label, entt::meta_data _data, entt::meta_any& _instance)
-	{
-		//if (entt::meta_any ref = *_value; ref)
-		//{
-		//	if (Core::Components::Component* component = ref.try_cast<Core::Components::Component>())
-		//	{
-		//		const char* componentLabel = component ? "Component Assigned" : "None";
-		//		ImGui::TextUnformatted(_label);
-		//		ImGui::SameLine();
-		//		ImGui::Button(componentLabel, ImVec2(-1, 0));
-		//		return true;
-		//	}
-		//}
-		//return false;
+        {
+            bool hasValue = false;
+            std::string btnLabel = "None (Drop GameObject)";
 
-		std::string btnLabel = "None (Drop here)";
-		entt::meta_any ref = *_value;
-		if (ref) btnLabel = "Assigned";
+            if (_value)
+            {
+                auto ptrType = _value.type();
+                if (ptrType.is_pointer())
+                {
+                    entt::meta_any inner = *_value;                    
+                    hasValue = (bool)inner;                          
+                    if (hasValue)
+                        btnLabel = std::string(ptrType.info().name());
+                }
+            }
 
-		ImGui::TextUnformatted(_label);
-		ImGui::SameLine();
-		ImGui::Button((btnLabel + "##" + _label).c_str(), ImVec2(-1, 0));
+            ImGui::TextUnformatted(_label);
+            ImGui::SameLine();
+            if (hasValue)
+                ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.3f, 0.5f, 0.3f, 1.0f));
+            ImGui::Button((btnLabel + "##" + _label).c_str(), ImVec2(-1, 0));
+            if (hasValue)
+                ImGui::PopStyleColor();
 
-		return true;
-	}
+            if (ImGui::BeginDragDropTarget())
+            {
+                if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("HIERARCHY_ITEM"))
+                {
+                    GameObject* droppedGO = *(GameObject**)payload->Data;
+                    auto targetPointerType = _data.type();
+                    auto baseType = targetPointerType.is_pointer() ? targetPointerType.remove_pointer() : targetPointerType;
+
+                    for (auto& comp : droppedGO->GetComponents())
+                    {
+                        auto compMetaType = entt::resolve(comp->GetType());
+                        if (compMetaType == baseType)
+                        {
+                            entt::meta_any typedPointer = targetPointerType.from_void(comp.get());
+                            if (_data.set(_instance, typedPointer))
+                                std::cout << "[DROP] SUCCESS: Linked to " << _label << std::endl;
+                            else
+                                std::cout << "[DROP] ERROR: Setter failed." << std::endl;
+                            break;
+                        }
+                    }
+                }
+                ImGui::EndDragDropTarget();
+            }
+
+            return true;
+        }
 
 	bool Inspector::ResolveResource(entt::meta_any _value, const char* _label, entt::meta_data _data, entt::meta_any& _instance)
 	{
@@ -689,4 +806,64 @@ namespace Mirage
 			ImGui::EndPopup();
 		}
 	}
+
+	void Inspector::DrawAIMonitor(UtilityAgent* _agent)
+        {
+            if (!_agent)
+                return;
+
+            ImGui::Spacing();
+            ImGui::TextColored(ImVec4(0, 1, 1, 1), "--- AI REAL-TIME MONITOR ---");
+
+            if (ImGui::CollapsingHeader("Sensors (Grid Perception)", ImGuiTreeNodeFlags_DefaultOpen))
+            {
+                InfluenceGrid* grid = _agent->GetInfluenceGrid();
+                const auto& sensors = _agent->GetSensors();
+
+                for (size_t i = 0; i < sensors.size(); ++i)
+                {
+                    std::string name = (grid && i < grid->GetChannelsNames().size()) ? grid->GetChannelsNames()[i] : "Channel " + std::to_string(i);
+
+                    ImGui::TextUnformatted(name.c_str());
+                    ImGui::SameLine(100);
+                    ImGui::ProgressBar(sensors[i], ImVec2(-1, 0));
+                }
+            }
+
+            if (ImGui::CollapsingHeader("Internal Stats (Blackboard)", ImGuiTreeNodeFlags_DefaultOpen))
+            {
+                for (auto const& [name, val] : _agent->GetInternalStatsMap())
+                {
+                    ImGui::Text("%s : %.2f", name.c_str(), val);
+                }
+            }
+
+            if (ImGui::CollapsingHeader("Decision Scores", ImGuiTreeNodeFlags_DefaultOpen))
+            {
+                const auto& scores = _agent->GetLastScores();
+                const auto& actions = _agent->GetActions();
+
+                if (!scores.empty() && scores.size() == actions.size())
+                {
+                    for (size_t i = 0; i < actions.size(); ++i)
+                    {
+                        float s = scores[i];
+                        std::string actionName = actions[i]->GetName();
+
+                        bool isActive = (_agent->GetLastDecisionReason().find(actionName) != std::string::npos);
+                        if (isActive)
+                            ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1, 1, 0, 1));
+
+                        ImGui::Text("%s", actionName.c_str());
+                        ImGui::SameLine(100);
+                        ImGui::SliderFloat(("##" + actionName).c_str(), &s, 0.0f, 1.2f, "%.3f", ImGuiSliderFlags_NoInput);
+
+                        if (isActive)
+                            ImGui::PopStyleColor();
+                    }
+                }
+                ImGui::Separator();
+                ImGui::TextWrapped("Reason: %s", _agent->GetLastDecisionReason().c_str());
+            }
+        }
 }

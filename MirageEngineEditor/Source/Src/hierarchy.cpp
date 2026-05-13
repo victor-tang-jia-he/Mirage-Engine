@@ -106,10 +106,12 @@ namespace Mirage
 				ImGui::EndDragDropTarget();
 			}
 
-			if (UIWrapper::IsItemClicked())
+			if (ImGui::IsItemHovered() && ImGui::IsMouseReleased(ImGuiMouseButton_Left))
 			{
-				m_Context->SetSelectedObject(_obj);
-				LOG(logTemp, LogHierarchy, "Selected object: ", name, " (ID: ", id, ")");
+			    if (!ImGui::IsMouseDragging(ImGuiMouseButton_Left))
+			    {
+			        m_Context->SetSelectedObject(_obj);
+			    }
 			}
 			if (ImGui::IsItemClicked(1))
 			{

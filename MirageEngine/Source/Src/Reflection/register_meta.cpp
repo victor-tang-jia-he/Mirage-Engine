@@ -1,4 +1,8 @@
 #include <Reflection/register_meta.h>
+#include "Components/mesh_renderer.h"
+#include <Resources/mesh.h>
+#include <Resources/texture.h>
+#include <AI/ai_action.h>
 
 // Components includes
 #include <GameObject/game_object.h>
@@ -424,6 +428,7 @@ void RegisterMeta::RegisterUtilityAgentMeta()
 
 	utilityAgent.data<&UtilityAgent::SetDecisionInterval, &UtilityAgent::GetDecisionInterval>("Decision Interval");
 	utilityAgent.data<&UtilityAgent::SetInertia, &UtilityAgent::GetInertia>("Inertia");
-
+    utilityAgent.data<&UtilityAgent::SetTargetGrid, &UtilityAgent::GetTargetGrid>("Grid");
 	utilityAgent.data<nullptr, &UtilityAgent::GetLastDecisionReason>("Status");
+    utilityAgent.data<&UtilityAgent::SetActions, &UtilityAgent::GetActionsRef>("Actions List");
 }
