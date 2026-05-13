@@ -350,6 +350,7 @@ extern "C" {
         if (!headerFile.is_open())
             LOG(logFatal, LogScriptManager, "Failed to create: ", headerFilePath.string());
 
+        headerFile << "#pragma once\n";
         headerFile << "#include <Scripting/script_api.h>\n";
         headerFile << "#include <Scripting/script_registry.h>\n\n\n";
 

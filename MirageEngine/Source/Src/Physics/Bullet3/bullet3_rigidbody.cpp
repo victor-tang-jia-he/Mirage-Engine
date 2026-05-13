@@ -218,12 +218,15 @@ void Bullet3RigidBody::SetType(ERigidBodyType _type)
     m_rigidBody->setCollisionFlags(flags);
     m_rigidBody->updateInertiaTensor();
 
-    m_rigidBody->setActivationState(m_Type == ERigidBodyType::Dynamic ? ACTIVE_TAG : ISLAND_SLEEPING);
+    m_rigidBody->setActivationState(m_Type == ERigidBodyType::Dynamic ? ACTIVE_TAG : DISABLE_DEACTIVATION);
 }
 
 void Bullet3RigidBody::SetMass(float _mass)
 {
     if (m_rigidBody == nullptr)
+        return;
+
+    if (m_Type == ERigidBodyType::Static || m_Type == ERigidBodyType::Kinematic)
         return;
 
     m_Mass = _mass;
