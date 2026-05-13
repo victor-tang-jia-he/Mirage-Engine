@@ -260,7 +260,6 @@ void Application::InitGameObject()
 void Application::ShutDown()
 {
     m_SceneGraph.ClearScene();
-    m_Renderer.Shutdown();
     m_EditorMapping.reset();
     m_PlayMapping.reset();
     m_EngineCamera.reset();
@@ -268,4 +267,5 @@ void Application::ShutDown()
     MirageEngine::Core::Resources::ResourceManager::Instance().Shutdown();
     MirageEngine::Core::Physics::PhysicsManager::Instance().Shutdown();
     Debug_Draw.ShutDown();
+    m_Renderer.Shutdown();
 }

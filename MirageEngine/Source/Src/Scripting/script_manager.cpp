@@ -1,7 +1,7 @@
 #include <Scripting/script_manager.h>
 #include <Logs/log.h>
 
-DEFINE_LOG_CATEGORY_WITH_COLOR(LogScriptManager, Loggers::Color::MAGENTA)
+DEFINE_LOG_CATEGORY(LogScriptManager)
 
 namespace MirageEngine::Core::Scripting
 {

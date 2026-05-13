@@ -225,11 +225,7 @@ void Bullet3RigidBody::SetMass(float _mass)
 {
     if (m_rigidBody == nullptr)
         return;
-    if (m_Type == ERigidBodyType::Static || m_Type == ERigidBodyType::Kinematic)
-    {
-        LOG(logWarning, LogPhysics, "Cannot set mass for static or kinematic rigid body");
-        return;
-    }
+
     m_Mass = _mass;
     btVector3 inertia(0, 0, 0);
     if (m_Mass > 0.0f)
