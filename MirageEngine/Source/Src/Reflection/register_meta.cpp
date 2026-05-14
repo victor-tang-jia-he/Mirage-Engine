@@ -68,7 +68,6 @@ void RegisterMeta::RegisterAllMeta(entt::locator<entt::meta_ctx>::node_type hand
 	RegisterUtilityAgentMeta();
 	RegisterResponsiveCurveMeta();
 
-	RegisterLightMeta();
 	RegisterDirectionalLightMeta();
 	RegisterPointLightMeta();
 	RegisterSpotLightMeta();
@@ -188,18 +187,6 @@ void RegisterMeta::RegisterInputMappingMeta()
 	inputMapping.func<&InputMapping::AttachNew>("AttachNew"_hs);
 }
 
-void MirageEngine::RegisterMeta::RegisterLightMeta()
-{
-	entt::meta_factory<Light> light{};
-
-	light.type(entt::type_id<Light>().hash(), "Light");
-
-	light.data<&Light::SetColor, &Light::GetColor>("Color");
-	light.data<&Light::SetIntensity, &Light::GetIntensity>("Intensity");
-
-	LOG(logTemp, LogRegisterMeta, "Registered Light Meta");
-}
-
 void MirageEngine::RegisterMeta::RegisterDirectionalLightMeta()
 {
 	entt::meta_factory<DirectionalLight> directionalLight{};
@@ -208,7 +195,6 @@ void MirageEngine::RegisterMeta::RegisterDirectionalLightMeta()
 	directionalLight.ctor<GameObject*>();
 
 	directionalLight.base<Component>();
-	directionalLight.base<Light>();
 
 	directionalLight.data<&DirectionalLight::SetColor, &DirectionalLight::GetColor>("Color");
 	directionalLight.data<&DirectionalLight::SetIntensity, &DirectionalLight::GetIntensity>("Intensity");

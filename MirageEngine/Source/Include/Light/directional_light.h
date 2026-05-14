@@ -23,11 +23,8 @@ namespace MirageEngine
 		void OnStart() override;
 
 		entt::id_type GetType() const override;
-		MirageEngine::Core::Math::Vector3& GetDirection()
-		{
-			return Direction;
-		}
+		MirageEngine::Core::Math::Vector3 GetDirection() const { return Direction; }
 
-		void SetDirection(const MirageEngine::Core::Math::Vector3& _direction) { Direction = _direction; }
+		void SetDirection(MirageEngine::Core::Math::Vector3 _direction) { Direction = _direction; }
 	};
 } // namespace MirageEngine

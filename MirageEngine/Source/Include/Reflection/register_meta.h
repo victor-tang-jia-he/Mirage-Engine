@@ -24,7 +24,6 @@ namespace MirageEngine
         void RegisterInputMappingMeta();
 
 		// Lights
-		void RegisterLightMeta();
         void RegisterDirectionalLightMeta();
         void RegisterPointLightMeta();
 		void RegisterSpotLightMeta();
