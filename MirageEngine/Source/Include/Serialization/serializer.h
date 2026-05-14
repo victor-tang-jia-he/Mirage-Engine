@@ -23,6 +23,7 @@ namespace MirageEngine
         namespace Math
         {
             class Vector3;
+            class Vector4;
             class Quaternion;
         } // namespace Math
 
@@ -51,6 +52,7 @@ namespace MirageEngine
             static json SerializeMetaData(entt::meta_type _type, entt::meta_data _data, void* _instancePtr);
 
             static json SerializeVector3(Core::Math::Vector3 _vector3);
+            static json SerializeVector4(Core::Math::Vector4 _vector4);
             static json SerializeQuaternion(Core::Math::Quaternion _quaternion);
 
             static bool ConvertJsonVarToJsonFile(json _jTarget);

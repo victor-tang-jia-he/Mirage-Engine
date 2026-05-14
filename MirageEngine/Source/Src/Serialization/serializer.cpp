@@ -142,6 +142,14 @@ json MirageEngine::Serializer::SerializeMetaData(entt::meta_type _type, entt::me
             return jMetaData;
         }
     }
+    else if (actualType == entt::resolve<Math::Vector4>())
+    {
+        if (Math::Vector4* vector4Data = value.try_cast<Math::Vector4>())
+        {
+            jMetaData = SerializeVector4(*vector4Data);
+            return jMetaData;
+        }
+    }
     else if (actualType == entt::resolve<Math::Quaternion>())
     {
         if (Math::Quaternion* quaternionData = value.try_cast<Math::Quaternion>())
@@ -234,6 +242,18 @@ json MirageEngine::Serializer::SerializeVector3(Core::Math::Vector3 _vector3)
     jVector3["Z"] = _vector3.Z;
 
     return jVector3;
+}
+
+json MirageEngine::Serializer::SerializeVector4(Core::Math::Vector4 _vector4)
+{
+    json jVector4;
+
+    jVector4["X"] = _vector4.X;
+    jVector4["Y"] = _vector4.Y;
+    jVector4["Z"] = _vector4.Z;
+    jVector4["W"] = _vector4.W;
+
+    return jVector4;
 }
 
 json MirageEngine::Serializer::SerializeQuaternion(Core::Math::Quaternion _quaternion)

@@ -192,13 +192,13 @@ void Application::InitGameObject()
     //  Light object
     // =========================
 
-    auto light1 = child2->AddComponent<PointLight>();
-    light1->Intensity = 0.5f;
-    light1->Color = { 1, 1, 1, 1 };
+    std::shared_ptr<PointLight> light1 = child2->AddComponent<PointLight>();
+    light1->SetIntensity(0.5f);
+    light1->SetColor({ 1, 1, 1, 1 });
 
-    auto light2 = child2->AddComponent<DirectionalLight>();
-    light2->Intensity = 0.5f;
-    light2->Color = { 1, 1, 1, 1 };
+    std::shared_ptr<DirectionalLight> light2 = child2->AddComponent<DirectionalLight>();
+    light2->SetIntensity(0.5f);
+    light2->SetColor({ 1, 1, 1, 1 });
 
     // =========================
     //  Resources

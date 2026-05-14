@@ -1,19 +1,33 @@
 #pragma once
+#include <Scripting/engine_script_api.h>
 
 #include <Light/i_light.h>
+#include <Components/component.h>
+
 DECLARE_LOG_CATEGORY_EXTERN(LogDirectionalLight)
 
 namespace MirageEngine
 {
-    struct ALIGN16 DirectionalLight : public Light, public MirageEngine::Core::Components::Component, public std::enable_shared_from_this<DirectionalLight>
-    {
-            MirageEngine::Core::Math::Vector3 Direction = { 0, -1, 0 };
+	class ENGINE_API DirectionalLight : public Light, public MirageEngine::Core::Components::Component, public std::enable_shared_from_this<DirectionalLight>
+	{
+	private:
+		MirageEngine::Core::Math::Vector3 Direction{ 0, -1, 0 };
 
-            DirectionalLight();
-            ~DirectionalLight() = default;
+	public:
+		DirectionalLight();
+		DirectionalLight(GameObject* _owner);
+		~DirectionalLight() = default;
 
-            void OnStart() override;
+		void AttachNew(std::shared_ptr<GameObject> _owner);
 
-            entt::id_type GetType() const override;
-    };
+		void OnStart() override;
+
+		entt::id_type GetType() const override;
+		MirageEngine::Core::Math::Vector3& GetDirection()
+		{
+			return Direction;
+		}
+
+		void SetDirection(const MirageEngine::Core::Math::Vector3& _direction) { Direction = _direction; }
+	};
 } // namespace MirageEngine

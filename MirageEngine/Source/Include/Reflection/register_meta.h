@@ -23,6 +23,12 @@ namespace MirageEngine
         void RegisterCameraMeta();
         void RegisterInputMappingMeta();
 
+		// Lights
+		void RegisterLightMeta();
+        void RegisterDirectionalLightMeta();
+        void RegisterPointLightMeta();
+		void RegisterSpotLightMeta();
+
 		// Physics
         void RegisterBoxColliderMeta();
         void RegisterSphereColliderMeta();

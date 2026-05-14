@@ -1,8 +1,4 @@
 #include <Reflection/register_meta.h>
-#include "Components/mesh_renderer.h"
-#include <Resources/mesh.h>
-#include <Resources/texture.h>
-#include <AI/ai_action.h>
 
 // Components includes
 #include <GameObject/game_object.h>
@@ -14,9 +10,14 @@
 #include <Components/capsule_collider.h>
 #include <Components/rigidbody.h>
 
+// Lights includes
+#include <Light/directional_light.h>
+#include <Light/point_light.h>
+#include <Light/spot_light.h>
+
 #include <Physics/common_enum.h>
 
-//#include <Components/input_mapping.h>
+#include <AI/ai_action.h>
 #include <Components/influence_emitter.h>
 #include <AI/influence_grid.h>
 #include <Input/input_mapping.h>
@@ -66,6 +67,11 @@ void RegisterMeta::RegisterAllMeta(entt::locator<entt::meta_ctx>::node_type hand
 	RegisterNavAgentMeta();   
 	RegisterUtilityAgentMeta();
 	RegisterResponsiveCurveMeta();
+
+	RegisterLightMeta();
+	RegisterDirectionalLightMeta();
+	RegisterPointLightMeta();
+	RegisterSpotLightMeta();
 
 	RegisterBoxColliderMeta();
 	RegisterSphereColliderMeta();
@@ -151,7 +157,6 @@ void RegisterMeta::RegisterCameraMeta()
 	camera.data<&Camera::SetPosition, &Camera::GetPosition>("Position");
 	camera.data<&Camera::SetRotation, &Camera::GetRotation>("Rotation");
 
-	camera.func<&Camera::AttachMeta>("Attach"_hs);
 	camera.func<&Camera::AttachNew>("AttachNew"_hs);
 	LOG(logTemp, LogRegisterMeta, "Registered Camera Meta");
 }
@@ -181,6 +186,72 @@ void RegisterMeta::RegisterInputMappingMeta()
 
 	inputMapping.func<&InputMapping::AttachMeta>("Attach"_hs);
 	inputMapping.func<&InputMapping::AttachNew>("AttachNew"_hs);
+}
+
+void MirageEngine::RegisterMeta::RegisterLightMeta()
+{
+	entt::meta_factory<Light> light{};
+
+	light.type(entt::type_id<Light>().hash(), "Light");
+
+	light.data<&Light::SetColor, &Light::GetColor>("Color");
+	light.data<&Light::SetIntensity, &Light::GetIntensity>("Intensity");
+
+	LOG(logTemp, LogRegisterMeta, "Registered Light Meta");
+}
+
+void MirageEngine::RegisterMeta::RegisterDirectionalLightMeta()
+{
+	entt::meta_factory<DirectionalLight> directionalLight{};
+
+	directionalLight.type(entt::type_id<DirectionalLight>().hash(), "DirectionalLight");
+	directionalLight.ctor<GameObject*>();
+
+	directionalLight.base<Component>();
+	directionalLight.base<Light>();
+
+	directionalLight.data<&DirectionalLight::SetColor, &DirectionalLight::GetColor>("Color");
+	directionalLight.data<&DirectionalLight::SetIntensity, &DirectionalLight::GetIntensity>("Intensity");
+	directionalLight.data<&DirectionalLight::SetDirection, &DirectionalLight::GetDirection>("Direction");
+
+	directionalLight.func<&DirectionalLight::AttachNew>("AttachNew"_hs);
+}
+
+void MirageEngine::RegisterMeta::RegisterPointLightMeta()
+{
+	entt::meta_factory<PointLight> pointLight{};
+
+	pointLight.type(entt::type_id<PointLight>().hash(), "PointLight");
+	pointLight.ctor<GameObject*>();
+
+	pointLight.base<Component>();
+	pointLight.base<Light>();
+
+	pointLight.data<&PointLight::SetColor, &PointLight::GetColor>("Color");
+	pointLight.data<&PointLight::SetIntensity, &PointLight::GetIntensity>("Intensity");
+	pointLight.data<&PointLight::SetPosition, &PointLight::GetPosition>("Position");
+
+	pointLight.func<&PointLight::AttachNew>("AttachNew"_hs);
+}
+
+void MirageEngine::RegisterMeta::RegisterSpotLightMeta()
+{
+	entt::meta_factory<SpotLight> spotLight{};
+
+	spotLight.type(entt::type_id<SpotLight>().hash(), "SpotLight");
+	spotLight.ctor<GameObject*>();
+
+	spotLight.base<Component>();
+	spotLight.base<Light>();
+
+	spotLight.data<&SpotLight::SetColor, &SpotLight::GetColor>("Color");
+	spotLight.data<&SpotLight::SetIntensity, &SpotLight::GetIntensity>("Intensity");
+	spotLight.data<&SpotLight::SetPosition, &SpotLight::GetPosition>("Position");
+	spotLight.data<&SpotLight::SetDirection, &SpotLight::GetDirection>("Direction");
+	spotLight.data<&SpotLight::SetInnerCutoff, &SpotLight::GetInnerCutoff>("InnerCutoff");
+	spotLight.data<&SpotLight::SetOuterCutoff, &SpotLight::GetOuterCutoff>("OuterCutoff");
+
+	spotLight.func<&SpotLight::AttachNew>("AttachNew"_hs);
 }
 
 void MirageEngine::RegisterMeta::RegisterBoxColliderMeta()

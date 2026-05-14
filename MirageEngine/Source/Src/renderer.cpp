@@ -269,9 +269,9 @@ void Renderer::ComputeLights()
             continue;
         std::shared_ptr<DirectionalLight> light = weak.lock();
         MirageRHI::DirectionalLightData& d = data.dirLights[data.dirCount++];
-        d.color = light->Color;
-        d.direction = light->Direction;
-        d.intensity = light->Intensity;
+        d.color = light->GetColor();
+        d.direction = light->GetDirection();
+        d.intensity = light->GetIntensity();
     }
 
     for (std::weak_ptr<PointLight>& weak : pointList)
@@ -280,9 +280,9 @@ void Renderer::ComputeLights()
             continue;
         std::shared_ptr<PointLight> light = weak.lock();
         MirageRHI::PointLightData& p = data.pointLights[data.pointCount++];
-        p.color = light->Color;
+        p.color = light->GetColor();
         p.position = light->GetOwner()->Transform.GetWorldMatrix().GetTranslation();
-        p.intensity = light->Intensity;
+        p.intensity = light->GetIntensity();
     }
 
     //for (std::weak_ptr<SpotLight>& weak : spotList)
