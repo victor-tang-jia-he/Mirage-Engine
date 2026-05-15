@@ -9,12 +9,12 @@ using namespace MirageEngine::Core;
 
 SphereCollider::SphereCollider() 
 { 
-    m_Collider = PhysicsManager::Instance().CreateCollider(ECollisionShapeType::Sphere);
+    m_Collider = PhysicsManager::Instance().CreateCollider(ECollisionShapeType::SPHERE);
 }
 
 MirageEngine::Core::Components::SphereCollider::SphereCollider(GameObject* _owner)
 {
-    m_Collider = PhysicsManager::Instance().CreateCollider(ECollisionShapeType::Sphere);
+    m_Collider = PhysicsManager::Instance().CreateCollider(ECollisionShapeType::SPHERE);
 }
 
 void MirageEngine::Core::Components::SphereCollider::AttachMeta(std::shared_ptr<GameObject> _Owner)

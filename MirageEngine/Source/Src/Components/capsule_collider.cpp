@@ -7,12 +7,12 @@ using namespace MirageEngine::Core::Components;
 using namespace MirageEngine::Core::Physics;
 using namespace MirageEngine::Core;
 
-CapsuleCollider::CapsuleCollider() { m_Collider = PhysicsManager::Instance().CreateCollider(ECollisionShapeType::Capsule); }
+CapsuleCollider::CapsuleCollider() { m_Collider = PhysicsManager::Instance().CreateCollider(ECollisionShapeType::CAPSULE); }
 
 MirageEngine::Core::Components::CapsuleCollider::CapsuleCollider(GameObject* _owner)
     : Component(_owner)
 {
-    m_Collider = PhysicsManager::Instance().CreateCollider(ECollisionShapeType::Capsule);
+    m_Collider = PhysicsManager::Instance().CreateCollider(ECollisionShapeType::CAPSULE);
 }
 
 void MirageEngine::Core::Components::CapsuleCollider::AttachMeta(std::shared_ptr<GameObject> _Owner)

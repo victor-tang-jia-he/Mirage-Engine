@@ -16,6 +16,10 @@ using namespace MirageEngine::Core::EventSystem;
 using namespace MirageEngine::Core::Input;
 using namespace MirageEngine::Core::Math;
 
+Camera::Camera(GameObject* _owner)
+    : Component(_owner)
+{};
+
 Camera::Camera(unsigned int _width, unsigned int _height, float _fov, float _near, float _far, const Vector3 _position)
     : ICamera(_width, _height, _fov, _near, _far, _position)
 {}

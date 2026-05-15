@@ -9,13 +9,13 @@ using namespace MirageEngine::Core;
 
 BoxCollider::BoxCollider() 
 { 
-    m_Collider = PhysicsManager::Instance().CreateCollider(ECollisionShapeType::Box);
+    m_Collider = PhysicsManager::Instance().CreateCollider(ECollisionShapeType::BOX);
 }
 
 MirageEngine::Core::Components::BoxCollider::BoxCollider(GameObject* _owner)
     : Component(_owner)
 {
-    m_Collider = PhysicsManager::Instance().CreateCollider(ECollisionShapeType::Box);
+    m_Collider = PhysicsManager::Instance().CreateCollider(ECollisionShapeType::BOX);
 }
 
 void MirageEngine::Core::Components::BoxCollider::AttachMeta(std::shared_ptr<GameObject> _Owner)

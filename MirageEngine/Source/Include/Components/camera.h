@@ -35,7 +35,7 @@ namespace MirageEngine
                 public:
 
                     Camera() = default;
-                    Camera(GameObject* _owner) : Component(_owner) {};
+                    Camera(GameObject* _owner);
                     Camera(unsigned int _width, unsigned int _height, float _fov, float _near, float _far, const MirageEngine::Core::Math::Vector3 _position);
                     ~Camera() = default;
 
