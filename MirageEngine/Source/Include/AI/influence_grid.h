@@ -16,7 +16,7 @@ namespace MirageEngine::Core::Components
             std::vector<float> channels;
     };
 
-    class InfluenceGrid : public Component
+    class InfluenceGrid : public Component, public std::enable_shared_from_this<InfluenceGrid>
     {
         private:
 
@@ -36,11 +36,15 @@ namespace MirageEngine::Core::Components
         public:
 
             InfluenceGrid() = default;
+            InfluenceGrid(GameObject* _owner) {}
             virtual ~InfluenceGrid() = default;
 
             void OnStart() override;
             void OnUpdate(float _dt) override;
             void OnDrawLine() override;
+
+            static void AttachNew(std::shared_ptr<GameObject> _owner);
+
             entt::id_type GetType() const override;
 
             void Bake();

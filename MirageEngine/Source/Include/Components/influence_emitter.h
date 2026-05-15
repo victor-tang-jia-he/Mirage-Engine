@@ -5,7 +5,7 @@
 
 namespace MirageEngine::Core::Components
 {
-    class InfluenceEmitter : public Component
+    class InfluenceEmitter : public Component, public std::enable_shared_from_this<InfluenceEmitter>
     {
         private:
 

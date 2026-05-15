@@ -16,6 +16,12 @@ namespace MirageEngine::Core::Components
 
     void InfluenceGrid::OnDrawLine() { RenderGrid(); }
 
+    void InfluenceGrid::AttachNew(std::shared_ptr<GameObject> _owner)
+    {
+        std::shared_ptr<InfluenceGrid> compPtr = std::make_shared<InfluenceGrid>(_owner.get());
+        _owner->AddComponent<InfluenceGrid>(compPtr);
+    }
+
     entt::id_type InfluenceGrid::GetType() const { return entt::type_id<InfluenceGrid>().hash(); }
 
     void InfluenceGrid::Bake()

@@ -419,7 +419,9 @@ void RegisterMeta::RegisterInfluenceGridMeta()
 	influenceGrid.data<&InfluenceGrid::SetCellSize, &InfluenceGrid::GetCellSize>("Cell Size");
 	influenceGrid.data<&InfluenceGrid::SetDecayRate, &InfluenceGrid::GetDecayRate>("Decay Rate");
 	influenceGrid.data<&InfluenceGrid::SetChannelsNames, &InfluenceGrid::GetChannelsNames>("Channels");
+
 	influenceGrid.func<&InfluenceGrid::Bake>("Bake Grid");
+	influenceGrid.func<&InfluenceGrid::AttachNew>("AttachNew"_hs);
 	LOG(logTemp, LogRegisterMeta, "Registered InfluenceGrid Meta");
 }
 
@@ -475,6 +477,8 @@ void RegisterMeta::RegisterNavAgentMeta()
 	navAgent.data<&NavAgent::SetRecalculateInterval, &NavAgent::GetRecalculateInterval>("Recalculate Interval");
 
 	navAgent.data<&NavAgent::SetProfile, &NavAgent::GetProfile>("Navigation Profile");
+
+	navAgent.func<&NavAgent::AttachNew>("AttachNew"_hs);
 }
 
 void RegisterMeta::RegisterUtilityAgentMeta()
@@ -488,4 +492,6 @@ void RegisterMeta::RegisterUtilityAgentMeta()
     utilityAgent.data<&UtilityAgent::SetTargetGrid, &UtilityAgent::GetTargetGrid>("Grid");
 	utilityAgent.data<nullptr, &UtilityAgent::GetLastDecisionReason>("Status");
     utilityAgent.data<&UtilityAgent::SetActions, &UtilityAgent::GetActionsRef>("Actions List");
+
+	utilityAgent.func<&UtilityAgent::AttachNew>("AttachNew"_hs);
 }

@@ -15,7 +15,7 @@ namespace MirageEngine::Core::Components
 {
 	using namespace MirageEngine::AI;
 
-	class UtilityAgent : public Component
+	class UtilityAgent : public Component, public std::enable_shared_from_this<UtilityAgent>
 	{
 	private:
 		/* Configs */
