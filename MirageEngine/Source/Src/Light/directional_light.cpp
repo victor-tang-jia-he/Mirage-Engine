@@ -23,6 +23,7 @@ namespace MirageEngine
     void DirectionalLight::AttachNew(std::shared_ptr<GameObject> _owner)
     {
         std::shared_ptr<DirectionalLight> compPtr = std::make_shared<DirectionalLight>(_owner.get());
+		LightManager::Instance().AddDirectionalLight(compPtr);
         _owner->AddComponent<DirectionalLight>(compPtr);
     }
 

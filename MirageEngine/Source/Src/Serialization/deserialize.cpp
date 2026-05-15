@@ -170,6 +170,12 @@ void MirageEngine::Deserializer::DeserializeMetaData(entt::meta_type _type, entt
         _data.set(_instance, vec3Data);
         return;
     }
+    else if (actualType == entt::resolve<Math::Vector4>())
+    {
+        Math::Vector4 vec4Data = DeserializeVector4(_jComponent[_data.name()]);
+        _data.set(_instance, vec4Data);
+        return;
+    }
     else if (actualType == entt::resolve<Math::Quaternion>())
     {
         Math::Quaternion quatData = DeserializeQuaternion(_jComponent[_data.name()]);

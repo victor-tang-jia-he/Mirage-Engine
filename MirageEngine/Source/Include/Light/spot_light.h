@@ -20,7 +20,7 @@ namespace MirageEngine
         SpotLight(GameObject* _owner);
         ~SpotLight() = default;
 
-        void AttachNew(std::shared_ptr<GameObject> _owner);
+        static void AttachNew(std::shared_ptr<GameObject> _owner);
 
         void OnStart() override;
 

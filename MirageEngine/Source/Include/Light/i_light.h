@@ -20,9 +20,6 @@ namespace MirageEngine
         LightType m_Type = LightType::None;
 
     public:
-        Light() = default;
-        ~Light() = default;
-
 		LightType GetType() const { return m_Type; }
         MirageEngine::Core::Math::Vector4 GetColor() const { return m_Color; }
         float GetIntensity() const { return m_Intensity; }

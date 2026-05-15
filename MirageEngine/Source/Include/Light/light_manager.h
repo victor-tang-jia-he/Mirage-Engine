@@ -25,7 +25,12 @@ namespace MirageEngine
             return instance;
         }
 
-        void ShutDown() {};
+        void ShutDown() 
+        {
+            m_DirectionalLights.clear();
+            m_PointLights.clear();
+			m_SpotLights.clear();
+        };
 
         void AddDirectionalLight(std::shared_ptr<DirectionalLight> _light);
         void AddPointLight(std::shared_ptr<PointLight> _light);

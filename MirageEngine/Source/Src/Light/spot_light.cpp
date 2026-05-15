@@ -22,6 +22,7 @@ namespace MirageEngine
     void SpotLight::AttachNew(std::shared_ptr<GameObject> _owner)
     {
         std::shared_ptr<SpotLight> compPtr = std::make_shared<SpotLight>(_owner.get());
+		LightManager::Instance().AddSpotLight(compPtr);
         _owner->AddComponent<SpotLight>(compPtr);
     }
 

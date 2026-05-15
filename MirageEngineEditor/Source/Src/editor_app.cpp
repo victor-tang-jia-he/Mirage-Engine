@@ -10,6 +10,7 @@
 #include "Serialization/serializer.h"
 #include "Serialization/deserializer.h"
 #include "Physics/physics_manager.h"
+#include "Light/light_manager.h"
 
 #include <Logs/log.h>
 
@@ -89,6 +90,7 @@ namespace Mirage
 		{
 			m_SceneGraph->ClearScene();
 			MirageEngine::Core::Physics::PhysicsManager::Instance().Initialize();
+			MirageEngine::LightManager::Instance().ShutDown();
 			*m_SceneGraph = *MirageEngine::Deserializer::LoadSceneFromFile("scene.json");
 			m_IsStoped = true;
 			LOG(logTemp, LogEditorApp, "Play mode stopping");

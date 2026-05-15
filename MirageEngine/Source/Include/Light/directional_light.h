@@ -18,7 +18,7 @@ namespace MirageEngine
 		DirectionalLight(GameObject* _owner);
 		~DirectionalLight() = default;
 
-		void AttachNew(std::shared_ptr<GameObject> _owner);
+		static void AttachNew(std::shared_ptr<GameObject> _owner);
 
 		void OnStart() override;
 
