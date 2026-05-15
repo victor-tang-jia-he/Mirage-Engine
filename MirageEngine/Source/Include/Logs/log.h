@@ -5,8 +5,8 @@
 #include <mutex>
 #include <atomic>
 #include <sys/stat.h>
-#include <fstream> // For file output
-#include <csignal> // For signal handling
+#include <fstream>          // For file output
+#include <csignal>          // For signal handling
 #include <cstring>
 #include <filesystem>
 
@@ -21,12 +21,12 @@
 #endif
 
 #ifdef _WIN32
-#    include <io.h>      // _write()
-#    include <windows.h> // STD_ERROR_HANDLE
-#    define write _write
+#    include <io.h>         // _write()
+#    include <windows.h>    // STD_ERROR_HANDLE
+#    define WRITE _write
 #    define STDERR_FILENO 2
 #else
-#    include <unistd.h> // write(), STDERR_FILENO
+#    include <unistd.h>     // write(), STDERR_FILENO
 #endif
 namespace Loggers
 {
@@ -89,16 +89,7 @@ namespace Loggers
 		inline constexpr const char* CYAN = "\033[36m";
 		inline constexpr const char* WHITE = "\033[37m";
 
-		inline constexpr const char* B_BLACK = "\033[90m";
-		inline constexpr const char* B_RED = "\033[91m";
-		inline constexpr const char* B_GREEN = "\033[92m";
-		inline constexpr const char* B_YELLOW = "\033[93m";
-		inline constexpr const char* B_BLUE = "\033[94m";
-		inline constexpr const char* B_MAGENTA = "\033[95m";
-		inline constexpr const char* B_CYAN = "\033[96m";
-		inline constexpr const char* B_WHITE = "\033[97m";
-
-		inline constexpr const char* DEFAULT = "\033[0m";
+		inline constexpr const char* DEFAULT    = "\033[0m";
 	} // namespace Color
 
 	// Default color associated with each log level
@@ -130,13 +121,10 @@ namespace Loggers
 	// ===== GLOBAL GETTER & SETTING =====
 	ENGINE_API LogConfig& GetLogConfig();
 
-	static void EnableFileWriting(bool enable) { GetLogConfig().WriteInFile.store(enable); }
-
-	static void EnableImmediateFlush(bool enable) { GetLogConfig().FlushEveryLog.store(enable); }
-
-	static void EnableTimeOnEveryLog(bool enable) { GetLogConfig().ShowTimeOnEveryLog.store(enable); }
-
-	static void EnableFileNameAndLine(bool enable) { GetLogConfig().ShowFileNameAndLine.store(enable); }
+    static void EnableFileWriting(bool enable) { GetLogConfig().WriteInFile.store(enable); }
+    static void EnableImmediateFlush(bool enable) { GetLogConfig().FlushEveryLog.store(enable); }
+    static void EnableTimeOnEveryLog(bool enable) { GetLogConfig().ShowTimeOnEveryLog.store(enable); }
+    static void EnableFileNameAndLine(bool enable) { GetLogConfig().ShowFileNameAndLine.store(enable); }
 
 	// ===== GLOBAL BUFFER =====
 	// This buffer batches normal log messages before flushing to stdcout.
@@ -389,7 +377,7 @@ namespace Loggers
 		msg.reserve(512);
 
 		// color
-		msg += (type != LogLevel::Fatal ? GetColor(cat, type) : Color::RED);
+		msg += (type != LogLevel::LOG_FATAL ? GetColor(cat, type) : Color::RED);
 
 		if (GetLogConfig().ShowTimeOnEveryLog)
 		{
@@ -418,10 +406,10 @@ namespace Loggers
 		// push buffer
 		LogBuffer::GetInstance().Append(msg);
 
-		if (type == LogLevel::Error || type == LogLevel::Fatal)
+		if (type == LogLevel::LOG_ERROR || type == LogLevel::LOG_FATAL)
 		{
 			LogBuffer::GetInstance().Flush();
-			if (type == LogLevel::Fatal)
+			if (type == LogLevel::LOG_FATAL)
 				std::abort();
 		}
 	}

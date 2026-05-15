@@ -17,9 +17,9 @@ namespace MirageEngine::Core::Resources
 {
     struct LitVertex
     {
-            MirageEngine::Core::Math::Vector3 Position;
-            MirageEngine::Core::Math::Vector3 Normal;
-            MirageEngine::Core::Math::Vector2 UV;
+        Math::Vector3 Position;
+        Math::Vector3 Normal;
+        Math::Vector2 UV;
     };
 
     class Mesh : public IResource
@@ -41,22 +41,17 @@ namespace MirageEngine::Core::Resources
     public:
         std::vector<LitVertex> m_Vertex;
 
-        Mesh(
-            std::shared_ptr<MirageRHI::IVertexLayout> _vao, std::shared_ptr<IBuffer> _vb, std::shared_ptr<IBuffer> _ib, std::vector<LitVertex>&& _vertices, std::vector<uint32_t>&& _indices,
-            size_t _count);
-
+        Mesh(std::shared_ptr<MirageRHI::IVertexLayout> _vao, std::shared_ptr<IBuffer> _vb,
+            std::shared_ptr<IBuffer> _ib, std::vector<LitVertex>&& _vertices, std::vector<uint32_t>&& _indices,size_t _count);
         ~Mesh() override;
 
         void Bind();
 
+		// Getters
         std::shared_ptr<MirageRHI::IVertexLayout> GetVertexLayout() const { return m_VertexLayout; }
-
         std::shared_ptr<MirageRHI::IBuffer> GetVertexBuffer() const { return m_VertexBuffer; }
-
-        static std::shared_ptr<Mesh> const GetFromManager(std::string _name);
-
+	    static std::shared_ptr<Mesh> const GetFromManager(std::string _name);
         std::shared_ptr<MirageRHI::IBuffer> GetIndexBuffer() const { return m_IndexBuffer; }
-
         size_t GetIndicesCount() const { return m_IndexCount; }
 
         void CreateLitVertexLayout();

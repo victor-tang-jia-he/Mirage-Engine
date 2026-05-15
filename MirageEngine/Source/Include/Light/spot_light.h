@@ -10,10 +10,10 @@ namespace MirageEngine
     class ENGINE_API SpotLight : public MirageEngine::Core::Components::Component, public Light, public std::enable_shared_from_this<SpotLight>
     {
     private:
-        MirageEngine::Core::Math::Vector3 Position;
-        MirageEngine::Core::Math::Vector3 Direction = { 0, -1, 0 };
-        float InnerCutoff = 0;
-        float OuterCutoff = 0;
+        MirageEngine::Core::Math::Vector3 m_Position;
+        MirageEngine::Core::Math::Vector3 m_Direction = { 0.f, -1.f, 0.f };
+        float m_InnerCutoff = 0.f;
+        float m_OuterCutoff = 0.f;
 
     public:
         SpotLight();
@@ -25,14 +25,14 @@ namespace MirageEngine
         void OnStart() override;
 
         entt::id_type GetType() const override;
-        MirageEngine::Core::Math::Vector3 GetPosition() const { return Position; }
-        MirageEngine::Core::Math::Vector3 GetDirection() const { return Direction; }
-        float GetInnerCutoff() const { return InnerCutoff; }
-        float GetOuterCutoff() const { return OuterCutoff; }
+        MirageEngine::Core::Math::Vector3 GetPosition() const { return m_Position; }
+        MirageEngine::Core::Math::Vector3 GetDirection() const { return m_Direction; }
+        float GetInnerCutoff() const { return m_InnerCutoff; }
+        float GetOuterCutoff() const { return m_OuterCutoff; }
 
-        void SetPosition(const MirageEngine::Core::Math::Vector3& _position) { Position = _position; }
-        void SetDirection(const MirageEngine::Core::Math::Vector3& _direction) { Direction = _direction; }
-        void SetInnerCutoff(float _inner) { InnerCutoff = _inner; }
-        void SetOuterCutoff(float _outer) { OuterCutoff = _outer; }
+        void SetPosition(const MirageEngine::Core::Math::Vector3& _position) { m_Position = _position; }
+        void SetDirection(const MirageEngine::Core::Math::Vector3& _direction) { m_Direction = _direction; }
+        void SetInnerCutoff(float _inner) { m_InnerCutoff = _inner; }
+        void SetOuterCutoff(float _outer) { m_OuterCutoff = _outer; }
     };
 } // namespace MirageEngine

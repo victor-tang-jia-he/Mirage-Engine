@@ -37,10 +37,10 @@ void MirageRHI::OpenGLCommandBuffer::Draw(uint32_t _indexCount, DrawMode _mode)
     GLenum glMode;
     switch (_mode)
     {
-        case DrawMode::Lines:
+        case DrawMode::LINES:
             glMode = GL_LINES;
             break;
-        case DrawMode::Points:
+        case DrawMode::POINTS:
             glMode = GL_POINTS;
             break;
         default:

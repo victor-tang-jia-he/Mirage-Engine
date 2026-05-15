@@ -10,20 +10,19 @@ namespace MirageRHI
 
     class IShader
     {
-        public:
+    public:
+        enum class ShaderType
+        {
+            NONE,
+            VERTEX,
+            FRAGMENT
+        };
 
-            enum class ShaderType
-            {
-                None,
-                Vertex,
-                Fragment
-            };
+        virtual ~IShader() = default;
 
-            virtual ~IShader() = default;
+        virtual bool Create(const char* _shaderPath, ShaderType _type) = 0;
+        virtual void Destroy() = 0;
 
-            virtual bool Create(const char* _shaderPath, ShaderType _type) = 0;
-            virtual void Destroy() = 0;
-
-            virtual OpenGLShader& API_OpenGL() { throw std::runtime_error("Bad API Call : object is not an OpenGLShader"); }
+        virtual OpenGLShader& API_OpenGL() { throw std::runtime_error("Bad API Call : object is not an OpenGLShader"); }
     };
 } // namespace MirageRHI

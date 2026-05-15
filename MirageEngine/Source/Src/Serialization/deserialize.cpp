@@ -294,8 +294,8 @@ AI::NavProfile MirageEngine::Deserializer::DeserializeNavProfile(json _jNavProfi
 {
 	AI::NavProfile navProfile;
 
-	navProfile.influenceWeights = DeserializeVector<float>(_jNavProfile["Weights"]);
-	navProfile.canWalkDiagonal = _jNavProfile["Can Walk Diagonal"].get<bool>();
+	navProfile.InfluenceWeights = DeserializeVector<float>(_jNavProfile["Weights"]);
+	navProfile.CanWalkDiagonal = _jNavProfile["Can Walk Diagonal"].get<bool>();
 
     return navProfile;
 }

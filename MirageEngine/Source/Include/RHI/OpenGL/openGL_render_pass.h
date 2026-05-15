@@ -9,22 +9,18 @@ namespace MirageRHI
     // Clear Framebuffer before drawing
     class OpenGLRenderPass : public IRenderPass
     {
-        private:
+    private:
+        float m_ClearColor[4];
+        float m_ClearDepth = 1.0f;
+        GLbitfield m_ClearMask = GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT;
 
-            float m_ClearColor[4];
-            float m_ClearDepth = 1.0f;
-            GLbitfield m_ClearMask = GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT;
+    public:
+        void Create(MirageEngine::Core::Math::Vector4 _color, float _depth) override;
+        void Destroy() override {}
 
-        public:
+        OpenGLRenderPass& API_OpenGL() override { return *this; }
 
-            void Create(MirageEngine::Core::Math::Vector4 _color, float _depth) override;
-
-            void Destroy() override {}
-
-            OpenGLRenderPass& API_OpenGL() override { return *this; }
-
-            void Begin() override;
-
-            void End() override {}
+        void Begin() override;
+        void End() override {}
     };
 } // namespace MirageRHI

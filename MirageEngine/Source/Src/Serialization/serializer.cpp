@@ -277,8 +277,8 @@ json MirageEngine::Serializer::SerializeNavProfile(AI::NavProfile _navProfile)
 {
     json jNavProfile;
 
-	jNavProfile["Weights"] = SerializeVector(_navProfile.influenceWeights);
-    jNavProfile["Can Walk Diagonal"] = _navProfile.canWalkDiagonal;
+	jNavProfile["Weights"] = SerializeVector(_navProfile.InfluenceWeights);
+    jNavProfile["Can Walk Diagonal"] = _navProfile.CanWalkDiagonal;
 
     return jNavProfile;
 }

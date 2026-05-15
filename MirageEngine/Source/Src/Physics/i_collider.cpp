@@ -9,16 +9,16 @@ bool ICollider::SetRigidbody(std::shared_ptr<IRigidBody> _rigidbody)
     if (!_rigidbody)
         return false;
 
-    if (m_RigidBody.get() == _rigidbody.get())
+    if (p_RigidBody.get() == _rigidbody.get())
     {
         LOG(logWarning, LogCat::System, "Trying to set the rigidbody with the same rigidbody");
         return false;
     }
-    else if (m_RigidBody) 
+    else if (p_RigidBody) 
     { 
-        m_RigidBody->RemoveCollider(this);
+        p_RigidBody->RemoveCollider(this);
     }
 
-    m_RigidBody = _rigidbody;
+    p_RigidBody = _rigidbody;
     return true;
 }

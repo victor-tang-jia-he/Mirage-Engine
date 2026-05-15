@@ -8,9 +8,15 @@ namespace MirageEngine::AI
 	class ResponsiveCurve
 	{
 	public:
-		enum class CurveType { Linear, Exponential, Logistic };
+		enum class CurveType
+		{
+			LINEAR,
+			EXPONENTIAL,
+			LOGISTIC
+		};
+
 	private:
-		CurveType m_Type = CurveType::Linear;
+		CurveType m_Type = CurveType::LINEAR;
 		float m_Slope = 1.0f;
 		// For Exponential and logistical curves
 		float m_Exponent = 2.0f;

@@ -10,13 +10,13 @@ namespace MirageEngine
 {
     SpotLight::SpotLight()
     {
-        m_Type = LightType::Spot;
+        p_Type = LightType::SPOT;
     }
 
     SpotLight::SpotLight(GameObject* _owner)
 		: Component(_owner)
     {
-        m_Type = LightType::Spot;
+        p_Type = LightType::SPOT;
     }
 
     void SpotLight::AttachNew(std::shared_ptr<GameObject> _owner)

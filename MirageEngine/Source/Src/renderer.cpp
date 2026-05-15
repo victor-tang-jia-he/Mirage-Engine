@@ -208,9 +208,9 @@ void MirageEngine::Renderer::ClassCreation()
     m_SwapChain->Create(2, m_Width, m_Height);
     m_RenderPass->Create(Vector4(0.f, 0.5f, 0.5f, 1.0f), 1.0f);
     ScreenPipelineCreation();
-    m_PerFrameUBO->Create(MirageRHI::UBOBinding::PerFrame, sizeof(MirageRHI::PerFrameData));
-    m_PerObjectUBO->Create(MirageRHI::UBOBinding::PerObject, sizeof(MirageRHI::PerObjectData));
-    m_LightUBO->Create(MirageRHI::UBOBinding::Lights, sizeof(MirageRHI::LightUBOData));
+    m_PerFrameUBO->Create(MirageRHI::UBOBinding::PER_FRAME, sizeof(MirageRHI::PerFrameData));
+    m_PerObjectUBO->Create(MirageRHI::UBOBinding::PER_OBJECT, sizeof(MirageRHI::PerObjectData));
+    m_LightUBO->Create(MirageRHI::UBOBinding::LIGHTS, sizeof(MirageRHI::LightUBOData));
     m_CommandBuffer->Create();
 
     LOG(logTemp, LogMirageRenderer, "All Classes successfully Created");
@@ -218,14 +218,14 @@ void MirageEngine::Renderer::ClassCreation()
 
 void MirageEngine::Renderer::ScreenPipelineCreation()
 {
-    m_ScreenPipelineParameters->Create(MirageRHI::CullingType::None, false);
+    m_ScreenPipelineParameters->Create(MirageRHI::CullingType::NONE, false);
 
     // Creation of single use shader objects for screen rendering pipeline
     std::shared_ptr<MirageRHI::IShader> screenVertShader = m_RenderInterface->InstantiateShader();
     std::shared_ptr<MirageRHI::IShader> screenFragShader = m_RenderInterface->InstantiateShader();
 
-    screenVertShader->Create("Assets/Shaders/screen.vert", MirageRHI::IShader::ShaderType::Vertex);
-    screenFragShader->Create("Assets/Shaders/screen.frag", MirageRHI::IShader::ShaderType::Fragment);
+    screenVertShader->Create("Assets/Shaders/screen.vert", MirageRHI::IShader::ShaderType::VERTEX);
+    screenFragShader->Create("Assets/Shaders/screen.frag", MirageRHI::IShader::ShaderType::FRAGMENT);
 
     m_ScreenPipeline->Create(screenVertShader, screenFragShader, m_ScreenPipelineParameters);
 
@@ -259,9 +259,9 @@ void Renderer::ComputeLights()
 {
     MirageRHI::LightUBOData data{};
 
-    std::vector<std::weak_ptr<DirectionalLight>> dirList = Light_Manager.GetDirectionalLights();
-    std::vector<std::weak_ptr<PointLight>> pointList = Light_Manager.GetPointLights();
-    std::vector<std::weak_ptr<SpotLight>> spotList = Light_Manager.GetSpotLights();
+    std::vector<std::weak_ptr<DirectionalLight>> dirList = LIGHT_MANAGER.GetDirectionalLights();
+    std::vector<std::weak_ptr<PointLight>> pointList = LIGHT_MANAGER.GetPointLights();
+    std::vector<std::weak_ptr<SpotLight>> spotList = LIGHT_MANAGER.GetSpotLights();
 
     for (std::weak_ptr<DirectionalLight>& weak : dirList)
     {
@@ -269,9 +269,9 @@ void Renderer::ComputeLights()
             continue;
         std::shared_ptr<DirectionalLight> light = weak.lock();
         MirageRHI::DirectionalLightData& d = data.dirLights[data.dirCount++];
-        d.color = light->GetColor();
-        d.direction = light->GetDirection();
-        d.intensity = light->GetIntensity();
+        d.Color = light->GetColor();
+        d.Direction = light->GetDirection();
+        d.Intensity = light->GetIntensity();
     }
 
     for (std::weak_ptr<PointLight>& weak : pointList)
@@ -280,9 +280,9 @@ void Renderer::ComputeLights()
             continue;
         std::shared_ptr<PointLight> light = weak.lock();
         MirageRHI::PointLightData& p = data.pointLights[data.pointCount++];
-        p.color = light->GetColor();
-        p.position = light->GetOwner()->Transform.GetWorldMatrix().GetTranslation();
-        p.intensity = light->GetIntensity();
+        p.Color = light->GetColor();
+        p.Position = light->GetOwner()->Transform.GetWorldMatrix().GetTranslation();
+        p.Intensity = light->GetIntensity();
     }
 
     //for (std::weak_ptr<SpotLight>& weak : spotList)

@@ -5,17 +5,15 @@ namespace MirageEngine::Core::Resources
     // Interface
     class IResource
     {
-            friend class ResourceManager;
+        friend class ResourceManager;
 
-        protected:
+    protected:
+        std::string p_Name;
+        std::string p_Path;
 
-            std::string p_Name;
-            std::string p_Path;
+    public:
+        virtual ~IResource() = default;
 
-        public:
-
-            virtual ~IResource() = default;
-
-            std::string GetName() { return p_Name; }
+        std::string GetName() { return p_Name; }
     };
 } // namespace MirageEngine::Core::Resources

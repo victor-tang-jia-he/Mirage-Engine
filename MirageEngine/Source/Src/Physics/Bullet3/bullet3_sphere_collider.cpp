@@ -14,13 +14,13 @@ Bullet3SphereCollider::~Bullet3SphereCollider()
 void Bullet3SphereCollider::Create()
 {
     m_CollisionShape = new btSphereShape(m_Radius);
-    if (m_Offset.IsNull() && m_Rot.IsNull())
+    if (p_Offset.IsNull() && p_Rot.IsNull())
         return;
 
     m_LocalTransform.setIdentity();
-    m_LocalTransform.setOrigin(btVector3(m_Offset.X, m_Offset.Y, m_Offset.Z));
-    m_LocalTransform.setRotation(btQuaternion(m_Rot.X, m_Rot.Y, m_Rot.Z, m_Rot.W));
-    m_CollisionShape->setLocalScaling(btVector3(m_Scale.X, m_Scale.Y, m_Scale.Z));
+    m_LocalTransform.setOrigin(btVector3(p_Offset.X, p_Offset.Y, p_Offset.Z));
+    m_LocalTransform.setRotation(btQuaternion(p_Rot.X, p_Rot.Y, p_Rot.Z, p_Rot.W));
+    m_CollisionShape->setLocalScaling(btVector3(p_Scale.X, p_Scale.Y, p_Scale.Z));
 }
 
 void Bullet3SphereCollider::SetOffset(Vector3 _offset, Quaternion _rotation)
@@ -28,9 +28,9 @@ void Bullet3SphereCollider::SetOffset(Vector3 _offset, Quaternion _rotation)
     if (!m_CollisionShape)
         return;
 
-    m_Rot = _rotation;
-    m_Offset = _offset;
-    m_bIsDirty = true;
+    p_Rot = _rotation;
+    p_Offset = _offset;
+    p_bIsDirty = true;
 }
 
 void Bullet3SphereCollider::SetRadius(float _radius)
@@ -42,11 +42,11 @@ void Bullet3SphereCollider::SetRadius(float _radius)
 
 btTransform Bullet3SphereCollider::GetTransform()
 {
-    if (m_bIsDirty)
+    if (p_bIsDirty)
     {
         m_LocalTransform.setIdentity();
-        m_LocalTransform.setOrigin(btVector3(m_Offset.X, m_Offset.Y, m_Offset.Z));
-        m_LocalTransform.setRotation(btQuaternion(m_Rot.X, m_Rot.Y, m_Rot.Z, m_Rot.W));
+        m_LocalTransform.setOrigin(btVector3(p_Offset.X, p_Offset.Y, p_Offset.Z));
+        m_LocalTransform.setRotation(btQuaternion(p_Rot.X, p_Rot.Y, p_Rot.Z, p_Rot.W));
     }
     return m_LocalTransform;
 }
