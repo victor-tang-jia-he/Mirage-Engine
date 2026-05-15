@@ -8,19 +8,16 @@ namespace MirageRHI
 {
     struct OpenGLPipelineParameters : public IPipelineParameters
     {
-        private:
+    private:
+        CullingType m_CullingType = CullingType::NONE;
+        bool m_bDepthTest = false;
 
-            CullingType m_CullingType = CullingType::None;
-            bool m_bDepthTest = false;
+    public:
+        void Create(CullingType _cullingType = CullingType::FRONT, bool _depthTest = false) override;
+        void Destroy() override {}
 
-        public:
+        OpenGLPipelineParameters& API_OpenGL() override { return *this; }
 
-            void Create(CullingType _cullingType = CullingType::Front, bool _depthTest = false) override;
-
-            void Destroy() override {}
-
-            OpenGLPipelineParameters& API_OpenGL() override { return *this; }
-
-            void ApplyParameters() const;
+        void ApplyParameters() const;
     };
 } // namespace MirageRHI

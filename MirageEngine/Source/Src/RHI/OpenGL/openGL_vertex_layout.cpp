@@ -74,10 +74,10 @@ void MirageRHI::OpenGLVertexLayout::SetLayout()
 
         switch (m_Attributes[index]->Type)
         {
-            case AttributeType::Float:
+            case AttributeType::FLOAT:
                 type = GL_FLOAT;
                 break;
-            case AttributeType::Int:
+            case AttributeType::INT:
                 type = GL_INT;
                 break;
             default:

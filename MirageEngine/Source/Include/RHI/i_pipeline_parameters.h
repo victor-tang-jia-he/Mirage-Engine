@@ -13,18 +13,17 @@ namespace MirageRHI
 
     enum class CullingType
     {
-        None,
-        Front,
-        Back
+        NONE,
+        FRONT,
+        BLACK
     };
 
     struct IPipelineParameters
     {
-        public:
+    public:
+        virtual void Create(CullingType _cullingType, bool _depthTest) = 0;
+        virtual void Destroy() = 0;
 
-            virtual void Create(CullingType _cullingType, bool _depthTest) = 0;
-            virtual void Destroy() = 0;
-
-            virtual OpenGLPipelineParameters& API_OpenGL() { throw std::runtime_error("Bad API Call : object is not an OpenGLPipelineParameters"); }
+        virtual OpenGLPipelineParameters& API_OpenGL() { throw std::runtime_error("Bad API Call : object is not an OpenGLPipelineParameters"); }
     };
 } // namespace MirageRHI

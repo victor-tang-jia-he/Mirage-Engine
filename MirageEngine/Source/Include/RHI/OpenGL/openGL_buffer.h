@@ -11,7 +11,7 @@ namespace MirageRHI
         private:
 
             uint32_t m_Buffer = 0;
-            BufferType m_Type = BufferType::None;
+            BufferType m_Type = BufferType::NONE;
 
         public:
 

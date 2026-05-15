@@ -15,7 +15,7 @@ void MirageRHI::OpenGLPipelineParameters::Create(CullingType _cullingType, bool 
 
 void MirageRHI::OpenGLPipelineParameters::ApplyParameters() const
 {
-    if (m_CullingType == CullingType::None)
+    if (m_CullingType == CullingType::NONE)
     {
         glDisable(GL_CULL_FACE);
     }
@@ -24,10 +24,10 @@ void MirageRHI::OpenGLPipelineParameters::ApplyParameters() const
         glEnable(GL_CULL_FACE);
         switch (m_CullingType)
         {
-            case CullingType::Front:
+            case CullingType::FRONT:
                 glCullFace(GL_FRONT);
                 break;
-            case CullingType::Back:
+            case CullingType::BLACK:
                 glCullFace(GL_BACK);
                 break;
         }

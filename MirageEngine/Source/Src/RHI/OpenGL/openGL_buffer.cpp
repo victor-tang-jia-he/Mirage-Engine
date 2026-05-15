@@ -16,18 +16,18 @@ void OpenGLBuffer::Create(const void* _data, size_t _size, BufferType _type)
 
     switch (m_Type)
     {
-        case BufferType::Vertices:
+        case BufferType::VERTICES:
             glGenBuffers(1, &m_Buffer);
             glBindBuffer(GL_ARRAY_BUFFER, m_Buffer);
             glBufferData(GL_ARRAY_BUFFER, _size, _data, GL_STATIC_DRAW);
             break;
 
-        case BufferType::Indices:
+        case BufferType::INDICES:
             glGenBuffers(1, &m_Buffer);
             glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_Buffer);
             glBufferData(GL_ELEMENT_ARRAY_BUFFER, _size, _data, GL_STATIC_DRAW);
             break;
-        case BufferType::VerticesDynamic:
+        case BufferType::VERTICES_DYNAMIC:
             glGenBuffers(1, &m_Buffer);
             glBindBuffer(GL_ARRAY_BUFFER, m_Buffer);
             glBufferData(GL_ARRAY_BUFFER, _size, _data, GL_DYNAMIC_DRAW);
@@ -56,12 +56,12 @@ void OpenGLBuffer::Bind() const
 {
     switch (m_Type)
     {
-        case BufferType::Vertices:
-        case BufferType::VerticesDynamic:
+        case BufferType::VERTICES:
+        case BufferType::VERTICES_DYNAMIC:
             glBindBuffer(GL_ARRAY_BUFFER, m_Buffer);
             break;
 
-        case BufferType::Indices:
+        case BufferType::INDICES:
             glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_Buffer);
             break;
     }

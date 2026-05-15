@@ -15,7 +15,7 @@ namespace MirageRHI
         private:
 
             GLuint m_Shader = 0;
-            ShaderType m_Type = ShaderType::None;
+            ShaderType m_Type = ShaderType::NONE;
 
         public:
 

@@ -7,9 +7,9 @@ bool MirageRHI::OpenGLShader::Create(const char* _shaderPath, ShaderType _type)
 {
     m_Type = _type;
     unsigned int glType = 0;
-    if (_type == ShaderType::Vertex)
+    if (_type == ShaderType::VERTEX)
         glType = GL_VERTEX_SHADER;
-    else if (_type == ShaderType::Fragment)
+    else if (_type == ShaderType::FRAGMENT)
         glType = GL_FRAGMENT_SHADER;
     else
         LOG(logError, LogRHIShader, "Unknown Shader Type Used!");
