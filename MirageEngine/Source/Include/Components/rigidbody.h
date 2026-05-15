@@ -2,7 +2,6 @@
 
 #include <Components/component.h>
 #include <Components/physics_components_interface.h>
-#include <Logs/log_macro.h>
 
 DECLARE_LOG_CATEGORY_EXTERN(LogComponentRigidBody)
 
@@ -18,53 +17,51 @@ namespace MirageEngine
             class Transform;
         } // namespace Components
 
-        namespace Math
-        {
-            struct Quaternion;
-            struct Vector3;
-        } // namespace Math
-
         namespace Physics
         {
             class IRigidBody;
             enum class ERigidBodyType;
             enum class ECollisionGroup;
             enum class ECollisionResponse;
-        }
+        } // namespace Physics
 
         namespace Components
         {
             class Rigidbody : public Components::Component
             {
-                    Physics::IRigidBody* m_Rigidbody;
+            private:
+                std::shared_ptr<Physics::IRigidBody> m_Rigidbody;
 
-                public:
+            public:
 
-                    Rigidbody(ICCollider* _shape, Physics::ERigidBodyType _type);
-                    ~Rigidbody();
+                Rigidbody(ICCollider* _shape, Physics::ERigidBodyType _type);
+                Rigidbody(GameObject* _owner);
+                ~Rigidbody();
 
-                    entt::id_type GetType() const override { return 0; }
+                entt::id_type GetType() const override;
 
-                    void Init() override {};
-                    void Update() override;
+                void AttachMeta(std::shared_ptr<GameObject> _Owner);
+                static void AttachNew(std::shared_ptr<GameObject> _owner);
 
-                    void OnTransformChanged(Components::Transform& _newTransform);
-                    void SetType(Physics::ERigidBodyType _type);
+                void OnTransformChanged(Components::Transform& _newTransform);
+                void SetRigidBodyType(Physics::ERigidBodyType _type);
 
-                    void AddCollider(ICCollider* _newCollider);
-                    void RemoveCollider(ICCollider* _collider);
+                void AddCollider(ICCollider* _newCollider);
+                void RemoveCollider(ICCollider* _collider);
 
-                    void SetMass(float _mass);
+                void SetMass(float _mass);
 
-                    void SetCollisionGroup(Physics::ECollisionGroup _group);
+                void SetCollisionGroup(Physics::ECollisionGroup _group);
+                void SetCollisionMask(Physics::ECollisionGroup _mask);
+                void SetCollisionResponse(Physics::ECollisionResponse _response);
 
-                    void SetCollisionMask(Physics::ECollisionGroup _mask);
+                Physics::ERigidBodyType GetRigidBodyType() const;
 
-                    void SetCollisionResponse(Physics::ECollisionResponse response);
+                float GetMass() const;
 
-                    Physics::ECollisionGroup GetCollisionGroup() const;
-
-                    Physics::ECollisionGroup GetCollisionMask() const;
+                Physics::ECollisionGroup GetCollisionGroup() const;
+                Physics::ECollisionGroup GetCollisionMask() const;
+                Physics::ECollisionResponse GetCollisionResponse() const;
             };
         } // namespace Components
     } // namespace Core

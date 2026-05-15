@@ -1,7 +1,6 @@
 #pragma once
 
 #include <i_vertex_layout.h>
-#include <unordered_map>
 
 namespace MirageRHI
 {
@@ -16,6 +15,7 @@ namespace MirageRHI
         void Destroy() override;
 
         OpenGLVertexLayout& API_OpenGL() override { return *this; }
+
         uint32_t GetVertexAttributesObjectHandle() const { return m_VAO; }
 
         void AddAttribute(std::shared_ptr<VertexAttribute> _newAttribute, uint32_t _index) override;
@@ -24,4 +24,4 @@ namespace MirageRHI
         void ClearAttributes() override;
         void SetLayout();
     };
-}
+} // namespace MirageRHI

@@ -2,9 +2,11 @@
 
 #include <SceneGraph/scene_graph.h>
 #include <Components/camera.h>
+#include <Camera/i_camera.h>
 
 #include <vector3.h>
 #include <matrix4.h>
+#include <array>
 
 #include <imgui.h>
 #include <ImGuizmo.h>
@@ -16,13 +18,12 @@ using namespace MirageEngine::Core;
 static ImGuizmo::OPERATION mCurrentGizmoOperation(ImGuizmo::TRANSLATE);
 static ImGuizmo::MODE mCurrentGizmoMode(ImGuizmo::WORLD);
 
-void MirageEditor::Gizmo::EditTransform(MirageEngine::SceneGraph* _sceneGraph)
+void MirageEditor::Gizmo::EditTransform(MirageEngine::SceneGraph* _sceneGraph, std::shared_ptr<ICamera> _camera)
 {
 	if (!_sceneGraph->GetSelectedObject())
 		return;
 
 	MirageEngine::Core::Math::Matrix4 worldMatrix(_sceneGraph->GetSelectedObject()->Transform.GetWorldMatrix());
-	std::shared_ptr<Components::Camera> mainCamera = _sceneGraph->GetActiveCamera();
 
 	if (ImGui::IsKeyPressed(ImGuiKey_T))
 	{
@@ -55,8 +56,8 @@ void MirageEditor::Gizmo::EditTransform(MirageEngine::SceneGraph* _sceneGraph)
 	}
 
 	bool manipulated = ImGuizmo::Manipulate(
-		mainCamera->GetView().ToArray().data(),
-		mainCamera->GetPerspective().ToArray().data(),
+		_camera->GetView().ToArray().data(),
+		_camera->GetPerspective().ToArray().data(),
 		mCurrentGizmoOperation,
 		mCurrentGizmoMode,
 		worldMatrix.M); 
@@ -83,7 +84,7 @@ void MirageEditor::Gizmo::EditTransform(MirageEngine::SceneGraph* _sceneGraph)
 
 void MirageEditor::Gizmo::EditView(MirageEngine::SceneGraph* _sceneGraph)
 {
-	std::shared_ptr<Components::Camera> mainCamera = _sceneGraph->GetActiveCamera();
+	/*std::shared_ptr<Components::Camera> mainCamera = _sceneGraph->GetActiveCamera();
 	float* view = mainCamera->GetView().ToArray().data();
 
 	ImVec2 size = ImGui::GetContentRegionAvail();
@@ -91,8 +92,7 @@ void MirageEditor::Gizmo::EditView(MirageEngine::SceneGraph* _sceneGraph)
 
 	ImGuizmo::ViewManipulate(view, 1, pos, size, 0);
 
-
 	Math::Matrix4 viewMatrix(view);
 	
-	mainCamera->Transform().SetLocalMatrix(viewMatrix.Inverse().Transpose());
+	mainCamera->Transform().SetLocalMatrix(viewMatrix.Inverse().Transpose());*/
 }

@@ -1,12 +1,15 @@
 #include <Resources/mesh.h>
 #include <i_buffer.h>
 #include <i_vertex_layout.h>
+#include <Resources/resource_manager.h>
+#include <Logs/log.h>
 
 DEFINE_LOG_CATEGORY(LogMesh)
 
 using namespace MirageEngine::Core::Resources;
 
-Mesh::Mesh(std::shared_ptr<MirageRHI::IVertexLayout> _vao, std::shared_ptr<IBuffer> _vb, std::shared_ptr<IBuffer> _ib, std::vector<LitVertex>&& _vertices, std::vector<uint32_t>&& _indices, size_t _count)
+Mesh::Mesh(
+    std::shared_ptr<MirageRHI::IVertexLayout> _vao, std::shared_ptr<IBuffer> _vb, std::shared_ptr<IBuffer> _ib, std::vector<LitVertex>&& _vertices, std::vector<uint32_t>&& _indices, size_t _count)
     : m_VertexLayout(_vao)
     , m_VertexBuffer(_vb)
     , m_IndexBuffer(_ib)
@@ -24,7 +27,7 @@ Mesh::~Mesh()
 {
     m_IndexCount = 0;
     m_VertexBuffer = nullptr;
-    m_IndexBuffer  = nullptr;
+    m_IndexBuffer = nullptr;
     LOG(logTemp, LogMesh, "Mesh ", p_Name, " destroyed !");
 }
 
@@ -38,13 +41,19 @@ void Mesh::Bind()
     if (!m_bIsUpload)
     {
         m_bIsUpload = true;
-        m_VertexBuffer->Create(m_Vertex.data(), m_Vertex.size() * sizeof(LitVertex), MirageRHI::IBuffer::BufferType::Vertices);
-        m_IndexBuffer->Create(m_Index.data(), m_Index.size() * sizeof(uint32_t), MirageRHI::IBuffer::BufferType::Indices);
+        m_VertexBuffer->Create(m_Vertex.data(), m_Vertex.size() * sizeof(LitVertex), MirageRHI::IBuffer::BufferType::VERTICES);
+        m_IndexBuffer->Create(m_Index.data(), m_Index.size() * sizeof(uint32_t), MirageRHI::IBuffer::BufferType::INDICES);
+
         m_VertexLayout->Create();
         // Clear CPU-side data after uploading to GPU
-        m_Vertex.clear();
-        m_Index.clear();
+        //m_Vertex.clear();
+        //m_Index.clear();
     }
+}
+
+std::shared_ptr<Mesh> const MirageEngine::Core::Resources::Mesh::GetFromManager(std::string _name)
+{
+    return ResourceManager::Instance().GetMesh(_name);
 }
 
 void MirageEngine::Core::Resources::Mesh::CreateLitVertexLayout()
@@ -52,7 +61,7 @@ void MirageEngine::Core::Resources::Mesh::CreateLitVertexLayout()
     std::shared_ptr<MirageRHI::VertexAttribute> positionAttr = std::make_shared<MirageRHI::VertexAttribute>();
     positionAttr->Name = "position";
     positionAttr->Size = 3;
-    positionAttr->Type = MirageRHI::AttributeType::Float;
+    positionAttr->Type = MirageRHI::AttributeType::FLOAT;
     positionAttr->Normalized = false;
     positionAttr->Stride = sizeof(LitVertex);
     positionAttr->Pointer = (void*)offsetof(LitVertex, Position);
@@ -60,7 +69,7 @@ void MirageEngine::Core::Resources::Mesh::CreateLitVertexLayout()
     std::shared_ptr<MirageRHI::VertexAttribute> normalAttr = std::make_shared<MirageRHI::VertexAttribute>();
     normalAttr->Name = "normal";
     normalAttr->Size = 3;
-    normalAttr->Type = MirageRHI::AttributeType::Float;
+    normalAttr->Type = MirageRHI::AttributeType::FLOAT;
     normalAttr->Normalized = false;
     normalAttr->Stride = sizeof(LitVertex);
     normalAttr->Pointer = (void*)offsetof(LitVertex, Normal);
@@ -68,7 +77,7 @@ void MirageEngine::Core::Resources::Mesh::CreateLitVertexLayout()
     std::shared_ptr<MirageRHI::VertexAttribute> UVAttr = std::make_shared<MirageRHI::VertexAttribute>();
     UVAttr->Name = "UV";
     UVAttr->Size = 2;
-    UVAttr->Type = MirageRHI::AttributeType::Float;
+    UVAttr->Type = MirageRHI::AttributeType::FLOAT;
     UVAttr->Normalized = false;
     UVAttr->Stride = sizeof(LitVertex);
     UVAttr->Pointer = (void*)offsetof(LitVertex, UV);
@@ -78,7 +87,4 @@ void MirageEngine::Core::Resources::Mesh::CreateLitVertexLayout()
     m_VertexLayout->AddAttribute(UVAttr, 2);
 }
 
-void MirageEngine::Core::Resources::Mesh::ClearVertexLayout()
-{
-    m_VertexLayout->ClearAttributes();
-}
+void MirageEngine::Core::Resources::Mesh::ClearVertexLayout() { m_VertexLayout->ClearAttributes(); }

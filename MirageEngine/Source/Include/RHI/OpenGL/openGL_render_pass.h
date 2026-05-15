@@ -1,6 +1,6 @@
 #pragma once
 
-#include <glad/glad.h>
+#include <Glad/glad.h>
 
 #include <i_render_pass.h>
 
@@ -23,4 +23,4 @@ namespace MirageRHI
         void Begin() override;
         void End() override {}
     };
-}
+} // namespace MirageRHI

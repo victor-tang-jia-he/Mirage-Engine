@@ -7,36 +7,34 @@ namespace MirageEngine::Core::Physics
 {
     class Bullet3CapsuleCollider : public ICollider, public IBulletColliderData, public ICapsuleCollider
     {
-            using Vector3    = MirageEngine::Core::Math::Vector3;
-            using Quaternion = MirageEngine::Core::Math::Quaternion;
+        using Vector3 = MirageEngine::Core::Math::Vector3;
+        using Quaternion = MirageEngine::Core::Math::Quaternion;
 
-        private:
+    private:
+        btCollisionShape* m_CollisionShape = nullptr;
+        float m_Radius = 1.f;
+        float m_Height = 2.f;
+        btTransform m_LocalTransform;
 
-            btCollisionShape* m_CollisionShape = nullptr;
-            float             m_Radius         = 1.f;
-            float             m_Height         = 2.f;
-            btTransform       m_LocalTransform;
+    public:
+        Bullet3CapsuleCollider() = default;
+        ~Bullet3CapsuleCollider() override;
 
-        public:
+        void Create() override;
 
-            Bullet3CapsuleCollider() = default;
-            ~Bullet3CapsuleCollider() override;
+        void SetOffset(Vector3 _offset, Quaternion _rotation) override;
 
-            void Create() override;
+        void SetRadius(float _radius) override;
+        void SetHeight(float _height) override;
 
-            void SetOffset(Vector3 _offset, Quaternion _rotation) override;
+        float GetRadius() const override { return m_Radius; }
 
-            void SetRadius(float _radius) override;
-            void SetHeight(float _height) override;
+        float GetHeight() const override { return m_Height; }
 
-            float GetRadius() const override { return m_Radius; }
+        btTransform GetTransform() override;
 
-            float GetHeight() const override { return m_Height; }
+        btCollisionShape* GetShape() override { return m_CollisionShape; }
 
-            btTransform GetTransform() override;
-
-            btCollisionShape* GetShape() override { return m_CollisionShape; }
-
-            IBulletColliderData* AsBullet3Collider() override { return this; }
+        IBulletColliderData* AsBullet3Collider() override { return this; }
     };
 } // namespace MirageEngine::Core::Physics

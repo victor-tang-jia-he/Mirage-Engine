@@ -1,9 +1,7 @@
 #pragma once
 #include <vector3.h>
-#include <unordered_map>
+
 #include <Resources/resource_interface.h>
-#include <Logs/log_macro.h>
-#include <memory>
 
 DECLARE_LOG_CATEGORY_EXTERN(LogMaterial)
 
@@ -20,23 +18,22 @@ namespace MirageEngine::Core::Resources
 
     class Material : public IResource
     {
-            friend class ResourceManager;
+        friend class ResourceManager;
 
-            std::shared_ptr<MirageRHI::IPipeline> pipeline;
-            std::shared_ptr<MirageRHI::IShader>   vertexShader;
-            std::shared_ptr<MirageRHI::IShader>   fragmentShader;
-            size_t                                uniformBufferSize;
+    private:
+        std::shared_ptr<MirageRHI::IPipeline> m_Pipeline;
+        std::shared_ptr<MirageRHI::IShader> m_VertexShader;
+        std::shared_ptr<MirageRHI::IShader> m_FragmentShader;
+        size_t m_UniformBufferSize;
 
-        public:
+    public:
+        ~Material() override;
 
-            ~Material() override;
+        std::shared_ptr<MirageRHI::IPipeline> GetPipeline() { return m_Pipeline; }
+        std::shared_ptr<MirageRHI::IShader> GetVertexShader() { return m_VertexShader; }
+        std::shared_ptr<MirageRHI::IShader> GetFragmentShader() { return m_FragmentShader; }
+        size_t GetUniformBufferSize() const { return m_UniformBufferSize; }
 
-            std::shared_ptr<MirageRHI::IPipeline> GetPipeline() { return pipeline; }
-
-            std::shared_ptr<MirageRHI::IShader> GetVertexShader() { return vertexShader; }
-
-            std::shared_ptr<MirageRHI::IShader> GetFragmentShader() { return fragmentShader; }
-
-            size_t GetUniformBufferSize() const { return uniformBufferSize; }
+        static std::shared_ptr<Material> const GetFromManager(std::string _name);
     };
 } // namespace MirageEngine::Core::Resources

@@ -6,6 +6,7 @@
 #include "application.h"
 #include "time_manager.h"
 #include "AI/ai_action.h"
+#include <entt/entt.hpp>
 
 using namespace MirageEngine::Core::Math;
 
@@ -13,13 +14,13 @@ namespace MirageEngine::Core::Components
 {
 	UtilityAgent::~UtilityAgent()
 	{
-		for (AIAction* action : m_actions) {
+		for (AI::AIAction* action : m_actions) {
 			delete action;
 		}
 		m_actions.clear();
 	}
 
-	void UtilityAgent::Init()
+	void UtilityAgent::OnStart()
 	{
 		srand(static_cast <unsigned> (time(0)));
 
@@ -35,9 +36,31 @@ namespace MirageEngine::Core::Components
 		m_DecisionTimer = static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / m_DecisionInterval));
 	}
 
-	void UtilityAgent::Update()
+	void UtilityAgent::OnUpdate(float _dt)
 	{
-		m_DecisionTimer -= TimeManager::GetDeltaTime();
+		if (m_Grid == nullptr)
+		{
+			Application* app = Application::Instance();
+			if (app)
+			{
+				m_Grid = app->GetSceneGraph()->FindComponentInScene<InfluenceGrid>();
+			}
+		}
+
+		 if (m_actions.empty())
+         {
+             auto allComps = GetOwner()->GetComponents();
+             for (auto& comp : allComps)
+             {
+                 AI::AIAction* action = dynamic_cast<AI::AIAction*>(comp.get());
+                 if (action)
+                 {
+                     AddAction(action);
+                 }
+             }
+         }
+
+		m_DecisionTimer -= _dt;
 		if (m_DecisionTimer <= 0.0f)
 		{
 			Decide();
@@ -45,6 +68,23 @@ namespace MirageEngine::Core::Components
 		}
 		if (m_CurrentAction != nullptr)
 			m_CurrentAction->Execute(TimeManager::GetDeltaTime());
+	}
+
+	void UtilityAgent::AttachMeta(std::shared_ptr<GameObject> _Owner)
+	{
+		std::shared_ptr<UtilityAgent> compPtr = std::make_shared<UtilityAgent>(*this);
+		_Owner->AddComponent<UtilityAgent>(compPtr);
+	}
+
+	void MirageEngine::Core::Components::UtilityAgent::AttachNew(std::shared_ptr<GameObject> _owner)
+	{
+		std::shared_ptr<UtilityAgent> compPtr = std::make_shared<UtilityAgent>(_owner.get());
+		_owner->AddComponent<UtilityAgent>(compPtr);
+	}
+
+	entt::id_type UtilityAgent::GetType() const
+	{
+		return entt::type_id<UtilityAgent>().hash();
 	}
 
 	void UtilityAgent::Decide()
@@ -64,13 +104,13 @@ namespace MirageEngine::Core::Components
 				m_CurrentCellIntensity.resize(numChannels);
 				for (int i = 0; i < numChannels; i++)
 				{
-					m_CurrentCellIntensity[i] = cells[currentIndex].channels[i];
+					m_CurrentCellIntensity[i] = cells[currentIndex].Channels[i];
 				}
 
-				AIAction* bestAction = nullptr;
+				AI::AIAction* bestAction = nullptr;
 				float highestScore = -1.0f;
 				m_LastScores.clear();
-				for (AIAction* action : m_actions)
+				for (AI::AIAction* action : m_actions)
 				{
 					float score = action->Evaluate();
 					if (action == m_CurrentAction)
@@ -86,15 +126,19 @@ namespace MirageEngine::Core::Components
 				
 				if (bestAction != m_CurrentAction)
 				{
-					if (m_CurrentAction)
-						m_CurrentAction->OnStop();
 					m_CurrentAction = bestAction;
 					if (m_CurrentAction)
 						m_CurrentAction->OnStart();
-					m_LastDecisionReason = m_CurrentAction ? m_CurrentAction->GetName() + "with score" + std::to_string(highestScore) : "None";
+                    m_LastDecisionReason = m_CurrentAction ? std::string(m_CurrentAction->GetName()) + " with score " + std::to_string(highestScore) : "None";
 				}
 			}
 		}
+	}
+
+	void UtilityAgent::ModifyInternalStat(const std::string& _name, float _addValue)
+	{
+		if (m_InternalStats.find(_name) != m_InternalStats.end())
+			m_InternalStats[_name] += _addValue;
 	}
 
 	float UtilityAgent::GetIntensity(int _channelIndex) const {
@@ -102,4 +146,23 @@ namespace MirageEngine::Core::Components
 			return m_CurrentCellIntensity[_channelIndex];
 		return 0.0f;
 	}
+
+	float UtilityAgent::GetIntensityByName(const std::string& _name) const
+	{
+		if (!m_Grid) return 0.0f;
+		int index = m_Grid->GetChannelsIndex(_name);
+		return GetIntensity(index);
+	}
+
+	float UtilityAgent::GetInternalStat(const std::string& _name)
+	{
+		if (m_InternalStats.find(_name) != m_InternalStats.end())
+			return m_InternalStats[_name];
+		return 0.0f;
+	}
+
+	void UtilityAgent::SetActions(const std::vector<AI::AIAction*>& _newActions)
+        {
+            m_actions = _newActions;
+        }
 }

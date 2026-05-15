@@ -3,11 +3,15 @@
 #include <memory>
 #include <string>
 
-namespace MirageEngine {
+DECLARE_LOG_CATEGORY_EXTERN(LogHierarchy)
+
+namespace MirageEngine
+{
 	class SceneGraph;
 	class GameObject;
 	class Renderer;
 }
+
 namespace Mirage	
 {
 	class Hierarchy : public IPanel

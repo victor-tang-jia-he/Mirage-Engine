@@ -5,7 +5,10 @@ cmake_minimum_required(VERSION 3.20)
 project(CustomEngine)
 
 # Create global variable (project-level) to store output directory
-set(MIRAGE_BIN_OUTPUT_DIR "${CMAKE_SOURCE_DIR}/Build/${CMAKE_CXX_COMPILER_ID}_$<CONFIG>")
+set(MIRAGE_BIN_OUTPUT_DIR "${CMAKE_BINARY_DIR}/Bin/")
+
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+
 
 # Log directory at configuration-time
 message("[${CMAKE_PROJECT_NAME}]: Output directory: ${MIRAGE_BIN_OUTPUT_DIR}")
@@ -23,6 +26,13 @@ set(CMAKE_C_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+# ONLY VICTOR TANG
+cmake_host_system_information(RESULT HOSTNAME QUERY HOSTNAME)
+if ("${HOSTNAME}" STREQUAL "TheDarkPhoenix" )
+    set(CMAKE_JOB_POOL_COMPILE compile_pool)
+    set_property(GLOBAL PROPERTY JOB_POOLS compile_pool=24)
+endif()
+
 message(STATUS "Adding external Libraries...")
 message("")
 
@@ -37,11 +47,13 @@ message(STATUS "GLFW")
 
 set(GLFW_SOURCE "${CMAKE_SOURCE_DIR}/Libraries/GLFW")
 
+set(GLFW_BUILD_WAYLAND OFF CACHE BOOL "" FORCE)
+set(GLFW_BUILD_X11 ON CACHE BOOL "" FORCE)
 set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)
 set(GLFW_BUILD_TESTS OFF CACHE BOOL "" FORCE)
 set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
 set(GLFW_INSTALL OFF CACHE BOOL "" FORCE)
-
+set(BUILD_SHARED_LIBS ON)
 if(NOT EXISTS "${GLFW_SOURCE}/CMakeLists.txt")
     message(STATUS "Fetching GLFW...")
     FetchContent_Declare(
@@ -55,6 +67,7 @@ else()
     message(STATUS "Using local GLFW")
     add_subdirectory(${GLFW_SOURCE} ${CMAKE_BINARY_DIR}/GLFW)
 endif()
+set(BUILD_SHARED_LIBS OFF)
 
 message(STATUS "GLFW created successfully")
 message(STATUS "================================================================================")
@@ -196,7 +209,7 @@ else()
 endif()
 
 set(IMGUIZMO_SOURCES
-    ${IMGUIZMO_DIR}/ImGuizmo.cpp
+    ${IMGUIZMO_DIR}/src/ImGuizmo.cpp
 )
 
 # Combine all sources
@@ -436,7 +449,8 @@ message("")
 # ============================================================================
 # System Engine Library (Core)
 # ============================================================================
-add_subdirectory(${CMAKE_SOURCE_DIR}/MirageEngine/Tools/Toolbox)
+set(TOOLBOX_DIR ${CMAKE_SOURCE_DIR}/MirageEngine/Tools/ToolBox)
+add_subdirectory(${TOOLBOX_DIR})
 
 # Create Convenience Interface for All Dependencies
 add_library(third_party INTERFACE)
@@ -444,9 +458,6 @@ add_library(third_party INTERFACE)
 target_include_directories(third_party INTERFACE
     ${CMAKE_SOURCE_DIR}/Libraries/Glad/Code/Include
     ${CMAKE_SOURCE_DIR}/Libraries/GLFW/include
-    ${CMAKE_SOURCE_DIR}/Libraries/ImGui
-    ${CMAKE_SOURCE_DIR}/Libraries/ImGuizmo
-    ${CMAKE_SOURCE_DIR}/Libraries/ImGui/backends
     ${CMAKE_SOURCE_DIR}/Libraries/TinyObjLoader
     ${CMAKE_SOURCE_DIR}/Libraries/STBImage
     ${CMAKE_SOURCE_DIR}/Libraries/EnTT/single_include
@@ -458,17 +469,14 @@ target_include_directories(third_party INTERFACE
 )
 
 target_link_libraries(third_party INTERFACE
-    MirageEngine
     glfw
     glad
-    imgui
     tinyobjloader
     OpenGL::GL
     Toolbox
     BulletDynamics
     BulletCollision
     LinearMath
-    MirageEngine
     cpptrace::cpptrace
 ) 
 

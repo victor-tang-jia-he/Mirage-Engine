@@ -1,6 +1,4 @@
 #pragma once
-#include <Logs/log_macro.h>
-
 #include "i_panel.h"
 #include <entt/entt.hpp>
 
@@ -9,7 +7,11 @@ DECLARE_LOG_CATEGORY_EXTERN(LogInspector)
 namespace MirageEngine
 {
 	class SceneGraph;
-	namespace Core::Components { class Component; }
+	namespace Core::Components 
+	{ 
+		class Component;
+            class UtilityAgent;
+	}
 	class GameObject;
 }
 
@@ -30,6 +32,7 @@ namespace Mirage
 
 		void DrawProperty(entt::meta_data _data, entt::meta_any _instance);
 		void DrawPropertyDirect(entt::meta_type _type, entt::meta_data _data, void* _instancePtr);
+		void DrawNestedProperty(entt::meta_data _childData, entt::meta_any& _parentInstance);
 
 	private:
 		void ResolveVec3(entt::meta_any _value, const char* _label, entt::meta_data _data, entt::meta_any &_instance);
@@ -50,5 +53,7 @@ namespace Mirage
 		void ResolveShader(entt::meta_any _value);
 
 		void RenderAddComponentPopup(std::shared_ptr<MirageEngine::GameObject> _selectedObj);
+
+		void DrawAIMonitor(MirageEngine::Core::Components::UtilityAgent* _agent);
 	};
 }

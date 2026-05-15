@@ -1,10 +1,9 @@
+#include <Glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <application.h>
 
 #include <renderer.h>
 #include <SceneGraph/scene_graph.h>
-
-#include <debug.h>
 
 // Resources
 #include <Resources/resource_manager.h>
@@ -13,6 +12,7 @@
 #include <Resources/material_instance.h>
 #include <Resources/texture.h>
 #include <Resources/shader.h>
+#include <RHI/ubo_structs.h>
 
 // GameObject & Components
 #include <GameObject/game_object.h>
@@ -28,6 +28,19 @@
 // Physics and physics Components
 #include <Physics/physics_manager.h>
 
+// Script Manager
+#include <Scripting/script_manager.h>
+
+#include <DebugDraw/debug_draw.h>
+
+// Light include
+#include <Light/light_manager.h>
+#include <Light/directional_light.h>
+#include <Light/spot_light.h>
+#include <Light/point_light.h>
+#include <Light/i_light.h>
+#include <i_uniform_buffer.h>
+
 using namespace MirageEngine::Core::Input;
 using namespace MirageEngine::Core::EventSystem;
 using namespace MirageEngine::Core::Math;
@@ -35,178 +48,261 @@ using namespace MirageEngine::Core::Components;
 using namespace MirageEngine::Core::Resources;
 
 Application* Application::s_Instance = nullptr;
+
 void Application::InitApp()
 {
-    s_Instance = this;
+	s_Instance = this;
 
-    Loggers::LogBuffer::GetInstance().EnableImmediateFlush(true); // Enable immediate flushing of log messages for real-time output during initialization
-    Loggers::LogBuffer::GetInstance().EnableFileWriting(true);    // Enable writing logs to file during initialization to capture any issues that may occur before the main loop starts.
+	m_Renderer.InitRenderer();
 
-    m_Renderer.InitRenderer();
+	MirageEngine::Core::Scripting::ScriptManager::Instance().Init();
+	MirageEngine::Core::Resources::ResourceManager::Instance().Init(m_Renderer.GetRenderInterfaceHandle());
+	MirageEngine::Core::Resources::ResourceManager::Instance().PreLoadResources();
+	MirageEngine::Core::Physics::PhysicsManager::Instance().Initialize();
+	Debug_Draw.Init(m_Renderer.GetRenderInterfaceHandle());
 
-    MirageEngine::Core::Resources::ResourceManager::Instance().Init(m_Renderer.GetRenderInterfaceHandle());
-    MirageEngine::Core::Resources::ResourceManager::Instance().PreLoadResources();
-    MirageEngine::Core::Physics::PhysicsManager::Instance().Initialize();
-
-    InitScene();
-    InitInput();
-    InitGameObject();
+	InitScene();
+	InitInput();
+	InitGameObject();
 }
 
 void Application::InitScene()
 {
-    m_EngineCamera = std::make_shared<Camera>(1920, 1080, 90.f, 0.1f, 100.f, Vector3(0.f, 0.f, -3.f));
-    m_SceneGraph.SetEditorCamera(m_EngineCamera);
+	m_EngineCamera = std::make_shared<Camera>(1920, 1080, 90.f, 0.1f, 100.f, Vector3(0.f, 0.f, -3.f));
 }
 
 void Application::InitInput()
 {
-    // creating editorMapping
-    m_EditorMapping = std::make_shared<InputMapping>();
+	// creating editorMapping
+	m_EditorMapping = std::make_shared<InputMapping>();
 
-    // add random function test member of current class
-    // m_EditorMapping->Add(GLFW_KEY_W, this, &Application::EditorPrintInput); // template
+	// add random function test member of current class
+	// m_EditorMapping->Add(GLFW_KEY_W, this, &Application::EditorPrintInput); // template
 
-    // init with previous created map
-    InputSystem::Initialize(m_EditorMapping);
-    // get and set callback
-    GLFWwindow* window = glfwGetCurrentContext();
-    glfwSetKeyCallback(window, InputSystem::KeyCallback);
-    glfwSetMouseButtonCallback(window, InputSystem::MouseButtonCallback);
-    glfwSetCursorPosCallback(window, InputSystem::CursorPosCallback);
-    // bind camera
-    m_EngineCamera->BindInput(m_EditorMapping);
+	// init with previous created map
+	InputSystem::Initialize(m_EditorMapping);
+	// get and set callback
+	GLFWwindow* window = glfwGetCurrentContext();
+	glfwSetKeyCallback(window, InputSystem::KeyCallback);
+	glfwSetMouseButtonCallback(window, InputSystem::MouseButtonCallback);
+	glfwSetCursorPosCallback(window, InputSystem::CursorPosCallback);
 }
 
 using namespace MirageEngine::Core::Resources;
 MeshRenderer* meshRenderer;
 MeshRenderer* meshRenderer2;
-Camera*       camera;
+Camera* camera;
 
 void Application::InitGameObject()
 {
-    using namespace MirageEngine;
-    using namespace MirageEngine::Core::Physics;
+	using namespace MirageEngine;
+	using namespace MirageEngine::Core::Physics;
 
-    PhysicsManager& physics = PhysicsManager::Instance();
+	PhysicsManager& physics = PhysicsManager::Instance();
 
     // =========================
     //  Physics setup
     // =========================
     std::shared_ptr<SphereCollider> dynamicCollider = std::make_shared<SphereCollider>();
-    std::shared_ptr<Rigidbody>      dynamicRB       = std::make_shared<Rigidbody>(dynamicCollider.get(), ERigidBodyType::Dynamic);
+    std::shared_ptr<Rigidbody> dynamicRB = std::make_shared<Rigidbody>(dynamicCollider.get(), ERigidBodyType::DYNAMIC);
 
-    dynamicRB->SetCollisionGroup(ECollisionGroup::Group1);
-    dynamicRB->SetCollisionMask(ECollisionGroup::Group1 | ECollisionGroup::Group2 | ECollisionGroup::Group3);
-    dynamicRB->SetCollisionResponse(ECollisionResponse::Block);
+    dynamicRB->SetCollisionGroup(ECollisionGroup::GROUP_1);
+    dynamicRB->SetCollisionMask(ECollisionGroup::GROUP_1 | ECollisionGroup::GROUP_2 | ECollisionGroup::GROUP_3);
+    dynamicRB->SetCollisionResponse(ECollisionResponse::BLOCK);
 
     std::shared_ptr<BoxCollider> staticCollider = std::make_shared<BoxCollider>();
-    std::shared_ptr<Rigidbody>   staticRB       = std::make_shared<Rigidbody>(staticCollider.get(), ERigidBodyType::Static);
+    std::shared_ptr<Rigidbody> staticRB = std::make_shared<Rigidbody>(staticCollider.get(), ERigidBodyType::STATIC);
 
-    staticRB->SetCollisionGroup(ECollisionGroup::Group2);
-    staticRB->SetCollisionMask(ECollisionGroup::All);
+    staticRB->SetCollisionGroup(ECollisionGroup::GROUP_2);
+    staticRB->SetCollisionMask(ECollisionGroup::ALL);
 
-    // =========================
-    //  Scene graph
-    // =========================
-    std::shared_ptr<GameObject> root     = m_SceneGraph.CreateGameObject("Root", nullptr);
-    std::shared_ptr<GameObject> cameraGO = m_SceneGraph.CreateGameObject("Commelin", root);
-    std::shared_ptr<GameObject> floorGO  = m_SceneGraph.CreateGameObject("Lin", root);
-    std::shared_ptr<GameObject> child1   = m_SceneGraph.CreateGameObject("Monin", floorGO);
-    std::shared_ptr<GameObject> child2   = m_SceneGraph.CreateGameObject("Tang", child1);
-    ResourceManager::Instance().GetMesh("cube")->Bind();
-    ResourceManager::Instance().GetMesh("sphere")->Bind();
-    ResourceManager::Instance().GetMesh("cylinder")->Bind();
-    ResourceManager::Instance().GetMesh("plane")->Bind();
-    ResourceManager::Instance().GetMesh("cone")->Bind();
-    // =========================
-    //  Camera object
-    // =========================
-    cameraGO->AddComponent<Camera>();
-    cameraGO->AddComponent<InputMapping>();
-    cameraGO->AddComponent<MeshRenderer>();
-    cameraGO->AddComponent <InfluenceEmitter>();
-    cameraGO->AddComponent(dynamicCollider);
-    cameraGO->AddComponent(dynamicRB);
+	// =========================
+	//  Scene graph
+	// =========================
+	std::shared_ptr<GameObject> root = m_SceneGraph.CreateGameObject("Root", nullptr);
+	std::shared_ptr<GameObject> cameraGO = m_SceneGraph.CreateGameObject("Commelin", root);
+	std::shared_ptr<GameObject> floorGO = m_SceneGraph.CreateGameObject("Lin", root);
+	std::shared_ptr<GameObject> child1 = m_SceneGraph.CreateGameObject("Monin", floorGO);
+	std::shared_ptr<GameObject> child2 = m_SceneGraph.CreateGameObject("Tang", child1);
+	ResourceManager::Instance().GetMesh("cube")->Bind();
+	ResourceManager::Instance().GetMesh("sphere")->Bind();
+	ResourceManager::Instance().GetMesh("cylinder")->Bind();
+	ResourceManager::Instance().GetMesh("plane")->Bind();
+	ResourceManager::Instance().GetMesh("cone")->Bind();
 
-    std::shared_ptr<Camera>       cam       = cameraGO->GetComponent<Camera>();
-    std::shared_ptr<InputMapping> input     = cameraGO->GetComponent<InputMapping>();
-    std::shared_ptr<MeshRenderer> renderer1 = cameraGO->GetComponent<MeshRenderer>();
+	// =========================
+	//  Script
+	// =========================
+	MirageEngine::Core::Scripting::ScriptManager& scriptManager = MirageEngine::Core::Scripting::ScriptManager::Instance();
 
-    m_SceneGraph.SetEditorCamera(cam);
+	scriptManager.CreateNewScript("Test");
+	if (const char* name = scriptManager.GetScriptName(0))
+	{
+		std::unique_ptr<Core::Scripting::IScript, Core::Scripting::ScriptManager::DllDeleter> script = scriptManager.CreateScriptByName("Test");
+		floorGO->AddComponent(std::move(script));
+	}
+	// =========================
+	//  Camera object
+	// =========================
+	cameraGO->AddComponent<Camera>();
+	cameraGO->AddComponent<InputMapping>();
+	cameraGO->AddComponent<MeshRenderer>();
+	cameraGO->AddComponent<SphereCollider>(dynamicCollider);
+	cameraGO->AddComponent<Rigidbody>(dynamicRB);
 
-    cam->BindInput(input);
-    cam->SetNear(0.1f);
-    cam->SetFar(100.f);
-    cam->SetFov(60.f);
-    cam->SetWidth(1920);
-    cam->SetHeight(1080);
+	std::shared_ptr<Camera> cam = cameraGO->GetComponent<Camera>();
+	std::shared_ptr<InputMapping> input = cameraGO->GetComponent<InputMapping>();
+	std::shared_ptr<MeshRenderer> renderer1 = cameraGO->GetComponent<MeshRenderer>();
 
-    InputSystem::SetCurrentMapping(input);
+	m_SceneGraph.SetEditorCamera(cam);
 
-    // =========================
-    //  Floor object
-    // =========================
-    floorGO->AddComponent(staticCollider);
-    floorGO->AddComponent(staticRB);
-    floorGO->AddComponent<MeshRenderer>();
+	input->RegisterInput("Reload", GLFW_KEY_R);
+	std::function<void(CallbackInputInfo)> func = [](CallbackInputInfo info)
+		{
+			if (info.Pressed)
+			{
+				MirageEngine::Core::Scripting::ScriptManager::Instance().ReloadScript();
+			}
+		};
 
-    std::shared_ptr<MeshRenderer> renderer2 = floorGO->GetComponent<MeshRenderer>();
+	input->RegisterAction("Reload", func);
 
-    Quaternion rotationQ(Vector3(1.f, 0.f, 0.f), PI / 12.f);
+	cam->SetNear(0.1f);
+	cam->SetFar(100.f);
+	cam->SetFov(60.f);
+	cam->SetWidth(1920);
+	cam->SetHeight(1080);
 
-    floorGO->SetPosition(Vector3(0, -3, 0));
-    floorGO->SetRotation(rotationQ);
-    floorGO->SetScale(Vector3(10, 1, 10));
+	InputSystem::SetCurrentMapping(input);
 
-    // =========================
-    //  Resources
-    // =========================
-    ResourceManager& rm = ResourceManager::Instance();
+	// =========================
+	//  Floor object
+	// =========================
+	floorGO->AddComponent<BoxCollider>(staticCollider);
+	floorGO->AddComponent<Rigidbody>(staticRB);
+	floorGO->AddComponent<MeshRenderer>();
 
-    std::shared_ptr<Texture> texCat    = rm.GetTexture("cat");
-    std::shared_ptr<Texture> texMirage = rm.GetTexture("Mirage");
+	std::shared_ptr<MeshRenderer> renderer2 = floorGO->GetComponent<MeshRenderer>();
 
-    std::shared_ptr<Material> mat = rm.CreateMaterial("TestMaterial", "Assets/Defaults/default.vert", "Assets/Defaults/default.frag", 0);
+	Quaternion rotationQ(Vector3(1.f, 0.f, 0.f), PI / 12.f);
 
-    std::shared_ptr<MaterialInstance> mat1 = rm.CreateMaterialInstance("TestMaterialinstance", mat);
-    std::shared_ptr<MaterialInstance> mat2 = rm.CreateMaterialInstance("TestMaterialinstance2", mat);
+	floorGO->SetPosition(Vector3(0, -3, 0));
+	floorGO->SetRotation(rotationQ);
+	// floorGO->SetScale(Vector3(10, 1, 10));
 
-    texCat->Bind();
-    mat1->SetTexture("ourTexture", texCat);
-    mat2->SetTexture("ourTexture", texMirage);
+	// =========================
+	//  Light object
+	// =========================
 
-    renderer1->SetMaterial(mat1);
-    renderer2->SetMaterial(mat2);
+	std::shared_ptr<PointLight> light1 = child2->AddComponent<PointLight>();
+	light1->SetIntensity(0.5f);
+	light1->SetColor({ 1, 1, 1, 1 });
 
-    std::shared_ptr<Mesh> cubeMesh = rm.GetMesh("cube");
-    cubeMesh->Bind();
+	std::shared_ptr<DirectionalLight> light2 = child2->AddComponent<DirectionalLight>();
+	light2->SetIntensity(0.5f);
+	light2->SetColor({ 1, 1, 1, 1 });
 
-    renderer1->SetMesh(cubeMesh);
-    renderer2->SetMesh(cubeMesh);
+	// =========================
+	//  Resources
+	// =========================
+	ResourceManager& rm = ResourceManager::Instance();
 
-    // =========================
-    //  Root transform
-    // =========================
-    root->Transform.SetPosition(Vector3(0, 0, -10));
+	std::shared_ptr<Texture> texCat = rm.GetTexture("cat");
+	std::shared_ptr<Texture> texMirage = rm.GetTexture("Mirage");
 
-    // =========================
-    //  Cache members
-    // =========================
-    camera        = cam.get();
-    meshRenderer  = renderer1.get();
-    meshRenderer2 = renderer2.get();
+    std::shared_ptr<Material> mat = rm.CreateMaterial(
+        "default", "Assets/Shaders/light.vert", "Assets/Shaders/light.frag", 0,
+        {
+            { "PerFrame",   MirageRHI::UBOBinding::PER_FRAME },
+            { "PerObject",  MirageRHI::UBOBinding::PER_OBJECT },
+            { "LightBlock", MirageRHI::UBOBinding::LIGHTS },
+    });
+
+	std::shared_ptr<MaterialInstance> mat1 = rm.CreateMaterialInstance("TestMaterialinstance", mat);
+	// Set texture
+	// mat1->SetTexture("albedoMap", texCat);
+	mat1->SetTexture("normalMap", texCat);
+	// mat1->SetTexture("metallicMap", texCat);
+	// mat1->SetTexture("roughnessMap", texCat);
+	// mat1->SetTexture("aoMap", texCat);
+
+	// Set PBR Setting
+	mat1->SetVec3("albedo", { 1, 1, 1 });
+	mat1->SetFloat("metallic", 1);
+	mat1->SetFloat("roughness", 1);
+	mat1->SetFloat("ao", 1);
+
+	std::shared_ptr<MaterialInstance> mat2 = rm.CreateMaterialInstance("TestMaterialinstance2", mat);
+
+	texCat->Bind();
+	mat2->SetTexture("normalMap", texMirage);
+
+	renderer1->SetMaterial(mat1);
+	renderer2->SetMaterial(mat2);
+
+	std::shared_ptr<Mesh> cubeMesh = rm.GetMesh("cube");
+	cubeMesh->Bind();
+
+	renderer1->SetMesh(cubeMesh);
+	renderer2->SetMesh(cubeMesh);
+
+	// =========================
+	//  Root transform
+	// =========================
+	root->Transform.SetPosition(Vector3(0, 0, -10));
+
+	// =========================
+	//  Cache members
+	// =========================
+	camera = cam.get();
+	meshRenderer = renderer1.get();
+	meshRenderer2 = renderer2.get();
 }
 
+void Application::RuntimeUpdate(float _dt)
+{
+	m_AccumulatedTime += _dt;
+
+	m_SceneGraph.CallAllOnStart();
+
+	// FixedUpdate is called in a loop to ensure that it is called at a consistent rate, regardless of the frame rate.
+	while (m_AccumulatedTime >= m_FixedDeltaTime)
+	{
+		m_SceneGraph.CallAllFixedUpdate(m_FixedDeltaTime);
+		m_AccumulatedTime -= m_FixedDeltaTime;
+	}
+
+	m_SceneGraph.CallAllUpdate(_dt);
+	m_SceneGraph.CallAllLateUpdate(_dt);
+}
+
+void Application::EditorUpdate()
+{
+	m_SceneGraph.CallAllDrawLine();
+	m_SceneGraph.UpdateAllWorldMatrices();
+}
+
+void Application::BeginRender(std::shared_ptr<MirageEngine::Core::ICamera> camera)
+{
+	m_Renderer.BeginFrame();
+	m_Renderer.RenderScene(m_SceneGraph, camera);
+	m_Renderer.RenderLine();
+	m_Renderer.RenderScreen();
+}
+void Application::EndRender()
+{
+	m_Renderer.EndFrame();
+}
 void Application::ShutDown()
 {
-    MirageEngine::Core::Input::InputSystem::Shutdown();
-    MirageEngine::Core::Resources::ResourceManager::Instance().Shutdown();
-    MirageEngine::Core::Physics::PhysicsManager::Instance().Shutdown();
-
-    m_Renderer.Shutdown();
-    m_SceneGraph.Clean();
-    m_EditorMapping.reset();
-    m_PlayMapping.reset();
-    m_EngineCamera.reset();
+	m_SceneGraph.ClearScene();
+	m_EditorMapping.reset();
+	m_PlayMapping.reset();
+	m_EngineCamera.reset();
+	MirageEngine::Core::Input::InputSystem::Shutdown();
+	MirageEngine::Core::Resources::ResourceManager::Instance().Shutdown();
+	MirageEngine::Core::Physics::PhysicsManager::Instance().Shutdown();
+	Debug_Draw.ShutDown();
+	m_Renderer.Shutdown();
+	MirageEngine::Core::Scripting::ScriptManager::Instance().ShutDown();
 }

@@ -19,6 +19,7 @@ namespace MirageRHI
         void Destroy() override;
 
         OpenGLFramebuffer& API_OpenGL() override { return *this; }
+
         uint32_t GetOpenGLHandle() const { return m_FBO; }
         uint32_t GetFrameTextureID() override { return m_Texture; }
 
@@ -27,4 +28,4 @@ namespace MirageRHI
         void Unbind() const;
         void BindFrameTexture() const;
     };
-}
+} // namespace MirageRHI

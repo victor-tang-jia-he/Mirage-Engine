@@ -11,9 +11,9 @@ namespace MirageEngine::Core
     {
         class ICCollider
         {
-            public:
+        public:
+            virtual std::shared_ptr<Physics::ICollider> GetCollision() const = 0;
 
-                virtual Physics::ICollider* GetCollision() const { return nullptr; }
         };
     } // namespace Components
 } // namespace MirageEngine::Core

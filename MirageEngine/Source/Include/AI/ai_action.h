@@ -1,37 +1,39 @@
 #pragma once
 #include <string>
+#include "Scripting/i_script.h"
+//#include "Components/utility_agent.h"
 
 namespace MirageEngine
 {
-    namespace Core::Components { class UtilityAgent; }
+    namespace Core::Components
+    {
+        class UtilityAgent;
+    }
 
     namespace AI
     {
-        class AIAction
+        class AIAction : public MirageEngine::Core::Scripting::IScript
         {
         protected:
-            std::string m_Name;
-            Core::Components::UtilityAgent* m_Owner = nullptr;
+            std::string m_ActionName = "BaseAction";
+            Core::Components::UtilityAgent* m_OwnerAgent = nullptr;
 
         public:
-            AIAction(const std::string& _name, Core::Components::UtilityAgent* _owner)
-                : m_Name(_name), m_Owner(_owner) {
-            }
-
+            virtual entt::id_type GetType() const override = 0; 
+            
+            void OnStart() override;
+            void OnUpdate(float dt) override;
+            
+            AIAction();
             virtual ~AIAction() = default;
-
+            
             // returns a score between 0 and 1 (Used in Decide())
             virtual float Evaluate() = 0;
             // Called every frame while the action is active
             virtual void Execute(float _dt) = 0;
-            // Called when the action starts, for setup purposes
-            virtual void OnStart() {}
-            // Called when the action stops, for cleanup purposes
-            virtual void OnStop() {}
-
-            // Getters
-            const std::string& GetName() const { return m_Name; }
-            Core::Components::UtilityAgent* GetOwner() const { return m_Owner; }
+            
+            const char* GetName() const override { return m_ActionName.c_str(); }
+            void SetActionName(std::string _name) { m_ActionName = _name; }
         };
-    }
-}
+    } // namespace AI
+} // namespace MirageEngine

@@ -8,8 +8,9 @@ namespace MirageRHI
 {
     class OpenGLInstance : public IInstance
     {
+    private:
         std::string m_Name = "";
-        
+
         const char* m_Version = nullptr;
         const char* m_Renderer = nullptr;
         const char* m_Vendor = nullptr;
@@ -21,4 +22,4 @@ namespace MirageRHI
 
         OpenGLInstance& API_OpenGL() override { return *this; }
     };
-}
+} // namespace MirageRHI

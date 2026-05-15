@@ -1,9 +1,10 @@
 #include "OpenGL/openGL_buffer.h"
 #include "OpenGL/openGL_pipeline.h"
 
-#include <glad/glad.h>
+#include <Glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <stb_image.h>
+#include <Logs/log.h>
 
 DEFINE_LOG_CATEGORY(LogRHIBuffer)
 
@@ -15,22 +16,33 @@ void OpenGLBuffer::Create(const void* _data, size_t _size, BufferType _type)
 
     switch (m_Type)
     {
-    case BufferType::Vertices:
-        glGenBuffers(1, &m_Buffer);
-        glBindBuffer(GL_ARRAY_BUFFER, m_Buffer);
-        glBufferData(GL_ARRAY_BUFFER, _size, _data, GL_STATIC_DRAW);
-        break;
+        case BufferType::VERTICES:
+            glGenBuffers(1, &m_Buffer);
+            glBindBuffer(GL_ARRAY_BUFFER, m_Buffer);
+            glBufferData(GL_ARRAY_BUFFER, _size, _data, GL_STATIC_DRAW);
+            break;
 
-    case BufferType::Indices:
-        glGenBuffers(1, &m_Buffer);
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_Buffer);
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, _size, _data, GL_STATIC_DRAW);
-        break;
-    default:
-        LOG(logWarning, LogRHIBuffer, "Unknown Buffer Type Used!");
+        case BufferType::INDICES:
+            glGenBuffers(1, &m_Buffer);
+            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_Buffer);
+            glBufferData(GL_ELEMENT_ARRAY_BUFFER, _size, _data, GL_STATIC_DRAW);
+            break;
+        case BufferType::VERTICES_DYNAMIC:
+            glGenBuffers(1, &m_Buffer);
+            glBindBuffer(GL_ARRAY_BUFFER, m_Buffer);
+            glBufferData(GL_ARRAY_BUFFER, _size, _data, GL_DYNAMIC_DRAW);
+            break;
+        default:
+            LOG(logWarning, LogRHIBuffer, "Unknown Buffer Type Used!");
     }
 
-	LOG(logTemp, LogRHIBuffer, "Buffer Created with ID: ", m_Buffer);
+    LOG(logTemp, LogRHIBuffer, "Buffer Created with ID: ", m_Buffer);
+}
+
+void MirageRHI::OpenGLBuffer::Update(const void* _data, size_t _size)
+{
+    glBindBuffer(GL_ARRAY_BUFFER, m_Buffer);
+    glBufferData(GL_ARRAY_BUFFER, _size, _data, GL_DYNAMIC_DRAW);
 }
 
 void OpenGLBuffer::Destroy()
@@ -44,12 +56,13 @@ void OpenGLBuffer::Bind() const
 {
     switch (m_Type)
     {
-    case BufferType::Vertices:
-        glBindBuffer(GL_ARRAY_BUFFER, m_Buffer);
-        break;
+        case BufferType::VERTICES:
+        case BufferType::VERTICES_DYNAMIC:
+            glBindBuffer(GL_ARRAY_BUFFER, m_Buffer);
+            break;
 
-    case BufferType::Indices:
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_Buffer);
-        break;
+        case BufferType::INDICES:
+            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_Buffer);
+            break;
     }
 }

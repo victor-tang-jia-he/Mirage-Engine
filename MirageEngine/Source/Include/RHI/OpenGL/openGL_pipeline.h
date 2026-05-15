@@ -7,42 +7,48 @@
 
 namespace MirageRHI
 {
-	class IShader;
-	struct IPipelineParameters;
+    class IShader;
+    struct IPipelineParameters;
 
-	class OpenGLPipeline : public IPipeline
-	{
-	private:
-		GLuint m_Program = 0;
-		std::shared_ptr<IPipelineParameters> m_Parameters = nullptr;
-		std::shared_ptr<IShader> m_VertexShader = nullptr;
-		std::shared_ptr<IShader> m_FragmentShader = nullptr;
+    class OpenGLPipeline : public IPipeline
+    {
+    private:
+        GLuint m_Program = 0;
+        std::shared_ptr<IPipelineParameters> m_Parameters = nullptr;
+        std::shared_ptr<IShader> m_VertexShader = nullptr;
+        std::shared_ptr<IShader> m_FragmentShader = nullptr;
 
-	public:
-		void Create(std::shared_ptr<IShader> _vertShader, std::shared_ptr<IShader> _fragShader, std::shared_ptr<IPipelineParameters> _pipelineParameters) override;
-		void Destroy() override;
+    public:
 
-		OpenGLPipeline& API_OpenGL() override { return *this; }
+        void Create(std::shared_ptr<IShader> _vertShader, std::shared_ptr<IShader> _fragShader,
+            std::shared_ptr<IPipelineParameters> _pipelineParameters, std::vector<UBOBlockInfo> _blocks = {}) override;
+        void Destroy() override;
 
-		// Shader linking
-		bool Link() const;
+        OpenGLPipeline& API_OpenGL() override { return *this; }
 
-		// Program Binding
-		void Bind() const;
-		void Unbind() const;
+        // Shader linking
+        bool Link() const;
 
-		// Set Shader Parameters
-		void SetInt(const std::string& _name, int _value) const override;
-		void SetFloat(const std::string& _name, float _value) const override;
-		void SetVec3(const std::string& _name, const MirageEngine::Core::Math::Vector3& _value) const override;
-		void SetMat3(const std::string& _name, const MirageEngine::Core::Math::Matrix3& _mat) const override;
-		void SetMat4(const std::string& _name, const MirageEngine::Core::Math::Matrix4& _mat) const override;
-		void SetBool(const std::string& _name, bool _value)const override;
+        // Program Binding
+        void Bind() const;
+        void Unbind() const;
 
-		// Apply Pipeline Parameters
-		void ApplyParameters();
+        // Set Shader Parameters
+        void SetInt(const std::string& _name, int _value) const override;
+        void SetFloat(const std::string& _name, float _value) const override;
+        void SetVec3(const std::string& _name, const MirageEngine::Core::Math::Vector3& _value) const override;
+        void SetVec4(const std::string& _name, const MirageEngine::Core::Math::Vector4& _value) const override;
+        void SetMat3(const std::string& _name, const MirageEngine::Core::Math::Matrix3& _mat) const override;
+        void SetMat4(const std::string& _name, const MirageEngine::Core::Math::Matrix4& _mat) const override;
+        void SetBool(const std::string& _name, bool _value) const override;
 
-		// Getters
-		GLuint GetProgramGLHandle() const { return m_Program; }
-	};
-}
+        // Apply Pipeline Parameters
+        void ApplyParameters();
+
+        // Getters
+        GLuint GetProgramGLHandle() const { return m_Program; }
+
+    private:
+        void BindUBOBlocks(std::vector<UBOBlockInfo> _blocks);
+    };
+} // namespace MirageRHI

@@ -3,18 +3,27 @@
 #include "editor_actions.h"
 #include "console.h"
 #include "dragdrop.h"
+
+#include <Resources/resource_manager.h>
+#include <Resources/texture.h>
+
 #include <fstream>
 #include <iostream>
+
+#include <Logs/log.h>
+
+DEFINE_LOG_CATEGORY_WITH_COLOR(LogExplorer, Loggers::Color::CYAN);
+DEFINE_LOG_CATEGORY(LogExplorerInfo);
 
 namespace Mirage
 {
 	void Explorer::InitPanel()
 	{
-		ShowFolderContent();
 		m_CurrentPath = m_RootPath;
 		ScanProjectDirectory(m_CurrentPath);
 
-		std::cout << "[Explorer] Root Path detecte : " << m_RootPath << std::endl;
+		LOG(logTemp, LogExplorer, "Root Path detected: ", m_RootPath.string());
+		LOG(logTemp, LogExplorer, "Explorer Panel Initialized");
 	}
 
 	void Explorer::DrawPanel(uint32_t _textureID)
@@ -22,6 +31,7 @@ namespace Mirage
 		UIWrapper::BeginWindow("Explorer");
 
 		ImGui::BeginChild("Sidebar", ImVec2(150, 0), true); //LEFT->SideBar
+
 		DrawFolderTree();
 		ImGui::EndChild();
 
@@ -36,13 +46,14 @@ namespace Mirage
 
 	void Explorer::ShutdownPanel()
 	{
-
+		LOG(logTemp, LogExplorer, "Explorer Panel Shutdown");
 	}
 
 	void Explorer::ScanProjectDirectory(const std::filesystem::path _rootPath)
 	{
+		LOG(logTemp, LogExplorer, "Scanning directory: ", _rootPath.string());
 		m_Entries.clear();
-		if(std::filesystem::exists(_rootPath) && std::filesystem::is_directory(_rootPath))
+		if (std::filesystem::exists(_rootPath) && std::filesystem::is_directory(_rootPath))
 		{
 			for (const std::filesystem::directory_entry& entry : std::filesystem::directory_iterator(_rootPath))
 			{
@@ -54,15 +65,21 @@ namespace Mirage
 				else
 				{
 					auto ext = entry.path().extension();
-					if (ext == ".png" || ext == ".jpg") newEntry.Type = AssetType::Texture;
-					else if (ext == ".obj") newEntry.Type = AssetType::Model;
-					else if (ext == ".cs" || ext == ".py") newEntry.Type = AssetType::Script;
-					else if (ext == ".glsl" || ext == ".frag" || ext == ".vert") newEntry.Type = AssetType::Shader;
-					else newEntry.Type = AssetType::Unknown;
+					if (ext == ".png" || ext == ".jpg")
+						newEntry.Type = AssetType::Texture;
+					else if (ext == ".obj")
+						newEntry.Type = AssetType::Model;	
+					else if (ext == ".c" || ext == ".cpp" || ext == ".cs" || ext == ".py")
+						newEntry.Type = AssetType::Script;
+					else if (ext == ".glsl" || ext == ".frag" || ext == ".vert")
+						newEntry.Type = AssetType::Shader;
+					else
+						newEntry.Type = AssetType::Unknown;
 				}
 				m_Entries.push_back(newEntry);
 			}
 		}
+		LOG(logTemp, LogExplorer, "Found ", m_Entries.size(), " entries in directory.");
 	}
 
 	void Explorer::DrawFolderTree()
@@ -71,8 +88,10 @@ namespace Mirage
 		std::string id = m_RootPath.string();
 
 		bool isLeaf = true;
-		for (const auto& sub : std::filesystem::directory_iterator(m_RootPath)) {
-			if (sub.is_directory()) {
+		for (const auto& sub : std::filesystem::directory_iterator(m_RootPath))
+		{
+			if (sub.is_directory())
+			{
 				isLeaf = false;
 				break;
 			}
@@ -103,9 +122,8 @@ namespace Mirage
 		}
 		else
 		{
-			if (UIWrapper::IsItemClicked()) {
+			if (UIWrapper::IsItemClicked())
 				this->ChangeDirectory(m_RootPath);
-			}
 		}
 	}
 
@@ -114,7 +132,8 @@ namespace Mirage
 		std::error_code ec;
 		auto it = std::filesystem::directory_iterator(_path, ec);
 
-		if (ec) return;
+		if (ec)
+			return;
 
 		for (const auto& entry : it)
 		{
@@ -124,8 +143,10 @@ namespace Mirage
 				std::string id = entry.path().string();
 
 				bool bisLeaf = true;
-				for (const auto& sub : std::filesystem::directory_iterator(entry.path())) {
-					if (sub.is_directory()) {
+				for (const auto& sub : std::filesystem::directory_iterator(entry.path()))
+				{
+					if (sub.is_directory())
+					{
 						bisLeaf = false;
 						break;
 					}
@@ -147,6 +168,7 @@ namespace Mirage
 
 					if (ImGui::BeginDragDropSource())
 					{
+						// Display a mini message when drag an object
 						DragDrop::SetPathPayload(DragDropTag::CONTENT_BROWSER_ITEM, entry.path());
 						ImGui::Text("Moving folder: %s", name.c_str());
 						ImGui::EndDragDropSource();
@@ -163,7 +185,8 @@ namespace Mirage
 				}
 				else
 				{
-					if (UIWrapper::IsItemClicked()) {
+					if (UIWrapper::IsItemClicked())
+					{
 						this->ChangeDirectory(entry.path());
 					}
 				}
@@ -176,51 +199,6 @@ namespace Mirage
 		m_SelectedEntry = nullptr;
 		m_CurrentPath = _newPath;
 		ScanProjectDirectory(m_CurrentPath);
-	}
-
-	void Explorer::ShowFolderContent()
-	{
-		std::filesystem::path content = std::filesystem::current_path();
-		bool found = false;
-
-		for (int i = 0; i < 5; ++i)
-		{
-			if (std::filesystem::exists(content / "MirageEngine" / "Assets"))
-			{
-				m_RootPath = std::filesystem::absolute(content / "MirageEngine" / "Assets");
-				found = true;
-				break;
-			}
-
-			if (content.filename() == "MirageEngine" && std::filesystem::exists(content / "Assets"))
-			{
-				m_RootPath = std::filesystem::absolute(content / "Assets");
-				found = true;
-				break;
-			}
-			if (content.has_parent_path())
-			{
-				content = content.parent_path();
-			}
-			else
-			{
-				break;
-			}
-		}
-		if (!found)
-		{
-			content = std::filesystem::current_path();
-			for (int i = 0; i < 3; ++i)
-			{
-				if (std::filesystem::exists(content / "Assets"))
-				{
-					m_RootPath = std::filesystem::absolute(content / "Assets");
-					found = true;
-					break;
-				}
-				content = content.parent_path();
-			}
-		}
 	}
 
 	void Explorer::DrawDirectoryContent()
@@ -285,7 +263,7 @@ namespace Mirage
 				ImGui::CloseCurrentPopup();
 			ImGui::EndPopup();
 		}
-		
+
 	}
 
 	void Explorer::DuplicateItem(const std::filesystem::path& _source, const std::filesystem::path& _target)
@@ -295,7 +273,7 @@ namespace Mirage
 		std::filesystem::copy(_source, _target, std::filesystem::copy_options::recursive, ec);
 
 		if (ec)
-			std::cout << "Error during duplication: " << ec.message() << std::endl;
+			LOG(logError, LogExplorerInfo, "Error during duplication: ", ec.message());
 
 		ScanProjectDirectory(m_CurrentPath);
 	}
@@ -347,16 +325,48 @@ namespace Mirage
 			for (const AssetEntry& entry : m_Entries)
 			{
 				bool isSelected = (m_SelectedEntry == &entry);
-				WidgetAction action = UIWrapper::DrawAssetTile(entry.Name.c_str(), isSelected);
 
-				if (action == WidgetAction::Clicked)
+				unsigned int id = (int)AssetType::Unknown;
+				if (entry.Type == AssetType::Folder)
+				{
+					id = (int)AssetType::Folder;
+				}
+				else if (entry.Type == AssetType::Texture)
+				{
+					id = (int)AssetType::Texture;
+				}
+				else if (entry.Type == AssetType::Model)
+				{
+					id = (int)AssetType::Model;
+				}
+				else if (entry.Type == AssetType::Script)
+				{
+					id = (int)AssetType::Script;
+				}
+				else if (entry.Type == AssetType::Shader)
+				{
+					id = (int)AssetType::Shader;
+				}
+				else if (entry.Type == AssetType::Scene)
+				{
+					id = (int)AssetType::Scene;
+				}
+				else
+				{
+					id = (int)AssetType::Unknown;
+				}
+
+				// Determine correct icon index based on asset type
+				WidgetAction content = UIWrapper::DrawAssetTile(entry.Name.c_str(), isSelected, GetIconTexture(id));
+
+				if (content == WidgetAction::Clicked)
 				{
 					m_SelectedEntry = (void*)&entry;
 				}
 
-				if (action == WidgetAction::DoubleClicked)
+				if (content == WidgetAction::DoubleClicked)
 				{
-					if(entry.Type == AssetType::Folder)
+					if (entry.Type == AssetType::Folder)
 					{
 						directoryToChange = entry.Path;
 					}
@@ -366,7 +376,7 @@ namespace Mirage
 					}
 				}
 
-				if (action == WidgetAction::RightClicked)
+				if (content == WidgetAction::RightClicked)
 				{
 					m_EntryToProcess = const_cast<AssetEntry*>(&entry);
 					m_NextModalToOpen = "AssetContextMenu";
@@ -438,7 +448,6 @@ namespace Mirage
 				}
 				if (ImGui::MenuItem("Rename"))
 				{
-					//strncpy_s(m_RenameBuffer, m_EntryToProcess->Name.c_str(), sizeof(m_RenameBuffer));
 					m_NextModalToOpen = "RenameModal";
 				}
 			}
@@ -457,7 +466,14 @@ namespace Mirage
 					if (ImGui::MenuItem("New Folder"))
 					{
 						std::error_code ec;
-						std::filesystem::create_directory(m_CurrentPath / "NewFolder", ec);
+						std::filesystem::path newFolderPath = m_CurrentPath / "NewFolder";
+						int counter = 1;
+						while (std::filesystem::exists(newFolderPath))
+						{
+							newFolderPath = m_CurrentPath / ("NewFolder (" + std::to_string(counter) + ")");
+							counter++;
+						}
+						std::filesystem::create_directory(newFolderPath, ec);
 						ScanProjectDirectory(m_CurrentPath);
 					}
 
@@ -487,15 +503,15 @@ namespace Mirage
 
 					if (ImGui::BeginMenu("Document"))
 					{
-						if (ImGui::MenuItem("Text File (.txt)")) 
+						if (ImGui::MenuItem("Text File (.txt)"))
 						{
 							CreateItem(m_CurrentPath, "NewText", ".txt", "");
 						}
-						if (ImGui::MenuItem("JSON File (.json)")) 
+						if (ImGui::MenuItem("JSON File (.json)"))
 						{
 							CreateItem(m_CurrentPath, "NewJSON", ".json", "{\n\t\"version\": 1\n}");
 						}
-						if (ImGui::MenuItem("Readme (.md)")) 
+						if (ImGui::MenuItem("Readme (.md)"))
 						{
 							CreateItem(m_CurrentPath, "README", ".md", "# Project Notes\n");
 						}
@@ -581,9 +597,7 @@ namespace Mirage
 		std::filesystem::rename(_oldPath, _newPath, ec);
 
 		if (ec)
-		{
-			std::cout << "Error during renaming" << ec.message() << std::endl;
-		}
+			LOG(logError, LogExplorerInfo, "Error during renaming: ", ec.message());
 	}
 
 	void Explorer::MoveItem(const std::filesystem::path& _source, const std::filesystem::path& _target)
@@ -593,13 +607,41 @@ namespace Mirage
 		std::error_code ec;
 		std::filesystem::rename(_source, newPath, ec);
 
-		if (ec) 
-		{
-			std::cerr << "Move Error: " << ec.message() << std::endl;
-		}
+		if (ec)
+			LOG(logError, LogExplorerInfo, "Move Error: ", ec.message());
 		else
-		{
 			ScanProjectDirectory(m_CurrentPath);
+	}
+
+	std::shared_ptr<MirageEngine::Core::Resources::Texture> Explorer::GetIconTexture(unsigned int _index)
+	{
+		MirageEngine::Core::Resources::ResourceManager& rm = MirageEngine::Core::Resources::ResourceManager::Instance();
+
+		std::shared_ptr<MirageEngine::Core::Resources::Texture> folder = rm.GetTexture("folder_icon");
+		std::shared_ptr<MirageEngine::Core::Resources::Texture> texture = rm.GetTexture("texture_icon");
+		std::shared_ptr<MirageEngine::Core::Resources::Texture> model = rm.GetTexture("model_icon");
+		std::shared_ptr<MirageEngine::Core::Resources::Texture> script = rm.GetTexture("script_icon");
+		std::shared_ptr<MirageEngine::Core::Resources::Texture> shader = rm.GetTexture("shader_icon");
+		std::shared_ptr<MirageEngine::Core::Resources::Texture> scene = rm.GetTexture("scene_icon");
+		std::shared_ptr<MirageEngine::Core::Resources::Texture> file = rm.GetTexture("file_icon");
+
+		folder->Bind();
+		texture->Bind();
+		model->Bind();
+		script->Bind();
+		shader->Bind();
+		scene->Bind();
+		file->Bind();
+		switch (_index)
+		{
+		case 0: return folder;   // Folder
+		case 1: return texture;  // Texture
+		case 2: return model;    // Model
+		case 3: return script;   // Script
+		case 4: return shader;   // Shader
+		case 5: return scene;    // Scene
+		case 6: return file;     // Unknown/Generic
+		default: return nullptr;
 		}
 	}
 }

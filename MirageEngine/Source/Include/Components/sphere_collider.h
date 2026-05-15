@@ -24,34 +24,34 @@ namespace MirageEngine
         {
             class SphereCollider : public Component, public ICCollider
             {
-                    Physics::ICollider* m_Collider;
+            private:
+                std::shared_ptr<Physics::ICollider> m_Collider;
 
-                public:
+            public:
+                SphereCollider();
+                SphereCollider(GameObject* _owner);
+                ~SphereCollider() = default;
 
-                    SphereCollider();
-                    ~SphereCollider();
+                void AttachMeta(std::shared_ptr<GameObject> _Owner);
+                static void AttachNew(std::shared_ptr<GameObject> _owner);
 
-                    virtual void Init() override {}
+                entt::id_type GetType() const override;
 
-                    virtual void Update() override {}
+                // Sphere only parameter
+                void SetRadius(float _radius);
+                float GetRadius() const;
 
-                    entt::id_type GetType() const override { return 0; }
+                // Global collider parameter
+                void SetScale(Math::Vector3 _scale);
+                void SetTranslate(Math::Vector3 _offset);
+                void SetRotation(Math::Quaternion _rotation);
+                void SetOffset(Math::Vector3 _offset, Math::Quaternion _rotation);
 
-                    // Sphere only parameter
-                    void  SetRadius(float _radius);
-                    float GetRadius() const;
+                Math::Vector3 GetScale() const;
+                Math::Vector3 GetTranslate() const;
+                Math::Quaternion GetRotation() const;
 
-                    // Global collider parameter
-                    void SetScale(Math::Vector3 _scale);
-                    void SetTranslate(Math::Vector3 _offset);
-                    void SetRotation(Math::Quaternion _rotation);
-                    void SetOffset(Math::Vector3 _offset, Math::Quaternion _rotation);
-
-                    Math::Vector3    GetScale() const;
-                    Math::Vector3    GetTranslate() const;
-                    Math::Quaternion GetRotation() const;
-
-                    Physics::ICollider* GetCollision() const override { return m_Collider; }
+                std::shared_ptr<Physics::ICollider> GetCollision() const override { return m_Collider; }
             };
         } // namespace Components
     } // namespace Core

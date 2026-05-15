@@ -14,13 +14,14 @@ Transform::Transform(Vector3 _position, Quaternion _rotation, Vector3 _scale)
     Init();
 }
 
-void Transform::Init()
-{
-}
+void Transform::Init() {}
 
-void Transform::Update()
-{
+void Transform::Update() {}
 
+void MirageEngine::Core::Components::Transform::AttachMeta(std::shared_ptr<GameObject> _Owner)
+{
+    Transform savedTransform = *this;
+    _Owner->Transform = savedTransform;
 }
 
 Matrix4 Transform::GetMatrix()
@@ -28,7 +29,7 @@ Matrix4 Transform::GetMatrix()
     if (m_bDirty)
     {
         m_LocalMatrix = Matrix4::CreateTransformMatrix(m_LocalPosition, m_LocalRotation, m_LocalScale);
-        m_bDirty      = false;
+        m_bDirty = false;
     }
     return m_LocalMatrix;
 }
@@ -81,26 +82,26 @@ Vector3 Transform::Left() const { return -Right(); }
 
 void Transform::SetPosition(Vector3 _pos)
 {
-    m_bDirty        = true;
+    m_bDirty = true;
     m_LocalPosition = _pos;
 }
 
 void Transform::SetScale(Vector3 _scale)
 {
-    m_bDirty     = true;
+    m_bDirty = true;
     m_LocalScale = _scale;
 }
 
 void Transform::SetRotation(Quaternion _rotation)
 {
-    m_bDirty        = true;
+    m_bDirty = true;
     m_LocalRotation = _rotation;
 }
 
 void Transform::SetLocalMatrix(Math::Matrix4 _mat)
 {
-	m_LocalPosition = _mat.GetTranslation();
-	m_LocalScale = _mat.GetScale();
-	m_LocalRotation = _mat.GetRotation();
-	m_bDirty = true;
+    m_LocalPosition = _mat.GetTranslation();
+    m_LocalScale = _mat.GetScale();
+    m_LocalRotation = _mat.GetRotation();
+    m_bDirty = true;
 }

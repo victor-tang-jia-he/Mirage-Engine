@@ -1,41 +1,42 @@
 #pragma once
 
-#include <vector>
-#include <string>
-#include <stdexcept>
-
-#include <entt/meta/factory.hpp>
-#include <entt/meta/container.hpp>
-#include <entt/meta/meta.hpp>
+namespace entt
+{
+    using id_type = std::uint32_t;
+    class meta_any;
+}
 
 namespace MirageEngine
 {
-	class GameObject;
-	namespace Core
-	{
-		namespace Components
-		{
-			class Component
-			{
-				friend class MirageEngine::GameObject;
+    class GameObject;
 
-			protected:
-				std::string m_ComponentName;
-				GameObject* m_Owner;
+	namespace Core::Components
+    {
+        class Component
+        {
+            friend class MirageEngine::GameObject;
 
-			public:
-				Component() = default;
-				virtual ~Component() = default;
+        protected:
+            std::string m_ComponentName;
+            GameObject* m_Owner;
 
-				virtual void Init() = 0;
-				virtual void Update() = 0;
+        public:
+            Component() = default;
+            Component(GameObject* _owner) : m_Owner(_owner) {}
+            virtual ~Component() = default;
 
-				virtual entt::id_type GetType() const = 0;
+            virtual void OnStart() {};
+            virtual void OnUpdate(float dt) {};
+            virtual void OnLateUpdate(float dt) {};
+            virtual void OnFixedUpdate(float dt) {};
+            virtual void OnDrawLine() {};
+            virtual void OnCreate() {}
+            virtual void OnDestroy() {}
+            virtual entt::id_type GetType() const = 0;
 
-				// Getters
-				std::string GetName() const { return m_ComponentName; }
-				GameObject* GetOwner() const { return m_Owner; }
-			};
-		}
-	}
-}
+            // Getters
+            std::string GetName() const { return m_ComponentName; }
+            GameObject* GetOwner() const { return m_Owner; }
+        };
+    } // namespace Core::Components
+} // namespace MirageEngine

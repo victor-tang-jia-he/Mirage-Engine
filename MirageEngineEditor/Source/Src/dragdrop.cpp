@@ -1,6 +1,10 @@
 #include "dragdrop.h"
 #include "imgui.h"
-#include<string>
+#include <string>
+
+#include <Logs/log.h>
+
+DEFINE_LOG_CATEGORY_WITH_COLOR(LogDragDrop, Loggers::Color::CYAN);
 
 namespace Mirage
 {
@@ -8,9 +12,12 @@ namespace Mirage
 	{
 		switch (_tag)
 		{
-			case DragDropTag::CONTENT_BROWSER_ITEM:   return "CONTENT_BROWSER_ITEM";
-			case DragDropTag::HIERARCHY_ITEM: return "HIERARCHY_ITEM";
-			default:                       return "UNKNOWN";
+			case DragDropTag::CONTENT_BROWSER_ITEM:
+				return "CONTENT_BROWSER_ITEM";
+			case DragDropTag::HIERARCHY_ITEM:
+				return "HIERARCHY_ITEM";
+			default:
+				return "UNKNOWN";
 		}
 	}
 
@@ -28,9 +35,7 @@ namespace Mirage
 	std::filesystem::path DragDrop::GetPathPayload(Mirage::DragDropTag _tag)
 	{
 		if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(GetTagString(_tag)))
-		{
 			return std::filesystem::path((const char*)payload->Data);
-		}
 
 		return {};
 	}
@@ -38,9 +43,8 @@ namespace Mirage
 	void* DragDrop::GetPointerPayload(Mirage::DragDropTag _tag)
 	{
 		if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(GetTagString(_tag)))
-		{
 			return *(void**)payload->Data;
-		}
+
 		return nullptr;
 	}
 }

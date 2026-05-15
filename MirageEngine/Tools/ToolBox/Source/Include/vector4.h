@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 
 #include "vector3.h"
 namespace MirageEngine
@@ -105,7 +105,7 @@ namespace MirageEngine
 				Vector4 Normalized() const;
 
 				/// <summary>
-				/// Returns the perspective-transformed value of the vector using the formula: (x² + y² + z² + w²) / _t.
+				/// Returns the perspective-transformed value of the vector using the formula: (x2 + y2 + z2 + w2) / _t.
 				/// </summary>
 				/// <param name="_t">The perspective parameter. Must be greater than 0.</param>
 				/// <returns>The result of the perspective function, or 0 if _t is less than or equal to 0.</returns>
@@ -169,8 +169,6 @@ namespace MirageEngine
 
 				bool operator==(const Vector4& _other) const;
 				bool operator!=(const Vector4& _other) const;
-
-				Vector3 operator=(const Vector4& vec4);
 			};
 			Vector4 operator*(float _scalar, const Vector4& _vec);
 			std::ostream& operator<<(std::ostream& _os, const Vector4& _vec);

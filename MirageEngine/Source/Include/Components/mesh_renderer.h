@@ -6,36 +6,41 @@
 
 namespace MirageEngine
 {
-	namespace Core
-	{
-		namespace Components
-		{
-			class MeshRenderer : public Component
-			{
-			private:
-				std::shared_ptr<MirageEngine::Core::Resources::Mesh> m_Mesh = nullptr;
-				std::shared_ptr<MirageEngine::Core::Resources::MaterialInstance> m_Material = nullptr;
+    namespace Core
+    {
+        namespace Components
+        {
+            class MeshRenderer : public Component
+            {
+            private:
+                std::shared_ptr<Resources::Mesh> m_Mesh = nullptr;
+                std::shared_ptr<Resources::MaterialInstance> m_Material = nullptr;
 
-			public:
-				MeshRenderer() = default;
-				MeshRenderer(std::shared_ptr<MirageEngine::Core::Resources::Mesh> _mesh, std::shared_ptr<MirageEngine::Core::Resources::MaterialInstance> _material)
-					: m_Mesh(_mesh), m_Material(_material)
-				{
-				}
+            public:
 
-				void Init() override {};
-				void Update() override {};
+                MeshRenderer() = default;
+				MeshRenderer(GameObject* _owner) {}
+                MeshRenderer(std::shared_ptr<Resources::Mesh> _mesh, std::shared_ptr<Resources::MaterialInstance> _material)
+                    : m_Mesh(_mesh)
+                    , m_Material(_material)
+                {
+                }
 
-				entt::id_type GetType() const override { return entt::type_id<MeshRenderer>().hash(); }
+                void AttachMeta(std::shared_ptr<GameObject> _Owner);
+				static void AttachNew(std::shared_ptr<GameObject> _owner);
 
-				// Getters
-				std::shared_ptr<MirageEngine::Core::Resources::Mesh> GetMesh() const { return m_Mesh; }
-				std::shared_ptr<MirageEngine::Core::Resources::MaterialInstance> GetMaterial() const { return m_Material; }
+				entt::id_type GetType() const override;
 
-				// Setters
-				void SetMesh(std::shared_ptr<MirageEngine::Core::Resources::Mesh> _mesh) { m_Mesh = _mesh; }
-				void SetMaterial(std::shared_ptr<MirageEngine::Core::Resources::MaterialInstance> _material) { m_Material = _material; }
-			};
-		}
-	}
-}
+                // Getters
+                std::shared_ptr<Resources::Mesh> GetMesh() const { return m_Mesh; }
+
+                std::shared_ptr<Resources::MaterialInstance> GetMaterial() const { return m_Material; }
+
+                // Setters
+                void SetMesh(std::shared_ptr<Resources::Mesh> _mesh) { m_Mesh = _mesh; }
+
+                void SetMaterial(std::shared_ptr<Resources::MaterialInstance> _material) { m_Material = _material; }
+            };
+        } // namespace Components
+    } // namespace Core
+} // namespace MirageEngine

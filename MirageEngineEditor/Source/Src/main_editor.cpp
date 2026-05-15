@@ -2,49 +2,52 @@
 
 #include "UI_wrapper.h"
 #include "editor_app.h"
-#include "glad/glad.h"
+#include "Glad/glad.h"
 #include "GLFW/glfw3.h"
 #include "application.h"
-#include "time_manager.h"
+#include <time_manager.h>
 #include "Physics/physics_manager.h"
 #include "Reflection/register_meta.h"
+#include <Scripting/script_manager.h>
+#include <Logs/log.h>
+#include <DebugDraw/debug_draw.h>
+#include <Components/camera.h>
 
 int main()
 {
-    Application application;	// Temp, will be replaced by Engine Handler
-    Mirage::EditorApp editor;
-
+	Loggers::EnableImmediateFlush(false);   // Enable immediate flushing of log messages for real-time output during initialization
+	Loggers::EnableFileWriting(false);      // Enable writing logs to file during initialization to capture any issues that may occur before the main loop starts.
+	Loggers::EnableTimeOnEveryLog(false);  // Disable time show as it take verbosal the log.
+	Loggers::EnableFileNameAndLine(true); // Disable file name and line of the log , can be enable if necessary.
+	Application application;               // Temp, will be replaced by Engine Handler
+	Mirage::EditorApp editor;
 	// --- Initialization ---
 	application.InitApp();
-	MirageEngine::RegisterMeta().RegisterAllMeta();
-	editor.Init(application.m_Renderer.GetWindowHandle(), &application.m_Renderer, application.GetSceneGraph());
-	MirageEngine::TimeManager::Init();
 
-	while (application.m_Renderer.IsRunning())
+	&entt::locator<entt::meta_ctx>::value_or(); // TODO : Remove for a better use of shared Context
+	MirageEngine::RegisterMeta().RegisterAllMeta(entt::locator<entt::meta_ctx>::handle());
+	editor.Init(application.GetWindowHandle(), application.GetRenderer(), application.GetSceneGraph());
+	MirageEngine::TimeManager::Init();
+	while (application.IsRunning())
 	{
-		// --- Update ---
+		glfwPollEvents();
 		MirageEngine::TimeManager::Update();
 		MirageEngine::Core::Input::InputSystem::UpdateHeldInput();
 		if (editor.IsPlaying() && !editor.IsPaused())
+		{
 			MirageEngine::Core::Physics::PhysicsManager::Instance().Update(MirageEngine::TimeManager::GetDeltaTime());
-		application.GetSceneGraph()->UpdateAllWorldMatrices();
+			application.RuntimeUpdate(MirageEngine::TimeManager::GetDeltaTime());
+		}
+		application.EditorUpdate();
+		application.BeginRender(editor.GetEditorCamera());
 
-		// --- Render ---
-		application.m_Renderer.BeginFrame();
-
-		application.m_Renderer.RenderScene(application.m_SceneGraph);
-		application.m_Renderer.RenderScreen();
-
-		// Used to display the scene in the editor viewport
-		uint32_t textureID = application.m_Renderer.GetFramebufferTextureID();
 		// Display the editor panels and pass the framebuffer texture ID to the viewport for rendering the scene
-		editor.Update(textureID);
-
-		application.m_Renderer.EndFrame();
+		editor.OnUpdate(application.GetFramebufferTextureID());
+		application.EndRender();
 	}
 
 	// --- Shutdown ---
-    editor.Shutdown();
-    application.ShutDown();
-    return 0;
+	editor.Shutdown();
+	application.ShutDown();
+	return 0;
 }

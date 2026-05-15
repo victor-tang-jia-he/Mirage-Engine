@@ -1,7 +1,6 @@
 #pragma once
 #include <Resources/resource_interface.h>
 #include <RHI/i_pipeline.h>
-#include <Logs/log_macro.h>
 
 DECLARE_LOG_CATEGORY_EXTERN(LogPipeline)
 
@@ -16,41 +15,41 @@ namespace MirageEngine::Core::Resources
 
     struct Pipeline : public IResource
     {
-        private:
+    private:
+        std::shared_ptr<MirageRHI::IPipeline> PipelineBind = nullptr;
+        std::shared_ptr<MirageRHI::IPipelineParameters> PipelineParameters = nullptr;
+        std::shared_ptr<Shader> AttachedVertexShader = nullptr;
+        std::shared_ptr<Shader> AttachedFragmentShader = nullptr;
+        std::vector<MirageRHI::UBOBlockInfo> UboBlockInfo{};
 
-            std::shared_ptr<MirageRHI::IPipeline>           PipelineBind           = nullptr;
-            std::shared_ptr<MirageRHI::IPipelineParameters> PipelineParameters     = nullptr;
-            std::shared_ptr<Shader>                         AttachedVertexShader   = nullptr;
-            std::shared_ptr<Shader>                         AttachedFragmentShader = nullptr;
+        bool m_bUploaded = false;
 
-            bool m_bUploaded = false;
+    public:
+        Pipeline(std::shared_ptr<MirageRHI::IPipeline> _pipelineBind,
+            std::shared_ptr<MirageRHI::IPipelineParameters> _pipelineParameters, std::shared_ptr<Shader> _vertexShader,
+            std::shared_ptr<Shader> _fragmentShader, std::vector<MirageRHI::UBOBlockInfo> _uboBlockInfo)
+            : PipelineBind(_pipelineBind)
+            , PipelineParameters(_pipelineParameters)
+            , AttachedVertexShader(_vertexShader)
+            , AttachedFragmentShader(_fragmentShader)
+            , UboBlockInfo(_uboBlockInfo)
+        {
+        }
 
-        public:
+        ~Pipeline() override = default;
 
-            Pipeline(
-                std::shared_ptr<MirageRHI::IPipeline> _pipelineBind, std::shared_ptr<MirageRHI::IPipelineParameters> _pipelineParameters, std::shared_ptr<Shader> _vertexShader,
-                std::shared_ptr<Shader> _fragmentShader)
-                : PipelineBind(_pipelineBind)
-                , PipelineParameters(_pipelineParameters)
-                , AttachedVertexShader(_vertexShader)
-                , AttachedFragmentShader(_fragmentShader)
-            {
-            }
+        void Bind();
 
-            ~Pipeline() override = default;
+        void SetNewVertexShader(std::shared_ptr<Shader> _newVertexShader)
+        {
+            AttachedVertexShader = _newVertexShader;
+            m_bUploaded = false; // Mark for re-upload
+        }
 
-            void Bind();
-
-            void SetNewVertexShader(std::shared_ptr<Shader> _newVertexShader)
-            {
-                AttachedVertexShader = _newVertexShader;
-                m_bUploaded          = false; // Mark for re-upload
-            }
-
-            void SetNewFragmentShader(std::shared_ptr<Shader> _newFragmentShader)
-            {
-                AttachedFragmentShader = _newFragmentShader;
-                m_bUploaded            = false; // Mark for re-upload
-            }
+        void SetNewFragmentShader(std::shared_ptr<Shader> _newFragmentShader)
+        {
+            AttachedFragmentShader = _newFragmentShader;
+            m_bUploaded = false; // Mark for re-upload
+        }
     };
 } // namespace MirageEngine::Core::Resources

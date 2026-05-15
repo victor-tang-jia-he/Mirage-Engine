@@ -25,4 +25,4 @@ namespace MirageRHI
         int GetWidth() const { return m_Width; }
         int GetHeight() const { return m_Height; }
     };
-}
+} // namespace MirageRHI

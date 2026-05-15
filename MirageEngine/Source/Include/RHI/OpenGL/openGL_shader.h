@@ -1,9 +1,8 @@
 #pragma once
 
-#include <glad/glad.h>
+#include <Glad/glad.h>
 #include <GLFW/glfw3.h>
 
-#include <string>
 #include <fstream>
 #include <sstream>
 
@@ -11,23 +10,27 @@
 
 namespace MirageRHI
 {
-	class OpenGLShader : public IShader
-	{
-	private:
-		GLuint m_Shader = 0;
-		ShaderType m_Type = ShaderType::None;
+    class OpenGLShader : public IShader
+    {
+        private:
 
-	public:
-		bool Create(const char* _shaderPath, ShaderType _type) override;
-		void Destroy() override;
+            GLuint m_Shader = 0;
+            ShaderType m_Type = ShaderType::NONE;
 
-		OpenGLShader& API_OpenGL() override { return *this; }
+        public:
 
-		// Getters
-		GLuint GetGLHandle() const { return m_Shader; }
-		ShaderType GetType() const { return m_Type; }
+            bool Create(const char* _shaderPath, ShaderType _type) override;
+            void Destroy() override;
 
-	private:
-		bool CompileShader(const std::string& _path, unsigned int _type, unsigned int& _shaderOut);
-	};
-}
+            OpenGLShader& API_OpenGL() override { return *this; }
+
+            // Getters
+            GLuint GetGLHandle() const { return m_Shader; }
+
+            ShaderType GetType() const { return m_Type; }
+
+        private:
+
+            bool CompileShader(const std::string& _path, unsigned int _type, unsigned int& _shaderOut);
+    };
+} // namespace MirageRHI

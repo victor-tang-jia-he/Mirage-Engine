@@ -1,6 +1,5 @@
 #pragma once
 
-#include <vector>
 #include <i_swap_chain.h>
 
 namespace MirageRHI
@@ -28,4 +27,4 @@ namespace MirageRHI
         uint32_t AcquireCurrentImage() override;
         void Present(OpenGLSurface _surface);
     };
-}
+} // namespace MirageRHI

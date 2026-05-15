@@ -1,24 +1,22 @@
 #pragma once
-
-#include <Logs/log_macro.h>
-
+#include <stdexcept>
 DECLARE_LOG_CATEGORY_EXTERN(LogRHIVertexLayout)
 
 namespace MirageRHI
 {
     class OpenGLVertexLayout;
 
-    enum class AttributeType 
+    enum class AttributeType
     {
-        Float,
-        Int
-	};
+        FLOAT,
+        INT
+    };
 
-    struct VertexAttribute 
+    struct VertexAttribute
     {
         std::string Name = "";
         uint32_t Size = 0; // Number of variables in the array
-        AttributeType Type = AttributeType::Float;
+        AttributeType Type = AttributeType::FLOAT;
         bool Normalized = false;
         uint32_t Stride = 0;
         void* Pointer = nullptr;
@@ -37,4 +35,4 @@ namespace MirageRHI
         virtual void RemoveAttribute(std::string _targetAttributeName) = 0;
         virtual void ClearAttributes() = 0;
     };
-}
+} // namespace MirageRHI

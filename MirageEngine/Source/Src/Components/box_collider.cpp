@@ -1,14 +1,39 @@
 #include <Components/box_collider.h>
 #include <quaternion.h>
 #include <Physics/physics_manager.h>
+#include <entt/entt.hpp>
 
 using namespace MirageEngine::Core::Components;
 using namespace MirageEngine::Core::Physics;
 using namespace MirageEngine::Core;
 
-BoxCollider::BoxCollider() { m_Collider = PhysicsManager::Instance().CreateCollider(ECollisionShapeType::Box); }
+BoxCollider::BoxCollider() 
+{ 
+    m_Collider = PhysicsManager::Instance().CreateCollider(ECollisionShapeType::BOX);
+}
 
-BoxCollider::~BoxCollider() { delete m_Collider; }
+MirageEngine::Core::Components::BoxCollider::BoxCollider(GameObject* _owner)
+    : Component(_owner)
+{
+    m_Collider = PhysicsManager::Instance().CreateCollider(ECollisionShapeType::BOX);
+}
+
+void MirageEngine::Core::Components::BoxCollider::AttachMeta(std::shared_ptr<GameObject> _Owner)
+{
+    std::shared_ptr<BoxCollider> compPtr = std::make_shared<BoxCollider>(*this);
+    _Owner->AddComponent<BoxCollider>(compPtr);
+}
+
+void MirageEngine::Core::Components::BoxCollider::AttachNew(std::shared_ptr<GameObject> _owner)
+{
+    std::shared_ptr<BoxCollider> compPtr = std::make_shared<BoxCollider>(_owner.get());
+    _owner->AddComponent<BoxCollider>(compPtr);
+}
+
+entt::id_type MirageEngine::Core::Components::BoxCollider::GetType() const
+{
+    return entt::type_id<BoxCollider>().hash();
+}
 
 void BoxCollider::SetHalfExtents(const Math::Vector3& _halfExtents) { m_Collider->As<IBoxCollider>()->SetHalfExtents(_halfExtents); }
 

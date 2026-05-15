@@ -9,30 +9,28 @@ namespace MirageEngine::Core::Physics
 
     class Bullet3BoxCollider : public ICollider, public IBulletColliderData, public IBoxCollider
     {
-            using Vector3    = MirageEngine::Core::Math::Vector3;
-            using Quaternion = MirageEngine::Core::Math::Quaternion;
+        using Vector3 = MirageEngine::Core::Math::Vector3;
+        using Quaternion = MirageEngine::Core::Math::Quaternion;
 
-        private:
+    private:
+        btCollisionShape* m_CollisionShape = nullptr;
+        Vector3 m_HalfExtents = Vector3(1.f);
+        btTransform m_LocalTransform;
 
-            btCollisionShape* m_CollisionShape = nullptr;
-            Vector3           m_HalfExtents    = Vector3(1.f);
-            btTransform       m_LocalTransform;
+    public:
+        Bullet3BoxCollider() = default;
+        ~Bullet3BoxCollider() override;
 
-        public:
+        void Create() override;
 
-            Bullet3BoxCollider() = default;
-            ~Bullet3BoxCollider() override;
+        void SetOffset(Vector3 _offset, Quaternion _rotation) override;
+        void SetHalfExtents(const Vector3& _halfExtents) override;
 
-            void Create() override;
+        Vector3 GetHalfExtents() const override;
+        btTransform GetTransform() override;
 
-            void SetOffset(Vector3 _offset, Quaternion _rotation) override;
-            void SetHalfExtents(const Vector3& _halfExtents) override;
+        btCollisionShape* GetShape() override { return m_CollisionShape; }
 
-            Vector3     GetHalfExtents() const override;
-            btTransform GetTransform() override;
-
-            btCollisionShape* GetShape() override { return m_CollisionShape; }
-
-            IBulletColliderData* AsBullet3Collider() override { return this; }
+        IBulletColliderData* AsBullet3Collider() override { return this; }
     };
 } // namespace MirageEngine::Core::Physics
