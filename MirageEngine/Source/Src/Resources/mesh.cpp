@@ -41,8 +41,8 @@ void Mesh::Bind()
     if (!m_bIsUpload)
     {
         m_bIsUpload = true;
-        m_VertexBuffer->Create(m_Vertex.data(), m_Vertex.size() * sizeof(LitVertex), MirageRHI::IBuffer::BufferType::Vertices);
-        m_IndexBuffer->Create(m_Index.data(), m_Index.size() * sizeof(uint32_t), MirageRHI::IBuffer::BufferType::Indices);
+        m_VertexBuffer->Create(m_Vertex.data(), m_Vertex.size() * sizeof(LitVertex), MirageRHI::IBuffer::BufferType::VERTICES);
+        m_IndexBuffer->Create(m_Index.data(), m_Index.size() * sizeof(uint32_t), MirageRHI::IBuffer::BufferType::INDICES);
 
         m_VertexLayout->Create();
         // Clear CPU-side data after uploading to GPU
@@ -61,7 +61,7 @@ void MirageEngine::Core::Resources::Mesh::CreateLitVertexLayout()
     std::shared_ptr<MirageRHI::VertexAttribute> positionAttr = std::make_shared<MirageRHI::VertexAttribute>();
     positionAttr->Name = "position";
     positionAttr->Size = 3;
-    positionAttr->Type = MirageRHI::AttributeType::Float;
+    positionAttr->Type = MirageRHI::AttributeType::FLOAT;
     positionAttr->Normalized = false;
     positionAttr->Stride = sizeof(LitVertex);
     positionAttr->Pointer = (void*)offsetof(LitVertex, Position);
@@ -69,7 +69,7 @@ void MirageEngine::Core::Resources::Mesh::CreateLitVertexLayout()
     std::shared_ptr<MirageRHI::VertexAttribute> normalAttr = std::make_shared<MirageRHI::VertexAttribute>();
     normalAttr->Name = "normal";
     normalAttr->Size = 3;
-    normalAttr->Type = MirageRHI::AttributeType::Float;
+    normalAttr->Type = MirageRHI::AttributeType::FLOAT;
     normalAttr->Normalized = false;
     normalAttr->Stride = sizeof(LitVertex);
     normalAttr->Pointer = (void*)offsetof(LitVertex, Normal);
@@ -77,7 +77,7 @@ void MirageEngine::Core::Resources::Mesh::CreateLitVertexLayout()
     std::shared_ptr<MirageRHI::VertexAttribute> UVAttr = std::make_shared<MirageRHI::VertexAttribute>();
     UVAttr->Name = "UV";
     UVAttr->Size = 2;
-    UVAttr->Type = MirageRHI::AttributeType::Float;
+    UVAttr->Type = MirageRHI::AttributeType::FLOAT;
     UVAttr->Normalized = false;
     UVAttr->Stride = sizeof(LitVertex);
     UVAttr->Pointer = (void*)offsetof(LitVertex, UV);

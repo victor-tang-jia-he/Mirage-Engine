@@ -14,9 +14,9 @@ using namespace MirageRHI;
 
 Material::~Material()
 {
-    pipeline.reset();
-    vertexShader.reset();
-    fragmentShader.reset();
+    m_Pipeline.reset();
+    m_VertexShader.reset();
+    m_FragmentShader.reset();
     LOG(logTemp, LogMaterial, "Material ", p_Name, " Destroy");
 }
 
