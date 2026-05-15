@@ -1,5 +1,6 @@
-#include "deserializer.h"
 #pragma once
+
+#include "deserializer.h"
 
 namespace MirageEngine
 {
@@ -14,14 +15,14 @@ namespace MirageEngine
         return vectorData;
 	}
 
-    template<typename TKey, typename TValue>
-    inline std::unordered_map<TKey, TValue> MirageEngine::Deserializer::DeserializeMap(json _jMap)
+    template<typename T>
+    inline std::unordered_map<std::string, T> MirageEngine::Deserializer::DeserializeMap(json _jMap)
     {
-        std::unordered_map<TKey, TValue> mapData;
-        for (json::iterator it = _jMap.begin(); it != _jMap.end(); ++it)
+        std::unordered_map<std::string, T> mapData;
+        for (const json& element : _jMap)
         {
-            TKey key = static_cast<TKey>(std::stoll(it.key()));
-            TValue value = it.value().get<TValue>();
+            std::string key = element.type_name();
+            T value = element.get<T>();
             mapData[key] = value;
         }
 		return mapData;

@@ -206,7 +206,7 @@ void MirageEngine::Deserializer::DeserializeMetaData(entt::meta_type _type, entt
 	// = Maps =
     else if (actualType == entt::resolve<std::unordered_map<std::string, float>>())
     {
-        std::unordered_map<std::string, float> mapData = DeserializeMap<std::string, float>(_jComponent[_data.name()]);
+        std::unordered_map<std::string, float> mapData = DeserializeMap<float>(_jComponent[_data.name()]);
         _data.set(_instance, mapData);
         return;
     }

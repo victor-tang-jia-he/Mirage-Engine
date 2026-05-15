@@ -68,8 +68,8 @@ namespace MirageEngine
 		template<typename T>
 		static std::vector<T> DeserializeVector(json _jVector);
 
-		template<typename TKey, typename TValue>
-		static std::unordered_map<TKey, TValue> DeserializeMap(json _jMap);
+		template<typename T>
+		static std::unordered_map<std::string, T> DeserializeMap(json _jMap);
 	};
 }
 
