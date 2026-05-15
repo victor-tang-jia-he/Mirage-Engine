@@ -158,28 +158,11 @@ void MirageEngine::Deserializer::DeserializeMetaData(entt::meta_type _type, entt
 
     entt::meta_type actualType = value.type();
 
+	// === Basic types handling ===
     if (actualType == entt::resolve<std::string>())
     {
         std::string stringData = _jComponent[_data.name()].get<std::string>();
         _data.set(_instance, stringData);
-        return;
-    }
-    else if (actualType == entt::resolve<Math::Vector3>())
-    {
-        Math::Vector3 vec3Data = DeserializeVector3(_jComponent[_data.name()]);
-        _data.set(_instance, vec3Data);
-        return;
-    }
-    else if (actualType == entt::resolve<Math::Vector4>())
-    {
-        Math::Vector4 vec4Data = DeserializeVector4(_jComponent[_data.name()]);
-        _data.set(_instance, vec4Data);
-        return;
-    }
-    else if (actualType == entt::resolve<Math::Quaternion>())
-    {
-        Math::Quaternion quatData = DeserializeQuaternion(_jComponent[_data.name()]);
-        _data.set(_instance, quatData);
         return;
     }
     else if (actualType == entt::resolve<float>())
@@ -206,6 +189,8 @@ void MirageEngine::Deserializer::DeserializeMetaData(entt::meta_type _type, entt
         _data.set(_instance, booleanData);
         return;
     }
+    // === Specific containers handling ===
+    // = Vectors =
     else if (actualType == entt::resolve<std::vector<float>>())
     {
         std::vector<float> floatVectorData = DeserializeVector<float>(_jComponent[_data.name()]);
@@ -218,12 +203,15 @@ void MirageEngine::Deserializer::DeserializeMetaData(entt::meta_type _type, entt
         _data.set(_instance, stringVectorData);
         return;
     }
-    else if (actualType.is_enum())
+	// = Maps =
+    else if (actualType == entt::resolve<std::unordered_map<std::string, float>>())
     {
-        int enumData = _jComponent[_data.name()].get<int>();
-        _data.set(_instance, enumData);
+        std::unordered_map<std::string, float> mapData = DeserializeMap<std::string, float>(_jComponent[_data.name()]);
+        _data.set(_instance, mapData);
         return;
     }
+    // === Specific types handling ===
+    // = Components =
     else if (actualType == entt::resolve<AI::NavProfile>())
     {
         json navProfileData = _jComponent[_data.name()];
@@ -242,6 +230,33 @@ void MirageEngine::Deserializer::DeserializeMetaData(entt::meta_type _type, entt
             return;
         }
     }
+	// = Math types =
+    else if (actualType == entt::resolve<Math::Vector3>())
+    {
+        Math::Vector3 vec3Data = DeserializeVector3(_jComponent[_data.name()]);
+        _data.set(_instance, vec3Data);
+        return;
+    }
+    else if (actualType == entt::resolve<Math::Vector4>())
+    {
+        Math::Vector4 vec4Data = DeserializeVector4(_jComponent[_data.name()]);
+        _data.set(_instance, vec4Data);
+        return;
+    }
+    else if (actualType == entt::resolve<Math::Quaternion>())
+    {
+        Math::Quaternion quatData = DeserializeQuaternion(_jComponent[_data.name()]);
+        _data.set(_instance, quatData);
+        return;
+    }
+	// = Enums =
+    else if (actualType.is_enum())
+    {
+        int enumData = _jComponent[_data.name()].get<int>();
+        _data.set(_instance, enumData);
+        return;
+    }
+	// = Pointer-like types =
     else if (actualType.is_pointer_like())
     {
         json jPointer = _jComponent[_data.name()];

@@ -125,35 +125,12 @@ json MirageEngine::Serializer::SerializeMetaData(entt::meta_type _type, entt::me
     if (!label)
         label = "Property";
 
+	// === Basic types handling ===
     if (actualType == entt::resolve<std::string>())
     {
         if (std::string* stringData = value.try_cast<std::string>())
         {
             jMetaData = *stringData;
-            return jMetaData;
-        }
-    }
-    else if (actualType == entt::resolve<Math::Vector3>())
-    {
-        if (Math::Vector3* vector3Data = value.try_cast<Math::Vector3>())
-        {
-            jMetaData = SerializeVector3(*vector3Data);
-            return jMetaData;
-        }
-    }
-    else if (actualType == entt::resolve<Math::Vector4>())
-    {
-        if (Math::Vector4* vector4Data = value.try_cast<Math::Vector4>())
-        {
-            jMetaData = SerializeVector4(*vector4Data);
-            return jMetaData;
-        }
-    }
-    else if (actualType == entt::resolve<Math::Quaternion>())
-    {
-        if (Math::Quaternion* quaternionData = value.try_cast<Math::Quaternion>())
-        {
-            jMetaData = SerializeQuaternion(*quaternionData);
             return jMetaData;
         }
     }
@@ -189,6 +166,8 @@ json MirageEngine::Serializer::SerializeMetaData(entt::meta_type _type, entt::me
             return jMetaData;
         }
     }
+	// === Specific containers handling ===
+	// = Vectors =
     else if (actualType == entt::resolve<std::vector<float>>())
     {
         if (std::vector<float>* vectorData = value.try_cast<std::vector<float>>())
@@ -205,14 +184,17 @@ json MirageEngine::Serializer::SerializeMetaData(entt::meta_type _type, entt::me
             return jMetaData;
         }
     }
-    else if (actualType.is_enum())
+	// = Maps =
+    else if (actualType == entt::resolve<std::unordered_map<std::string, float>>())
     {
-        if (value.allow_cast<int>())
+        if (std::unordered_map<std::string, float>* mapData = value.try_cast<std::unordered_map<std::string, float>>())
         {
-            jMetaData = value.cast<int>();
+            jMetaData = SerializeMap(*mapData);
             return jMetaData;
         }
     }
+	// === Specific types handling ===
+	// = Components =
     else if (actualType == entt::resolve<Core::Components::Transform>())
     {
         if (Core::Components::Transform* transformData = value.try_cast<Core::Components::Transform>())
@@ -229,6 +211,41 @@ json MirageEngine::Serializer::SerializeMetaData(entt::meta_type _type, entt::me
             return jMetaData;
         }
     }
+	// = Math types =
+    else if (actualType == entt::resolve<Math::Vector3>())
+    {
+        if (Math::Vector3* vector3Data = value.try_cast<Math::Vector3>())
+        {
+            jMetaData = SerializeVector3(*vector3Data);
+            return jMetaData;
+        }
+    }
+    else if (actualType == entt::resolve<Math::Vector4>())
+    {
+        if (Math::Vector4* vector4Data = value.try_cast<Math::Vector4>())
+        {
+            jMetaData = SerializeVector4(*vector4Data);
+            return jMetaData;
+        }
+    }
+    else if (actualType == entt::resolve<Math::Quaternion>())
+    {
+        if (Math::Quaternion* quaternionData = value.try_cast<Math::Quaternion>())
+        {
+            jMetaData = SerializeQuaternion(*quaternionData);
+            return jMetaData;
+        }
+    }
+	// = Enums =
+    else if (actualType.is_enum())
+    {
+        if (value.allow_cast<int>())
+        {
+            jMetaData = value.cast<int>();
+            return jMetaData;
+        }
+    }
+	// = Pointer-like types =
     else if (actualType.is_pointer_like())
     {
         if (entt::meta_any ref = *value; ref)

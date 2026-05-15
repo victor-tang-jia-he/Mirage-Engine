@@ -1,3 +1,4 @@
+#include "serializer.h"
 #pragma once
 
 namespace MirageEngine
@@ -11,5 +12,16 @@ namespace MirageEngine
             jArray.emplace_back(element);
         }
         return jArray;
+    }
+
+    template<typename TKey, typename TValue>
+    inline json MirageEngine::Serializer::SerializeMap(std::unordered_map<TKey, TValue> _map)
+    {
+        json jMap;
+        for (const auto& pair : _map)
+        {
+            jMap[std::to_string(pair.first)] = pair.second;
+        }
+		return jMap;
     }
 } // namespace MirageEngine

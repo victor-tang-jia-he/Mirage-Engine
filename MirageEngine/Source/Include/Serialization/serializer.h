@@ -66,6 +66,9 @@ namespace MirageEngine
 
         template <typename T>
         static json SerializeVector(std::vector<T> _vector);
+
+		template <typename TKey, typename TValue>
+		static json SerializeMap(std::unordered_map<TKey, TValue> _map);
     };
 } // namespace MirageEngine
 
