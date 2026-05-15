@@ -7,7 +7,8 @@ namespace MirageEngine::Core::Scripting
 {
     void ScriptManager::Init()
     {
-#ifdef DEBUG
+        LOG(logInfo, LogScriptManager, "Init Script Manager");
+#ifndef NDEBUG
         m_BIsDebug = true;
 #endif // DEBUG
 
@@ -19,6 +20,7 @@ namespace MirageEngine::Core::Scripting
         }
 #endif
         ReloadScript();
+        LOG(logInfo, LogScriptManager, "Script Manager Initialized");
     }
 
     void ScriptManager::ReloadScript()
@@ -29,14 +31,18 @@ namespace MirageEngine::Core::Scripting
         hScripts = nullptr;
         RebuildScriptsDll();
 
-        hScripts = LoadModule("GameScripts.dll");
+#if defined(_WIN32)
+        hScripts = LoadModule((std::string("./") + m_DLLBuildName + ".dll").c_str());
+#else
+        hScripts = LoadModule((std::string("./") + m_DLLBuildName + ".so").c_str());
+#endif
         if (!hScripts)
             return;
 
-        m_GetScriptCountDLL = (PFN_GetScriptCount)GetSymbol(hScripts, "GetScriptCount");
-        m_GetScriptNameDLL = (PFN_GetScriptName)GetSymbol(hScripts, "GetScriptName");
-        m_CreateScriptByNameDLL = (PFN_CreateScriptByName)GetSymbol(hScripts, "CreateScriptByName");
-        m_DestroyScriptDLL = (PFN_DestroyScript)GetSymbol(hScripts, "DestroyScript");
+        m_GetScriptCountDLL = reinterpret_cast<PFN_GetScriptCount>(GetSymbol(hScripts, "GetScriptCount"));
+        m_GetScriptNameDLL = reinterpret_cast<PFN_GetScriptName>(GetSymbol(hScripts, "GetScriptName"));
+        m_CreateScriptByNameDLL = reinterpret_cast<PFN_CreateScriptByName>(GetSymbol(hScripts, "CreateScriptByName"));
+        m_DestroyScriptDLL = reinterpret_cast<PFN_DestroyScript>(GetSymbol(hScripts, "DestroyScript"));
 
         if (!m_GetScriptCountDLL || !m_GetScriptNameDLL || !m_CreateScriptByNameDLL || !m_DestroyScriptDLL)
         {
@@ -50,6 +56,16 @@ namespace MirageEngine::Core::Scripting
         // Trigger callback
         for (auto& [gameobject, callback] : m_PostReloadSubscribers)
             callback->Trigger();
+    }
+
+    void ScriptManager::SetMetaContext(entt::locator<entt::meta_ctx>::node_type handle) 
+    { 
+        entt::locator<entt::meta_ctx>::reset(handle);
+        int scriptNum = ((PFN_GetScriptCount)m_GetScriptCountDLL)();
+        for (int i = 0; i < scriptNum; i++)
+        {
+            CreateScriptByName(GetScriptName(i))->RegisteMeta(handle);
+        }
     }
 
     void ScriptManager::SubscribePreReload(GameObject* _go, std::function<void()> _func)
@@ -95,18 +111,22 @@ namespace MirageEngine::Core::Scripting
         }
         LOG(logInfo, LogScriptManager, "Script ", name, " created.");
         IScript* script = ((PFN_CreateScriptByName)m_CreateScriptByNameDLL)(name);
+        if (!script)
+        {
+            LOG(logFatal, LogScriptManager, "Script invalid");
+        }
         return { script, DllDeleter{ (PFN_DestroyScript)m_DestroyScriptDLL } };
     }
 
     void ScriptManager::DestroyScript(IScript* _script) const { ((PFN_DestroyScript)m_DestroyScriptDLL)(_script); }
-
+#ifdef _WIN32
     bool ScriptManager::SetupVisualStudioEnvironment()
     {
         // Search vcvarsall.bat
         std::string vcvarsPath;
 
         // Using vswhere first
-        FILE* vswhere = _popen(
+        FILE* vswhere = MRG_POPEN(
             "\"C:/Program Files (x86)/Microsoft Visual Studio/Installer/vswhere.exe\" "
             "-latest -property installationPath",
             "r");
@@ -154,7 +174,7 @@ namespace MirageEngine::Core::Scripting
 
         std::string cmd = "cmd /c \"\"" + vcvarsPath + "\" x64 >nul && set\"";
 
-        FILE* pipe = _popen(cmd.c_str(), "r");
+        FILE* pipe = MRG_POPEN(cmd.c_str(), "r");
         if (!pipe)
         {
             LOG(logFatal, LogScriptManager, "Failed to run vcvarsall.bat\n");
@@ -171,15 +191,19 @@ namespace MirageEngine::Core::Scripting
                 std::string name = line.substr(0, eq);
                 std::string value = line.substr(eq + 1);
                 value.erase(value.find_last_not_of("\r\n") + 1);
+#    if defined(_WIN32)
                 _putenv((name + "=" + value).c_str());
+#    else
+                setenv(name.c_str(), value.c_str(), 1);
+#    endif
             }
         }
-        _pclose(pipe);
+        MRG_PCLOSE(pipe);
 
         LOG(logInfo, LogScriptManager, "Visual Studio environment configured");
         return true;
     }
-
+#endif
     bool ScriptManager::RebuildScriptsDll()
     {
         std::vector<std::string> sources;
@@ -190,7 +214,7 @@ namespace MirageEngine::Core::Scripting
         for (const auto& entry : fs::recursive_directory_iterator(m_ScriptsSourceDir))
         {
             if (entry.path().extension() == ".cpp")
-                sources.push_back("\"" + entry.path().string() + "\"");
+                sources.push_back(entry.path().string());
         }
         if (sources.empty())
         {
@@ -198,15 +222,35 @@ namespace MirageEngine::Core::Scripting
             GenerateScriptBindings();
             sources.push_back("\"" + fs::absolute(m_ScriptsSourceDir / "script_bindings.cpp").string() + "\"");
         }
+#if defined(_WIN32)
         std::string outDll = "\"" + (m_OutputDir / m_DLLBuildName).string() + std::string(".dll") + "\"";
+#else
+        std::string outDll = "\"" + (m_OutputDir / m_DLLBuildName).string() + std::string(".so") + "\"";
+#endif
         std::string outPdb = "\"" + (m_OutputDir / m_DLLBuildName).string() + std::string(".pdb") + "\"";
         std::string impLib = "\"" + (m_OutputDir / m_DLLBuildName).string() + std::string(".lib") + "\"";
+        std::string compiler;
+#if defined(_WIN32)
+        compiler = "cl.exe";
+#elif defined(__linux__)
+        if (system("which clang++ > /dev/null 2>&1") == 0)
+            compiler = "clang++";
+        else
+            compiler = "g++";
+#endif
+        std::string cmd = compiler;
 
-        std::string cmd = "cl.exe";
-        cmd += " /LD";
+#if defined(_WIN32)
+
         cmd += " /std:c++17";
-        cmd += m_BIsDebug ? " /MDd /Zi /Od" : " /MD /O2";
+
+        if (m_BIsDebug)
+            cmd += " /MDd /Zi /Od";
+        else
+            cmd += " /MD /O2";
+
         cmd += " /EHsc /nologo";
+        cmd += " /LD";
         cmd += " /D SCRIPTS_DLL_EXPORT";
         cmd += " /D CPP_TRACE_DEBUG";
         cmd += " /I\"" + m_EngineIncludeDir.string() + "\"";
@@ -214,26 +258,49 @@ namespace MirageEngine::Core::Scripting
         cmd += " /FI\"pch.h\"";
 
         for (const auto& src : sources)
-            cmd += " " + src;
+        {
+            cmd += " \"" + src + "\"";
+        }
 
-        cmd += " /link";
-        cmd += " /DLL";
-        cmd += " /OUT:" + outDll;
-        cmd += " /IMPLIB:" + impLib;
-        cmd += m_BIsDebug ? " /DEBUG /PDB:" + outPdb : "";
-        cmd += m_BIsDebug ? " \"" + m_EngineLibPath.string() + "\"" : " \"" + std::string("./Libs/MirageEngine_Debug.lib") + "\"";
+        cmd += " /Fe:" + outDll;
+        cmd += " /Fd:" + outPdb;
+        cmd += m_BIsDebug ? " \"" + std::string("./Libs/MirageEngine_Debug.lib") + "\"" : " \"" + m_EngineLibPath.string() + "\"";
 
-        FILE* pipe = _popen(cmd.c_str(), "r");
+#elif defined(__linux__)
+
+        cmd += " -std=c++17 -shared -fPIC";
+
+        if (m_BIsDebug)
+            cmd += " -g -O0";
+        else
+            cmd += " -O2";
+
+        cmd += " -D SCRIPTS_DLL_EXPORT";
+        cmd += " -D CPP_TRACE_DEBUG";
+        cmd += " -I" + m_EngineIncludeDir.string();
+        cmd += " -I" + m_Toolbox.string();
+        cmd += " -include " + m_EngineIncludeDir.string() + "/pch.h";
+
+        for (const auto& src : sources)
+        {
+            cmd += " \"" + src + "\"";
+        }
+
+        cmd += " -o " + m_OutputDir.string() + "/" + m_DLLBuildName + ".so";
+
+#endif
+        LOG(logInfo, LogScriptManager, "Compile commands : ", cmd);
+        FILE* pipe = MRG_POPEN(cmd.c_str(), "r");
         if (!pipe)
         {
             LOG(logFatal, LogScriptManager, "Failed to execute cl.exe");
             return false;
         }
-        char buffer[256];
+        char buffer[512];
         while (fgets(buffer, sizeof(buffer), pipe))
             LOG(logTemp, LogScriptManager, buffer);
 
-        int status = _pclose(pipe);
+        int status = MRG_PCLOSE(pipe);
         LOG(logInfo, LogScriptManager, "Exit code: ", status);
         m_ScriptDLLoaded = true;
         return (status == 0);
@@ -302,10 +369,10 @@ extern "C" {
         headerFile << "#include <Scripting/script_api.h>\n";
         headerFile << "#include <Scripting/script_registry.h>\n\n\n";
 
-        headerFile << "class " << _fileName << " : public MirageEngine::Core::Scripting::IScript{\n";
+        headerFile << "class " << _fileName << " : public MirageEngine::Core::Scripting::IScript\n{\n";
         headerFile << "public: \n";
-        headerFile << "void OnStart() override {} \n";
-        headerFile << "void OnUpdate(float dt) override {}\n";
+        headerFile << "    void OnStart() override {} \n";
+        headerFile << "    void OnUpdate(float dt) override {}\n";
         headerFile << "    const char* GetName() const override { return \"" << _fileName << "\"; }\n";
         headerFile << "};\n";
 

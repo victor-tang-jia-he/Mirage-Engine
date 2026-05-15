@@ -4,6 +4,7 @@
 #include <atomic>
 #include <Components/rigidbody.h>
 #include <Scripting/script_manager.h>
+#include <entt/entt.hpp>
 #include <Logs/log.h>
 
 DEFINE_LOG_CATEGORY(LogGameObject)
@@ -97,6 +98,24 @@ void MirageEngine::GameObject::AddComponent(std::shared_ptr<MirageEngine::Core::
 void MirageEngine::GameObject::RemoveComponent(std::shared_ptr<MirageEngine::Core::Components::Component> _component)
 {
     m_Components.erase(std::remove(m_Components.begin(), m_Components.end(), _component), m_Components.end());
+}
+
+std::shared_ptr<MirageEngine::Core::Components::Component> MirageEngine::GameObject::AddComponentByMeta(entt::meta_type _type)
+{
+    if (!_type)
+        return nullptr;
+    entt::meta_any compAny = _type.construct();
+
+    if (compAny)
+    {
+        auto comp = compAny.cast<std::shared_ptr<Core::Components::Component>>();
+        if (comp)
+        {
+            this->AddComponent(comp);
+            return comp;
+        }
+    }
+    return nullptr;
 }
 
 void MirageEngine::GameObject::RemoveChild(std::shared_ptr<GameObject> _child) { m_Children.erase(std::remove(m_Children.begin(), m_Children.end(), _child), m_Children.end()); }

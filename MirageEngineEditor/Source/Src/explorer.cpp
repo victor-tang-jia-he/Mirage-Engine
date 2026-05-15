@@ -462,7 +462,7 @@ namespace Mirage
 
 					ImGui::Separator();
 
-					if (ImGui::MenuItem("Scripts")) {}
+					if (ImGui::MenuItem("Scripting")) {}
 
 					ImGui::Separator();
 

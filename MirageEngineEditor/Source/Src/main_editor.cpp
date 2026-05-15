@@ -23,8 +23,9 @@ int main()
     Mirage::EditorApp editor;
     // --- Initialization ---
     MirageEngine::Core::Scripting::ScriptManager::Instance().Init();
-    application.InitApp();
     std::cout << "Context address: " << &entt::locator<entt::meta_ctx>::value_or() << std::endl;
+    MirageEngine::Core::Scripting::ScriptManager::Instance().SetMetaContext(entt::locator<entt::meta_ctx>::handle());
+    application.InitApp();
     MirageEngine::RegisterMeta().RegisterAllMeta(entt::locator<entt::meta_ctx>::handle());
     editor.Init(application.m_Renderer.GetWindowHandle(), &application.m_Renderer, application.GetSceneGraph());
     MirageEngine::TimeManager::Init();

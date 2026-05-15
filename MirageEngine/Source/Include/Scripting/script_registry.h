@@ -1,6 +1,8 @@
 #pragma once
 #include <Scripting/i_script.h>
 
+#include <Components/utility_agent.h>
+
 namespace MirageEngine::Core::Scripting
 {
     class IScript;

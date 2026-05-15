@@ -328,7 +328,7 @@ namespace Mirage
 								if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("HIERARCHY_ITEM"))
                                 {
                                     GameObject* droppedGO = *(GameObject**)payload->Data;
-                                    auto baseType = itemType.remove_pointer();
+                                    entt::meta_type baseType = itemType.remove_pointer();
 
                                     for (auto& comp : droppedGO->GetComponents())
                                     {
@@ -350,8 +350,34 @@ namespace Mirage
                                         std::filesystem::path scriptPath(rawPath);
                                         std::string scriptName = scriptPath.stem().string();
 
-                                        std::cout << "[DROP] Script from content browser: " << scriptName << std::endl;
-                                        std::cout << "[DROP] Script instanciation not yet implemented for: " << scriptName << std::endl;
+                                        entt::meta_type scriptType = entt::resolve(entt::hashed_string{ scriptName.c_str() });
+
+                                        if (scriptType)
+                                        {
+                                            UtilityAgent* agent = instance.try_cast<UtilityAgent>();
+
+                                            if (agent && agent->GetOwner())
+                                            {
+                                                auto newComp = agent->GetOwner()->AddComponentByMeta(scriptType);
+
+                                                if (newComp)
+                                                {
+                                                    AI::AIAction* actionPtr = dynamic_cast<AI::AIAction*>(newComp.get());
+
+                                                    if (actionPtr)
+                                                    {
+                                                        it = view.erase(it);
+                                                        view.insert(it, actionPtr);
+                                                        _data.set(instance, value);
+                                                        std::cout << "[IA] Script instanced and linked: " << scriptName << std::endl;
+                                                    }
+                                                }
+                                            }
+                                        }
+                                        else
+                                        {
+                                            std::cout << "[DROP] Error: Class " << scriptName << " not registered in Meta!" << std::endl;
+                                        }
                                     }
                                 }
                                 

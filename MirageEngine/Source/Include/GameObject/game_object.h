@@ -9,6 +9,11 @@
 
 DECLARE_LOG_CATEGORY_EXTERN(LogGameObject)
 
+namespace entt
+{
+    class meta_type;
+}
+
 namespace MirageEngine
 {
     namespace Core::Math
@@ -59,6 +64,8 @@ namespace MirageEngine
             void AddComponentByName(std::string className);
 
             void RemoveComponent(std::shared_ptr<MirageEngine::Core::Components::Component> _component);
+
+            std::shared_ptr<Core::Components::Component> AddComponentByMeta(entt::meta_type _type);
 
             // Game Object Public Methods
             bool IsRoot() const { return m_Parent.expired(); };
