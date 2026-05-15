@@ -102,17 +102,17 @@ void Application::InitGameObject()
     //  Physics setup
     // =========================
     std::shared_ptr<SphereCollider> dynamicCollider = std::make_shared<SphereCollider>();
-    std::shared_ptr<Rigidbody> dynamicRB = std::make_shared<Rigidbody>(dynamicCollider.get(), ERigidBodyType::Dynamic);
+    std::shared_ptr<Rigidbody> dynamicRB = std::make_shared<Rigidbody>(dynamicCollider.get(), ERigidBodyType::DYNAMIC);
 
-    dynamicRB->SetCollisionGroup(ECollisionGroup::Group1);
-    dynamicRB->SetCollisionMask(ECollisionGroup::Group1 | ECollisionGroup::Group2 | ECollisionGroup::Group3);
-    dynamicRB->SetCollisionResponse(ECollisionResponse::Block);
+    dynamicRB->SetCollisionGroup(ECollisionGroup::GROUP_1);
+    dynamicRB->SetCollisionMask(ECollisionGroup::GROUP_1 | ECollisionGroup::GROUP_2 | ECollisionGroup::GROUP_3);
+    dynamicRB->SetCollisionResponse(ECollisionResponse::BLOCK);
 
     std::shared_ptr<BoxCollider> staticCollider = std::make_shared<BoxCollider>();
-    std::shared_ptr<Rigidbody> staticRB = std::make_shared<Rigidbody>(staticCollider.get(), ERigidBodyType::Static);
+    std::shared_ptr<Rigidbody> staticRB = std::make_shared<Rigidbody>(staticCollider.get(), ERigidBodyType::STATIC);
 
-    staticRB->SetCollisionGroup(ECollisionGroup::Group2);
-    staticRB->SetCollisionMask(ECollisionGroup::All);
+    staticRB->SetCollisionGroup(ECollisionGroup::GROUP_2);
+    staticRB->SetCollisionMask(ECollisionGroup::ALL);
 
     // =========================
     //  Scene graph
@@ -211,9 +211,9 @@ void Application::InitGameObject()
     std::shared_ptr<Material> mat = rm.CreateMaterial(
         "default", "Assets/Shaders/light.vert", "Assets/Shaders/light.frag", 0,
         {
-            { "PerFrame",   MirageRHI::UBOBinding::PerFrame  },
-            { "PerObject",  MirageRHI::UBOBinding::PerObject },
-            { "LightBlock", MirageRHI::UBOBinding::Lights    },
+            { "PerFrame",   MirageRHI::UBOBinding::PER_FRAME },
+            { "PerObject",  MirageRHI::UBOBinding::PER_OBJECT },
+            { "LightBlock", MirageRHI::UBOBinding::LIGHTS },
     });
 
     std::shared_ptr<MaterialInstance> mat1 = rm.CreateMaterialInstance("TestMaterialinstance", mat);
