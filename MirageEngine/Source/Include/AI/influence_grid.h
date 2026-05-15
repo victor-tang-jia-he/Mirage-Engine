@@ -4,11 +4,6 @@
 #include <vector3.h>
 #include "Components/component.h"
 
-namespace entt
-{
-    using id_type = std::uint32_t;
-}
-
 namespace MirageEngine::Core::Components
 {
     struct InfluenceCell
@@ -21,15 +16,15 @@ namespace MirageEngine::Core::Components
         private:
 
             // Data the user can set
-            float m_GridWidth;
-            float m_GridHeight;
-            float m_CellSize;
+            float m_GridWidth = 0.0f;
+            float m_GridHeight = 0.0f;
+            float m_CellSize = 0.0f;
             float m_DecayRate = 0.95f;
             std::vector<std::string> m_ChannelsNames;
 
             // Internal data calculated from the other parameters
-            int m_ResolutionX;
-            int m_ResolutionY;
+            int m_ResolutionX = 0;
+            int m_ResolutionY = 0;
             std::vector<InfluenceCell> m_Cells;
             Core::Math::Vector3 m_Origin;
 

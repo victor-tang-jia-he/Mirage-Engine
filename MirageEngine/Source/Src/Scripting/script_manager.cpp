@@ -251,6 +251,8 @@ namespace MirageEngine::Core::Scripting
         cmd += " /Fe:" + outDll;
         cmd += " /Fd:" + outPdb;
 
+        cmd += m_BIsDebug ? " \"" + std::string("./Libs/MirageEngine_Debug.lib") + "\"" : " \"" + m_EngineLibPath.string() + "\"";
+
 #elif defined(__linux__)
 
         cmd += " -std=c++17 -shared -fPIC";

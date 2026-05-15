@@ -4,7 +4,9 @@
 #include "Components/component.h"
 #include "Components/camera.h"
 #include "Components/rigidbody.h"
+#include "AI/pathfinding.h"
 #include "vector3.h"
+#include "vector4.h"
 #include "quaternion.h"
 #include <fstream>
 
@@ -13,6 +15,8 @@ DEFINE_LOG_CATEGORY(LogDeserializer)
 using namespace MirageEngine;
 using namespace MirageEngine::Core;
 using namespace entt::literals;
+
+std::unordered_map<std::string, json> Deserializer::m_ComponentSearchMap = std::unordered_map<std::string, json>();
 
 std::shared_ptr<SceneGraph> MirageEngine::Deserializer::LoadSceneFromJson(json _jSavedScene)
 {
@@ -29,6 +33,8 @@ std::shared_ptr<SceneGraph> MirageEngine::Deserializer::LoadSceneFromFile(std::s
 std::shared_ptr<SceneGraph> MirageEngine::Deserializer::DeserializeScene(json _jSceneGraph)
 {
     LOG(logInfo, LogDeserializer, "Loading Scene...");
+
+    m_ComponentSearchMap.clear();
 
     std::shared_ptr<SceneGraph> savedScene = std::make_shared<SceneGraph>();
 
@@ -194,12 +200,31 @@ void MirageEngine::Deserializer::DeserializeMetaData(entt::meta_type _type, entt
         _data.set(_instance, booleanData);
         return;
     }
+    else if (actualType == entt::resolve<std::vector<float>>())
+    {
+        std::vector<float> floatVectorData = DeserializeVector<float>(_jComponent[_data.name()]);
+        _data.set(_instance, floatVectorData);
+        return;
+    }
+    else if (actualType == entt::resolve<std::vector<std::string>>())
+    {
+        std::vector<std::string> stringVectorData = DeserializeVector<std::string>(_jComponent[_data.name()]);
+        _data.set(_instance, stringVectorData);
+        return;
+    }
     else if (actualType.is_enum())
     {
         int enumData = _jComponent[_data.name()].get<int>();
         _data.set(_instance, enumData);
         return;
     }
+    else if (actualType == entt::resolve<AI::NavProfile>())
+    {
+        json navProfileData = _jComponent[_data.name()];
+        AI::NavProfile navProfileInstance = DeserializeNavProfile(navProfileData);
+        _data.set(_instance, navProfileInstance);
+        return;
+	}
     else if (actualType == entt::resolve<Core::Components::Transform>())
     {
         json transformData = _jComponent[_data.name()];
@@ -217,12 +242,22 @@ void MirageEngine::Deserializer::DeserializeMetaData(entt::meta_type _type, entt
 
         if (!jPointer.is_null())
         {
-            std::string typeName = jPointer["Type"].get<std::string>();
-            entt::hashed_string hashed{ typeName.c_str() };
-            entt::meta_type metaType = entt::resolve(hashed);
+            if (jPointer.contains("OwnerID"))
+            {
+                std::string typeName = jPointer["Type"].get<std::string>();
 
-            entt::meta_func getPointer = metaType.func("Get"_hs);
-            _data.set(_instance, getPointer.invoke({}, jPointer["Name"].get<std::string>()));
+				m_ComponentSearchMap.emplace(typeName, jPointer);
+                return;
+			}
+            else
+            {
+                std::string typeName = jPointer["Type"].get<std::string>();
+                entt::hashed_string hashed{ typeName.c_str() };
+                entt::meta_type metaType = entt::resolve(hashed);
+
+                entt::meta_func getPointer = metaType.func("Get"_hs);
+                _data.set(_instance, getPointer.invoke({}, jPointer["Name"].get<std::string>()));
+            }
             return;
         }
     }
@@ -234,6 +269,16 @@ void MirageEngine::Deserializer::DeserializeMetaData(entt::meta_type _type, entt
     LOG(logWarning, LogDeserializer, "Meta Data Mismatch : ", label);
 }
 
+AI::NavProfile MirageEngine::Deserializer::DeserializeNavProfile(json _jNavProfile)
+{
+	AI::NavProfile navProfile;
+
+	navProfile.influenceWeights = DeserializeVector<float>(_jNavProfile["Weights"]);
+	navProfile.canWalkDiagonal = _jNavProfile["Can Walk Diagonal"].get<bool>();
+
+    return navProfile;
+}
+
 Core::Math::Vector3 MirageEngine::Deserializer::DeserializeVector3(json _jVector3)
 {
     Core::Math::Vector3 savedVector3;
@@ -243,6 +288,18 @@ Core::Math::Vector3 MirageEngine::Deserializer::DeserializeVector3(json _jVector
     savedVector3.Z = _jVector3["Z"].get<float>();
 
     return savedVector3;
+}
+
+Core::Math::Vector4 MirageEngine::Deserializer::DeserializeVector4(json _jVector4)
+{
+    Core::Math::Vector4 savedVector4;
+
+    savedVector4.X = _jVector4["X"].get<float>();
+    savedVector4.Y = _jVector4["Y"].get<float>();
+    savedVector4.Z = _jVector4["Z"].get<float>();
+    savedVector4.W = _jVector4["W"].get<float>();
+
+    return savedVector4;
 }
 
 Core::Math::Quaternion MirageEngine::Deserializer::DeserializeQuaternion(json _jQuaternion)

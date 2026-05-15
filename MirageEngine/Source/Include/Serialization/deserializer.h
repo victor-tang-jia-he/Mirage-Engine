@@ -24,17 +24,26 @@ namespace MirageEngine
         namespace Math
         {
             class Vector3;
+			class Vector4;
             class Quaternion;
         } // namespace Math
 
         namespace Resources
         {
             class IResource;
-        }
+		} // namespace Resources
     } // namespace Core
+
+	namespace AI
+	{
+		struct NavProfile;
+	} // namespace AI
 
 	class Deserializer
 	{
+    private:
+		static std::unordered_map<std::string, json> m_ComponentSearchMap;
+
 	public:
 		static std::shared_ptr<SceneGraph> LoadSceneFromJson(json _jSavedScene);
 		static std::shared_ptr<SceneGraph> LoadSceneFromFile(std::string _saveFileName);
@@ -48,9 +57,17 @@ namespace MirageEngine
 		
 		static void DeserializeMetaData(entt::meta_type _type, entt::meta_data _data, entt::meta_any& _instance, json _jComponent);
 		
+		static AI::NavProfile DeserializeNavProfile(json _jNavProfile);
+
 		static Core::Math::Vector3 DeserializeVector3(json _jVector3);
+		static Core::Math::Vector4 DeserializeVector4(json _jVector4);
 		static Core::Math::Quaternion DeserializeQuaternion(json _jQuaternion);
 
 		static json ConvertJsonFileToJsonVar(std::string _fileName);
+
+		template<typename T>
+		static std::vector<T> DeserializeVector(json _jVector);
 	};
 }
+
+#include "deserializer.inl"

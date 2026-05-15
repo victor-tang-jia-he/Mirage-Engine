@@ -5,6 +5,7 @@
 #include <GameObject/game_object.h>
 #include <Components/component.h>
 #include <Components/transform.h>
+#include <Components/nav_agent.h>
 
 #include <Physics/common_enum.h>
 
@@ -14,8 +15,6 @@
 #include <vector3.h>
 #include <quaternion.h>
 #include <Logs/log.h>
-
-#include <fstream>
 
 #include <fstream>
 
@@ -123,7 +122,7 @@ json MirageEngine::Serializer::SerializeMetaData(entt::meta_type _type, entt::me
     entt::meta_type actualType = value.type();
 
     const char* label = _data.name();
-    if (!label) 
+    if (!label)
         label = "Property";
 
     if (actualType == entt::resolve<std::string>())
@@ -190,6 +189,22 @@ json MirageEngine::Serializer::SerializeMetaData(entt::meta_type _type, entt::me
             return jMetaData;
         }
     }
+    else if (actualType == entt::resolve<std::vector<float>>())
+    {
+        if (std::vector<float>* vectorData = value.try_cast<std::vector<float>>())
+        {
+            jMetaData = SerializeVector(*vectorData);
+            return jMetaData;
+        }
+    }
+    else if (actualType == entt::resolve<std::vector<std::string>>())
+    {
+        if (std::vector<std::string>* vectorData = value.try_cast<std::vector<std::string>>())
+        {
+            jMetaData = SerializeVector(*vectorData);
+            return jMetaData;
+        }
+    }
     else if (actualType.is_enum())
     {
         if (value.allow_cast<int>())
@@ -206,6 +221,14 @@ json MirageEngine::Serializer::SerializeMetaData(entt::meta_type _type, entt::me
             return jMetaData;
         }
     }
+    else if (actualType == entt::resolve<AI::NavProfile>())
+    {
+        if (AI::NavProfile* navProfileData = value.try_cast<AI::NavProfile>())
+        {
+            jMetaData = SerializeNavProfile(*navProfileData);
+            return jMetaData;
+        }
+    }
     else if (actualType.is_pointer_like())
     {
         if (entt::meta_any ref = *value; ref)
@@ -214,8 +237,8 @@ json MirageEngine::Serializer::SerializeMetaData(entt::meta_type _type, entt::me
 
             if (Core::Components::Component* component = ref.try_cast<Core::Components::Component>())
             {
+                jPointer["OwnerID"] = component->GetOwner()->GetID();
                 jPointer["Type"] = ref.type().name();
-                jPointer["Name"] = component->GetName();
             }
             else if (Core::Resources::IResource* resource = ref.try_cast<Core::Resources::IResource>())
             {
@@ -231,6 +254,16 @@ json MirageEngine::Serializer::SerializeMetaData(entt::meta_type _type, entt::me
     LOG(logWarning, LogSerializer, "Ignored Meta Data : ", label);
 
     return jMetaData;
+}
+
+json MirageEngine::Serializer::SerializeNavProfile(AI::NavProfile _navProfile)
+{
+    json jNavProfile;
+
+	jNavProfile["Weights"] = SerializeVector(_navProfile.influenceWeights);
+    jNavProfile["Can Walk Diagonal"] = _navProfile.canWalkDiagonal;
+
+    return jNavProfile;
 }
 
 json MirageEngine::Serializer::SerializeVector3(Core::Math::Vector3 _vector3)
