@@ -23,8 +23,8 @@ namespace MirageEngine::AI
 
 		int index = _grid->GetIndex(startX, startY);
 		PathNode& startNode = m_NodePool[index];
-		startNode.gCost = 0.0f;
-		startNode.hCost = GetHeuristic(startX, startY, endX, endY);
+		startNode.GCost = 0.0f;
+		startNode.HCost = GetHeuristic(startX, startY, endX, endY);
 		m_OpenList.push(&startNode);
 
 		while (!m_OpenList.empty())
@@ -40,9 +40,9 @@ namespace MirageEngine::AI
 				while (temp != nullptr)
 				{
 					finalPath.push_back(_grid->GetCellWorldPosition(temp->x, temp->y));
-					if (temp->parentIndex != -1)
+					if (temp->ParentIndex != -1)
 					{
-						temp = &m_NodePool[temp->parentIndex];
+						temp = &m_NodePool[temp->ParentIndex];
 					}
 					else
 					{
@@ -54,7 +54,7 @@ namespace MirageEngine::AI
 				return finalPath;
 			}
 
-			currentNode->isClosed = true;
+			currentNode->bIsClosed = true;
 
 			for (int neighborX = -1; neighborX <= 1; neighborX++)
 			{
@@ -70,7 +70,7 @@ namespace MirageEngine::AI
 						int neighborIndex = checkY * width + checkX;
 						PathNode& neighbor = m_NodePool[neighborIndex];
 
-						if (neighbor.isClosed) continue;
+						if (neighbor.bIsClosed) continue;
 
 						int moveX = std::abs(neighborX); 
 						int moveY = std::abs(neighborY);
@@ -82,16 +82,16 @@ namespace MirageEngine::AI
 							distanceStep = 1.0f;
 
 						float influenceCost = GetInfluenceCost(checkX, checkY, _grid, _profile);
-						float totalCost = currentNode->gCost + influenceCost + distanceStep;
+						float totalCost = currentNode->GCost + influenceCost + distanceStep;
 
-						if (!neighbor.isOpen || totalCost < neighbor.gCost)
+						if (!neighbor.bIsOpen || totalCost < neighbor.GCost)
 						{
-							neighbor.gCost = totalCost;
-							neighbor.hCost = GetHeuristic(checkX, checkY, endX, endY);
-							neighbor.parentIndex = _grid->GetIndex(currentNode->x, currentNode->y);
-							if (!neighbor.isOpen)
+							neighbor.GCost = totalCost;
+							neighbor.HCost = GetHeuristic(checkX, checkY, endX, endY);
+							neighbor.ParentIndex = _grid->GetIndex(currentNode->x, currentNode->y);
+							if (!neighbor.bIsOpen)
 							{
-								neighbor.isOpen = true;
+								neighbor.bIsOpen = true;
 								m_OpenList.push(&neighbor);
 							}
 						}
@@ -118,10 +118,10 @@ namespace MirageEngine::AI
 			int index = _grid->GetIndex(_x, _y);
 			const InfluenceCell& cell = _grid->GetCells()[index];
 
-			size_t numChannels = std::min(cell.Channels.size(), _profile.influenceWeights.size());
+			size_t numChannels = std::min(cell.Channels.size(), _profile.InfluenceWeights.size());
 			for (size_t i = 0; i< numChannels; i++)
 			{
-				influenceCost += cell.Channels[i] * _profile.influenceWeights[i];
+				influenceCost += cell.Channels[i] * _profile.InfluenceWeights[i];
 			}
 		}
 
