@@ -19,7 +19,6 @@ namespace Mirage
 {
 	void Explorer::InitPanel()
 	{
-		ShowFolderContent();
 		m_CurrentPath = m_RootPath;
 		ScanProjectDirectory(m_CurrentPath);
 
@@ -200,52 +199,6 @@ namespace Mirage
 		m_SelectedEntry = nullptr;
 		m_CurrentPath = _newPath;
 		ScanProjectDirectory(m_CurrentPath);
-	}
-
-	void Explorer::ShowFolderContent()
-	{
-		std::filesystem::path content = std::filesystem::current_path();
-		bool found = false;
-
-		for (int i = 0; i < 5; ++i)
-		{
-			if (std::filesystem::exists(content / "MirageEngine" / "Assets"))
-			{
-				m_RootPath = std::filesystem::absolute(content / "MirageEngine" / "Assets");
-				found = true;
-				break;
-			}
-
-			if (content.filename() == "MirageEngine" && std::filesystem::exists(content / "Assets"))
-			{
-				m_RootPath = std::filesystem::absolute(content / "Assets");
-				found = true;
-				break;
-			}
-			if (content.has_parent_path())
-			{
-				content = content.parent_path();
-			}
-			else
-			{
-				break;
-			}
-		}
-
-		if (!found)
-		{
-			content = std::filesystem::current_path();
-			for (int i = 0; i < 3; ++i)
-			{
-				if (std::filesystem::exists(content / "Assets"))
-				{
-					m_RootPath = std::filesystem::absolute(content / "Assets");
-					found = true;
-					break;
-				}
-				content = content.parent_path();
-			}
-		}
 	}
 
 	void Explorer::DrawDirectoryContent()
