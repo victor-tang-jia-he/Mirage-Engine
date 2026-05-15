@@ -2,6 +2,8 @@
 
 #include <vector3.h>
 
+#define LIGHT_MANAGER MirageEngine::LightManager::Instance()
+
 namespace MirageEngine
 {
     class Light;
@@ -11,7 +13,7 @@ namespace MirageEngine
 
     class LightManager
     {
-        using Vector3 = MirageEngine::Core::Math::Vector3;
+        using Vector3 = Core::Math::Vector3;
 
     private:
         std::vector<std::weak_ptr<DirectionalLight>> m_DirectionalLights;
@@ -37,5 +39,3 @@ namespace MirageEngine
 
     };
 } // namespace MirageEngine
-
-#define Light_Manager MirageEngine::LightManager::Instance()

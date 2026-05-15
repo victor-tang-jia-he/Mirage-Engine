@@ -8,10 +8,10 @@ DECLARE_LOG_CATEGORY_EXTERN(LogDirectionalLight)
 
 namespace MirageEngine
 {
-	class ENGINE_API DirectionalLight : public Light, public MirageEngine::Core::Components::Component, public std::enable_shared_from_this<DirectionalLight>
+	class ENGINE_API DirectionalLight : public Light, public Core::Components::Component, public std::enable_shared_from_this<DirectionalLight>
 	{
 	private:
-		MirageEngine::Core::Math::Vector3 Direction{ 0, -1, 0 };
+		Core::Math::Vector3 Direction{ 0, -1, 0 };
 
 	public:
 		DirectionalLight();
@@ -23,8 +23,8 @@ namespace MirageEngine
 		void OnStart() override;
 
 		entt::id_type GetType() const override;
-		MirageEngine::Core::Math::Vector3 GetDirection() const { return Direction; }
+		Core::Math::Vector3 GetDirection() const { return Direction; }
 
-		void SetDirection(MirageEngine::Core::Math::Vector3 _direction) { Direction = _direction; }
+		void SetDirection(Core::Math::Vector3 _direction) { Direction = _direction; }
 	};
 } // namespace MirageEngine

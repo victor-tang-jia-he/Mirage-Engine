@@ -10,13 +10,13 @@ namespace MirageEngine
 {
     PointLight::PointLight()
     {
-        m_Type = LightType::Point;
+        p_Type = LightType::POINT;
     }
 
     PointLight::PointLight(GameObject* _owner)
 		: Component(_owner)
     {
-        m_Type = LightType::Point;
+        p_Type = LightType::POINT;
     }
 
     void PointLight::AttachNew(std::shared_ptr<GameObject> _owner)

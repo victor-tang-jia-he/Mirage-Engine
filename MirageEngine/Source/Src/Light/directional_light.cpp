@@ -11,13 +11,13 @@ namespace MirageEngine
 {
     DirectionalLight::DirectionalLight()
     {
-        m_Type = LightType::Directional;
+        p_Type = LightType::DIRECTIONNAL;
     }
 
     DirectionalLight::DirectionalLight(GameObject* _owner)
 		: Component(_owner)
     {
-        m_Type = LightType::Directional;
+        p_Type = LightType::DIRECTIONNAL;
     }
 
     void DirectionalLight::AttachNew(std::shared_ptr<GameObject> _owner)

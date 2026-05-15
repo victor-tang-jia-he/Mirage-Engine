@@ -6,29 +6,29 @@ namespace MirageEngine
 {
     enum class LightType
     {
-        Directional,
-        Spot,
-        Point,
-        None
+        DIRECTIONNAL,
+        SPOT,
+        POINT,
+        NONE
     };
 
     class Light
     {
     protected:
-        MirageEngine::Core::Math::Vector4 m_Color = { 1,1,1,1 };
-        float m_Intensity = 0.5f;
-        LightType m_Type = LightType::None;
+        Core::Math::Vector4 p_Color = { 1,1,1,1 };
+        float p_Intensity = 0.5f;
+        LightType p_Type = LightType::NONE;
 
     public:
         Light() = default;
         ~Light() = default;
 
-		LightType GetType() const { return m_Type; }
-        MirageEngine::Core::Math::Vector4 GetColor() const { return m_Color; }
-        float GetIntensity() const { return m_Intensity; }
+		LightType GetType() const { return p_Type; }
+        Core::Math::Vector4 GetColor() const { return p_Color; }
+        float GetIntensity() const { return p_Intensity; }
 
-        void SetColor(MirageEngine::Core::Math::Vector4 _color) { m_Color = _color; }
-        void SetIntensity(float _intensity) { m_Intensity = _intensity; }
+        void SetColor(Core::Math::Vector4 _color) { p_Color = _color; }
+        void SetIntensity(float _intensity) { p_Intensity = _intensity; }
     };
 
 } // namespace MirageEngine
