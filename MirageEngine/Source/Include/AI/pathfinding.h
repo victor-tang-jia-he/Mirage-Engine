@@ -1,11 +1,11 @@
 #pragma once 
-#include <iostream>
-#include <vector>
-#include <vector3.h>
 #include <queue>
-#include <functional>
+#include <vector3.h>
 
-using namespace MirageEngine::Core::Math;
+namespace MirageEngine::Core::Math
+{
+	struct Vector3;
+}
 
 namespace MirageEngine::Core::Components
 {
@@ -18,6 +18,8 @@ namespace MirageEngine
 
 	namespace AI
 	{
+		using Vector3 = Core::Math::Vector3;
+
 		struct PathNode
 		{
 			// Position in the grid

@@ -11,6 +11,7 @@ namespace MirageEngine::Core
 {
 	namespace Components
 	{
+		using Vector3 = Core::Math::Vector3;
 		class NavAgent : public Component, public std::enable_shared_from_this<NavAgent>
 		{
 		private:

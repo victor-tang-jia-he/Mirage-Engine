@@ -1,5 +1,4 @@
 #pragma once
-#include <iostream>
 
 namespace MirageEngine::Core
 {
