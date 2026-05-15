@@ -118,10 +118,10 @@ namespace MirageEngine::AI
 			int index = _grid->GetIndex(_x, _y);
 			const InfluenceCell& cell = _grid->GetCells()[index];
 
-			size_t numChannels = std::min(cell.channels.size(), _profile.influenceWeights.size());
+			size_t numChannels = std::min(cell.Channels.size(), _profile.influenceWeights.size());
 			for (size_t i = 0; i< numChannels; i++)
 			{
-				influenceCost += cell.channels[i] * _profile.influenceWeights[i];
+				influenceCost += cell.Channels[i] * _profile.influenceWeights[i];
 			}
 		}
 

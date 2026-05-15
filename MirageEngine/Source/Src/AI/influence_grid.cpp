@@ -39,7 +39,7 @@ namespace MirageEngine::Core::Components
 
             m_Cells.assign(m_ResolutionX * m_ResolutionY, InfluenceCell());
             for (InfluenceCell& cell : m_Cells)
-                cell.channels.resize(m_ChannelsNames.size(), 0.0f);
+                cell.Channels.resize(m_ChannelsNames.size(), 0.0f);
         }
     }
 
@@ -51,9 +51,9 @@ namespace MirageEngine::Core::Components
         {
             for (int i = 0; i < m_ChannelsNames.size(); i++)
             {
-                cell.channels[i] *= frameDecay;
-                if (cell.channels[i] < 0.01f)
-                    cell.channels[i] = 0.0f;
+                cell.Channels[i] *= frameDecay;
+                if (cell.Channels[i] < 0.01f)
+                    cell.Channels[i] = 0.0f;
             }
         }
     }
@@ -71,7 +71,7 @@ namespace MirageEngine::Core::Components
         if (IsInBounds(_x, _y) && _channelIndex >= 0 && _channelIndex < m_ChannelsNames.size())
         {
             int index = GetIndex(_x, _y);
-            m_Cells[index].channels[_channelIndex] += _value;
+            m_Cells[index].Channels[_channelIndex] += _value;
         }
     }
 
@@ -108,14 +108,14 @@ namespace MirageEngine::Core::Components
     {
         m_ChannelsNames.push_back(_name);
         for (InfluenceCell& cell : m_Cells)
-            cell.channels.push_back(0.0f);
+            cell.Channels.push_back(0.0f);
     }
 
     void InfluenceGrid::SetChannelsNames(const std::vector<std::string>& _names)
     {
         m_ChannelsNames = _names;
         for (InfluenceCell& cell : m_Cells)
-            cell.channels.resize(m_ChannelsNames.size(), 0.0f);
+            cell.Channels.resize(m_ChannelsNames.size(), 0.0f);
     }
 
     Vector3 InfluenceGrid::GetCellWorldPosition(int _x, int _y) const
