@@ -5,8 +5,8 @@
 #include <mutex>
 #include <atomic>
 #include <sys/stat.h>
-#include <fstream> // For file output
-#include <csignal> // For signal handling
+#include <fstream>          // For file output
+#include <csignal>          // For signal handling
 #include <cstring>
 #include <filesystem>
 
@@ -21,12 +21,12 @@
 #endif
 
 #ifdef _WIN32
-#    include <io.h>      // _write()
-#    include <windows.h> // STD_ERROR_HANDLE
-#    define write _write
+#    include <io.h>         // _write()
+#    include <windows.h>    // STD_ERROR_HANDLE
+#    define WRITE _write
 #    define STDERR_FILENO 2
 #else
-#    include <unistd.h> // write(), STDERR_FILENO
+#    include <unistd.h>     // write(), STDERR_FILENO
 #endif
 
 namespace Loggers
@@ -44,16 +44,7 @@ namespace Loggers
 		inline constexpr const char* CYAN		= "\033[36m";
 		inline constexpr const char* WHITE		= "\033[37m";
 
-		inline constexpr const char* B_BLACK	= "\033[90m";
-		inline constexpr const char* B_RED		= "\033[91m";
-		inline constexpr const char* B_GREEN	= "\033[92m";
-		inline constexpr const char* B_YELLOW	= "\033[93m";
-		inline constexpr const char* B_BLUE		= "\033[94m";
-		inline constexpr const char* B_MAGENTA	= "\033[95m";
-		inline constexpr const char* B_CYAN		= "\033[96m";
-		inline constexpr const char* B_WHITE	= "\033[97m";
-
-		inline constexpr const char* DEFAULT = "\033[0m";
+		inline constexpr const char* DEFAULT    = "\033[0m";
 	} // namespace Color
 
     // Default color associated with each log level
@@ -86,11 +77,8 @@ namespace Loggers
     ENGINE_API LogConfig& GetLogConfig();
 
     static void EnableFileWriting(bool enable) { GetLogConfig().WriteInFile.store(enable); }
-
     static void EnableImmediateFlush(bool enable) { GetLogConfig().FlushEveryLog.store(enable); }
-
     static void EnableTimeOnEveryLog(bool enable) { GetLogConfig().ShowTimeOnEveryLog.store(enable); }
-
     static void EnableFileNameAndLine(bool enable) { GetLogConfig().ShowFileNameAndLine.store(enable); }
 
     // ===== GLOBAL BUFFER =====
@@ -346,7 +334,7 @@ namespace Loggers
         // Using a local stream avoids locking during formatting.
         std::ostringstream oss{};
 
-        oss << (_type != LogLevel::Fatal ? GetColor(_cat, _type) : Color::RED); // Fatal logs are always red, regardless of category color
+        oss << (_type != LogLevel::LOG_FATAL ? GetColor(_cat, _type) : Color::RED); // Fatal logs are always red, regardless of category color
         if (GetLogConfig().ShowTimeOnEveryLog)
             oss << "[" << GetTimeString() << "]";
         oss << "[" << _cat.Name << "] ";
@@ -365,10 +353,10 @@ namespace Loggers
         // Errors and Fatal logs are immediately flushed to ensure they are visible in the console and written to the file without delay. This is crucial for debugging critical issues.
         // Fatal logs terminate the program immediately.
         // Before aborting we flush the buffer to avoid losing logs.
-        if (_type == LogLevel::Error || _type == LogLevel::Fatal)
+        if (_type == LogLevel::LOG_ERROR || _type == LogLevel::LOG_FATAL)
         {
             LogBuffer::GetInstance().Flush();
-            if (_type == LogLevel::Fatal)
+            if (_type == LogLevel::LOG_FATAL)
                 std::abort();
         }
     }
