@@ -316,28 +316,28 @@ void MirageEngine::RegisterMeta::RegisterRigidbodyMeta()
 	// Enums
 	entt::meta_factory<Physics::ERigidBodyType>{}
 	.type("ERigidBodyType"_hs, "ERigidBodyType")
-		.data<Physics::ERigidBodyType::Static>("Static")
-		.data<Physics::ERigidBodyType::Dynamic>("Dynamic")
-		.data<Physics::ERigidBodyType::Kinematic>("Kinematic");
+		.data<Physics::ERigidBodyType::STATIC>("Static")
+		.data<Physics::ERigidBodyType::DYNAMIC>("Dynamic")
+		.data<Physics::ERigidBodyType::KINEMATIC>("Kinematic");
 
 	entt::meta_factory<Physics::ECollisionGroup>{}
 	.type("ECollisionGroup"_hs, "ECollisionGroup")
-		.data<Physics::ECollisionGroup::All>("All")
-		.data<Physics::ECollisionGroup::Default>("Default")
-		.data<Physics::ECollisionGroup::Group1>("Group1")
-		.data<Physics::ECollisionGroup::Group2>("Group2")
-		.data<Physics::ECollisionGroup::Group3>("Group3")
-		.data<Physics::ECollisionGroup::Group4>("Group4")
-		.data<Physics::ECollisionGroup::Group5>("Group5")
-		.data<Physics::ECollisionGroup::Group6>("Group6")
-		.data<Physics::ECollisionGroup::Group7>("Group7")
-		.data<Physics::ECollisionGroup::None>("None");
+		.data<Physics::ECollisionGroup::ALL>("All")
+		.data<Physics::ECollisionGroup::DEFAULT>("Default")
+		.data<Physics::ECollisionGroup::GROUP_1>("Group1")
+		.data<Physics::ECollisionGroup::GROUP_2>("Group2")
+		.data<Physics::ECollisionGroup::GROUP_3>("Group3")
+		.data<Physics::ECollisionGroup::GROUP_4>("Group4")
+		.data<Physics::ECollisionGroup::GROUP_5>("Group5")
+		.data<Physics::ECollisionGroup::GROUP_6>("Group6")
+		.data<Physics::ECollisionGroup::GROUP_7>("Group7")
+		.data<Physics::ECollisionGroup::NONE>("None");
 
 	entt::meta_factory<Physics::ECollisionResponse>{}
 	.type("ECollisionResponse"_hs, "ECollisionResponse")
-		.data<Physics::ECollisionResponse::Block>("Block")
-		.data<Physics::ECollisionResponse::Ignore>("Ignore")
-		.data<Physics::ECollisionResponse::Overlap>("Overlap");
+		.data<Physics::ECollisionResponse::BLOCK>("Block")
+		.data<Physics::ECollisionResponse::IGNORE_COLLISION>("Ignore")
+		.data<Physics::ECollisionResponse::OVERLAP>("Overlap");
 	LOG(logTemp, LogRegisterMeta, "Registered InputMapping Meta");
 }
 
@@ -448,9 +448,9 @@ void RegisterMeta::RegisterResponsiveCurveMeta()
 
 	entt::meta_factory<AI::ResponsiveCurve::CurveType> enumFactory{};
 	enumFactory.type(entt::type_id<AI::ResponsiveCurve::CurveType>().hash(), "CurveType");
-	enumFactory.data<AI::ResponsiveCurve::CurveType::Linear>("Linear");
-	enumFactory.data<AI::ResponsiveCurve::CurveType::Exponential>("Exponential");
-	enumFactory.data<AI::ResponsiveCurve::CurveType::Logistic>("Logistic");
+	enumFactory.data<AI::ResponsiveCurve::CurveType::LINEAR>("Linear");
+	enumFactory.data<AI::ResponsiveCurve::CurveType::EXPONENTIAL>("Exponential");
+	enumFactory.data<AI::ResponsiveCurve::CurveType::LOGISTIC>("Logistic");
 
 	curve.data<&AI::ResponsiveCurve::SetSlope, &AI::ResponsiveCurve::GetSlope>("Slope");
 	curve.data<&AI::ResponsiveCurve::SetExponent, &AI::ResponsiveCurve::GetExponent>("Exponent");
@@ -464,8 +464,8 @@ void RegisterMeta::RegisterNavAgentMeta()
 {
 	entt::meta_factory<AI::NavProfile> navProfile{};
 	navProfile.type(entt::type_id<AI::NavProfile>().hash(), "NavProfile");
-	navProfile.data<&AI::NavProfile::influenceWeights>("Weights");
-	navProfile.data<&AI::NavProfile::canWalkDiagonal>("Can Walk Diagonal");
+	navProfile.data<&AI::NavProfile::InfluenceWeights>("Weights");
+	navProfile.data<&AI::NavProfile::CanWalkDiagonal>("Can Walk Diagonal");
 
 	entt::meta_factory<NavAgent> navAgent{};
 	navAgent.type(entt::type_id<NavAgent>().hash(), "NavAgent");

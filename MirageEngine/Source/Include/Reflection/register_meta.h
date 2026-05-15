@@ -9,7 +9,6 @@ namespace MirageEngine
     class RegisterMeta
     {
     public:
-
         RegisterMeta();
         ~RegisterMeta();
 
