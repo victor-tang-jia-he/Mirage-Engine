@@ -22,12 +22,9 @@ namespace MirageEngine
 
 class ENGINE_API Application
 {
-    public:
-
+    private:
         MirageEngine::Renderer m_Renderer;
         MirageEngine::SceneGraph m_SceneGraph;
-
-    private:
 
         // TODO : Edit in map
         std::shared_ptr<MirageEngine::Core::Input::InputMapping> m_EditorMapping = nullptr;
@@ -38,14 +35,27 @@ class ENGINE_API Application
 
         static Application* s_Instance;
 
+        // Fix update 
+        float m_AccumulatedTime = 0.f;
+		const float m_FixedDeltaTime = 0.02f;
+
     public:
 
         void InitApp();
+		void RuntimeUpdate(float _dt);
+		void EditorUpdate();
+		void BeginRender(std::shared_ptr<MirageEngine::Core::ICamera> camera);
+		void EndRender();
         void ShutDown();
 
         MirageEngine::SceneGraph* GetSceneGraph() { return &m_SceneGraph; }
 
         static Application* Instance() { return s_Instance; }
+
+		bool IsRunning() const { return m_Renderer.IsRunning(); }
+		void* GetWindowHandle() const { return m_Renderer.GetWindowHandle(); }
+		MirageEngine::Renderer* GetRenderer() { return &m_Renderer; }
+		uint32_t GetFramebufferTextureID() const { return m_Renderer.GetFramebufferTextureID(); }
 
     private:
 

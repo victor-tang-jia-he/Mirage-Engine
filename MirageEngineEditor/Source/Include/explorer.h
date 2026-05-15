@@ -35,7 +35,7 @@ namespace Mirage
 	{
 	private:
 		std::filesystem::path m_CurrentPath;
-		std::filesystem::path m_RootPath;
+		std::filesystem::path m_RootPath = "./Assets";
 		std::vector<AssetEntry> m_Entries;
 		void* m_SelectedEntry;
 		AssetEntry* m_EntryToProcess = nullptr;
@@ -60,7 +60,6 @@ namespace Mirage
 		void ChangeDirectory(const std::filesystem::path& _newPath);
 
 		//Display
-		void ShowFolderContent();
 		void DrawDirectoryContent();
 		void DrawBreadcrumb();
 

@@ -1,7 +1,5 @@
 #pragma once
 
-#include <stdexcept>
-
 namespace entt
 {
     using id_type = std::uint32_t;

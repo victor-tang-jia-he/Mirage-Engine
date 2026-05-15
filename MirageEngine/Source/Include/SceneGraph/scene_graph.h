@@ -23,6 +23,7 @@ namespace MirageEngine
         private:
 
             std::vector<std::shared_ptr<GameObject>> m_RootsList;
+			std::vector<std::weak_ptr<GameObject>> m_CallGameObjectOnStart;
             std::unordered_map<uint64_t, std::shared_ptr<MirageEngine::GameObject>> m_Registry;
 
             std::shared_ptr<GameObject> m_SelectedObject = nullptr;

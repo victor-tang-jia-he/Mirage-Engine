@@ -248,23 +248,23 @@ namespace Mirage
 		ImGuiStyle& style = ImGui::GetStyle();
 
 		// Primary colors
-		style.Colors[ImGuiCol_WindowBg]						= Color(49, 0, 76, 255);
-		style.Colors[ImGuiCol_ChildBg]						= Color(29, 0, 76, 255);
+		style.Colors[ImGuiCol_WindowBg]						= Color(33, 21, 64, 255);
+		style.Colors[ImGuiCol_ChildBg]						= Color(21, 13, 40, 255);
 		style.Colors[ImGuiCol_PopupBg]						= Color(20, 20, 20, 255);
-		style.Colors[ImGuiCol_Border];
-		style.Colors[ImGuiCol_BorderShadow];
-		style.Colors[ImGuiCol_FrameBg];
-		style.Colors[ImGuiCol_MenuBarBg];
+		// style.Colors[ImGuiCol_Border];
+		// style.Colors[ImGuiCol_BorderShadow];
+		style.Colors[ImGuiCol_FrameBg]						= Color(29, 0, 76, 255);
+		// style.Colors[ImGuiCol_MenuBarBg];
 		style.Colors[ImGuiCol_ScrollbarBg];
-		style.Colors[ImGuiCol_TitleBg];
+		style.Colors[ImGuiCol_TitleBg]						= Color(43, 27, 39, 255);
 		style.Colors[ImGuiCol_TitleBgActive];
 		style.Colors[ImGuiCol_TitleBgCollapsed];
 
 		// Interactive elements - hover/active states
-		style.Colors[ImGuiCol_FrameBgHovered];
+		style.Colors[ImGuiCol_FrameBgHovered]				= Color(250, 150, 250, 102);
 		style.Colors[ImGuiCol_FrameBgActive];
-		style.Colors[ImGuiCol_ScrollbarGrab];
-		style.Colors[ImGuiCol_ScrollbarGrabHovered];
+		style.Colors[ImGuiCol_ScrollbarGrab]				= Color(81, 79, 96, 255);
+		style.Colors[ImGuiCol_ScrollbarGrabHovered]			= Color(81, 79, 96, 255);
 		style.Colors[ImGuiCol_ScrollbarGrabActive];
 		style.Colors[ImGuiCol_SliderGrab];
 		style.Colors[ImGuiCol_SliderGrabActive];
@@ -284,11 +284,12 @@ namespace Mirage
 
 		// Tabs
 		style.Colors[ImGuiCol_Tab];
-		style.Colors[ImGuiCol_TabHovered]					= Color(255, 128, 16, 185);
-		style.Colors[ImGuiCol_TabActive]					= Color(228, 35, 31, 211);
-		style.Colors[ImGuiCol_TabUnfocused];
-		style.Colors[ImGuiCol_TabUnfocusedActive]			= Color(255, 212, 8, 157);
+		// style.Colors[ImGuiCol_TabHovered]					= Color(255, 128, 16, 185);
+		// style.Colors[ImGuiCol_TabSelected]					= Color(228, 35, 31, 211);
+		style.Colors[ImGuiCol_TabUnfocusedActive];
 		style.Colors[ImGuiCol_TabSelectedOverline];
+		style.Colors[ImGuiCol_TabDimmed];
+		style.Colors[ImGuiCol_TabDimmedSelected]			= Color(47, 11, 146, 180);
 		style.Colors[ImGuiCol_TabDimmedSelectedOverline];
 
 		// Resize grip
@@ -359,6 +360,7 @@ namespace Mirage
 			"ScrollbarGrabHovered",
 			"ScrollbarGrabActive",
 			"CheckMark",
+			"CheckboxSelectedBg",
 			"SliderGrab",
 			"SliderGrabActive",
 			"Button",

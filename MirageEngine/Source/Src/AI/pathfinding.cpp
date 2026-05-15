@@ -3,6 +3,8 @@
 #include <stdlib.h>
 #include <algorithm>
 
+using namespace MirageEngine::Core::Math;
+
 namespace MirageEngine::AI
 {
 	std::vector<Vector3> Pathfinding::FindPath(Vector3 _start, Vector3 _end, InfluenceGrid* _grid, const NavProfile& _profile)

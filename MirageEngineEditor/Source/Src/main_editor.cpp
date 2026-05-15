@@ -15,59 +15,39 @@
 
 int main()
 {
-    Loggers::EnableImmediateFlush(true);   // Enable immediate flushing of log messages for real-time output during initialization
-    Loggers::EnableFileWriting(true);      // Enable writing logs to file during initialization to capture any issues that may occur before the main loop starts.
-    Loggers::EnableTimeOnEveryLog(false);  // Disable time show as it take verbosal the log.
-    Loggers::EnableFileNameAndLine(false); // Disable file name and line of the log , can be enable if necessary.
-    Application application;               // Temp, will be replaced by Engine Handler
-    Mirage::EditorApp editor;
-    // --- Initialization ---
-    MirageEngine::Core::Scripting::ScriptManager::Instance().Init();
-    application.InitApp();
-    
-    &entt::locator<entt::meta_ctx>::value_or(); // TODO : Remove for a better use of shared Context
-    MirageEngine::RegisterMeta().RegisterAllMeta(entt::locator<entt::meta_ctx>::handle());
-    editor.Init(application.m_Renderer.GetWindowHandle(), &application.m_Renderer, application.GetSceneGraph());
-    MirageEngine::TimeManager::Init();
-    Debug_Draw.Init(application.m_Renderer.GetRenderInterfaceHandle());
-    float dt;
-    bool OnStart = false;
+	Loggers::EnableImmediateFlush(false);   // Enable immediate flushing of log messages for real-time output during initialization
+	Loggers::EnableFileWriting(false);      // Enable writing logs to file during initialization to capture any issues that may occur before the main loop starts.
+	Loggers::EnableTimeOnEveryLog(false);  // Disable time show as it take verbosal the log.
+	Loggers::EnableFileNameAndLine(true); // Disable file name and line of the log , can be enable if necessary.
+	Application application;               // Temp, will be replaced by Engine Handler
+	Mirage::EditorApp editor;
+	// --- Initialization ---
+	application.InitApp();
 
-    application.GetSceneGraph()->CallAllOnStart();
-    while (application.m_Renderer.IsRunning())
-    {
-        glfwPollEvents();
-        MirageEngine::TimeManager::Update();
-        dt = MirageEngine::TimeManager::GetDeltaTime();
-        MirageEngine::Core::Input::InputSystem::UpdateHeldInput();
-        if (editor.IsPlaying() && !editor.IsPaused())
-        {
-            MirageEngine::Core::Physics::PhysicsManager::Instance().Update(MirageEngine::TimeManager::GetDeltaTime());
-            application.GetSceneGraph()->CallAllUpdate(dt);
-            application.GetSceneGraph()->CallAllLateUpdate(dt);
-            application.GetSceneGraph()->CallAllFixedUpdate(dt);
-        }
-        application.GetSceneGraph()->CallAllDrawLine();
-        application.GetSceneGraph()->UpdateAllWorldMatrices();
+	&entt::locator<entt::meta_ctx>::value_or(); // TODO : Remove for a better use of shared Context
+	MirageEngine::RegisterMeta().RegisterAllMeta(entt::locator<entt::meta_ctx>::handle());
+	editor.Init(application.GetWindowHandle(), application.GetRenderer(), application.GetSceneGraph());
+	MirageEngine::TimeManager::Init();
+	while (application.IsRunning())
+	{
+		glfwPollEvents();
+		MirageEngine::TimeManager::Update();
+		MirageEngine::Core::Input::InputSystem::UpdateHeldInput();
+		if (editor.IsPlaying() && !editor.IsPaused())
+		{
+			MirageEngine::Core::Physics::PhysicsManager::Instance().Update(MirageEngine::TimeManager::GetDeltaTime());
+			application.RuntimeUpdate(MirageEngine::TimeManager::GetDeltaTime());
+		}
+		application.EditorUpdate();
+		application.BeginRender(editor.GetEditorCamera());
 
-        // --- Render ---
-        application.m_Renderer.BeginFrame();
+		// Display the editor panels and pass the framebuffer texture ID to the viewport for rendering the scene
+		editor.OnUpdate(application.GetFramebufferTextureID());
+		application.EndRender();
+	}
 
-        application.m_Renderer.RenderScene(application.m_SceneGraph, editor.GetEditorCamera());
-        application.m_Renderer.RenderLine();
-        application.m_Renderer.RenderScreen();
-
-        // Used to display the scene in the editor viewport
-        uint32_t textureID = application.m_Renderer.GetFramebufferTextureID();
-        // Display the editor panels and pass the framebuffer texture ID to the viewport for rendering the scene
-        editor.OnUpdate(textureID);
-
-        application.m_Renderer.EndFrame();
-    }
-
-    // --- Shutdown ---
-    editor.Shutdown();
-    application.ShutDown();
-    MirageEngine::Core::Scripting::ScriptManager::Instance().ShutDown();
-    return 0;
+	// --- Shutdown ---
+	editor.Shutdown();
+	application.ShutDown();
+	return 0;
 }

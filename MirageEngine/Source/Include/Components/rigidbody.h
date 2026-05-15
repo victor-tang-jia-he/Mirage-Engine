@@ -17,12 +17,6 @@ namespace MirageEngine
             class Transform;
         } // namespace Components
 
-        namespace Math
-        {
-            struct Quaternion;
-            struct Vector3;
-        } // namespace Math
-
         namespace Physics
         {
             class IRigidBody;

@@ -5,7 +5,7 @@
 #include <Components/box_collider.h>
 #include <Components/sphere_collider.h>
 #include <Components/capsule_collider.h>
-#include <entt/entt.hpp>s
+#include <entt/entt.hpp>
 #include <Logs/log.h>
 
 DEFINE_LOG_CATEGORY(LogComponentRigidBody)
