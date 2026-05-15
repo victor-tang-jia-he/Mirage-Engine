@@ -58,6 +58,7 @@ void RegisterMeta::RegisterAllMeta(entt::locator<entt::meta_ctx>::node_type hand
 	RegisterNavAgentMeta();   
 	RegisterUtilityAgentMeta();
 	RegisterResponsiveCurveMeta();
+    RegisterAIActionMeta();
 
 	RegisterMeshMeta();
 	RegisterTextureMeta();
@@ -276,4 +277,25 @@ void RegisterMeta::RegisterUtilityAgentMeta()
     utilityAgent.data<&UtilityAgent::SetTargetGrid, &UtilityAgent::GetTargetGrid>("Grid");
 	utilityAgent.data<nullptr, &UtilityAgent::GetLastDecisionReason>("Status");
     utilityAgent.data<&UtilityAgent::SetActions, &UtilityAgent::GetActionsRef>("Actions List");
+}
+
+void RegisterMeta::RegisterAIActionMeta()
+{
+    auto sourceEnum = entt::meta_factory<VariableSource>{};
+    sourceEnum.type(entt::type_id<VariableSource>().hash(), "VariableSource");
+    sourceEnum.data<VariableSource::Grid>("Grid");
+    sourceEnum.data<VariableSource::Blackboard>("Blackboard");
+
+    auto consideration = entt::meta_factory<Consideration>{};
+    consideration.type(entt::type_id<Consideration>().hash(), "Consideration");
+
+    consideration.data<&Consideration::source>("Source");
+    consideration.data<&Consideration::variableName>("Variable Name");
+    consideration.data<&Consideration::responseCurve>("Curve");
+
+    auto action = entt::meta_factory<AI::AIAction>{};
+    action.type(entt::type_id<AI::AIAction>().hash(), "AIAction");
+    action.base<Core::Scripting::IScript>();
+
+    action.data<&AI::AIAction::SetConsiderations, &AI::AIAction::GetConsiderations>("Considerations");
 }

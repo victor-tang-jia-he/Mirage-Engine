@@ -2,22 +2,54 @@
 #include "GameObject/game_object.h"
 #include "Components/utility_agent.h"
 
-namespace MirageEngine::AI
+namespace MirageEngine
 {
-    AIAction::AIAction()
-        : m_ActionName("BaseAction")
-        , m_OwnerAgent(nullptr)
+    float Consideration::GetScore(Core::Components::UtilityAgent* _agent)
     {
+        if (!_agent)
+            return 0.0f;
+
+        float input = 0.0f;
+        if (source == VariableSource::Grid)
+            input = _agent->GetIntensityByName(variableName);
+        else
+            input = _agent->GetInternalStat(variableName);
+
+        return responseCurve.Evaluate(input);
     }
 
-    void AIAction::OnStart()
+    namespace AI
     {
-        auto agentPtr = GetOwner()->GetComponent<Core::Components::UtilityAgent>();
-        if (agentPtr)
+        AIAction::AIAction()
+            : m_ActionName("BaseAction")
+            , m_OwnerAgent(nullptr)
         {
-            m_OwnerAgent = agentPtr.get();
         }
-    }
 
-    void AIAction::OnUpdate(float dt) {}
+        void AIAction::OnStart()
+        {
+            auto agentPtr = GetOwner()->GetComponent<Core::Components::UtilityAgent>();
+            if (agentPtr)
+            {
+                m_OwnerAgent = agentPtr.get();
+            }
+        }
+
+        void AIAction::OnUpdate(float dt) {}
+
+        float AIAction::Evaluate()
+        {
+            if (m_Considerations.empty())
+                return 0.0f;
+
+            float finalScore = 1.0f;
+
+            for (auto& consideration : m_Considerations)
+            {
+                finalScore *= consideration.GetScore(m_OwnerAgent);
+            }
+
+            return finalScore;
+        }
+    } // namespace AI
 } // namespace MirageEngine::AI

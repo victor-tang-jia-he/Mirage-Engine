@@ -31,6 +31,7 @@ namespace MirageEngine
 		void RegisterResponsiveCurveMeta();
 		void RegisterNavAgentMeta();
 		void RegisterUtilityAgentMeta();
+        void RegisterAIActionMeta();
 
 		template<typename T>
 		void RegisterSharedPtr();
