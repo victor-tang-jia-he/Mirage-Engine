@@ -39,11 +39,9 @@ namespace MirageEngine
 
         float AIAction::Evaluate()
         {
-            if (m_Considerations.empty())
-                return 0.0f;
+            if (m_Considerations.empty() || !m_OwnerAgent) return 0.0f;
 
             float finalScore = 1.0f;
-
             for (auto& consideration : m_Considerations)
             {
                 finalScore *= consideration.GetScore(m_OwnerAgent);

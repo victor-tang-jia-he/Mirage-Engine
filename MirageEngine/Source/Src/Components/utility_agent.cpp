@@ -41,24 +41,34 @@ namespace MirageEngine::Core::Components
 		if (m_Grid == nullptr)
 		{
 			Application* app = Application::Instance();
-			if (app)
+			if (app) m_Grid = app->GetSceneGraph()->FindComponentInScene<InfluenceGrid>();
+		}
+
+		if (m_Grid)
+		{
+			size_t actualChannelCount = m_Grid->GetChannelsNames().size();
+			if (m_CurrentCellIntensity.size() != actualChannelCount)
 			{
-				m_Grid = app->GetSceneGraph()->FindComponentInScene<InfluenceGrid>();
+				m_CurrentCellIntensity.assign(actualChannelCount, 0.0f);
 			}
 		}
 
-		 if (m_actions.empty())
-         {
-             auto allComps = GetOwner()->GetComponents();
-             for (auto& comp : allComps)
-             {
-                 AI::AIAction* action = dynamic_cast<AI::AIAction*>(comp.get());
-                 if (action)
-                 {
-                     AddAction(action);
-                 }
-             }
-         }
+		if (!m_StatsInitialized)
+		{
+			auto allComps = GetOwner()->GetComponents();
+			for (auto& comp : allComps)
+			{
+				AI::AIAction* action = dynamic_cast<AI::AIAction*>(comp.get());
+				if (action) AddAction(action);
+			}
+
+			for (const auto& stat : m_DefaultStats)
+			{
+				m_InternalStats[stat.name] = stat.initialValue;
+			}
+
+			m_StatsInitialized = true;
+		}
 
 		m_DecisionTimer -= _dt;
 		if (m_DecisionTimer <= 0.0f)
@@ -66,8 +76,9 @@ namespace MirageEngine::Core::Components
 			Decide();
 			m_DecisionTimer = m_DecisionInterval;
 		}
+
 		if (m_CurrentAction != nullptr)
-			m_CurrentAction->Execute(TimeManager::GetDeltaTime());
+			m_CurrentAction->Execute(_dt); 
 	}
 		
 	entt::id_type UtilityAgent::GetType() const

@@ -337,7 +337,6 @@ namespace Mirage
                                             it = view.erase(it);
                                             view.insert(it, comp.get());
                                             _data.set(instance, value);
-                                            std::cout << "[IA] Action linked successfully!" << std::endl;
                                             break;
                                         }
                                     }
@@ -384,6 +383,29 @@ namespace Mirage
                                 ImGui::EndDragDropTarget();
                             }
                         }
+						else if (!itemType.is_arithmetic())
+						{
+							if (ImGui::TreeNode(("Element " + std::to_string(index)).c_str()))
+							{
+								for (auto [id, childData] : itemType.data())
+								{
+									ImGui::TableNextRow();
+									ImGui::TableNextColumn();
+									ImGui::TextUnformatted(childData.name());
+									ImGui::TableNextColumn();
+									ImGui::PushItemWidth(-1);
+
+									DrawNestedProperty(childData, item);
+
+									ImGui::PopItemWidth();
+								}
+								it = view.erase(it);
+								it = view.insert(it, item);
+								_data.set(instance, value);
+
+								ImGui::TreePop();
+							}
+						}
 						++it;
 						index++;
 					}
@@ -442,6 +464,44 @@ namespace Mirage
 		else if (type == entt::resolve<bool>()) {
 			bool v = childValue.cast<bool>();
 			if (ImGui::Checkbox(name, &v)) _childData.set(_parentInstance, v);
+		}
+		else if (type == entt::resolve<std::string>())
+		{
+			std::string currentVal = childValue.cast<std::string>();
+			if (std::string(name) == "Variable Name")
+			{
+				InfluenceGrid* grid = nullptr;
+				auto app = Application::Instance();
+				if (app) grid = app->GetSceneGraph()->FindComponentInScene<InfluenceGrid>();
+
+				if (grid && ImGui::BeginCombo(name, currentVal.c_str()))
+				{
+					for (const auto& channelName : grid->GetChannelsNames())
+					{
+						if (ImGui::Selectable(channelName.c_str(), currentVal == channelName))
+						{
+							_childData.set(_parentInstance, channelName);
+						}
+					}
+					ImGui::EndCombo();
+				}
+				else
+				{
+					char buffer[256];
+					memset(buffer, 0, sizeof(buffer));
+					strncpy(buffer, currentVal.c_str(), 255);
+					if (ImGui::InputText(name, buffer, 256))
+						_childData.set(_parentInstance, std::string(buffer));
+				}
+			}
+			else 
+			{
+				char buffer[256];
+				memset(buffer, 0, sizeof(buffer));
+				strncpy(buffer, currentVal.c_str(), 255);
+				if (ImGui::InputText(name, buffer, 256))
+					_childData.set(_parentInstance, std::string(buffer));
+			}
 		}
 		else if (type.is_sequence_container())
 		{
@@ -556,20 +616,63 @@ namespace Mirage
 
 	void Inspector::ResolveString(entt::meta_any _value, const char* _label, entt::meta_data _data, entt::meta_any& _instance)
 	{
-		static bool printed = false;
-		if (!printed)
+		ImGui::PushID(_label);
+
+		std::string currentVal = _value.cast<std::string>();
+		bool drewCombo = false;
+
+		// --- LOGIQUE COMBO (Émetteur) ---
+		if (std::strcmp(_label, "Type") == 0 || std::strcmp(_label, "Variable Name") == 0)
 		{
-			LOG(logTemp, LogInspector, "String detected in component");
-			printed = true;
+			InfluenceGrid* grid = nullptr;
+
+			// On essaie de trouver la grille
+			if (auto* emitter = _instance.try_cast<InfluenceEmitter>()) {
+				grid = emitter->GetTargetGrid();
+			}
+
+			if (!grid) {
+				auto app = Application::Instance();
+				if (app) grid = app->GetSceneGraph()->FindComponentInScene<InfluenceGrid>();
+			}
+
+			// Si on a une grille, on dessine le combo
+			if (grid)
+			{
+				// On utilise "###" pour forcer un ID constant même si le texte change
+				std::string comboLabel = std::string(_label) + "###Combo";
+				if (ImGui::BeginCombo(comboLabel.c_str(), currentVal.c_str()))
+				{
+					for (const auto& channelName : grid->GetChannelsNames())
+					{
+						bool isSelected = (currentVal == channelName);
+						if (ImGui::Selectable(channelName.c_str(), isSelected))
+						{
+							_data.set(_instance, channelName);
+						}
+					}
+					ImGui::EndCombo();
+				}
+				drewCombo = true;
+			}
 		}
-		std::string val = _value.cast<std::string>();
-		char buffer[256];
-		memset(buffer, 0, sizeof(buffer));
-		std::strncpy(buffer, val.c_str(), sizeof(buffer) - 1);
-		if (ImGui::InputText(_label, buffer, sizeof(buffer)))
+
+		// --- LOGIQUE ZONE DE TEXTE (Seulement si le combo n'a pas été dessiné) ---
+		if (!drewCombo)
 		{
-			_data.set(_instance, std::string(buffer));
+			char buffer[256];
+			memset(buffer, 0, sizeof(buffer));
+			std::strncpy(buffer, currentVal.c_str(), 255);
+
+			// On ajoute "###Input" pour garantir l'unicité
+			std::string inputLabel = std::string(_label) + "###Input";
+			if (ImGui::InputText(inputLabel.c_str(), buffer, sizeof(buffer)))
+			{
+				_data.set(_instance, std::string(buffer));
+			}
 		}
+
+		ImGui::PopID(); // On libère l'ID
 	}
 
 	void Inspector::ResolveInt(entt::meta_any _value, const char* _label, entt::meta_data _data, entt::meta_any& _instance)

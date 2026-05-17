@@ -15,9 +15,16 @@ namespace MirageEngine::Core::Components
 {
 	using namespace MirageEngine::AI;
 
+	struct StatDefinition {
+		std::string name;
+		float initialValue;
+	};
+
 	class UtilityAgent : public Component
 	{
 	private:
+		bool m_StatsInitialized = false;
+
 		/* Configs */
 		// DecisionInterval determines how often the agent re-evaluates it's actions
 		float m_DecisionInterval = 0.3f;
@@ -36,6 +43,7 @@ namespace MirageEngine::Core::Components
 		float m_DecisionTimer = 0.0f;
 		// Memory of information like stress/stamina/health
 		std::unordered_map<std::string, float> m_InternalStats;
+		std::vector<StatDefinition> m_DefaultStats;
 
 		/* Feedback */
 		// Stores the reason for the last decision
