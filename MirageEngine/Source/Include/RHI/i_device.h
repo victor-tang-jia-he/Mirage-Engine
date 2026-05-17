@@ -8,15 +8,15 @@ namespace MirageRHI
 
     class IDevice
     {
-        public:
+    public:
 
-            virtual ~IDevice() = default;
+        virtual ~IDevice() = default;
 
-            virtual void Create() = 0;
-            virtual void Destroy() = 0;
+        virtual void Create() = 0;
+        virtual void Destroy() = 0;
 
-            virtual OpenGLDevice& API_OpenGL() { throw std::runtime_error("Bad API Call : object is not an OpenGLDevice"); }
+        virtual OpenGLDevice& API_OpenGL() { throw std::runtime_error("Bad API Call : object is not an OpenGLDevice"); }
 
-            virtual void WaitIdle() = 0;
+        virtual void WaitIdle() = 0;
     };
 } // namespace MirageRHI

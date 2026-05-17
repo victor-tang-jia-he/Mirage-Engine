@@ -1,7 +1,8 @@
-#include <glad/glad.h>
+#include <Glad/glad.h>
 #include <GLFW/glfw3.h>
 
 #include "renderer.h"
+#include <Camera/i_camera.h>
 #include <DebugDraw/debug_draw.h>
 
 #include <Logs/log.h>
@@ -13,6 +14,13 @@
 
 #include <Resources/material.h>
 #include <Resources/material_instance.h>
+
+// Light include
+#include <Light/light_manager.h>
+#include <Light/directional_light.h>
+#include <Light/spot_light.h>
+#include <Light/point_light.h>
+#include <Light/i_light.h>
 
 DEFINE_LOG_CATEGORY(LogMirageRenderer)
 
@@ -35,7 +43,9 @@ void Renderer::Shutdown()
     LOG(logInfo, LogMirageRenderer, "Shutting down Renderer...");
 
     m_CommandBuffer->Destroy();
-    m_UniformBuffer->Destroy();
+    m_PerFrameUBO->Destroy();
+    m_PerObjectUBO->Destroy();
+    m_LightUBO->Destroy();
     m_ScreenPipeline->Destroy();
     m_ScreenPipelineParameters->Destroy();
     m_RenderPass->Destroy();
@@ -46,7 +56,9 @@ void Renderer::Shutdown()
 
     m_RenderInterface.reset();
     m_CommandBuffer.reset();
-    m_UniformBuffer.reset();
+    m_PerFrameUBO.reset();
+    m_PerObjectUBO.reset();
+    m_LightUBO.reset();
     m_ScreenPipeline.reset();
     m_ScreenPipelineParameters.reset();
     m_RenderPass.reset();
@@ -69,12 +81,14 @@ void Renderer::BeginFrame()
     m_CommandBuffer->BeginDraw(m_RenderPass, currentFBO);
 }
 
-void Renderer::RenderScene(SceneGraph _sceneGraph)
+void Renderer::RenderScene(SceneGraph _sceneGraph, std::shared_ptr<Core::ICamera> _camera)
 {
-    if (_sceneGraph.GetActiveCamera())
+    if (_camera)
     {
-        m_UniformBuffer->SetView(_sceneGraph.GetActiveCamera()->GetView());
-        m_UniformBuffer->SetProjection(_sceneGraph.GetActiveCamera()->GetPerspective());
+        MirageRHI::PerFrameData frame{ _camera->GetView(), _camera->GetPerspective(), _camera->GetPosition(), 0.0f };
+        m_PerFrameUBO->Upload(&frame, sizeof(MirageRHI::PerFrameData));
+        Debug_Draw.UpdateUBO(&frame, sizeof(MirageRHI::PerFrameData));
+        ComputeLights();
     }
 
     for (std::shared_ptr<GameObject> root : _sceneGraph.GetRootObjects())
@@ -90,6 +104,7 @@ void Renderer::RenderScreen()
     m_CommandBuffer->BeginDraw(m_RenderPass, 0);
 
     m_CommandBuffer->BindPipeline(m_ScreenPipeline);
+
     m_CommandBuffer->ApplyPipelineParameters(m_ScreenPipeline);
     m_CommandBuffer->BindTextureFromID(0);
 
@@ -115,14 +130,15 @@ void Renderer::InitWindow()
 {
     if (!glfwInit())
     {
-        LOG(logFatal, LogMirageRenderer, "Failed to init GLFW!");
+    	LOG(logFatal, LogMirageRenderer, "Failed to init GLFW!");
     }
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+    
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 5);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-    m_Width = 1920;
-    m_Height = 1080;
+    m_Width  = 1280;
+    m_Height = 720;
 
     m_Window = glfwCreateWindow(m_Width, m_Height, "Mirage Engine", nullptr, nullptr);
     if (!m_Window)
@@ -176,7 +192,9 @@ void MirageEngine::Renderer::ClassInstantiation()
     m_RenderPass = m_RenderInterface->InstantiateRenderPass();
     m_ScreenPipelineParameters = m_RenderInterface->InstantiatePipelineParameters();
     m_ScreenPipeline = m_RenderInterface->InstantiatePipeline();
-    m_UniformBuffer = m_RenderInterface->InstantiateUniformBuffer();
+    m_PerFrameUBO = m_RenderInterface->InstantiateUniformBuffer();
+    m_PerObjectUBO = m_RenderInterface->InstantiateUniformBuffer();
+    m_LightUBO = m_RenderInterface->InstantiateUniformBuffer();
     m_CommandBuffer = m_RenderInterface->InstantiateCommandBuffer();
 
     LOG(logTemp, LogMirageRenderer, "All Classes successfully Instantiated");
@@ -190,7 +208,9 @@ void MirageEngine::Renderer::ClassCreation()
     m_SwapChain->Create(2, m_Width, m_Height);
     m_RenderPass->Create(Vector4(0.f, 0.5f, 0.5f, 1.0f), 1.0f);
     ScreenPipelineCreation();
-    m_UniformBuffer->Create();
+    m_PerFrameUBO->Create(MirageRHI::UBOBinding::PER_FRAME, sizeof(MirageRHI::PerFrameData));
+    m_PerObjectUBO->Create(MirageRHI::UBOBinding::PER_OBJECT, sizeof(MirageRHI::PerObjectData));
+    m_LightUBO->Create(MirageRHI::UBOBinding::LIGHTS, sizeof(MirageRHI::LightUBOData));
     m_CommandBuffer->Create();
 
     LOG(logTemp, LogMirageRenderer, "All Classes successfully Created");
@@ -198,14 +218,14 @@ void MirageEngine::Renderer::ClassCreation()
 
 void MirageEngine::Renderer::ScreenPipelineCreation()
 {
-    m_ScreenPipelineParameters->Create(MirageRHI::CullingType::None, false);
+    m_ScreenPipelineParameters->Create(MirageRHI::CullingType::NONE, false);
 
     // Creation of single use shader objects for screen rendering pipeline
     std::shared_ptr<MirageRHI::IShader> screenVertShader = m_RenderInterface->InstantiateShader();
     std::shared_ptr<MirageRHI::IShader> screenFragShader = m_RenderInterface->InstantiateShader();
 
-    screenVertShader->Create("Assets/Shaders/screen.vert", MirageRHI::IShader::ShaderType::Vertex);
-    screenFragShader->Create("Assets/Shaders/screen.frag", MirageRHI::IShader::ShaderType::Fragment);
+    screenVertShader->Create("Assets/Shaders/screen.vert", MirageRHI::IShader::ShaderType::VERTEX);
+    screenFragShader->Create("Assets/Shaders/screen.frag", MirageRHI::IShader::ShaderType::FRAGMENT);
 
     m_ScreenPipeline->Create(screenVertShader, screenFragShader, m_ScreenPipelineParameters);
 
@@ -233,16 +253,52 @@ void Renderer::RenderObjectRecursive(std::shared_ptr<MirageEngine::GameObject> _
     }
 }
 
-void MirageEngine::Renderer::RenderLine()
+void MirageEngine::Renderer::RenderLine() { Debug_Draw.Flush(m_CommandBuffer); }
+
+void Renderer::ComputeLights()
 {
-    m_CommandBuffer->BindPipeline(Debug_Draw.m_Pipeline);
-    m_CommandBuffer->ApplyPipelineParameters(Debug_Draw.m_Pipeline);
-    Debug_Draw.UpdateVertexBuffer();
-    m_UniformBuffer->UpdateUniformBuffer(Debug_Draw.m_Pipeline, Matrix4::Identity());
-    m_CommandBuffer->BindBuffer(Debug_Draw.m_VertexBufferObject);
-    m_CommandBuffer->ApplyVertexLayout(Debug_Draw.m_VertexAttributeObject);
-    m_CommandBuffer->Draw((uint32_t)Debug_Draw.m_Lines.size(), MirageRHI::DrawMode::Lines);
-    Debug_Draw.Flush();
+    MirageRHI::LightUBOData data{};
+
+    std::vector<std::weak_ptr<DirectionalLight>> dirList = LIGHT_MANAGER.GetDirectionalLights();
+    std::vector<std::weak_ptr<PointLight>> pointList = LIGHT_MANAGER.GetPointLights();
+    std::vector<std::weak_ptr<SpotLight>> spotList = LIGHT_MANAGER.GetSpotLights();
+
+    for (std::weak_ptr<DirectionalLight>& weak : dirList)
+    {
+        if (weak.expired())
+            continue;
+        std::shared_ptr<DirectionalLight> light = weak.lock();
+        MirageRHI::DirectionalLightData& d = data.dirLights[data.dirCount++];
+        d.Color = light->GetColor();
+        d.Direction = light->GetDirection();
+        d.Intensity = light->GetIntensity();
+    }
+
+    for (std::weak_ptr<PointLight>& weak : pointList)
+    {
+        if (weak.expired())
+            continue;
+        std::shared_ptr<PointLight> light = weak.lock();
+        MirageRHI::PointLightData& p = data.pointLights[data.pointCount++];
+        p.Color = light->GetColor();
+        p.Position = light->GetOwner()->Transform.GetWorldMatrix().GetTranslation();
+        p.Intensity = light->GetIntensity();
+    }
+
+    //for (std::weak_ptr<SpotLight>& weak : spotList)
+    //{
+    //    if (weak.expired())
+    //        continue;
+    //    std::shared_ptr<SpotLight> light = weak.lock();
+    //    MirageRHI::SpotLightData& s = data.spotLights[data.spotCount++];
+    //    s.color = light->Color;
+    //    s.position = light->GetOwner()->Transform.GetWorldMatrix().GetTranslation();
+    //    s.direction = light->Direction;
+    //    s.intensity = light->Intensity;
+    //    s.innerCutoff = light->InnerCutoff;
+    //    s.outerCutoff = light->OuterCutoff;
+    //}
+    m_LightUBO->Upload(&data, sizeof(MirageRHI::LightUBOData));
 }
 
 void Renderer::DrawMesh(std::shared_ptr<MirageEngine::Core::Components::MeshRenderer> _meshRenderer, const MirageEngine::Core::Components::Transform& _meshTransform)
@@ -250,10 +306,13 @@ void Renderer::DrawMesh(std::shared_ptr<MirageEngine::Core::Components::MeshRend
     if (!_meshRenderer->GetMesh() || !_meshRenderer->GetMaterial())
         return;
 
-    m_CommandBuffer->BindPipeline(_meshRenderer->GetMaterial()->GetMaterial()->GetPipeline());
-    m_CommandBuffer->ApplyPipelineParameters(_meshRenderer->GetMaterial()->GetMaterial()->GetPipeline());
+    std::shared_ptr<MirageRHI::IPipeline> pipeline = _meshRenderer->GetMaterial()->GetMaterial()->GetPipeline();
+    MirageRHI::PerObjectData obj{ _meshTransform.GetWorldMatrix(), _meshTransform.GetWorldMatrix().Inverse().Transpose() };
+
+    m_CommandBuffer->BindPipeline(pipeline);
+    m_CommandBuffer->ApplyPipelineParameters(pipeline);
     _meshRenderer->GetMaterial()->Bind();
-    m_UniformBuffer->UpdateUniformBuffer(_meshRenderer->GetMaterial()->GetMaterial()->GetPipeline(), _meshTransform.GetWorldMatrix());
+    m_PerObjectUBO->Upload(&obj, sizeof(MirageRHI::PerObjectData));
     m_CommandBuffer->BindBuffer(_meshRenderer->GetMesh()->GetVertexBuffer());
     m_CommandBuffer->ApplyVertexLayout(_meshRenderer->GetMesh()->GetVertexLayout());
     m_CommandBuffer->BindBuffer(_meshRenderer->GetMesh()->GetIndexBuffer());

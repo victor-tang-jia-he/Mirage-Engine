@@ -1,42 +1,51 @@
 #pragma once
 
-#include <EnTT/meta/meta.hpp>
+#include <entt/meta/meta.hpp>
+
+DECLARE_LOG_CATEGORY_EXTERN(LogRegisterMeta);
 
 namespace MirageEngine
 {
-	class RegisterMeta
-	{
-	public:
-		RegisterMeta();
-		~RegisterMeta();
+    class RegisterMeta
+    {
+    public:
+        RegisterMeta();
+        ~RegisterMeta();
 
-		void RegisterAllMeta(entt::locator<entt::meta_ctx>::node_type handle);
+        void RegisterAllMeta(entt::locator<entt::meta_ctx>::node_type handle);
 
-	private:
-		void RegisterGameObjectMeta();
+        void RegisterTransformMeta();
 
-		void RegisterTransformMeta();
+		// Components
+        void RegisterGameObjectMeta();
+        void RegisterMeshRendererMeta();
+        void RegisterCameraMeta();
+        void RegisterInputMappingMeta();
 
-		void RegisterMeshRendererMeta();
-		void RegisterCameraMeta();
-		void RegisterInputMappingMeta();
+		// Lights
+        void RegisterDirectionalLightMeta();
+        void RegisterPointLightMeta();
+		void RegisterSpotLightMeta();
 
-		void RegisterMeshMeta();
-		void RegisterTextureMeta();
-		void RegisterMaterialMeta();
-		void RegisterShaderMeta();
+		// Physics
+        void RegisterBoxColliderMeta();
+        void RegisterSphereColliderMeta();
+        void RegisterCapsuleColliderMeta();
+        void RegisterRigidbodyMeta();
 
-		void RegisterInfluenceGridMeta();
-		void RegisterInfluenceEmitterMeta();
-		void RegisterResponsiveCurveMeta();
-		void RegisterNavAgentMeta();
-		void RegisterUtilityAgentMeta();
+		// AI
+        void RegisterInfluenceGridMeta();
+        void RegisterInfluenceEmitterMeta();
+        void RegisterResponsiveCurveMeta();
+        void RegisterNavAgentMeta();
+        void RegisterUtilityAgentMeta();
         void RegisterAIActionMeta();
 
-		template<typename T>
-		void RegisterSharedPtr();
-
-	};
-}
-
-#include "register_meta.inl"
+		// Resources
+        void RegisterMeshMeta();
+        void RegisterTextureMeta();
+        void RegisterMaterialMeta();
+        void RegisterMaterialInstanceMeta();
+        void RegisterShaderMeta();
+    };
+} // namespace MirageEngine

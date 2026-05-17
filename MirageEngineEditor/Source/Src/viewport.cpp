@@ -3,11 +3,15 @@
 #include "imgui.h"
 #include "ImGuizmo.h"
 
+#include <Logs/log.h>
+
+DEFINE_LOG_CATEGORY_WITH_COLOR(LogViewport, Loggers::Color::CYAN);
+
 namespace Mirage
 {
 	void Viewport::InitPanel()
 	{
-
+		LOG(logTemp, LogViewport, "Viewport Panel Initialized");
 	}
 
 	void Viewport::DrawPanel(uint32_t _textureID)

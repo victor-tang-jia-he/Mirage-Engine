@@ -1,7 +1,7 @@
 #include <OpenGL/openGL_vertex_layout.h>
 #include <Logs/log.h>
 
-#include <glad/glad.h>
+#include <Glad/glad.h>
 #include <GLFW/glfw3.h>
 
 DEFINE_LOG_CATEGORY(LogRHIVertexLayout)
@@ -74,10 +74,10 @@ void MirageRHI::OpenGLVertexLayout::SetLayout()
 
         switch (m_Attributes[index]->Type)
         {
-            case AttributeType::Float:
+            case AttributeType::FLOAT:
                 type = GL_FLOAT;
                 break;
-            case AttributeType::Int:
+            case AttributeType::INT:
                 type = GL_INT;
                 break;
             default:

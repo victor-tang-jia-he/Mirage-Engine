@@ -1,6 +1,6 @@
 #pragma once
 
-#include <glad/glad.h>
+#include <Glad/glad.h>
 #include <GLFW/glfw3.h>
 
 #include <fstream>
@@ -15,7 +15,7 @@ namespace MirageRHI
         private:
 
             GLuint m_Shader = 0;
-            ShaderType m_Type = ShaderType::None;
+            ShaderType m_Type = ShaderType::NONE;
 
         public:
 

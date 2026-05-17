@@ -40,6 +40,12 @@ namespace MirageEngine::Core
 			m_Owner->Transform.LookAt(targetPos);
 		}
 
+		void NavAgent::AttachNew(std::shared_ptr<GameObject> _owner)
+		{
+			std::shared_ptr<NavAgent> compPtr = std::make_shared<NavAgent>(_owner.get());
+			_owner->AddComponent<NavAgent>(compPtr);
+		}
+
 		entt::id_type NavAgent::GetType() const
 		{ 
 			return entt::type_id<NavAgent>().hash(); 

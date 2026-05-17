@@ -2,11 +2,14 @@
 #include <Components/component.h>
 #include <Scripting/i_script.h>
 #include <AI/ai_action.h>
-
-#ifdef ENGINE_EXPORTS
-#    define ENGINE_API __declspec(dllexport)
+#ifdef _WIN32
+#    ifdef ENGINE_EXPORTS
+#        define ENGINE_API __declspec(dllexport)
+#    else
+#        define ENGINE_API __declspec(dllimport)
+#    endif
 #else
-#    define ENGINE_API __declspec(dllimport)
+#    define ENGINE_API
 #endif
 
 //#define REGISTER_SCRIPT(ClassName)                               \

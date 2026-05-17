@@ -10,12 +10,14 @@
 #include <RHI/i_pipeline_parameters.h>
 #include <RHI/i_vertex_layout.h>
 #include <RHI/i_buffer.h>
+#include <RHI/i_command_buffer.h>
 
 // resource Include
 #include <Resources/shader.h>
 #include <Resources/resource_manager.h>
 
 #include <matrix4.h>
+#include <i_uniform_buffer.h>
 
 namespace MirageEngine::DebugDraw
 {
@@ -38,7 +40,7 @@ namespace MirageEngine::DebugDraw
 
         std::shared_ptr<VertexAttribute> vertexAPosition = std::make_shared<VertexAttribute>();
         vertexAPosition->Name = "aPosition";
-        vertexAPosition->Type = AttributeType::Float;
+        vertexAPosition->Type = AttributeType::FLOAT;
         vertexAPosition->Size = 3;
         vertexAPosition->Stride = sizeof(LineVertex);
         vertexAPosition->Normalized = false;
@@ -46,7 +48,7 @@ namespace MirageEngine::DebugDraw
 
         std::shared_ptr<VertexAttribute> vertexAColor = std::make_shared<VertexAttribute>();
         vertexAColor->Name = "aColor";
-        vertexAColor->Type = AttributeType::Float;
+        vertexAColor->Type = AttributeType::FLOAT;
         vertexAColor->Size = 4;
         vertexAColor->Stride = sizeof(LineVertex);
         vertexAColor->Normalized = false;
@@ -58,15 +60,37 @@ namespace MirageEngine::DebugDraw
         m_VertexAttributeObject->Create(); // Create VAO
 
         m_VertexBufferObject = _rhi->InstantiateBuffer();
-        m_VertexBufferObject->Create(nullptr, sizeof(LineVertex) * m_MaxLine, IBuffer::BufferType::VerticesDynamic);
+        m_VertexBufferObject->Create(nullptr, sizeof(LineVertex) * m_MaxLine, IBuffer::BufferType::VERTICES_DYNAMIC);
 
         // ------------------------------------------------------------------ Pipeline
         m_Pipelineparameter = _rhi->InstantiatePipelineParameters();
-        m_Pipelineparameter->Create(MirageRHI::CullingType::None, false); // Default setting
+        m_Pipelineparameter->Create(MirageRHI::CullingType::NONE, false); // Default setting
 
         m_Pipeline = _rhi->InstantiatePipeline();
-        m_Pipeline->Create(vert->ShaderBind, frag->ShaderBind, m_Pipelineparameter);
+        m_Pipeline->Create(
+            vert->ShaderBind, frag->ShaderBind, m_Pipelineparameter,
+            {
+                { "PerFrame", MirageRHI::UBOBinding::PER_FRAME }
+            });
+
+        // ------------------------------------------------------------------ Uniform Buffer
+        m_DebugUBO = _rhi->InstantiateUniformBuffer();
+
+        m_DebugUBO->Create(MirageRHI::UBOBinding::PER_FRAME, sizeof(MirageRHI::PerFrameData));
+
     }
+
+    // ------------------------------------------------------------------ Destructor
+
+    void DebugDraw::ShutDown()
+    {
+        m_VertexAttributeObject->Destroy();
+        m_VertexBufferObject->Destroy();
+        m_Pipelineparameter->Destroy();
+        m_Pipeline->Destroy();
+        m_Lines.clear();
+    }
+
 
     // ------------------------------------------------------------------ API
 
@@ -84,18 +108,21 @@ namespace MirageEngine::DebugDraw
         m_VertexBufferObject->Update(m_Lines.data(), m_Lines.size() * sizeof(LineVertex));
     }
 
-    void DebugDraw::Flush() { m_Lines.clear(); }
+    void DebugDraw::UpdateUBO(const void* data, size_t size) { m_DebugUBO->Upload(data, size); }
 
-    // ------------------------------------------------------------------ dtor
-
-    DebugDraw::~DebugDraw()
+    void DebugDraw::Flush(std::shared_ptr<MirageRHI::ICommandBuffer> _commandBuffer)
     {
-        m_VertexAttributeObject->Destroy();
-        m_VertexBufferObject->Destroy();
-        m_Pipelineparameter->Destroy();
-        m_Pipeline->Destroy();
+        _commandBuffer->BindPipeline(m_Pipeline);
+        _commandBuffer->ApplyPipelineParameters(m_Pipeline);
+        UpdateVertexBuffer();
+        _commandBuffer->BindBuffer(m_VertexBufferObject);
+        _commandBuffer->ApplyVertexLayout(m_VertexAttributeObject);
+        _commandBuffer->Draw((uint32_t)m_Lines.size(), MirageRHI::DrawMode::LINES);
         m_Lines.clear();
     }
+
+    DebugDraw::~DebugDraw()
+    {  }
 
     // ------------------------------------------------------------------ helpers
 } // namespace MirageEngine::DebugDraw

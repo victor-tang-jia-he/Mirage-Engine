@@ -46,10 +46,21 @@ namespace MirageEngine::Core::Components
             m_Grid->AddInfluenceArea(pos, m_Radius, strengthToApply, m_CachedChannelIndex);
         }
     }
+	void InfluenceEmitter::AttachMeta(std::shared_ptr<GameObject> _Owner)
+	{
+		std::shared_ptr<InfluenceEmitter> compPtr = std::make_shared<InfluenceEmitter>(*this);
+		_Owner->AddComponent<InfluenceEmitter>(compPtr);
+	}
 
-    entt::id_type MirageEngine::Core::Components::InfluenceEmitter::GetType() const 
-    { 
-        return entt::type_id<InfluenceEmitter>().hash(); 
+	void MirageEngine::Core::Components::InfluenceEmitter::AttachNew(std::shared_ptr<GameObject> _owner)
+	{
+		std::shared_ptr<InfluenceEmitter> compPtr = std::make_shared<InfluenceEmitter>(_owner.get());
+		_owner->AddComponent<InfluenceEmitter>(compPtr);
+	}
+
+    entt::id_type InfluenceEmitter::GetType() const
+    {
+        return entt::type_id<InfluenceEmitter>().hash();
     }
 
 } // namespace MirageEngine::Core::Components

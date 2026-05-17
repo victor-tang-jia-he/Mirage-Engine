@@ -3,6 +3,7 @@
 #include <iostream>
 #include <array>
 #include <assert.h>
+#include <cmath>
 
 using namespace MirageEngine::Core::Math;
 
@@ -194,6 +195,15 @@ const float& Vector3::operator[](int _index) const
 {
     assert(_index >= 0 && _index < 3 && "Index out of range");
     return (_index == 0) ? X : (_index == 1) ? Y : Z;
+}
+
+Vector3& Vector3::operator=(const Vector4& vec4)
+{
+    X = vec4.X;
+    Y = vec4.Y;
+    Z = vec4.Z;
+
+    return *this;
 }
 
 Vector3::operator Vector2() const { return Vector2(X, Y); }

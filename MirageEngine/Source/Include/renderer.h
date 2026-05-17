@@ -11,11 +11,16 @@ namespace MirageEngine
     class SceneGraph;
     class GameObject;
 
-    namespace Core::Components
-    {
-        class Transform;
-        class MeshRenderer;
-    } // namespace Core::Components
+	namespace Core
+	{
+		class ICamera;
+
+		namespace Components
+		{
+				class Transform;
+				class MeshRenderer;
+		}
+	}
 
     class Renderer
     {
@@ -35,7 +40,9 @@ namespace MirageEngine
             std::shared_ptr<MirageRHI::IRenderPass> m_RenderPass = nullptr;
             std::shared_ptr<MirageRHI::IPipelineParameters> m_ScreenPipelineParameters = nullptr;
             std::shared_ptr<MirageRHI::IPipeline> m_ScreenPipeline = nullptr;
-            std::shared_ptr<MirageRHI::IUniformBuffer> m_UniformBuffer = nullptr;
+            std::shared_ptr<MirageRHI::IUniformBuffer> m_PerFrameUBO = nullptr;
+            std::shared_ptr<MirageRHI::IUniformBuffer> m_PerObjectUBO = nullptr;
+            std::shared_ptr<MirageRHI::IUniformBuffer> m_LightUBO = nullptr;
             std::shared_ptr<MirageRHI::ICommandBuffer> m_CommandBuffer = nullptr;
 
         public:
@@ -49,13 +56,15 @@ namespace MirageEngine
             // Manages the beginning of the frame, such as polling events and acquiring the current framebuffer
             void BeginFrame();
             // Renders the given SceneGraph, by rendering all its root GameObjects and their children recursively
-            void RenderScene(SceneGraph _sceneGraph);
+            void RenderScene(SceneGraph _sceneGraph, std::shared_ptr<Core::ICamera> _camera);
             // Sets the current framebuffer as the render target and displays the rendered image on the screen
             void RenderScreen();
             // Manages the end of the frame, such as presenting the rendered image and swapping buffers
             void EndFrame();
-            // REdners a list of line
+            // Renders a list of line
             void RenderLine();
+            // Renders all light
+            void ComputeLights();
 
             // --- Getters ---
             // Used to display the scene in the editor viewport

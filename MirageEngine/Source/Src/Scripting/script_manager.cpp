@@ -13,23 +13,23 @@ namespace MirageEngine::Core::Scripting
 #endif // DEBUG
 
 #ifdef _WIN32
-        if (!SetupVisualStudioEnvironment())
-        {
-            LOG(logFatal, LogScriptManager, "Failed to setup VS environment");
-            return;
-        }
+		if (!SetupVisualStudioEnvironment())
+		{
+			LOG(logFatal, LogScriptManager, "Failed to setup VS environment");
+			return;
+		}
 #endif
         ReloadScript();
         LOG(logInfo, LogScriptManager, "Script Manager Initialized");
     }
 
-    void ScriptManager::ReloadScript()
-    {
-        for (auto& [go, callback] : m_PreReloadSubscribers)
-            callback->Trigger();
-        UnloadSharedLibrary(hScripts);
-        hScripts = nullptr;
-        RebuildScriptsDll();
+	void ScriptManager::ReloadScript()
+	{
+		for (auto& [go, callback] : m_PreReloadSubscribers)
+			callback->Trigger();
+		UnloadSharedLibrary(hScripts);
+		hScripts = nullptr;
+		RebuildScriptsDll();
 
 #if defined(_WIN32)
         hScripts = LoadModule((std::string("./") + m_DLLBuildName + ".dll").c_str());
@@ -316,21 +316,21 @@ namespace MirageEngine::Core::Scripting
 #ifdef _WIN32
             LOG(logFatal, LogScriptManager, "Failed to load library ", GetLastError());
 #else
-            LOG(logFatal, LogScriptManager, "Failed to load library: ", dlerror());
+			LOG(logFatal, LogScriptManager, "Failed to load library: ", dlerror());
 #endif
-        }
-        return h;
-    };
+		}
+		return h;
+	};
 
-    void ScriptManager::GenerateScriptBindings() const
-    {
-        fs::path filePath = m_OutputDir / m_ScriptsSourceDir / "script_bindings.cpp";
+	void ScriptManager::GenerateScriptBindings() const
+	{
+		fs::path filePath = m_OutputDir / m_ScriptsSourceDir / "script_bindings.cpp";
 
-        std::ofstream file(filePath);
-        if (!file.is_open())
-            LOG(logFatal, LogScriptManager, "Failed to create: ", filePath.string());
+		std::ofstream file(filePath);
+		if (!file.is_open())
+			LOG(logFatal, LogScriptManager, "Failed to create: ", filePath.string());
 
-        file << R"(#include <Scripting/script_api.h>
+		file << R"(#include <Scripting/script_api.h>
 #include <Scripting/script_registry.h>
 
 
@@ -354,20 +354,21 @@ extern "C" {
 }
 )";
 
-        file.close();
-    }
+		file.close();
+	}
 
-    void ScriptManager::CreateNewScript(const std::string& _fileName) const
-    {
-        fs::path headerFilePath = m_OutputDir / m_ScriptsSourceDir / (_fileName + ".h");
-        fs::path cppFilePath = m_OutputDir / m_ScriptsSourceDir / (_fileName + ".cpp");
+	void ScriptManager::CreateNewScript(const std::string& _fileName) const
+	{
+		fs::path headerFilePath = m_OutputDir / m_ScriptsSourceDir / (_fileName + ".h");
+		fs::path cppFilePath = m_OutputDir / m_ScriptsSourceDir / (_fileName + ".cpp");
 
-        std::ofstream headerFile(headerFilePath);
-        if (!headerFile.is_open())
-            LOG(logFatal, LogScriptManager, "Failed to create: ", headerFilePath.string());
+		std::ofstream headerFile(headerFilePath);
+		if (!headerFile.is_open())
+			LOG(logFatal, LogScriptManager, "Failed to create: ", headerFilePath.string());
 
-        headerFile << "#include <Scripting/script_api.h>\n";
-        headerFile << "#include <Scripting/script_registry.h>\n\n\n";
+		headerFile << "#pragma once\n";
+		headerFile << "#include <Scripting/script_api.h>\n";
+		headerFile << "#include <Scripting/script_registry.h>\n\n\n";
 
         headerFile << "class " << _fileName << " : public MirageEngine::Core::Scripting::IScript\n{\n";
         headerFile << "public: \n";
@@ -376,15 +377,15 @@ extern "C" {
         headerFile << "    const char* GetName() const override { return \"" << _fileName << "\"; }\n";
         headerFile << "};\n";
 
-        headerFile.close();
+		headerFile.close();
 
-        std::ofstream cppFile(cppFilePath);
-        if (!cppFile.is_open())
-            LOG(logFatal, LogScriptManager, "Failed to create: ", cppFilePath.string());
+		std::ofstream cppFile(cppFilePath);
+		if (!cppFile.is_open())
+			LOG(logFatal, LogScriptManager, "Failed to create: ", cppFilePath.string());
 
-        cppFile << "#include \"" << _fileName << ".h\"\n\n";
-        cppFile << "REGISTER_SCRIPT(" << _fileName << "); ";
+		cppFile << "#include \"" << _fileName << ".h\"\n\n";
+		cppFile << "REGISTER_SCRIPT(" << _fileName << "); ";
 
-        cppFile.close();
-    }
+		cppFile.close();
+	}
 } // namespace MirageEngine::Core::Scripting

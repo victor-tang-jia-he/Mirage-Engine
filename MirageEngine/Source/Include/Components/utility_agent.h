@@ -20,7 +20,7 @@ namespace MirageEngine::Core::Components
 		float initialValue;
 	};
 
-	class UtilityAgent : public Component
+	class UtilityAgent : public Component, public std::enable_shared_from_this<UtilityAgent>
 	{
 	private:
 		bool m_StatsInitialized = false;
@@ -31,14 +31,14 @@ namespace MirageEngine::Core::Components
 		// Inertia determines how much the agent sticks to its current action
 		float m_Inertia = 0.1f;
 		// List of actions the agent can choose from
-		std::vector<AIAction*> m_actions;
+		std::vector<AI::AIAction*> m_actions;
 
 		/* Perception*/
 		InfluenceGrid* m_Grid = nullptr;
 		std::vector<float> m_CurrentCellIntensity;
 
 		/* Internal state */
-		AIAction* m_CurrentAction = nullptr;
+		AI::AIAction* m_CurrentAction = nullptr;
 		// Timer to track when to make the next decision
 		float m_DecisionTimer = 0.0f;
 		// Memory of information like stress/stamina/health
@@ -54,14 +54,18 @@ namespace MirageEngine::Core::Components
 
 	public:
 		UtilityAgent() = default;
+		UtilityAgent(GameObject* _owner) {}
 		virtual ~UtilityAgent();
 
+		void AttachMeta(std::shared_ptr<GameObject> _Owner);
+		static void AttachNew(std::shared_ptr<GameObject> _owner);
+
+		entt::id_type GetType() const override;
+		
 		void OnStart() override;
 		void OnUpdate(float _dt) override;
 
-		entt::id_type GetType() const override;
-
-		void AddAction(AIAction* _action) { m_actions.push_back(_action); }
+		void AddAction(AI::AIAction* _action) { m_actions.push_back(_action); }
 		void Decide();
 
 		void ModifyInternalStat(const std::string& _name, float _addValue);
@@ -69,8 +73,8 @@ namespace MirageEngine::Core::Components
 		// Getters
 		float GetDecisionInterval() const { return m_DecisionInterval; }
 		float GetInertia() const { return m_Inertia; }
-		std::vector<AIAction*> GetActions() { return m_actions; }
-        std::vector<AIAction*>& GetActionsRef() { return m_actions; }
+		std::vector<AI::AIAction*> GetActions() { return m_actions; }
+        std::vector<AI::AIAction*>& GetActionsRef() { return m_actions; }
 		InfluenceGrid* GetInfluenceGrid() const { return m_Grid; }
 		float GetIntensity(int _channelIndex) const;
 		float GetIntensityByName(const std::string& _name) const;
@@ -87,6 +91,6 @@ namespace MirageEngine::Core::Components
 		void SetInfluenceGrid(InfluenceGrid* _newGrid) { m_Grid = _newGrid; }
 		void SetInternalStat(const std::string& _name, float _value) { m_InternalStats[_name] = _value; }
 		void SetTargetGrid(InfluenceGrid* _grid) { m_Grid = _grid; }
-		void SetActions(const std::vector<AIAction*>& _newActions);
+		void SetActions(const std::vector<AI::AIAction*>& _newActions);
 	};
 }

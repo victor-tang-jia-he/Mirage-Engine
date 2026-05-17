@@ -5,8 +5,9 @@ cmake_minimum_required(VERSION 3.20)
 project(CustomEngine)
 
 # Create global variable (project-level) to store output directory
-set(MIRAGE_BIN_OUTPUT_DIR "${CMAKE_BINARY_DIR}/Bin/${CMAKE_CXX_COMPILER_ID}_$<CONFIG>")
+set(MIRAGE_BIN_OUTPUT_DIR "${CMAKE_BINARY_DIR}/Bin/")
 
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
 
 # Log directory at configuration-time
@@ -46,6 +47,8 @@ message(STATUS "GLFW")
 
 set(GLFW_SOURCE "${CMAKE_SOURCE_DIR}/Libraries/GLFW")
 
+set(GLFW_BUILD_WAYLAND OFF CACHE BOOL "" FORCE)
+set(GLFW_BUILD_X11 ON CACHE BOOL "" FORCE)
 set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)
 set(GLFW_BUILD_TESTS OFF CACHE BOOL "" FORCE)
 set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
@@ -446,7 +449,8 @@ message("")
 # ============================================================================
 # System Engine Library (Core)
 # ============================================================================
-add_subdirectory(${CMAKE_SOURCE_DIR}/MirageEngine/Tools/Toolbox)
+set(TOOLBOX_DIR ${CMAKE_SOURCE_DIR}/MirageEngine/Tools/ToolBox)
+add_subdirectory(${TOOLBOX_DIR})
 
 # Create Convenience Interface for All Dependencies
 add_library(third_party INTERFACE)

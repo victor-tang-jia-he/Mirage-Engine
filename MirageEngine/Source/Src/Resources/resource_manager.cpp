@@ -45,8 +45,8 @@ void ResourceManager::PreLoadResources()
 {
     LOG(logInfo, LogResourceManager, "Preloading default resources...");
 
-    CreateShader("DefaultVertex", "Assets/Defaults/default.vert", MirageRHI::IShader::ShaderType::Vertex);
-    CreateShader("DefaultFragment", "Assets/Defaults/default.frag", MirageRHI::IShader::ShaderType::Fragment);
+    CreateShader("DefaultVertex", "Assets/Defaults/default.vert", MirageRHI::IShader::ShaderType::VERTEX);
+    CreateShader("DefaultFragment", "Assets/Defaults/default.frag", MirageRHI::IShader::ShaderType::FRAGMENT);
     CreateTexture("DefaultTexture", "Assets/Defaults/default.png")->Bind();
 
     LOG(logInfo, LogResourceManager, "Preloading default resources completed.");
@@ -80,8 +80,8 @@ void ResourceManager::PreLoadResources()
             std::string fragPath = entry.path().parent_path().string() + "/" + shaderName + ".frag";
             if (fs::exists(fragPath))
             {
-                CreateShader(shaderName + "_Vertex", entry.path().string(), MirageRHI::IShader::ShaderType::Vertex);
-                CreateShader(shaderName + "_Fragment", fragPath, MirageRHI::IShader::ShaderType::Fragment);
+                CreateShader(shaderName + "_Vertex", entry.path().string(), MirageRHI::IShader::ShaderType::VERTEX);
+                CreateShader(shaderName + "_Fragment", fragPath, MirageRHI::IShader::ShaderType::FRAGMENT);
             }
             else
             {
@@ -113,7 +113,7 @@ std::shared_ptr<Texture> ResourceManager::CreateTexture(const std::string& _name
     int width = 0;
     int height = 0;
     int channel = 0;
-    int format = NAN;
+    int format = -1;
     unsigned char* data = nullptr;
     rm.LoadTextureUtility(_path, width, height, channel, format, data);
 
@@ -154,7 +154,7 @@ std::shared_ptr<Shader> ResourceManager::CreateShader(const std::string& _name, 
     if (!rhiShader->Create(_path.c_str(), _type))
     {
         rhiShader->Destroy();
-        return _type == MirageRHI::IShader::ShaderType::Fragment ? rm.GetFragmentShader("default") : rm.GetVertexShader("default");
+        return _type == MirageRHI::IShader::ShaderType::FRAGMENT ? rm.GetFragmentShader("default") : rm.GetVertexShader("default");
     }
 
     std::shared_ptr<Shader> shader = std::make_shared<Shader>();
@@ -201,7 +201,8 @@ std::shared_ptr<Mesh> ResourceManager::CreateMesh(const std::string& _name, cons
     return mesh;
 }
 
-std::shared_ptr<Material> ResourceManager::CreateMaterial(const std::string& _name, const std::string& _pathVertex, const std::string& _pathFrag, size_t _uniformBufferSize)
+std::shared_ptr<Material>
+    ResourceManager::CreateMaterial(const std::string& _name, const std::string& _pathVertex, const std::string& _pathFrag, size_t _uniformBufferSize, std::vector<MirageRHI::UBOBlockInfo> _shader_blocks)
 {
     ResourceManager& rm = ResourceManager::Instance();
 
@@ -220,24 +221,26 @@ std::shared_ptr<Material> ResourceManager::CreateMaterial(const std::string& _na
     LOG(logTemp, LogResourceManager, "Creating Material : ", newAssetName);
 
     std::shared_ptr<Shader> frag
-        = rm.m_ShaderCache.contains(_pathFrag) ? rm.m_ShaderCache[_pathFrag] : ResourceManager::CreateShader("ShaderFragment", _pathFrag, MirageRHI::IShader::ShaderType::Fragment);
+        = rm.m_ShaderCache.contains(_pathFrag) ? rm.m_ShaderCache[_pathFrag]
+        : ResourceManager::CreateShader("ShaderFragment", _pathFrag, MirageRHI::IShader::ShaderType::FRAGMENT);
 
     std::shared_ptr<Shader> vert
-        = rm.m_ShaderCache.contains(_pathVertex) ? rm.m_ShaderCache[_pathVertex] : ResourceManager::CreateShader("ShaderVertex", _pathVertex, MirageRHI::IShader::ShaderType::Vertex);
+        = rm.m_ShaderCache.contains(_pathVertex) ? rm.m_ShaderCache[_pathVertex]
+        : ResourceManager::CreateShader("ShaderVertex", _pathVertex, MirageRHI::IShader::ShaderType::VERTEX);
 
     std::shared_ptr<MirageRHI::IPipelineParameters> pipelineparameter = rm.m_Rhi->InstantiatePipelineParameters();
-    pipelineparameter->Create(MirageRHI::CullingType::None, true); // Default setting
+    pipelineparameter->Create(MirageRHI::CullingType::NONE, true); // Default setting
 
     std::shared_ptr<MirageRHI::IPipeline> pipeline = rm.m_Rhi->InstantiatePipeline();
-    pipeline->Create(vert->ShaderBind, frag->ShaderBind, pipelineparameter);
+    pipeline->Create(vert->ShaderBind, frag->ShaderBind, pipelineparameter, _shader_blocks);
 
     std::shared_ptr<Material> material = std::make_shared<Material>();
     material->p_Name = newAssetName;
     material->p_Path = ""; // No path for material as it's created empty
-    material->fragmentShader = frag->ShaderBind;
-    material->vertexShader = vert->ShaderBind;
-    material->uniformBufferSize = _uniformBufferSize;
-    material->pipeline = pipeline;
+    material->m_FragmentShader = frag->ShaderBind;
+    material->m_VertexShader = vert->ShaderBind;
+    material->m_UniformBufferSize = _uniformBufferSize;
+    material->m_Pipeline = pipeline;
     rm.m_Resources.emplace(newAssetName, material);
     return material;
 }
@@ -259,10 +262,7 @@ std::shared_ptr<MaterialInstance> ResourceManager::CreateMaterialInstance(const 
         newAssetName = rm.GenerateUniqueAssetName(_name);
     }
 
-    std::shared_ptr<MirageRHI::IUniformBuffer> ubo = rm.m_Rhi->InstantiateUniformBuffer();
-    ubo->Create();
-
-    std::shared_ptr<MaterialInstance> matInstance = std::make_shared<MaterialInstance>(mat, std::move(ubo));
+    std::shared_ptr<MaterialInstance> matInstance = std::make_shared<MaterialInstance>(mat);
 
     matInstance->p_Name = newAssetName;
     matInstance->p_Path = ""; // No path for material instance as it's created from material
@@ -270,8 +270,9 @@ std::shared_ptr<MaterialInstance> ResourceManager::CreateMaterialInstance(const 
     return matInstance;
 }
 
-std::shared_ptr<Pipeline>
-    ResourceManager::CreatePipeline(const std::string& _name, const std::string& _pathFrag, const std::string& _pathVertex, std::shared_ptr<MirageRHI::IPipelineParameters> _pipelineParamter)
+std::shared_ptr<Pipeline> ResourceManager::CreatePipeline(
+    const std::string& _name, const std::string& _pathFrag, const std::string& _pathVertex, std::shared_ptr<MirageRHI::IPipelineParameters> _pipelineParamter,
+    std::vector<MirageRHI::UBOBlockInfo> _uboBlockInfo)
 {
     ResourceManager& rm = ResourceManager::Instance();
 
@@ -288,12 +289,14 @@ std::shared_ptr<Pipeline>
     }
 
     std::shared_ptr<Shader> frag
-        = rm.m_ShaderCache.contains(_pathFrag) ? rm.m_ShaderCache[_pathFrag] : ResourceManager::CreateShader("ShaderFragment", _pathFrag, MirageRHI::IShader::ShaderType::Fragment);
+        = rm.m_ShaderCache.contains(_pathFrag) ? rm.m_ShaderCache[_pathFrag] :
+        ResourceManager::CreateShader("ShaderFragment", _pathFrag, MirageRHI::IShader::ShaderType::FRAGMENT);
 
     std::shared_ptr<Shader> vert
-        = rm.m_ShaderCache.contains(_pathVertex) ? rm.m_ShaderCache[_pathVertex] : ResourceManager::CreateShader("ShaderVertex", _pathVertex, MirageRHI::IShader::ShaderType::Vertex);
+        = rm.m_ShaderCache.contains(_pathVertex) ? rm.m_ShaderCache[_pathVertex] :
+        ResourceManager::CreateShader("ShaderVertex", _pathVertex, MirageRHI::IShader::ShaderType::VERTEX);
 
-    std::shared_ptr<Pipeline> pipeline = std::make_shared<Pipeline>(rm.m_Rhi->InstantiatePipeline(), _pipelineParamter, vert, frag);
+    std::shared_ptr<Pipeline> pipeline = std::make_shared<Pipeline>(rm.m_Rhi->InstantiatePipeline(), _pipelineParamter, vert, frag, _uboBlockInfo);
     pipeline->p_Name = newAssetName;
     pipeline->p_Path = ""; // No path for pipeline as it's created from shaders
     rm.m_Resources.emplace(newAssetName, pipeline);

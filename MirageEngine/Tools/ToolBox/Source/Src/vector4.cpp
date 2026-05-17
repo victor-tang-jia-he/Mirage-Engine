@@ -2,6 +2,7 @@
 #include <iostream>
 #include <array>
 #include <assert.h>
+#include <cmath>
 
 using namespace MirageEngine::Core::Math;
 
@@ -174,8 +175,6 @@ const float& Vector4::operator[](int _index) const
 bool Vector4::operator==(const Vector4& _other) const { return X == _other.X && Y == _other.Y && Z == _other.Z && W == _other.W; }
 
 bool Vector4::operator!=(const Vector4& _other) const { return !(*this == _other); }
-
-Vector3 MirageEngine::Core::Math::Vector4::operator=(const Vector4& vec4) { return Vector3(X, Y, Z); }
 
 Vector4 MirageEngine::Core::Math::operator*(float _scalar, const Vector4& _vec) { return { _vec.X * _scalar, _vec.Y * _scalar, _vec.Z * _scalar, _vec.W * _scalar }; }
 

@@ -18,6 +18,12 @@ void Transform::Init() {}
 
 void Transform::Update() {}
 
+void MirageEngine::Core::Components::Transform::AttachMeta(std::shared_ptr<GameObject> _Owner)
+{
+    Transform savedTransform = *this;
+    _Owner->Transform = savedTransform;
+}
+
 Matrix4 Transform::GetMatrix()
 {
     if (m_bDirty)

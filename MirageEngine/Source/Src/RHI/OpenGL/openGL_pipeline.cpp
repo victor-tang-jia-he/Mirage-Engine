@@ -3,11 +3,16 @@
 #include "OpenGL/openGL_pipeline_parameters.h"
 #include <Logs/log.h>
 
+#include <RHI/ubo_structs.h>
+#include <i_uniform_buffer.h>
+
+
 DEFINE_LOG_CATEGORY(LogRHIPipeline)
 
 using namespace MirageEngine::Core::Math;
 
-void MirageRHI::OpenGLPipeline::Create(std::shared_ptr<IShader> _vertShader, std::shared_ptr<IShader> _fragShader, std::shared_ptr<IPipelineParameters> _pipelineParameters)
+void MirageRHI::OpenGLPipeline::Create(
+    std::shared_ptr<IShader> _vertShader, std::shared_ptr<IShader> _fragShader, std::shared_ptr<IPipelineParameters> _pipelineParameters, std::vector<UBOBlockInfo> _blocks)
 {
     m_Parameters = _pipelineParameters;
     m_VertexShader = _vertShader;
@@ -17,7 +22,7 @@ void MirageRHI::OpenGLPipeline::Create(std::shared_ptr<IShader> _vertShader, std
     glAttachShader(m_Program, m_VertexShader->API_OpenGL().GetGLHandle());
     glAttachShader(m_Program, m_FragmentShader->API_OpenGL().GetGLHandle());
     Link();
-
+    BindUBOBlocks(_blocks);
     LOG(logTemp, LogRHIPipeline, "Pipeline Created with Program ID: ", m_Program);
 }
 
@@ -73,6 +78,17 @@ void MirageRHI::OpenGLPipeline::SetVec3(const std::string& name, const Vector3& 
     glUniform3fv(location, 1, array);
 }
 
+void MirageRHI::OpenGLPipeline::SetVec4(const std::string& name, const Vector4& value) const
+{
+    int location = glGetUniformLocation(m_Program, name.c_str());
+    float array[4];
+    array[0] = value.X;
+    array[1] = value.Y;
+    array[2] = value.Z;
+    array[3] = value.W;
+    glUniform4fv(location, 1, array);
+}
+
 void MirageRHI::OpenGLPipeline::SetMat3(const std::string& name, const Matrix3& mat) const
 {
     int location = glGetUniformLocation(m_Program, name.c_str());
@@ -96,3 +112,20 @@ void MirageRHI::OpenGLPipeline::SetBool(const std::string& name, bool value) con
 }
 
 void MirageRHI::OpenGLPipeline::ApplyParameters() { m_Parameters->API_OpenGL().ApplyParameters(); }
+
+void MirageRHI::OpenGLPipeline::BindUBOBlocks(std::vector<UBOBlockInfo> _blocks)
+{
+    for (UBOBlockInfo& block : _blocks)
+    {
+        GLuint index = glGetUniformBlockIndex(m_Program, block.Name);
+        if (index != GL_INVALID_INDEX)
+        {
+            glUniformBlockBinding(m_Program, index, (int)block.Binding);
+            LOG(logTemp, LogRHIPipeline, block.Name, " : ", index, " index used in Program ID: ", m_Program, " bind to ", (int)block.Binding);
+        }
+        else
+        {
+            LOG(logWarning, LogRHIPipeline, "Invalid UBO block: ", block.Name, " in program ", m_Program);
+        }
+    }
+}

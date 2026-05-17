@@ -1,12 +1,15 @@
 #pragma once
 #include "i_script.h"
-
+#ifdef _WIN32
 #ifdef SCRIPTS_DLL_EXPORT
 #    define SCRIPT_API __declspec(dllexport)
 #elif defined(SCRIPTS_LOAD_DYNAMIC)
-#    define SCRIPT_API // nothing ¨C but we also omit the function declarations
+#    define SCRIPT_API
 #else
 #    define SCRIPT_API __declspec(dllimport)
+#endif
+#else
+#define SCRIPT_API
 #endif
 
 // Function pointer types ¨C always available

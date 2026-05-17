@@ -23,6 +23,7 @@ namespace MirageEngine
         namespace Math
         {
             class Vector3;
+            class Vector4;
             class Quaternion;
         } // namespace Math
 
@@ -32,27 +33,43 @@ namespace MirageEngine
         }
     } // namespace Core
 
+    namespace AI
+    {
+        class NavProfile;
+	} // namespace AI
+
     class Serializer
     {
-        public:
+    public:
 
-            // Save SceneGraph as a Json file
-            static void SaveScene(SceneGraph _sceneGraph);
+        // Save SceneGraph as a Json file
+        static void SaveScene(SceneGraph _sceneGraph);
 
-        private:
+    private:
 
-            static json SerializeScene(SceneGraph _sceneGraph);
-            static json SerializeGameObject(std::shared_ptr<GameObject> _gameObject, json _jParent);
+        static json SerializeScene(SceneGraph _sceneGraph);
+        static json SerializeGameObject(std::shared_ptr<GameObject> _gameObject, json _jParent);
 
-            static json SerializeComponent(std::shared_ptr<Core::Components::Component> _component, json _Owner);
-            static json SerializeTransform(Core::Components::Transform _transform);
+        static json SerializeComponent(std::shared_ptr<Core::Components::Component> _component);
+        static json SerializeTransform(Core::Components::Transform _transform);
 
-            // Serializes Components reflected meta data
-            static json SerializeMetaData(entt::meta_type _type, entt::meta_data _data, void* _instancePtr);
+        // Serializes Components reflected meta data
+        static json SerializeMetaData(entt::meta_type _type, entt::meta_data _data, void* _instancePtr);
 
-            static json SerializeVector3(Core::Math::Vector3 _vector3);
-            static json SerializeQuaternion(Core::Math::Quaternion _quaternion);
+        static json SerializeNavProfile(AI::NavProfile _navProfile);
 
-            static bool ConvertJsonToFile(json _jTarget);
+        static json SerializeVector3(Core::Math::Vector3 _vector3);
+        static json SerializeVector4(Core::Math::Vector4 _vector4);
+        static json SerializeQuaternion(Core::Math::Quaternion _quaternion);
+
+        static bool ConvertJsonVarToJsonFile(json _jTarget);
+
+        template <typename T>
+        static json SerializeVector(std::vector<T> _vector);
+
+		template <typename T>
+		static json SerializeMap(std::unordered_map<std::string, T> _map);
     };
 } // namespace MirageEngine
+
+#include "serializer.inl"

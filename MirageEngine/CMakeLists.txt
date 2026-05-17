@@ -30,7 +30,7 @@ target_include_directories(MirageEngine PRIVATE
     "${CMAKE_CURRENT_SOURCE_DIR}/Source/Src/RHI"
 )
 
-target_precompile_headers(MirageEngine PRIVATE "Source/Include/pch.h")
+target_precompile_headers(MirageEngine PUBLIC "Source/Include/pch.h")
 
 target_compile_options(MirageEngine PRIVATE
     $<$<CXX_COMPILER_ID:MSVC>:/Zi>        # Windows
@@ -47,7 +47,7 @@ set_target_properties(MirageEngine PROPERTIES
 )
 
 # Copy all asset in the build
-set(ASSETS_SOURCE "${CMAKE_SOURCE_DIR}/MirageEngine/Assets")
+set(ASSETS_SOURCE "${CMAKE_SOURCE_DIR}/Assets")
 set(ASSETS_DEST "${MIRAGE_BIN_OUTPUT_DIR}/Assets")
 
 if(EXISTS ${ASSETS_SOURCE})
@@ -72,14 +72,14 @@ add_custom_command(TARGET MirageEngine POST_BUILD
 
 
 set(ENGINE_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/Source/Include")
-set(TOOLBOX_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/Tools/Toolbox/Source/Include")
+set(TOOLBOX_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/Tools/ToolBox/Source/Include")
 
 add_custom_command(TARGET MirageEngine POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_directory
         "${ENGINE_INCLUDE_DIR}"
-        "$<TARGET_FILE_DIR:MirageEngine>/Include/Engine"
+        "${MIRAGE_BIN_OUTPUT_DIR}/Include/Engine"
 
     COMMAND ${CMAKE_COMMAND} -E copy_directory
         "${TOOLBOX_INCLUDE_DIR}"
-        "$<TARGET_FILE_DIR:MirageEngine>/Include/Toolbox"
+        "${MIRAGE_BIN_OUTPUT_DIR}/Include/ToolBox"
 )

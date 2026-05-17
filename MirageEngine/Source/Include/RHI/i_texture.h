@@ -8,10 +8,10 @@ namespace MirageRHI
 {
     struct TextureDesc
     {
-            uint32_t width;
-            uint32_t height;
-            uint32_t channel;
-            bool mipmaps;
+        uint32_t Width;
+        uint32_t Height;
+        uint32_t Channel;
+        bool bMipmaps;
     };
 
     class OpenGLTexture;
@@ -26,7 +26,7 @@ namespace MirageRHI
             virtual void Destroy() = 0;
 
             virtual void Bind() const = 0;
-
+			virtual uint32_t GetID() const = 0;
             virtual OpenGLTexture& API_OpenGL() { throw std::runtime_error("Bad API Call : object is not an OpenGLTexture"); }
     };
 } // namespace MirageRHI

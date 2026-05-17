@@ -12,13 +12,13 @@ namespace MirageEngine::AI
 
 		switch (m_Type)
 		{
-		case CurveType::Linear:
+		case CurveType::LINEAR:
 			result = m_Slope * val;
 			break;
-		case CurveType::Exponential:
+		case CurveType::EXPONENTIAL:
 			result = powf(val, m_Exponent) * m_Slope;
 			break;
-		case CurveType::Logistic:
+		case CurveType::LOGISTIC:
 			result = 1.0f / (1.0f + expf(-m_Slope * (val - 0.5f)));
 			break;
 		}

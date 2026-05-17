@@ -2,6 +2,7 @@
 #include <iostream>
 #include "vector2.h"
 #include <assert.h>
+#include <cmath>
 using namespace MirageEngine::Core::Math;
 
 Matrix2::Matrix2(const Matrix2& _copy) noexcept

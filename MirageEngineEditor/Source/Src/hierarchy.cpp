@@ -5,11 +5,15 @@
 #include "GameObject/game_object.h"
 #include "imgui.h"
 
+#include <Logs/log.h>
+
+DEFINE_LOG_CATEGORY_WITH_COLOR(LogHierarchy, Loggers::Color::CYAN);
+
 namespace Mirage
 {
 	void Hierarchy::InitPanel()
 	{
-
+		LOG(logTemp, LogHierarchy, "Hierarchy panel initialized");
 	}
 
 	void Hierarchy::DrawPanel([[maybe_unused]] uint32_t _textureID)
@@ -57,7 +61,7 @@ namespace Mirage
 
 	void Hierarchy::ShutdownPanel()
 	{
-
+		LOG(logTemp, LogHierarchy, "Hierarchy panel shutdown");
 	}
 
 	void Hierarchy::DrawHierarchyTree()
@@ -137,14 +141,16 @@ namespace Mirage
 		if (ImGui::BeginPopup("HierarchyItemMenu"))
 		{
 			std::shared_ptr<MirageEngine::GameObject> selected = m_Context->GetSelectedObject();
-			if (selected) {
+			if (selected)
+			{
 				if (ImGui::MenuItem("Rename", "F2"))
 				{
 					m_NextModalToOpen = "RenameModal";
 					ImGui::CloseCurrentPopup();
 				}
 				ImGui::Separator();
-				if (ImGui::MenuItem("Create Empty")) {
+				if (ImGui::MenuItem("Create Empty"))
+				{
 					m_Context->CreateGameObject("New GameObject", selected);
 					m_NextModalToOpen = "CreateObjectModal";
 				}
@@ -199,10 +205,12 @@ namespace Mirage
 		{
 			if (ImGui::BeginPopup("HierarchyEmptyMenu"))
 			{
-				if (ImGui::MenuItem("Create Empty")) {
+				if (ImGui::MenuItem("Create Empty"))
+				{
 					m_Context->CreateGameObject("New GameObject", nullptr);
 					m_NextModalToOpen = "CreateObjectModal";
 				}
+
 				if (ImGui::BeginMenu("3D Object"))
 				{
 					if (ImGui::MenuItem("Create Cube"))

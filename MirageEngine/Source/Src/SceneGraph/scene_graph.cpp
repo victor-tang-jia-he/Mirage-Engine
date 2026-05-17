@@ -11,6 +11,11 @@
 #include "renderer.h"
 
 #include "Components/camera.h"
+#include <i_uniform_buffer.h>
+
+#include <Logs/log.h>
+
+DEFINE_LOG_CATEGORY(LogSceneGraph);
 
 using namespace MirageEngine::Core::Math;
 using namespace MirageEngine::Core::Resources;
@@ -22,12 +27,21 @@ namespace MirageEngine
         std::shared_ptr<GameObject> newObject = std::make_shared<GameObject>(nullptr, _name);
         uint64_t objectID = newObject->GetID();
         auto [it, success] = m_Registry.try_emplace(objectID, newObject);
-
+		m_CallGameObjectOnStart.push_back(newObject);
         if (!success) {}
 
         this->SetParent(_parent, newObject);
         m_LastCreatedObject = newObject;
         return newObject;
+    }
+
+    void SceneGraph::AddGameObject(std::shared_ptr<GameObject> _newGameObject)
+    {
+        uint64_t objectID = _newGameObject->GetID();
+        auto [it, success] = m_Registry.try_emplace(objectID, _newGameObject);
+        m_CallGameObjectOnStart.push_back(_newGameObject);
+        this->SetParent(_newGameObject->GetParent(), _newGameObject);
+        m_LastCreatedObject = _newGameObject;
     }
 
     std::shared_ptr<GameObject> SceneGraph::CreateObject3D(const std::string& _name, const std::string& _mesh, std::shared_ptr<GameObject> _parent, MirageEngine::Renderer* _renderer)
@@ -39,7 +53,7 @@ namespace MirageEngine
         meshRenderer->SetMesh(rm.GetMesh(_mesh));
 
         std::shared_ptr<Texture> texture = rm.GetTexture("White");
-        std::shared_ptr<Material> material = rm.CreateMaterial("TestMaterial", "default", "default", 0); // using default shader (fallback)
+        std::shared_ptr<Material> material = rm.GetMaterial("default"); // using default shader (fallback)
         std::shared_ptr<MaterialInstance> matInstance = rm.CreateMaterialInstance("WhiteInstance", material);
 
         if (texture)
@@ -82,7 +96,10 @@ namespace MirageEngine
             _obj->GetParent()->RemoveChild(_obj);
 
         m_Registry.erase(_obj->GetID());
-
+        m_CallGameObjectOnStart.erase(std::remove_if(m_CallGameObjectOnStart.begin(), m_CallGameObjectOnStart.end(),
+            [_obj](const std::weak_ptr<GameObject>& weakObj) {
+                return weakObj.lock() == _obj;
+            }), m_CallGameObjectOnStart.end());
         if (m_SelectedObject == _obj)
             m_SelectedObject = nullptr;
 
@@ -98,6 +115,29 @@ namespace MirageEngine
         }
         m_Registry.clear();
         m_RootsList.clear();
+    }
+
+    std::shared_ptr<GameObject> SceneGraph::FindGameObject(uint64_t _id) const
+    {
+        return m_Registry.contains(_id) ? m_Registry.at(_id) : nullptr;
+    }
+    
+    void SceneGraph::CallAllOnStart()
+    {
+        if (m_CallGameObjectOnStart.empty())
+			return;
+        for (std::weak_ptr<GameObject> obj : m_CallGameObjectOnStart)
+        {
+            if (std::shared_ptr<GameObject> sharedObj = obj.lock())
+            {
+                for (std::shared_ptr<MirageEngine::Core::Components::Component> component : sharedObj->GetComponents())
+                {
+                    component->OnStart();
+                }
+            }
+        }
+		// After calling OnStart for all objects, clear the list to avoid calling it again in the future.
+        m_CallGameObjectOnStart.clear();
     }
 
     void SceneGraph::CallAllUpdate(float dt)
@@ -121,6 +161,14 @@ namespace MirageEngine
         for (std::shared_ptr<GameObject> root : m_RootsList)
         {
             CallAllFixedUpdateRecursive(root, dt);
+        }
+    }
+
+    void SceneGraph::CallAllDrawLine()
+    {
+        for (std::shared_ptr<GameObject> root : m_RootsList)
+        {
+            CallAllDrawLineRecursive(root);
         }
     }
 
@@ -163,6 +211,19 @@ namespace MirageEngine
         }
     }
 
+    void SceneGraph::CallAllDrawLineRecursive(std::shared_ptr<GameObject> _obj)
+    {
+        for (auto& component : _obj->GetComponents())
+        {
+            component->OnDrawLine();
+        }
+
+        for (std::shared_ptr<GameObject> child : _obj->GetChildren())
+        {
+            CallAllDrawLineRecursive(child);
+        }
+    }
+
     void SceneGraph::UpdateAllWorldMatrices()
     {
         MirageEngine::Core::Math::Matrix4 Identity = Core::Math::Matrix4::Identity();
@@ -199,24 +260,13 @@ namespace MirageEngine
             current = current->GetParent();
         }
 
-        while (current != nullptr)
+        if (_child->GetParent() == nullptr) 
         {
-            auto currentShared = current;
-
-            if (currentShared == _child)
-            {
-                std::cout << "Error: Circular dependency detected!" << std::endl;
-                return false;
-            }
-
-            current = currentShared->GetParent();
-        }
-
-        if (_child->GetParent() == nullptr)
             std::erase(m_RootsList, _child);
-        else
-        {
-            _child->GetParent()->RemoveChild(_child);
+        }
+        else 
+        { 
+            _child->GetParent()->RemoveChild(_child); 
         }
 
         if (_parent == nullptr)
@@ -238,11 +288,10 @@ namespace MirageEngine
             //_child->Transform.SetLocalMatrix(newLoc);
             _child->SetPosition(newLoc.GetTranslation());
             _child->SetRotation(newLoc.GetRotation());
-            std::cout << "New Local calculated. Scale: " << newLoc.GetScale().X << std::endl;
+            LOG(logTemp, LogSceneGraph, "New Local calculated. Scale: ", newLoc.GetScale().X);
         }
         else
         {
-            std::cout << "Root" << std::endl;
             //_child->Transform.SetLocalMatrix(childWorldBefore);
             _child->SetPosition(childWorldBefore.GetTranslation());
             _child->SetRotation(childWorldBefore.GetRotation());

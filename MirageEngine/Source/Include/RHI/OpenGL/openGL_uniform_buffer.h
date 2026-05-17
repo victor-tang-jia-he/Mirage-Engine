@@ -9,21 +9,18 @@ namespace MirageRHI
 {
     class OpenGLUniformBuffer : public IUniformBuffer
     {
-        private:
+    private:
+        unsigned int m_UniformBufferId = 0;
+        UBOBinding m_Binding;
 
-            MirageEngine::Core::Math::Matrix4 m_View;
-            MirageEngine::Core::Math::Matrix4 m_Proj;
+    public:
+        ~OpenGLUniformBuffer() = default;
+        void Create(UBOBinding _binding, size_t _size) override;
+        void Upload(const void* _data, size_t _size) override;
+        void Destroy() override {};
 
-        public:
+        int GetID() override { return m_UniformBufferId; }
 
-            void Create() override;
-
-            void Destroy() override {}
-
-            void SetView(MirageEngine::Core::Math::Matrix4 _view) override { m_View = _view; }
-
-            void SetProjection(MirageEngine::Core::Math::Matrix4 _proj) override { m_Proj = _proj; }
-
-            void UpdateUniformBuffer(std::shared_ptr<IPipeline> _pipeline, MirageEngine::Core::Math::Matrix4 _model) override;
+        virtual OpenGLUniformBuffer& API_OpenGL() { return *this; }
     };
 } // namespace MirageRHI

@@ -3,6 +3,7 @@
 #include <array>
 #include <assert.h>
 #include <quaternion.h>
+#include <cmath>
 
 using namespace MirageEngine::Core::Math;
 

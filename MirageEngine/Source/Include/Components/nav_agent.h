@@ -11,7 +11,8 @@ namespace MirageEngine::Core
 {
 	namespace Components
 	{
-		class NavAgent : public Component
+		using Vector3 = Core::Math::Vector3;
+		class NavAgent : public Component, public std::enable_shared_from_this<NavAgent>
 		{
 		private:
 			std::vector<Vector3> m_CurrentPath;
@@ -27,10 +28,14 @@ namespace MirageEngine::Core
 
 		public:
 			NavAgent() = default;
+			NavAgent(GameObject* _owner) {}
 			virtual ~NavAgent() = default;
 
 			void OnStart() override;
 			void OnUpdate(float _dt) override;
+
+			static void AttachNew(std::shared_ptr<GameObject> _owner);
+
             entt::id_type GetType() const override;
 			 
 			void SetDestination(Vector3 _newDestination);
