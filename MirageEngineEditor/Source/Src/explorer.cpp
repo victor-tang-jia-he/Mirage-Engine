@@ -61,20 +61,20 @@ namespace Mirage
 				newEntry.Name = entry.path().filename().string();
 				newEntry.Path = entry.path();
 				if (entry.is_directory())
-					newEntry.Type = AssetType::Folder;
+					newEntry.Type = AssetType::FOLDER;
 				else
 				{
 					auto ext = entry.path().extension();
 					if (ext == ".png" || ext == ".jpg")
-						newEntry.Type = AssetType::Texture;
+						newEntry.Type = AssetType::TEXTURE;
 					else if (ext == ".obj")
-						newEntry.Type = AssetType::Model;	
+						newEntry.Type = AssetType::MODEL;	
 					else if (ext == ".c" || ext == ".cpp" || ext == ".cs" || ext == ".py")
-						newEntry.Type = AssetType::Script;
+						newEntry.Type = AssetType::SCRIPT;
 					else if (ext == ".glsl" || ext == ".frag" || ext == ".vert")
-						newEntry.Type = AssetType::Shader;
+						newEntry.Type = AssetType::SHADER;
 					else
-						newEntry.Type = AssetType::Unknown;
+						newEntry.Type = AssetType::UNKNOW;
 				}
 				m_Entries.push_back(newEntry);
 			}
@@ -326,47 +326,47 @@ namespace Mirage
 			{
 				bool isSelected = (m_SelectedEntry == &entry);
 
-				unsigned int id = (int)AssetType::Unknown;
-				if (entry.Type == AssetType::Folder)
+				unsigned int id = (int)AssetType::UNKNOW;
+				if (entry.Type == AssetType::FOLDER)
 				{
-					id = (int)AssetType::Folder;
+					id = (int)AssetType::FOLDER;
 				}
-				else if (entry.Type == AssetType::Texture)
+				else if (entry.Type == AssetType::TEXTURE)
 				{
-					id = (int)AssetType::Texture;
+					id = (int)AssetType::TEXTURE;
 				}
-				else if (entry.Type == AssetType::Model)
+				else if (entry.Type == AssetType::MODEL)
 				{
-					id = (int)AssetType::Model;
+					id = (int)AssetType::MODEL;
 				}
-				else if (entry.Type == AssetType::Script)
+				else if (entry.Type == AssetType::SCRIPT)
 				{
-					id = (int)AssetType::Script;
+					id = (int)AssetType::SCRIPT;
 				}
-				else if (entry.Type == AssetType::Shader)
+				else if (entry.Type == AssetType::SHADER)
 				{
-					id = (int)AssetType::Shader;
+					id = (int)AssetType::SHADER;
 				}
-				else if (entry.Type == AssetType::Scene)
+				else if (entry.Type == AssetType::SCENE)
 				{
-					id = (int)AssetType::Scene;
+					id = (int)AssetType::SCENE;
 				}
 				else
 				{
-					id = (int)AssetType::Unknown;
+					id = (int)AssetType::UNKNOW;
 				}
 
 				// Determine correct icon index based on asset type
 				WidgetAction content = UIWrapper::DrawAssetTile(entry.Name.c_str(), isSelected, GetIconTexture(id));
 
-				if (content == WidgetAction::Clicked)
+				if (content == WidgetAction::CLICKED)
 				{
 					m_SelectedEntry = (void*)&entry;
 				}
 
-				if (content == WidgetAction::DoubleClicked)
+				if (content == WidgetAction::DOUBLE_CLICKED)
 				{
-					if (entry.Type == AssetType::Folder)
+					if (entry.Type == AssetType::FOLDER)
 					{
 						directoryToChange = entry.Path;
 					}
@@ -376,7 +376,7 @@ namespace Mirage
 					}
 				}
 
-				if (content == WidgetAction::RightClicked)
+				if (content == WidgetAction::RIGHT_CLICKED)
 				{
 					m_EntryToProcess = const_cast<AssetEntry*>(&entry);
 					m_NextModalToOpen = "AssetContextMenu";
@@ -390,7 +390,7 @@ namespace Mirage
 					ImGui::EndDragDropSource();
 				}
 
-				if (entry.Type == AssetType::Folder && ImGui::BeginDragDropTarget()) {
+				if (entry.Type == AssetType::FOLDER && ImGui::BeginDragDropTarget()) {
 					auto droppedPath = DragDrop::GetPathPayload(DragDropTag::CONTENT_BROWSER_ITEM);
 					if (!droppedPath.empty()) {
 						this->MoveItem(droppedPath, entry.Path);

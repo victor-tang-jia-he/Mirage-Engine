@@ -163,7 +163,7 @@ namespace Mirage
 		ImGui::TableNextColumn();
 		ImGui::PushID(_name);
 		
-		WidgetAction action = WidgetAction::None;
+		WidgetAction action = WidgetAction::NONE;
 
 		// Get the starting position of the tile
 		ImVec2 startPos = ImGui::GetCursorPos();
@@ -211,9 +211,9 @@ namespace Mirage
 
 		if (ImGui::IsItemHovered())
 		{
-			if (ImGui::IsMouseDoubleClicked(0)) action = WidgetAction::DoubleClicked;
-			else if (ImGui::IsItemClicked(0)) action = WidgetAction::Clicked;
-			else if (ImGui::IsItemClicked(1)) action = WidgetAction::RightClicked;
+			if (ImGui::IsMouseDoubleClicked(0)) action = WidgetAction::DOUBLE_CLICKED;
+			else if (ImGui::IsItemClicked(0)) action = WidgetAction::CLICKED;
+			else if (ImGui::IsItemClicked(1)) action = WidgetAction::RIGHT_CLICKED;
 		}
 
 		ImGui::SetCursorPos(ImVec2(startPos.x, startPos.y + tileSize.y));
