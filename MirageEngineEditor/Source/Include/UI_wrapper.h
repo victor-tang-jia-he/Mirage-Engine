@@ -48,7 +48,6 @@ namespace Mirage
 		static bool AssetContextMenu(const char* _id);
 		static bool DrawContextMenuItem(const char* _label);
 
-
 		// Widgets
 		static void CreateSeparatorText(const char* _separatorName);
 		static void CreateColorPicker(Math::Vector3* _color);
@@ -56,7 +55,6 @@ namespace Mirage
 	private:
 		// Design
 		static void ApplyThemeColors();
-		static void ShowThemeColorEditor();
 		static ImVec4 Color(unsigned char _r, unsigned char _g, unsigned char _b, unsigned char _a = 255);
 	};
 }
