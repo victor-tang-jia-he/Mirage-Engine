@@ -24,7 +24,7 @@ Bullet3RigidBody::~Bullet3RigidBody()
 bool Bullet3RigidBody::Create(std::shared_ptr<ICollider> _shape, ERigidBodyType _type, MirageEngine::Core::Components::Transform& _newTransform)
 {
     m_Type = _type;
-    m_bIsDirty = false;
+    m_bIsDirty = true;
 
     if (!_shape)
     {
@@ -139,10 +139,6 @@ void Bullet3RigidBody::UpdateTransform(MirageEngine::Core::Components::Transform
     // Update all compount
     if (m_bIsDirty)
         UpdateCompound();
-
-    btVector3 velocity(0, 0, 0);
-    velocity.setY(-9.81f);
-    //m_RigidBody->setLinearVelocity(velocity);
 
     // Update GameObject
     btVector3 position = m_RigidBody->getWorldTransform().getOrigin();

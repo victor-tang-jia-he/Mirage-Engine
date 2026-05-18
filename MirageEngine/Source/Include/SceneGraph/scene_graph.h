@@ -21,7 +21,7 @@ namespace MirageEngine
     private:
         std::vector<std::shared_ptr<GameObject>> m_RootsList;
         std::unordered_map<uint64_t, std::shared_ptr<MirageEngine::GameObject>> m_Registry;
-        std::shared_ptr<GameObject> m_SelectedObject = nullptr;
+        std::weak_ptr<GameObject> m_SelectedObject;
         std::shared_ptr<MirageEngine::Core::Components::Camera> m_EditorCamera = nullptr;
         std::shared_ptr<MirageEngine::Core::Components::Camera> m_ActiveCamera = nullptr;
         std::shared_ptr<GameObject> m_LastCreatedObject = nullptr;
@@ -68,7 +68,7 @@ namespace MirageEngine
 
         void SetSelectedObject(std::shared_ptr<GameObject> _obj) { m_SelectedObject = _obj; }
 
-        std::shared_ptr<GameObject> GetSelectedObject() { return m_SelectedObject; }
+        std::weak_ptr<GameObject> GetSelectedObject() { return m_SelectedObject; }
         const std::vector<std::shared_ptr<GameObject>>& GetRootObjects() const { return m_RootsList; }
         std::vector<std::shared_ptr<GameObject>> GetChildren(std::shared_ptr<GameObject> _parent) const;
 

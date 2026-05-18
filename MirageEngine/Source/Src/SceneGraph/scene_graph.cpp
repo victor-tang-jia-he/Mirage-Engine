@@ -100,10 +100,13 @@ namespace MirageEngine
             [_obj](const std::weak_ptr<GameObject>& weakObj) {
                 return weakObj.lock() == _obj;
             }), m_CallGameObjectOnStart.end());
-        if (m_SelectedObject == _obj)
-            m_SelectedObject = nullptr;
+        if (m_SelectedObject.lock() == _obj)
+            m_SelectedObject.reset();
 
-        _obj->~GameObject();
+        for (std::shared_ptr<Core::Components::Component> comp : _obj->GetComponents())
+        {
+			_obj->RemoveComponent(comp);
+        }
     }
 
     void SceneGraph::ClearScene()

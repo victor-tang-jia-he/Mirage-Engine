@@ -18,6 +18,15 @@ PhysicsManager& PhysicsManager::Instance()
 
 void PhysicsManager::Shutdown()
 {
+	if (m_WorldRigidbodys.size() > 0)
+	{
+		LOG(logWarning, LogPhysics, "Initializing physics manager while there are still rigid bodies registered. All rigid bodies will be cleared.");
+		for (int i = 0; i < m_WorldRigidbodys.size(); i++)
+		{
+			LOG(logTemp, LogPhysics, " - Unregistering rigid body ", i + 1, " : ", int(m_WorldRigidbodys[i]->GetType()));
+			UnregisterRigidBody(m_WorldRigidbodys[i]);
+		}
+	}
 	m_WorldRigidbodys.clear();
 	m_WorldPhysics.reset();
 	delete m_Instance;
@@ -28,6 +37,15 @@ void PhysicsManager::Initialize(EPhysicsEngine _physicsEngine)
 {
 	// set up physics engine
 	m_PhysicsEngine = _physicsEngine;
+	if (m_WorldRigidbodys.size() > 0)
+	{
+		LOG(logWarning, LogPhysics, "Initializing physics manager while there are still rigid bodies registered. All rigid bodies will be cleared.");
+		for (int i = 0; i < m_WorldRigidbodys.size(); i++)
+		{
+			LOG(logTemp, LogPhysics, " - Unregistering rigid body ", i + 1, " : ", int(m_WorldRigidbodys[i]->GetType()));
+			UnregisterRigidBody(m_WorldRigidbodys[i]);
+		}
+	}
 	m_WorldRigidbodys.clear();
 	m_WorldPhysics.reset(); // clean up previous physics engine if exists
 	LOG(logInfo, LogPhysics, "Physics Engine initialized : ", m_PhysicsEngine == EPhysicsEngine::BULLET_3 ? "Bullet physics" : "Undefined physics Engine");

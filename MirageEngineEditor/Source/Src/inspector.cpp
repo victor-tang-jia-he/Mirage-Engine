@@ -53,7 +53,7 @@ namespace Mirage
 	{
 		UIWrapper::BeginWindow("Inspector");
 
-		std::shared_ptr<GameObject> selectedObj = m_Context->GetSelectedObject();
+		std::shared_ptr<GameObject> selectedObj = m_Context->GetSelectedObject().lock();
 		if (selectedObj == nullptr)
 		{
 			ImGui::TextDisabled("No object selected in Hierarchy");

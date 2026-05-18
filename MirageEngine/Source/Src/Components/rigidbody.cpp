@@ -37,6 +37,8 @@ MirageEngine::Core::Components::Rigidbody::Rigidbody(GameObject* _owner)
         {
             m_Rigidbody->UpdateTransform(m_Owner->Transform);
         };
+
+    m_Rigidbody->OnTransformChanged(m_Owner->Transform);
 }
 
 MirageEngine::Core::Components::Rigidbody::~Rigidbody()

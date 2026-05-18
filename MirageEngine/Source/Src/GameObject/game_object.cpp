@@ -44,7 +44,6 @@ MirageEngine::GameObject::GameObject(std::shared_ptr<GameObject> _parent, std::s
 
 MirageEngine::GameObject::~GameObject()
 {
-    ScriptManager::Instance().Unsubscribe(this);
     m_Components.clear();
 }
 

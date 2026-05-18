@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vector3.h>
+#include <Scripting/engine_script_api.h>
 
 #define LIGHT_MANAGER MirageEngine::LightManager::Instance()
 
@@ -11,7 +12,7 @@ namespace MirageEngine
     class DirectionalLight;
     class PointLight;
 
-    class LightManager
+    class ENGINE_API LightManager
     {
         using Vector3 = Core::Math::Vector3;
 
@@ -27,12 +28,7 @@ namespace MirageEngine
             return instance;
         }
 
-        void ShutDown() 
-        {
-            m_DirectionalLights.clear();
-            m_PointLights.clear();
-			m_SpotLights.clear();
-        };
+        void ShutDown();
 
         void AddDirectionalLight(std::shared_ptr<DirectionalLight> _light);
         void AddPointLight(std::shared_ptr<PointLight> _light);

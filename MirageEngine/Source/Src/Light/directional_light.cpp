@@ -12,12 +12,14 @@ namespace MirageEngine
     DirectionalLight::DirectionalLight()
     {
         p_Type = LightType::DIRECTIONNAL;
+        LOG(logTemp, LogDirectionalLight, "Directional light created");
     }
 
     DirectionalLight::DirectionalLight(GameObject* _owner)
 		: Component(_owner)
     {
         p_Type = LightType::DIRECTIONNAL;
+        LOG(logTemp, LogDirectionalLight, "Directional light created");
     }
 
     void DirectionalLight::AttachNew(std::shared_ptr<GameObject> _owner)
@@ -29,8 +31,6 @@ namespace MirageEngine
 
     void DirectionalLight::OnStart()
     {
-        LOG(logTemp, LogDirectionalLight, "Directional light created");
-        LightManager::Instance().AddDirectionalLight(shared_from_this());
     }
 
     entt::id_type DirectionalLight::GetType() const 
