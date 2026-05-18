@@ -976,6 +976,7 @@ namespace Mirage
                 {
                     for (size_t i = 0; i < actions.size(); ++i)
                     {
+						ImGui::PushID((int)i);
                         float s = scores[i];
                         std::string actionName = actions[i]->GetName();
 
@@ -989,6 +990,8 @@ namespace Mirage
 
                         if (isActive)
                             ImGui::PopStyleColor();
+
+						ImGui::PopID();
                     }
                 }
                 ImGui::Separator();

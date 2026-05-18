@@ -14,9 +14,9 @@ namespace MirageEngine::Core::Components
 {
 	UtilityAgent::~UtilityAgent()
 	{
-		for (AI::AIAction* action : m_actions) {
-			delete action;
-		}
+		//for (AI::AIAction* action : m_actions) {
+		//	delete action;
+		//}
 		m_actions.clear();
 	}
 
@@ -55,6 +55,7 @@ namespace MirageEngine::Core::Components
 
 		if (!m_StatsInitialized)
 		{
+			m_actions.clear();
 			auto allComps = GetOwner()->GetComponents();
 			for (auto& comp : allComps)
 			{

@@ -12,6 +12,7 @@ file(GLOB_RECURSE MIRAGE_ENGINE_HEADERS CONFIGURE_DEPENDS
     "${CMAKE_CURRENT_SOURCE_DIR}/Source/Include/*.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/Source/Include/*.inl"
     "${CMAKE_CURRENT_SOURCE_DIR}/Tools/Toolbox/Include/*.h"
+    "${CMAKE_SOURCE_DIR}/Scripts/Source/*.h"
 )
 # Project executable
 add_library(MirageEngine SHARED    

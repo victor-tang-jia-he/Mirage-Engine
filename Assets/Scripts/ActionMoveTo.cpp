@@ -2,11 +2,10 @@
 #include "GameObject/game_object.h"
 #include "Components/nav_agent.h"
 #include <entt/entt.hpp>
-REGISTER_SCRIPT(ActionMoveTo);
 
 namespace MirageEngine::AI
 {
-
+    REGISTER_SCRIPT(ActionMoveTo);
     ActionMoveTo::ActionMoveTo()
     {
         m_ActionName = "MoveTo";
@@ -19,7 +18,7 @@ namespace MirageEngine::AI
 
     void ActionMoveTo::Execute(float dt)
     {
-        auto nav = GetOwner()->GetComponent<Core::Components::NavAgent>();
+        auto nav = GetOwner()->GetComponent<MirageEngine::Core::Components::NavAgent>();
         if (nav)
         {
             nav->SetDestination(m_Target);
