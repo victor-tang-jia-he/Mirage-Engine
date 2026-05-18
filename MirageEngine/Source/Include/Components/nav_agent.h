@@ -34,6 +34,8 @@ namespace MirageEngine::Core
 			void OnStart() override;
 			void OnUpdate(float _dt) override;
 
+			void OnDrawLine() override;
+
 			static void AttachNew(std::shared_ptr<GameObject> _owner);
 
             entt::id_type GetType() const override;

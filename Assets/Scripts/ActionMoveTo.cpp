@@ -21,7 +21,10 @@ namespace MirageEngine::AI
         auto nav = GetOwner()->GetComponent<MirageEngine::Core::Components::NavAgent>();
         if (nav)
         {
-            nav->SetDestination(m_Target);
+            if (nav->GetCurrentPath().empty())
+            {
+                nav->SetDestination(m_Target);
+            }
         }
     }
 

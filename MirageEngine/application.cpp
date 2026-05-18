@@ -269,14 +269,14 @@ void Application::InitGameObject()
 	
 	std::shared_ptr<GameObject> gridGO = m_SceneGraph.CreateGameObject("AI_Grid", root);
 	auto globalGrid = gridGO->AddComponent<InfluenceGrid>();
-	globalGrid->SetWidth(40.0f);
-	globalGrid->SetHeight(40.0f);
+	globalGrid->SetWidth(55.0f);
+	globalGrid->SetHeight(55.0f);
 	globalGrid->SetCellSize(1.0f);
 	globalGrid->AddChannel("Fire");
 	globalGrid->Bake();
 
 	std::shared_ptr<GameObject> aiAgentGO = m_SceneGraph.CreateGameObject("Pompier", root);
-	aiAgentGO->SetPosition(Vector3(5.0f, -3.0f, 5.0f));
+	aiAgentGO->SetPosition(Vector3(5.0f, 0.0f, 5.0f));
 
 	auto aiRenderer = aiAgentGO->AddComponent<MeshRenderer>();
 	aiRenderer->SetMesh(rm.GetMesh("cube"));
@@ -295,7 +295,7 @@ void Application::InitGameObject()
 	auto moveAction = aiAgentGO->GetComponent<ActionMoveTo>();
 
 	if (moveAction) {
-		moveAction->SetTarget(Vector3(15.0f, -3.0f, 15.0f));
+		moveAction->SetTarget(Vector3(25.0f, 0.0f, 25.0f));
 
 		Consideration fireRule;
 		fireRule.source = VariableSource::Grid;
@@ -308,12 +308,12 @@ void Application::InitGameObject()
 	}
 
 	std::shared_ptr<GameObject> fireGO = m_SceneGraph.CreateGameObject("Feu", root);
-	fireGO->SetPosition(Vector3(15.0f, -3.0f, 15.0f)); 
+	fireGO->SetPosition(Vector3(15.0f, 0.0f, 15.0f)); 
 	auto emitter = fireGO->AddComponent<InfluenceEmitter>();
 	emitter->SetTargetGrid(globalGrid.get());
 	emitter->SetInfluenceType("Fire");
 	emitter->SetStrength(100.0f);
-	emitter->SetRadius(20.0f);
+	emitter->SetRadius(5.0f);
 }
 
 void Application::RuntimeUpdate(float _dt)
