@@ -71,7 +71,6 @@ namespace Mirage
 		ImGuizmo::BeginFrame();
 		ImGui::DockSpaceOverViewport(0, ImGui::GetMainViewport(), ImGuiDockNodeFlags_PassthruCentralNode);
 		//ImGui::ShowDemoWindow();
-		ShowThemeColorEditor();
 	}
 
 	void UIWrapper::EndFrame()
