@@ -73,6 +73,8 @@ namespace Mirage
 						newEntry.Type = AssetType::SCRIPT;
 					else if (ext == ".glsl" || ext == ".frag" || ext == ".vert")
 						newEntry.Type = AssetType::SHADER;
+					else if (ext == ".json")
+						newEntry.Type = AssetType::SCENE;
 					else
 						newEntry.Type = AssetType::UNKNOW;
 				}

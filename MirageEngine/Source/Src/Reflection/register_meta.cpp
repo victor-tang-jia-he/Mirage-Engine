@@ -188,7 +188,7 @@ void RegisterMeta::RegisterInputMappingMeta()
 	inputMapping.func<&InputMapping::AttachNew>("AttachNew"_hs);
 }
 
-void MirageEngine::RegisterMeta::RegisterDirectionalLightMeta()
+void RegisterMeta::RegisterDirectionalLightMeta()
 {
 	entt::meta_factory<DirectionalLight> directionalLight{};
 
@@ -204,7 +204,7 @@ void MirageEngine::RegisterMeta::RegisterDirectionalLightMeta()
 	directionalLight.func<&DirectionalLight::AttachNew>("AttachNew"_hs);
 }
 
-void MirageEngine::RegisterMeta::RegisterPointLightMeta()
+void RegisterMeta::RegisterPointLightMeta()
 {
 	entt::meta_factory<PointLight> pointLight{};
 
@@ -221,7 +221,7 @@ void MirageEngine::RegisterMeta::RegisterPointLightMeta()
 	pointLight.func<&PointLight::AttachNew>("AttachNew"_hs);
 }
 
-void MirageEngine::RegisterMeta::RegisterSpotLightMeta()
+void RegisterMeta::RegisterSpotLightMeta()
 {
 	entt::meta_factory<SpotLight> spotLight{};
 
@@ -241,7 +241,7 @@ void MirageEngine::RegisterMeta::RegisterSpotLightMeta()
 	spotLight.func<&SpotLight::AttachNew>("AttachNew"_hs);
 }
 
-void MirageEngine::RegisterMeta::RegisterBoxColliderMeta()
+void RegisterMeta::RegisterBoxColliderMeta()
 {
 	entt::meta_factory<BoxCollider> boxCollider{};
 
@@ -259,7 +259,7 @@ void MirageEngine::RegisterMeta::RegisterBoxColliderMeta()
 	boxCollider.func<&BoxCollider::AttachNew>("AttachNew"_hs);
 }
 
-void MirageEngine::RegisterMeta::RegisterSphereColliderMeta()
+void RegisterMeta::RegisterSphereColliderMeta()
 {
 	entt::meta_factory<SphereCollider> sphereCollided{};
 
@@ -277,7 +277,7 @@ void MirageEngine::RegisterMeta::RegisterSphereColliderMeta()
 	sphereCollided.func<&SphereCollider::AttachNew>("AttachNew"_hs);
 }
 
-void MirageEngine::RegisterMeta::RegisterCapsuleColliderMeta()
+void RegisterMeta::RegisterCapsuleColliderMeta()
 {
 	entt::meta_factory<CapsuleCollider> capsuleCollider{};
 
@@ -296,7 +296,7 @@ void MirageEngine::RegisterMeta::RegisterCapsuleColliderMeta()
 	capsuleCollider.func<&CapsuleCollider::AttachNew>("AttachNew"_hs);
 }
 
-void MirageEngine::RegisterMeta::RegisterRigidbodyMeta()
+void RegisterMeta::RegisterRigidbodyMeta()
 {
 	entt::meta_factory<Rigidbody> rigidBody{};
 
@@ -372,7 +372,7 @@ void RegisterMeta::RegisterTextureMeta()
 	LOG(logTemp, LogRegisterMeta, "Registered Texture Meta");
 }
 
-void MirageEngine::RegisterMeta::RegisterMaterialMeta()
+void RegisterMeta::RegisterMaterialMeta()
 {
 	entt::meta_factory<Resources::Material> material{};
 	material.type("Material"_hs, "Material");
@@ -384,7 +384,7 @@ void MirageEngine::RegisterMeta::RegisterMaterialMeta()
 	material.func<&Resources::Material::GetFromManager>("Get"_hs);
 }
 
-void MirageEngine::RegisterMeta::RegisterMaterialInstanceMeta()
+void RegisterMeta::RegisterMaterialInstanceMeta()
 {
 	entt::meta_factory<Resources::MaterialInstance> materialInstance{};
 	materialInstance.type("MaterialInstance"_hs, "MaterialInstance");
@@ -397,7 +397,7 @@ void MirageEngine::RegisterMeta::RegisterMaterialInstanceMeta()
 	LOG(logTemp, LogRegisterMeta, "Registered Material Meta");
 }
 
-void MirageEngine::RegisterMeta::RegisterShaderMeta()
+void RegisterMeta::RegisterShaderMeta()
 {
 	entt::meta_factory<Resources::Shader> material{};
 	material.type("Shader"_hs, "Shader");

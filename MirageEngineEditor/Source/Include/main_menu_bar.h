@@ -9,7 +9,11 @@ namespace Mirage
 	{
 	public:
 		void DrawBar();
+
+	private:
 		void FileMenu();
 		void EditMenu();
+
+		void Play();
 	};
 }
