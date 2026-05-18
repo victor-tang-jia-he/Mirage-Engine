@@ -1,11 +1,11 @@
 #include <cstdlib>
 #include <vector3.h>
 #include <string>
-#include "Components/utility_agent.h"
-#include "GameObject/game_object.h"
-#include "application.h"
-#include "time_manager.h"
-#include "AI/ai_action.h"
+#include <Components/utility_agent.h>
+#include <GameObject/game_object.h>
+#include <application.h>
+#include <time_manager.h>
+#include <AI/ai_action.h>
 #include <entt/entt.hpp>
 
 using namespace MirageEngine::Core::Math;

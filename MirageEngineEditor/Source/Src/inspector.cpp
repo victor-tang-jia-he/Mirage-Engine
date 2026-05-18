@@ -1,29 +1,18 @@
-#include <dragdrop.h>
+//#include <dragdrop.h>
 #include "inspector.h"
 #include "UI_wrapper.h"
-#include "matrix4.h"
-#include "imgui.h"
 #include "GameObject/game_object.h"
 #include "SceneGraph/scene_graph.h"
-#include <string>
-#include <cmath>
-#include <limits>
-#include <fstream>
-#include <Resources/resource_manager.h>
 #include <application.h>
 
 // RESOURCES HEADERS
 #include <Resources/mesh.h>
-#include <Resources/texture.h>
 #include <Resources/material.h>
-#include <Resources/shader.h>
 
 // COMPONENTS HEADERS
 #include "Components/camera.h"
-#include "Components/mesh_renderer.h"
 #include "Components/utility_agent.h"
 #include "Components/influence_emitter.h"
-#include <Input/input_mapping.h>
 #include <AI/influence_grid.h>
 #include <AI/responsive_curve.h>
 #include <AI/ai_action.h>

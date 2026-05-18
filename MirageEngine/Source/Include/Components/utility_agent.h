@@ -1,10 +1,7 @@
 #pragma once 
-#include <iostream>
-#include <vector>
-#include <unordered_map>
-#include <string>
-#include "Components/component.h" 
-#include "AI/influence_grid.h"
+
+#include <Components/component.h>
+#include <AI/influence_grid.h>
 
 namespace MirageEngine::AI
 {

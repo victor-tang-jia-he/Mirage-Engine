@@ -1,13 +1,9 @@
-#include "Serialization/deserializer.h"
-#include "SceneGraph/scene_graph.h"
-#include "GameObject/game_object.h"
-#include "Components/component.h"
-#include "Components/camera.h"
-#include "Components/rigidbody.h"
-#include "AI/pathfinding.h"
-#include "vector3.h"
-#include "vector4.h"
-#include "quaternion.h"
+#include <Serialization/deserializer.h>
+#include <SceneGraph/scene_graph.h>
+#include <GameObject/game_object.h>
+#include <Components/camera.h>
+#include <Components/rigidbody.h>
+#include <AI/pathfinding.h>
 #include <fstream>
 
 DEFINE_LOG_CATEGORY(LogDeserializer)

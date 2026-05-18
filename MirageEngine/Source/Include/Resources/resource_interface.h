@@ -1,5 +1,7 @@
 #pragma once
 
+#include <matrix4.h>
+
 namespace MirageEngine::Core::Resources
 {
     // Interface

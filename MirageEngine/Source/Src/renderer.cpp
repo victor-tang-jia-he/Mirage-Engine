@@ -1,7 +1,7 @@
 #include <Glad/glad.h>
 #include <GLFW/glfw3.h>
 
-#include "renderer.h"
+#include <renderer.h>
 #include <Camera/i_camera.h>
 #include <DebugDraw/debug_draw.h>
 

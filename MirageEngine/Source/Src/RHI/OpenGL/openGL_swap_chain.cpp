@@ -1,10 +1,10 @@
-#include "OpenGL/openGL_swap_chain.h"
-#include "OpenGL/openGL_surface.h"
-#include "OpenGL/openGL_framebuffer.h"
-#include <Logs/log.h>
-
 #include <Glad/glad.h>
 #include <GLFW/glfw3.h>
+
+#include <OpenGL/openGL_swap_chain.h>
+#include <OpenGL/openGL_surface.h>
+#include <OpenGL/openGL_framebuffer.h>
+#include <Logs/log.h>
 
 DEFINE_LOG_CATEGORY(LogRHISwapChain)
 

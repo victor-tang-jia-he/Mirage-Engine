@@ -1,8 +1,9 @@
 #include <Glad/glad.h>
 #include <GLFW/glfw3.h>
-#include <Logs/log.h>
 
 #include <OpenGL/openGL_texture.h>
+
+#include <Logs/log.h>
 
 DEFINE_LOG_CATEGORY(LogRHITexture)
 

@@ -1,4 +1,3 @@
-#include <Resources/resource_manager.h>
 #include <RHI/OpenGL/openGL_render_interface.h>
 
 #include <Resources/mesh.h>
@@ -7,10 +6,14 @@
 #include <Resources/material.h>
 #include <Resources/shader.h>
 #include <Resources/pipeline.h>
+#include <Resources/resource_manager.h>
+
 #define TINYOBJLOADER_IMPLEMENTATION
 #include <TinyObjLoader/tiny_obj_loader.h>
+
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
+
 #include <Logs/log.h>
 
 constexpr int OPENGL_RGBA = 0x1908;

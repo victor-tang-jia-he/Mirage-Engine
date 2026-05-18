@@ -1,8 +1,5 @@
 #pragma once
 
-#include <iostream>
-
-#include <Components/component.h>
 #include <Components/transform.h>
 #include <Components/mesh_renderer.h>
 #include <Scripting/engine_script_api.h>

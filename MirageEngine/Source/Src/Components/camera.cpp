@@ -1,12 +1,14 @@
+#include <GLFW/glfw3.h>
+
+#include <iostream>
+
 #include <Components/camera.h>
 #include <GameObject/game_object.h>
 #include <Input/input_system.h>
 #include <Input/input_mapping.h>
 #include <Events/event.h>
-#include <iostream>
 #include <algorithm>
 #include <time_manager.h>
-#include <GLFW/glfw3.h>
 #include <entt/entt.hpp>
 
 using namespace MirageEngine;

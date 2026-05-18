@@ -2,7 +2,6 @@
 #include <Scripting/engine_script_api.h>
 
 #include <Light/i_light.h>
-#include <Components/component.h>
 
 DECLARE_LOG_CATEGORY_EXTERN(LogDirectionalLight)
 

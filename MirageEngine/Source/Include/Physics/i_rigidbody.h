@@ -1,9 +1,9 @@
 #pragma once
 
 #include <iostream>
-#include "common_enum.h"
+#include <Physics/common_enum.h>
 #include <GameObject/game_object.h>
-#include <vector3.h>
+
 namespace MirageEngine::Core::Components
 {
     class Transform;

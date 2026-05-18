@@ -31,7 +31,6 @@ namespace Mirage
 		io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
 		io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;
 		io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
-		//io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
 		ImGui::StyleColorsDark();
 		ApplyThemeColors();
 
@@ -70,24 +69,12 @@ namespace Mirage
 		ImGui::NewFrame();
 		ImGuizmo::BeginFrame();
 		ImGui::DockSpaceOverViewport(0, ImGui::GetMainViewport(), ImGuiDockNodeFlags_PassthruCentralNode);
-		//ImGui::ShowDemoWindow();
 	}
 
 	void UIWrapper::EndFrame()
 	{
 		ImGui::Render();
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-
-		//ImGuiIO& io = ImGui::GetIO();
-		//if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
-		//{
-		//	GLFWwindow* backup_current_context = glfwGetCurrentContext();
-
-		//	ImGui::UpdatePlatformWindows();
-		//	ImGui::RenderPlatformWindowsDefault();
-
-		//	glfwMakeContextCurrent(backup_current_context);
-		//}
 	}
 
 	bool UIWrapper::BeginWindow(const char* _windowName, bool* _isOpen)
@@ -205,7 +192,7 @@ namespace Mirage
 		ImGui::SetCursorPos(startPos);
 		if (ImGui::Selectable("##selectable", _isSelected, ImGuiSelectableFlags_AllowDoubleClick, tileSize))
 		{
-			// Clic
+			// Click
 		}
 
 		if (ImGui::IsItemHovered())
@@ -250,18 +237,11 @@ namespace Mirage
 		style.Colors[ImGuiCol_WindowBg]						= Color(33, 21, 64, 255);
 		style.Colors[ImGuiCol_ChildBg]						= Color(21, 13, 40, 255);
 		style.Colors[ImGuiCol_PopupBg]						= Color(20, 20, 20, 255);
-		// style.Colors[ImGuiCol_Border];
-		// style.Colors[ImGuiCol_BorderShadow];
 		style.Colors[ImGuiCol_FrameBg]						= Color(29, 0, 76, 255);
-		// style.Colors[ImGuiCol_MenuBarBg];
-		style.Colors[ImGuiCol_ScrollbarBg];
 		style.Colors[ImGuiCol_TitleBg]						= Color(43, 27, 39, 255);
-		style.Colors[ImGuiCol_TitleBgActive];
-		style.Colors[ImGuiCol_TitleBgCollapsed];
 
 		// Interactive elements - hover/active states
 		style.Colors[ImGuiCol_FrameBgHovered]				= Color(250, 150, 250, 102);
-		style.Colors[ImGuiCol_FrameBgActive];
 		style.Colors[ImGuiCol_ScrollbarGrab]				= Color(81, 79, 96, 255);
 		style.Colors[ImGuiCol_ScrollbarGrabHovered]			= Color(81, 79, 96, 255);
 

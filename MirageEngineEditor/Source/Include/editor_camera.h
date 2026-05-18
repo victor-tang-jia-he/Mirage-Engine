@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Camera/i_camera.h"
+#include <Camera/i_camera.h>
 
 namespace MirageEngine::Core::Input
 {

@@ -1,7 +1,7 @@
 #pragma once
 
-#include "bullet3_pch.h"
-#include "../i_collider.h"
+#include <Physics/Bullet3/bullet3_pch.h>
+#include <Physics/i_collider.h>
 
 namespace MirageEngine::Core::Physics
 {

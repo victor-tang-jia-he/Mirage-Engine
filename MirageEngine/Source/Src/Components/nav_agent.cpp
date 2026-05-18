@@ -1,9 +1,9 @@
-#include "Components/nav_agent.h"
-#include "GameObject/game_object.h"
-#include "AI/pathfinding.h"
-#include "AI/influence_grid.h"
-#include "time_manager.h"
-#include "application.h"
+#include <Components/nav_agent.h>
+#include <GameObject/game_object.h>
+#include <AI/pathfinding.h>
+#include <AI/influence_grid.h>
+#include <time_manager.h>
+#include <application.h>
 #include <entt/entt.hpp>
 
 namespace MirageEngine::Core

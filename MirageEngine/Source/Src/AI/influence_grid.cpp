@@ -1,8 +1,7 @@
-#include "AI/influence_grid.h"
-#include "GameObject/game_object.h"
-#include "Components/transform.h"
-#include <matrix4.h>
-#include "time_manager.h"
+#include <AI/influence_grid.h>
+#include <GameObject/game_object.h>
+#include <Components/transform.h>
+#include <time_manager.h>
 #include <DebugDraw/debug_draw.h>
 #include <entt/entt.hpp>
 

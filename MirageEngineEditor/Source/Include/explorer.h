@@ -1,5 +1,5 @@
 #pragma once
-#include "i_panel.h"
+#include <i_panel.h>
 #include <string>
 #include <filesystem>
 

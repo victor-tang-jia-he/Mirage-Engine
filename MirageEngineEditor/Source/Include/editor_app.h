@@ -1,11 +1,11 @@
 #pragma once
-#include "i_panel.h"
-#include "main_menu_bar.h"
+#include <i_panel.h>
+#include <main_menu_bar.h>
 #include <iostream>
 #include <vector>
 #include <memory>
 #include <editor_camera.h>
-#include "SceneGraph/scene_graph.h" 
+#include <SceneGraph/scene_graph.h>
 
 DECLARE_LOG_CATEGORY_EXTERN(logEditorApp)
 

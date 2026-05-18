@@ -1,8 +1,7 @@
 #pragma once
-#include <string>
-#include "Scripting/i_script.h"
-#include "AI/responsive_curve.h"
-//#include "Components/utility_agent.h"
+
+#include <Scripting/i_script.h>
+#include <AI/responsive_curve.h>
 
 namespace MirageEngine
 {   

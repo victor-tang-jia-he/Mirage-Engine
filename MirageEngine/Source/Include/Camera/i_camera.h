@@ -1,6 +1,5 @@
 #pragma once
 
-#include <vector3.h>
 #include <matrix4.h>
 
 namespace MirageEngine

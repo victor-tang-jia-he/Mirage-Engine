@@ -2,7 +2,7 @@
 
 #include <iostream>
 
-#include "GameObject/game_object.h"
+#include <GameObject/game_object.h>
 #include <Scripting/engine_script_api.h>
 DECLARE_LOG_CATEGORY_EXTERN(LogSceneGraph)
 

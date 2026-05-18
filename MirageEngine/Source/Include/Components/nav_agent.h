@@ -1,6 +1,7 @@
-#include "Components/component.h"
-#include "AI/pathfinding.h"
-#include <vector>
+#pragma once
+
+#include <Components/component.h>
+#include <AI/pathfinding.h>
 
 namespace entt
 {

@@ -53,7 +53,10 @@ set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)
 set(GLFW_BUILD_TESTS OFF CACHE BOOL "" FORCE)
 set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
 set(GLFW_INSTALL OFF CACHE BOOL "" FORCE)
+
+set(SAVED_BUILD_SHARED_LIBS ${BUILD_SHARED_LIBS})
 set(BUILD_SHARED_LIBS ON)
+
 if(NOT EXISTS "${GLFW_SOURCE}/CMakeLists.txt")
     message(STATUS "Fetching GLFW...")
     FetchContent_Declare(
@@ -67,7 +70,8 @@ else()
     message(STATUS "Using local GLFW")
     add_subdirectory(${GLFW_SOURCE} ${CMAKE_BINARY_DIR}/GLFW)
 endif()
-set(BUILD_SHARED_LIBS OFF)
+
+set(BUILD_SHARED_LIBS ${SAVED_BUILD_SHARED_LIBS})
 
 message(STATUS "GLFW created successfully")
 message(STATUS "================================================================================")
@@ -110,6 +114,8 @@ message("")
 # ============================================================================
 message(STATUS "================================================================================")
 message(STATUS "IMGUI")
+
+find_package(OpenGL REQUIRED)
 
 set(IMGUI_DIR "${CMAKE_SOURCE_DIR}/Libraries/ImGui")
 set(IMGUI_BACKENDS_DIR "${CMAKE_SOURCE_DIR}/Libraries/ImGui/backends")
@@ -165,7 +171,6 @@ target_include_directories(imgui
 )
 
 # Linking dependencies
-find_package(OpenGL REQUIRED)
 target_link_libraries(imgui
     PUBLIC
         glfw          # GLFW must be PUBLIC because it is used in the backend headers
@@ -206,19 +211,8 @@ if(NOT EXISTS ${IMGUIZMO_DIR} OR IMGUIZMO_CONTENT_COUNT EQUAL 0)
     FetchContent_MakeAvailable(imguizmo)
 else()
     message(STATUS "Using local ImGuizmo")
+    add_subdirectory(${IMGUIZMO_DIR} ${CMAKE_BINARY_DIR}/ImGuizmo)
 endif()
-
-set(IMGUIZMO_SOURCES
-    ${IMGUIZMO_DIR}/src/ImGuizmo.cpp
-)
-
-# Combine all sources
-set(IMGUIZMO_ALL_SOURCES
-    ${IMGUIZMO_SOURCES}
-)
-
-# Create the ImGui library
-add_library(imguizmo STATIC ${IMGUIZMO_ALL_SOURCES})
 
 target_include_directories(imguizmo
     PUBLIC
@@ -297,18 +291,8 @@ set(STB_IMAGE_CORE_SOURCES
     ${STB_IMAGE_DIR}/deprecated/stb_image.c
 )
 
-set(STB_IMAGE_CORE_HEADERS
-    ${STB_IMAGE_DIR}/stb_image.h
-)
-
-# Combine all sources
-set(STB_IMAGE_ALL_SOURCES
-    ${STB_IMAGE_CORE_SOURCES}
-    ${STB_IMAGE_CORE_HEADERS}
-)
-
 # Create the STB Image library
-add_library(stb_image STATIC ${STB_IMAGE_ALL_SOURCES})
+add_library(stb_image STATIC ${STB_IMAGE_CORE_SOURCES})
 
 target_include_directories(stb_image
     PUBLIC

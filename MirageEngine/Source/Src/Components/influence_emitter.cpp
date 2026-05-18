@@ -1,9 +1,8 @@
-
-#include "Components/influence_emitter.h"
-#include "AI/influence_grid.h"
-#include "GameObject/game_object.h"
-#include "time_manager.h"
-#include "application.h"
+#include <Components/influence_emitter.h>
+#include <AI/influence_grid.h>
+#include <GameObject/game_object.h>
+#include <time_manager.h>
+#include <application.h>
 #include <entt/entt.hpp>
 
 using namespace MirageEngine::Core::Math;

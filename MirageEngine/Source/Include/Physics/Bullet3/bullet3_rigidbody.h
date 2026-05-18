@@ -1,6 +1,6 @@
 #pragma once
-#include "bullet3_pch.h"
-#include "../i_rigidbody.h"
+#include <Physics/Bullet3/bullet3_pch.h>
+#include <Physics/i_rigidbody.h>
 
 DECLARE_LOG_CATEGORY_EXTERN(LogBullet3Rigidbody)
 

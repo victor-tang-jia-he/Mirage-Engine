@@ -1,7 +1,7 @@
 #pragma once
 
-#include "bullet3_pch.h"
-#include "../i_world_physics.h"
+#include <Physics/Bullet3/bullet3_pch.h>
+#include <Physics/i_world_physics.h>
 
 DECLARE_LOG_CATEGORY_EXTERN(LogBullet3WorldPhysics)
 

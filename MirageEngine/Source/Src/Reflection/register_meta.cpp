@@ -2,6 +2,7 @@
 
 // Components includes
 #include <GameObject/game_object.h>
+
 #include <Components/transform.h>
 #include <Components/mesh_renderer.h>
 #include <Components/camera.h>
@@ -9,21 +10,25 @@
 #include <Components/sphere_collider.h>
 #include <Components/capsule_collider.h>
 #include <Components/rigidbody.h>
+#include <Components/influence_emitter.h>
+#include <Components/nav_agent.h>
+#include <Components/utility_agent.h>
 
 // Lights includes
 #include <Light/directional_light.h>
 #include <Light/point_light.h>
 #include <Light/spot_light.h>
 
+// Input includes
+#include <Input/input_mapping.h>
+
+// Physics includes
 #include <Physics/common_enum.h>
 
+// AI includes
 #include <AI/ai_action.h>
-#include <Components/influence_emitter.h>
 #include <AI/influence_grid.h>
-#include <Input/input_mapping.h>
 #include <AI/responsive_curve.h>
-#include <Components/nav_agent.h>
-#include <Components/utility_agent.h>
 
 // Ressources includes
 #include <Resources/material.h>
@@ -34,9 +39,10 @@
 // EnTT includes
 #include <entt/entt.hpp>
 
-#include <vector3.h>
+// Math includes
 #include <quaternion.h>
 
+// Log includes
 #include <Logs/log.h>
 
 DEFINE_LOG_CATEGORY(LogRegisterMeta)

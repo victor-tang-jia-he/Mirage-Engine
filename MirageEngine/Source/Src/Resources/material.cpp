@@ -1,9 +1,8 @@
-#include <Resources/material.h>
-
 #include <RHI/i_texture.h>
 #include <RHI/i_shader.h>
 #include <Resources/mesh.h>
 #include <Resources/texture.h>
+#include <Resources/material.h>
 #include <Resources/resource_manager.h>
 #include <Logs/log.h>
 

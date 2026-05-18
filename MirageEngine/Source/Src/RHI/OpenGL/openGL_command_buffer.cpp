@@ -1,10 +1,10 @@
-#include "OpenGL/openGL_command_buffer.h"
-#include "OpenGL/openGL_pipeline.h"
-#include "OpenGL/openGL_buffer.h"
-#include "OpenGL/openGL_render_pass.h"
-#include "OpenGL/openGL_swap_chain.h"
-#include "OpenGL/openGL_surface.h"
-#include "OpenGL/openGL_vertex_layout.h"
+#include <OpenGL/openGL_command_buffer.h>
+#include <OpenGL/openGL_pipeline.h>
+#include <OpenGL/openGL_buffer.h>
+#include <OpenGL/openGL_render_pass.h>
+#include <OpenGL/openGL_swap_chain.h>
+#include <OpenGL/openGL_surface.h>
+#include <OpenGL/openGL_vertex_layout.h>
 #include <Logs/log.h>
 
 DEFINE_LOG_CATEGORY(LogRHICommandBuffer)

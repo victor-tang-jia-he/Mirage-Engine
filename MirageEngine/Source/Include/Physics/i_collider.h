@@ -2,7 +2,7 @@
 #pragma once
 
 #include <iostream>
-#include "common_enum.h"
+#include <Physics/common_enum.h>
 #include <Components/component.h>
 #include <Components/transform.h>
 

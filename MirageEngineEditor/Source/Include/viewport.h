@@ -1,6 +1,6 @@
 #pragma once
 
-#include "i_panel.h"
+#include <i_panel.h>
 
 DECLARE_LOG_CATEGORY_EXTERN(LogViewport)
 

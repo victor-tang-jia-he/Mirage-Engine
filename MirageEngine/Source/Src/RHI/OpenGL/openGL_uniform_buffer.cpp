@@ -1,5 +1,5 @@
-#include "OpenGL/openGL_uniform_buffer.h"
-#include "OpenGL/openGL_pipeline.h"
+#include <OpenGL/openGL_uniform_buffer.h>
+#include <OpenGL/openGL_pipeline.h>
 #include <Logs/log.h>
 
 DEFINE_LOG_CATEGORY(LogRHIUniformBuffer)

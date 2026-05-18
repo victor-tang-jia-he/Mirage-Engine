@@ -1,16 +1,16 @@
-#include "SceneGraph/scene_graph.h"
+#include <SceneGraph/scene_graph.h>
 #include <matrix4.h>
-#include <vector3.h>
 
-#include "Resources/resource_manager.h"
-#include "Components/mesh_renderer.h"
+#include <Components/mesh_renderer.h>
+
 #include <Resources/material.h>
 #include <Resources/texture.h>
 #include <Resources/shader.h>
+#include <Resources/resource_manager.h>
 
-#include "renderer.h"
+#include <renderer.h>
 
-#include "Components/camera.h"
+#include <Components/camera.h>
 #include <i_uniform_buffer.h>
 
 #include <Logs/log.h>

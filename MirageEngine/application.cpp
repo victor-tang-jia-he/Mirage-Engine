@@ -146,7 +146,7 @@ void Application::InitGameObject()
     cameraGO->AddComponent<InputMapping>();
     cameraGO->AddComponent<MeshRenderer>();
     cameraGO->AddComponent(dynamicCollider);
-    cameraGO->AddComponent(dynamicRB);
+    cameraGO->AddComponent<Rigidbody>(dynamicRB);
 
 	std::shared_ptr<Camera> cam = cameraGO->GetComponent<Camera>();
 	std::shared_ptr<InputMapping> input = cameraGO->GetComponent<InputMapping>();
@@ -217,12 +217,7 @@ void Application::InitGameObject()
     });
 
 	std::shared_ptr<MaterialInstance> mat1 = rm.CreateMaterialInstance("TestMaterialinstance", mat);
-	// Set texture
-	// mat1->SetTexture("albedoMap", texCat);
 	mat1->SetTexture("normalMap", texCat);
-	// mat1->SetTexture("metallicMap", texCat);
-	// mat1->SetTexture("roughnessMap", texCat);
-	// mat1->SetTexture("aoMap", texCat);
 
 	// Set PBR Setting
 	mat1->SetVec3("albedo", { 1, 1, 1 });

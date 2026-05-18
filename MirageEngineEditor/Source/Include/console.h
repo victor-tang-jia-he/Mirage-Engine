@@ -1,6 +1,6 @@
 #pragma once
-#include "i_panel.h"
-#include "imgui.h"
+#include <i_panel.h>
+#include <imgui.h>
 #include <vector>
 #include <string>
 

@@ -3,7 +3,6 @@
 #include <Resources/resource_interface.h>
 #include <RHI/i_shader.h>
 
-#include <vector3.h>
 #include <filesystem>
 #include <Scripting/engine_script_api.h>
 

@@ -1,6 +1,5 @@
 #pragma once
 #include <Components/transform.h>
-#include "component.h"
 #include <Camera/i_camera.h>
 #include <Scripting/engine_script_api.h>
 

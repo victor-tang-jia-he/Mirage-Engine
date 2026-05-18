@@ -1,8 +1,6 @@
 #pragma once
-#include <iostream>
-#include <vector>
 #include <vector3.h>
-#include "Components/component.h"
+#include <Components/component.h>
 
 namespace MirageEngine::Core::Components
 {
