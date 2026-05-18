@@ -15,10 +15,11 @@ namespace Mirage
 {
 	enum class WidgetAction
 	{
-		None = 0,
-		Clicked,
-		DoubleClicked,
-		RightClicked
+		NONE = 0,
+		CLICKED,
+		DOUBLE_CLICKED,
+		RIGHT_CLICKED,
+		LEFT_CLICKED
 	};
 
 	class UIWrapper
