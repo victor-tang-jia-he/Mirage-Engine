@@ -103,14 +103,15 @@ namespace MirageEngine
         if (m_SelectedObject == _obj)
             m_SelectedObject = nullptr;
 
-        _obj.reset();
+        _obj->~GameObject();
     }
 
     void SceneGraph::ClearScene()
     {
-        std::vector<std::shared_ptr<GameObject>> rootsCopy = m_RootsList;
-        for (std::shared_ptr<GameObject> obj : rootsCopy)
+        //std::vector<std::shared_ptr<GameObject>> rootsCopy = m_RootsList;
+        while (!m_RootsList.empty())
         {
+            std::shared_ptr<GameObject> obj = m_RootsList.back();
             RemoveGameObject(obj);
         }
         m_Registry.clear();

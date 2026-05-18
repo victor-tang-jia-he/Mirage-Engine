@@ -91,7 +91,7 @@ namespace Mirage
 			m_SceneGraph->ClearScene();
 			MirageEngine::Core::Physics::PhysicsManager::Instance().Initialize();
 			MirageEngine::LightManager::Instance().ShutDown();
-			*m_SceneGraph = *MirageEngine::Deserializer::LoadSceneFromFile("scene.json");
+			*m_SceneGraph = *MirageEngine::Deserializer::LoadSceneFromFile("Assets/Scenes/scene.json");
 			m_IsStoped = true;
 			LOG(logTemp, LogEditorApp, "Play mode stopping");
 		}

@@ -68,7 +68,7 @@ namespace MirageRHI
     };
 
     // Mat
-    struct ALIGN8 MaterialData
+    struct ALIGN8 MaterialInstanceData
     {
             Vector3 albedo;
             float metallic;

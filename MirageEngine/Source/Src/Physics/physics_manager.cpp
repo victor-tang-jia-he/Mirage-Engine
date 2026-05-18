@@ -132,6 +132,7 @@ std::shared_ptr<ICollider> PhysicsManager::CreateCollider(ECollisionShapeType _s
 	default: break;
 	}
 	if (collider.get() != nullptr) { collider->Create(); }
+
 	return collider;
 }
 

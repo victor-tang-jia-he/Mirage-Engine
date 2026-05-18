@@ -18,8 +18,8 @@ namespace MirageEngine
 
             public:
 
-                MeshRenderer() = default;
-				MeshRenderer(GameObject* _owner) {}
+                MeshRenderer();
+                MeshRenderer(GameObject* _owner);
                 MeshRenderer(std::shared_ptr<Resources::Mesh> _mesh, std::shared_ptr<Resources::MaterialInstance> _material)
                     : m_Mesh(_mesh)
                     , m_Material(_material)

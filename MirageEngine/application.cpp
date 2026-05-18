@@ -145,8 +145,8 @@ void Application::InitGameObject()
     cameraGO->AddComponent<Camera>();
     cameraGO->AddComponent<InputMapping>();
     cameraGO->AddComponent<MeshRenderer>();
-    cameraGO->AddComponent(dynamicCollider);
-    cameraGO->AddComponent(dynamicRB);
+    cameraGO->AddComponent<SphereCollider>(dynamicCollider);
+    cameraGO->AddComponent<Rigidbody>(dynamicRB);
 
 	std::shared_ptr<Camera> cam = cameraGO->GetComponent<Camera>();
 	std::shared_ptr<InputMapping> input = cameraGO->GetComponent<InputMapping>();

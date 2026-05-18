@@ -23,7 +23,7 @@ namespace MirageEngine::Core::Physics
         float m_Mass = 1.f;
         Vector3 m_Velocity = Vector3(0.f);
         ERigidBodyType m_Type;
-        ECollisionGroup m_CollisionGroup = ECollisionGroup::DEFAULT;
+        ECollisionGroup m_CollisionGroup = ECollisionGroup::GROUP_1;
         ECollisionGroup m_CollisionMask = ECollisionGroup::ALL;
         ECollisionResponse m_CollisionRespond = ECollisionResponse::BLOCK;
         bool m_bIsDirty = true;
