@@ -100,7 +100,10 @@ void PhysicsManager::Update(float _deltaTime)
 		}
 	}
 }
-
+void PhysicsManager::DebugDraw()
+{
+	m_WorldPhysics->DebugDraw();
+}
 std::shared_ptr<IRigidBody> PhysicsManager::CreateRigidBody(std::shared_ptr<ICollider> _shape, ERigidBodyType _type, MirageEngine::Core::Components::Transform _newTransform)
 {
 	if (_shape.get() == nullptr)

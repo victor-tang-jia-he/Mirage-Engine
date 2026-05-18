@@ -18,7 +18,7 @@ int main()
     Loggers::EnableImmediateFlush(true);   // Enable immediate flushing of log messages for real-time output during initialization
     Loggers::EnableFileWriting(false);      // Enable writing logs to file during initialization to capture any issues that may occur before the main loop starts.
     Loggers::EnableTimeOnEveryLog(false);  // Disable time show as it take verbosal the log.
-    Loggers::EnableFileNameAndLine(false); // Disable file name and line of the log , can be enable if necessary.
+    Loggers::EnableFileNameAndLine(true); // Disable file name and line of the log , can be enable if necessary.
     Application application;               // Temp, will be replaced by Engine Handler
     Mirage::EditorApp editor;
     // --- Initialization ---

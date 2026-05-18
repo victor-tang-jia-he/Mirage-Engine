@@ -33,6 +33,7 @@ namespace MirageEngine::Core::Physics
             ~PhysicsManager() = default;
             void Initialize(EPhysicsEngine _physicsEngine = EPhysicsEngine::BULLET_3);
             void Update(float _deltaTime);
+			void DebugDraw();
 
             std::weak_ptr<IWorldPhysics> GetWorldPhysics() const { return m_WorldPhysics; }
 

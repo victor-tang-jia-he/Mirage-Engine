@@ -18,6 +18,8 @@ namespace MirageEngine::Core::Physics
     {
     protected:
         using Vector3 = Math::Vector3;
+        using Vector4 = Math::Vector4;
+        using Matrix4 = Math::Matrix4;
         using Transform = Components::Transform;
 
         float m_Mass = 1.f;

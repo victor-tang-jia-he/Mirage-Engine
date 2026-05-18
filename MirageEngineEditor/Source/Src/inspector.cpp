@@ -664,14 +664,14 @@ namespace Mirage
 			}
 		}
 
-		// --- LOGIQUE ZONE DE TEXTE (Seulement si le combo n'a pas été dessiné) ---
+		// --- LOGIQUE ZONE DE TEXTE (Seulement si le combo n'a pas ét?dessin? ---
 		if (!drewCombo)
 		{
 			char buffer[256];
 			memset(buffer, 0, sizeof(buffer));
 			std::strncpy(buffer, currentVal.c_str(), 255);
 
-			// On ajoute "###Input" pour garantir l'unicité
+			// On ajoute "###Input" pour garantir l'unicit?
 			std::string inputLabel = std::string(_label) + "###Input";
 			if (ImGui::InputText(inputLabel.c_str(), buffer, sizeof(buffer)))
 			{

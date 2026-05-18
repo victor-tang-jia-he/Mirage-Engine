@@ -31,9 +31,9 @@ void MirageRHI::OpenGLCommandBuffer::ApplyVertexLayout(std::shared_ptr<IVertexLa
 
 void MirageRHI::OpenGLCommandBuffer::Draw(uint32_t _indexCount, DrawMode _mode)
 {
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
     GLint ebo = 0;
     glGetIntegerv(GL_ELEMENT_ARRAY_BUFFER_BINDING, &ebo);
-
     GLenum glMode;
     switch (_mode)
     {

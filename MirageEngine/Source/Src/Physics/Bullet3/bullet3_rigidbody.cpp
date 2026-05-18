@@ -123,6 +123,7 @@ bool Bullet3RigidBody::Create(std::shared_ptr<ICollider> _shape, ERigidBodyType 
         m_CollisionGroup
     );
 
+    m_RigidBody->setActivationState(DISABLE_DEACTIVATION);
     return true;
 }
 
@@ -156,10 +157,12 @@ void Bullet3RigidBody::OnTransformChanged(MirageEngine::Core::Components::Transf
     if (!m_RigidBody)
         return;
 
-    btTransform btTrans;
-    btTrans.setOrigin(btVector3(_newTransform.GetPosition().X, _newTransform.GetPosition().Y, _newTransform.GetPosition().Z));
-    btTrans.setRotation(btQuaternion(_newTransform.GetRotation().X, _newTransform.GetRotation().Y, _newTransform.GetRotation().Z, _newTransform.GetRotation().W));
+	Vector3 position = _newTransform.GetWorldMatrix().GetTranslation();
+	Quaternion rotation = _newTransform.GetWorldMatrix().GetRotation();
 
+    btTransform btTrans;
+    btTrans.setOrigin(btVector3(position.X, position.Y, position.Z));
+    btTrans.setRotation(btQuaternion(rotation.X, rotation.Y, rotation.Z, rotation.W));
     SetScale(_newTransform.GetScale());
 
     m_RigidBody->setWorldTransform(btTrans);

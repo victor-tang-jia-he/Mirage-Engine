@@ -158,7 +158,7 @@ void Application::InitGameObject()
 
 	m_SceneGraph.SetEditorCamera(cam);
 
-	input->RegisterInput("Reload", GLFW_KEY_R);
+	input->RegisterInput("Reload", GLFW_KEY_INSERT);
 	std::function<void(CallbackInputInfo)> func = [](CallbackInputInfo info)
 		{
 			if (info.Pressed)
@@ -249,7 +249,7 @@ void Application::InitGameObject()
 	// =========================
 	//  Root transform
 	// =========================
-	root->Transform.SetPosition(Vector3(0, 0, -10));
+	root->SetPosition(Vector3(0, 0, -10));
 
 	// =========================
 	//  Cache members
@@ -279,6 +279,7 @@ void Application::RuntimeUpdate(float _dt)
 void Application::EditorUpdate()
 {
 	m_SceneGraph.CallAllDrawLine();
+	MirageEngine::Core::Physics::PhysicsManager::Instance().DebugDraw();
 	m_SceneGraph.UpdateAllWorldMatrices();
 }
 

@@ -24,6 +24,7 @@ namespace MirageEngine
                 virtual void AddRigidBody(std::shared_ptr<IRigidBody> _body, ECollisionGroup _group, ECollisionGroup _mask) = 0;
                 virtual void RemoveRigidBody(IRigidBody* _body) = 0;
                 virtual void Update(float _deltaTime) = 0;
+                virtual void DebugDraw() = 0;
 
                 virtual void SetGravity(float _x, float _y, float _z) = 0;
                 virtual void SetGravity(Vector3& _v) = 0;

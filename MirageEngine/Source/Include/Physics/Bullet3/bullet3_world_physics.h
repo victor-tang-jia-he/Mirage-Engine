@@ -8,6 +8,7 @@ DECLARE_LOG_CATEGORY_EXTERN(LogBullet3WorldPhysics)
 namespace MirageEngine::Core::Physics
 {
     class IRigidBody;
+    class BulletDebugDrawer;
 
     class Bullet3WorldPhysics : public IWorldPhysics
     {
@@ -19,7 +20,7 @@ namespace MirageEngine::Core::Physics
         btBroadphaseInterface* m_Broadphase;
         btSequentialImpulseConstraintSolver* m_Solver;
         btDiscreteDynamicsWorld* m_World;
-
+        BulletDebugDrawer* m_DebugDrawer;
     public:
 	    Bullet3WorldPhysics();
 	    ~Bullet3WorldPhysics() override;
@@ -27,6 +28,7 @@ namespace MirageEngine::Core::Physics
 	    void AddRigidBody(std::shared_ptr<IRigidBody> _body, ECollisionGroup _group, ECollisionGroup _mask) override;
         void RemoveRigidBody(IRigidBody* _body) override;
         void Update(float _deltaTime) override { m_World->stepSimulation(_deltaTime); }
+        void DebugDraw() override;
 
         btDiscreteDynamicsWorld* GetWorld() const { return m_World; }
 
