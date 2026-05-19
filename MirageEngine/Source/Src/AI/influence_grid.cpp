@@ -74,7 +74,8 @@ namespace MirageEngine::Core::Components
         if (IsInBounds(_x, _y) && _channelIndex >= 0 && _channelIndex < m_ChannelsNames.size())
         {
             int index = GetIndex(_x, _y);
-            m_Cells[index].Channels[_channelIndex] += _value;
+            float currentValue = m_Cells[index].Channels[_channelIndex];
+            m_Cells[index].Channels[_channelIndex] = std::fmaxf(currentValue, _value);
         }
     }
 
