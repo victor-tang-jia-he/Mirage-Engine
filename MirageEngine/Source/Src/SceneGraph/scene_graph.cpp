@@ -285,14 +285,12 @@ namespace MirageEngine
             Core::Math::Matrix4 invParent = _parent->Transform.GetWorldMatrix().Inverse();
             Core::Math::Matrix4 newLoc = invParent * childWorldBefore;
 
-            //_child->Transform.SetLocalMatrix(newLoc);
             _child->SetPosition(newLoc.GetTranslation());
             _child->SetRotation(newLoc.GetRotation());
             LOG(logTemp, LogSceneGraph, "New Local calculated. Scale: ", newLoc.GetScale().X);
         }
         else
         {
-            //_child->Transform.SetLocalMatrix(childWorldBefore);
             _child->SetPosition(childWorldBefore.GetTranslation());
             _child->SetRotation(childWorldBefore.GetRotation());
         }

@@ -69,6 +69,7 @@ void Transform::LookAt(const Vector3& _target)
     result(2, 2) = f.Z;
 
     m_LocalRotation = Quaternion(result);
+    m_bDirty = true;
 }
 
 Vector3 Transform::Forward() const { return Rotate(m_LocalRotation, Vector3(0.f, 0.f, -1.f)); }

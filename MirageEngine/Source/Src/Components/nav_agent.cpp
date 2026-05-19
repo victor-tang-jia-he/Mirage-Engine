@@ -38,7 +38,7 @@ namespace MirageEngine::Core
 			Vector3 newPos = myPos + (direction * m_MovementSpeed * _dt);
 
 			m_Owner->SetPosition(newPos);
-			m_Owner->Transform.LookAt(targetPos);
+			//m_Owner->Transform.LookAt(targetPos);
 		}
 
 		void NavAgent::OnDrawLine()
