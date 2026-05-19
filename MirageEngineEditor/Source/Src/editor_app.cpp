@@ -89,6 +89,7 @@ namespace Mirage
 		if (ImGui::IsKeyPressed(ImGuiKey_M) && m_IsPlaying)
 		{
 			m_SceneGraph->ClearScene();
+			*m_SceneGraph = MirageEngine::SceneGraph();
 			MirageEngine::Core::Physics::PhysicsManager::Instance().Initialize();
 			MirageEngine::LightManager::Instance().ShutDown();
 			*m_SceneGraph = *MirageEngine::Deserializer::LoadSceneFromFile("Assets/Scenes/scene.json");
