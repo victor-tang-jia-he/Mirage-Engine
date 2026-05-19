@@ -1,14 +1,16 @@
 #pragma once
 
 #include <vector3.h>
+#include <Light/i_light.h>
 #include <Scripting/engine_script_api.h>
 
 #define LIGHT_MANAGER MirageEngine::LightManager::Instance()
 
+DECLARE_LOG_CATEGORY_EXTERN(LogLightManager)
+
 namespace MirageEngine
 {
     class Light;
-    class SpotLight;
     class DirectionalLight;
     class PointLight;
 
@@ -19,7 +21,6 @@ namespace MirageEngine
     private:
         std::vector<std::weak_ptr<DirectionalLight>> m_DirectionalLights;
         std::vector<std::weak_ptr<PointLight>> m_PointLights;
-        std::vector<std::weak_ptr<SpotLight>> m_SpotLights;
 
     public:
         static LightManager& Instance()
@@ -30,13 +31,14 @@ namespace MirageEngine
 
         void ShutDown();
 
+        std::shared_ptr<DirectionalLight> CreateDirectionalLight();
+        std::shared_ptr<PointLight> CreatePointLight();
+
         void AddDirectionalLight(std::shared_ptr<DirectionalLight> _light);
         void AddPointLight(std::shared_ptr<PointLight> _light);
-        void AddSpotLight(std::shared_ptr<SpotLight> _light);
 
         const std::vector<std::weak_ptr<DirectionalLight>>& GetDirectionalLights() const;
         const std::vector<std::weak_ptr<PointLight>>& GetPointLights() const;
-        const std::vector<std::weak_ptr<SpotLight>>& GetSpotLights() const;
 
     };
 } // namespace MirageEngine

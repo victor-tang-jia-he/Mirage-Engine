@@ -35,10 +35,8 @@
 
 // Light include
 #include <Light/light_manager.h>
-#include <Light/directional_light.h>
-#include <Light/spot_light.h>
-#include <Light/point_light.h>
-#include <Light/i_light.h>
+#include <Components/directional_light_component.h>
+#include <Components/point_light_component.h>
 #include <i_uniform_buffer.h>
 
 using namespace MirageEngine::Core::Input;
@@ -194,11 +192,11 @@ void Application::InitGameObject()
 	//  Light object
 	// =========================
 
-	std::shared_ptr<PointLight> light1 = child2->AddComponent<PointLight>();
+	std::shared_ptr<PointLightComponent> light1 = child2->AddComponent<PointLightComponent>();
 	light1->SetIntensity(0.5f);
 	light1->SetColor({ 1, 1, 1, 1 });
 
-	std::shared_ptr<DirectionalLight> light2 = child2->AddComponent<DirectionalLight>();
+	std::shared_ptr<DirectionalLightComponent> light2 = child2->AddComponent<DirectionalLightComponent>();
 	light2->SetIntensity(0.5f);
 	light2->SetColor({ 1, 1, 1, 1 });
 

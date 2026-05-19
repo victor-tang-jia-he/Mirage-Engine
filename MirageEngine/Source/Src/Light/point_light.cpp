@@ -13,24 +13,4 @@ namespace MirageEngine
         p_Type = LightType::POINT;
         LOG(logTemp, LogPointLight, "Point light created");
     }
-
-    PointLight::PointLight(GameObject* _owner)
-		: Component(_owner)
-    {
-        p_Type = LightType::POINT;
-        LOG(logTemp, LogPointLight, "Point light created");
-    }
-
-    void PointLight::AttachNew(std::shared_ptr<GameObject> _owner)
-    {
-        std::shared_ptr<PointLight> compPtr = std::make_shared<PointLight>(_owner.get());
-		LightManager::Instance().AddPointLight(compPtr);
-        _owner->AddComponent<PointLight>(compPtr);
-    }
-
-    void PointLight::OnStart()
-    {
-    }
-
-    entt::id_type PointLight::GetType() const { return entt::type_id<PointLight>().hash(); }
 } // namespace MirageEngine
