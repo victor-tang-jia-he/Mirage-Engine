@@ -35,7 +35,7 @@ int main()
 		glfwPollEvents();
 		MirageEngine::TimeManager::Update();
 		MirageEngine::Core::Input::InputSystem::UpdateHeldInput();
-		if (editor.IsPlaying() && !editor.IsPaused())
+		if (editor.GetIsPlaying() && !editor.GetIsPaused())
 		{
 			MirageEngine::Core::Physics::PhysicsManager::Instance().Update(MirageEngine::TimeManager::GetDeltaTime());
 			application.RuntimeUpdate(MirageEngine::TimeManager::GetDeltaTime());

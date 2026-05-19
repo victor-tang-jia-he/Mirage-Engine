@@ -44,7 +44,7 @@ namespace Mirage
 	void Mirage::EditorApp::OnUpdate(uint32_t _textureID)
 	{
 		UIWrapper::BeginFrame();
-		m_MainMenuBar.DrawBar();
+		m_MainMenuBar.DrawBar(this);
 
 		for (auto& panel : m_PanelList)
 		{
@@ -92,16 +92,33 @@ namespace Mirage
 			MirageEngine::Core::Physics::PhysicsManager::Instance().Initialize();
 			MirageEngine::LightManager::Instance().ShutDown();
 			*m_SceneGraph = *MirageEngine::Deserializer::LoadSceneFromFile("scene.json");
-			m_IsStoped = true;
+			m_IsStopped = true;
 			LOG(logTemp, LogEditorApp, "Play mode stopping");
 		}
 
-		if (m_IsStoped)
+		if (m_IsStopped)
 		{
 			LOG(logTemp, LogEditorApp, "Play mode stopped");
 			m_IsPlaying = false;
 			m_IsPaused = false;
-			m_IsStoped = false;
+			m_IsStopped = false;
 		}
+	}
+	void EditorApp::PlayGame()
+	{
+		MirageEngine::Serializer::SaveScene(*m_SceneGraph);
+		m_IsPlaying = true;
+		LOG(logTemp, LogEditorApp, "Play mode started");
+	}
+
+	void EditorApp::StopGame()
+	{
+		m_SceneGraph->ClearScene();
+		*m_SceneGraph = MirageEngine::SceneGraph();
+		MirageEngine::LightManager::Instance().ShutDown();
+		MirageEngine::Core::Physics::PhysicsManager::Instance().Initialize();
+		*m_SceneGraph = *MirageEngine::Deserializer::LoadSceneFromFile("Assets/Scenes/scene.json");
+		m_IsStopped = true;
+		LOG(logTemp, LogEditorApp, "Play mode stopping");
 	}
 }
