@@ -53,6 +53,7 @@ namespace Mirage
 		void ResolveShader(entt::meta_any _value);
 
 		void RenderAddComponentPopup(std::shared_ptr<MirageEngine::GameObject> _selectedObj);
+		void RenderRemoveComponentPopup(std::shared_ptr<MirageEngine::GameObject> _selectedObj);
 
 		void DrawAIMonitor(MirageEngine::Core::Components::UtilityAgent* _agent);
 	};

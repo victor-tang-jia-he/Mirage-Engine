@@ -95,6 +95,7 @@ namespace MirageEngine
 
             template <typename T> std::shared_ptr<T> AddComponent();
             template <typename T> void AddComponent(std::shared_ptr<Core::Components::Component> _component);
+            template <typename T> bool RemoveComponent();
             template <typename T> std::shared_ptr<T> GetComponent();
 
     }; // namespace MirageEngine
