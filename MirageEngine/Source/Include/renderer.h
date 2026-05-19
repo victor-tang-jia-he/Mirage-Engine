@@ -39,7 +39,9 @@ namespace MirageEngine
             std::shared_ptr<MirageRHI::ISwapChain> m_SwapChain = nullptr;
             std::shared_ptr<MirageRHI::IRenderPass> m_RenderPass = nullptr;
             std::shared_ptr<MirageRHI::IPipelineParameters> m_ScreenPipelineParameters = nullptr;
+            std::shared_ptr<MirageRHI::IPipelineParameters> m_SkySpherePipelineParameters = nullptr;
             std::shared_ptr<MirageRHI::IPipeline> m_ScreenPipeline = nullptr;
+            std::shared_ptr<MirageRHI::IPipeline> m_SkySpherePipeline = nullptr;
             std::shared_ptr<MirageRHI::IUniformBuffer> m_PerFrameUBO = nullptr;
             std::shared_ptr<MirageRHI::IUniformBuffer> m_PerObjectUBO = nullptr;
             std::shared_ptr<MirageRHI::IUniformBuffer> m_LightUBO = nullptr;
@@ -63,6 +65,8 @@ namespace MirageEngine
             void EndFrame();
             // Renders a list of line
             void RenderLine();
+            // Render SkySphere
+			void RenderSkySphere();
             // Renders all light
             void ComputeLights();
 

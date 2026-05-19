@@ -2,6 +2,7 @@
 #include <GLFW/glfw3.h>
 
 #include "renderer.h"
+#include <Resources/resource_manager.h>
 #include <Camera/i_camera.h>
 #include <DebugDraw/debug_draw.h>
 
@@ -191,7 +192,9 @@ void MirageEngine::Renderer::ClassInstantiation()
     m_SwapChain = m_RenderInterface->InstantiateSwapChain();
     m_RenderPass = m_RenderInterface->InstantiateRenderPass();
     m_ScreenPipelineParameters = m_RenderInterface->InstantiatePipelineParameters();
+    m_SkySpherePipelineParameters = m_RenderInterface->InstantiatePipelineParameters();
     m_ScreenPipeline = m_RenderInterface->InstantiatePipeline();
+    m_SkySpherePipeline = m_RenderInterface->InstantiatePipeline();
     m_PerFrameUBO = m_RenderInterface->InstantiateUniformBuffer();
     m_PerObjectUBO = m_RenderInterface->InstantiateUniformBuffer();
     m_LightUBO = m_RenderInterface->InstantiateUniformBuffer();
@@ -219,19 +222,29 @@ void MirageEngine::Renderer::ClassCreation()
 void MirageEngine::Renderer::ScreenPipelineCreation()
 {
     m_ScreenPipelineParameters->Create(MirageRHI::CullingType::NONE, false);
+    m_SkySpherePipelineParameters->Create(MirageRHI::CullingType::NONE, false);
 
     // Creation of single use shader objects for screen rendering pipeline
     std::shared_ptr<MirageRHI::IShader> screenVertShader = m_RenderInterface->InstantiateShader();
     std::shared_ptr<MirageRHI::IShader> screenFragShader = m_RenderInterface->InstantiateShader();
 
+    std::shared_ptr<MirageRHI::IShader> skyBoxVertShader = m_RenderInterface->InstantiateShader();
+    std::shared_ptr<MirageRHI::IShader> skyBoxFragShader = m_RenderInterface->InstantiateShader();
+
     screenVertShader->Create("Assets/Shaders/screen.vert", MirageRHI::IShader::ShaderType::VERTEX);
     screenFragShader->Create("Assets/Shaders/screen.frag", MirageRHI::IShader::ShaderType::FRAGMENT);
 
+    skyBoxVertShader->Create("Assets/Shaders/sky_sphere.vert", MirageRHI::IShader::ShaderType::VERTEX);
+    skyBoxFragShader->Create("Assets/Shaders/sky_sphere.frag", MirageRHI::IShader::ShaderType::FRAGMENT);
+
     m_ScreenPipeline->Create(screenVertShader, screenFragShader, m_ScreenPipelineParameters);
+    m_SkySpherePipeline->Create(skyBoxVertShader, skyBoxFragShader, m_SkySpherePipelineParameters, { { "PerFrame",   MirageRHI::UBOBinding::PER_FRAME } });
 
     // Single use shader objects is destroyed after screen rendering pipeline creation
     screenVertShader->Destroy();
+    skyBoxVertShader->Destroy();
     screenFragShader->Destroy();
+    skyBoxFragShader->Destroy();
 }
 
 void Renderer::RenderObjectRecursive(std::shared_ptr<MirageEngine::GameObject> _obj)
@@ -253,7 +266,23 @@ void Renderer::RenderObjectRecursive(std::shared_ptr<MirageEngine::GameObject> _
     }
 }
 
-void MirageEngine::Renderer::RenderLine() { Debug_Draw.Flush(m_CommandBuffer); }
+void MirageEngine::Renderer::RenderLine()
+{
+    Debug_Draw.Flush(m_CommandBuffer);
+}
+
+void MirageEngine::Renderer::RenderSkySphere()
+{
+	MirageEngine::Core::Resources::ResourceManager& rm = MirageEngine::Core::Resources::ResourceManager::Instance();
+    std::shared_ptr<MirageEngine::Core::Resources::Mesh> skySphere = rm.GetMesh("sphere");
+    
+    m_CommandBuffer->BindPipeline(m_SkySpherePipeline);
+    m_CommandBuffer->ApplyPipelineParameters(m_SkySpherePipeline);
+    m_CommandBuffer->BindBuffer(skySphere->GetVertexBuffer());
+    m_CommandBuffer->ApplyVertexLayout(skySphere->GetVertexLayout());
+    m_CommandBuffer->BindBuffer(skySphere->GetIndexBuffer());
+    m_CommandBuffer->Draw((uint32_t)skySphere->GetIndicesCount());
+}
 
 void Renderer::ComputeLights()
 {
