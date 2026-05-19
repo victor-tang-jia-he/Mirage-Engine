@@ -289,8 +289,8 @@ namespace Mirage
 				for (auto it = view.begin(); it != view.end(); )
 				{
 					ImGui::PushID(index);
-					bool elementDeleted = false;
 
+					bool elementDeleted = false;
 					if (ImGui::Button("X")) {
 						it = view.erase(it);
 						_data.set(instance, value);
@@ -404,10 +404,10 @@ namespace Mirage
                             }
                         }
 						else if (!itemType.is_arithmetic())
-						{
-							if (ImGui::TreeNode(("Element " + std::to_string(index)).c_str()))
+						{	
+							std::string nodeLabel = "Rule " + std::to_string(index);
+							if (ImGui::TreeNode(nodeLabel.c_str()))
 							{
-								ImGui::PushID(index);
 								for (auto [id, childData] : itemType.data())
 								{
 									ImGui::TableNextRow();
@@ -420,7 +420,6 @@ namespace Mirage
 
 									ImGui::PopItemWidth();
 								}
-								ImGui::PopID();
 								it = view.erase(it);
 								it = view.insert(it, item);
 								_data.set(instance, value);
@@ -428,7 +427,8 @@ namespace Mirage
 								ImGui::TreePop();
 							}
 						}
-						++it;
+						if (!elementDeleted) 
+							++it;
 						index++;
 					}
 					ImGui::PopID();
@@ -486,6 +486,23 @@ namespace Mirage
 			bool v = childValue.cast<bool>();
 			if (ImGui::Checkbox(name, &v)) _childData.set(_parentInstance, v);
 		}
+		//else if (type.is_enum()) {
+		//	std::string preview = "Unknown";
+		//	for (auto [id, enumData] : type.data()) {
+		//		if (enumData.get({}).cast<int>() == childValue.cast<int>()) {
+		//			preview = enumData.name();
+		//			break;
+		//		}
+		//	}
+		//	if (ImGui::BeginCombo("##enum", preview.c_str())) {
+		//		for (auto [id, enumData] : type.data()) {
+		//			if (ImGui::Selectable(enumData.name(), enumData.get({}).cast<int>() == childValue.cast<int>())) {
+		//				_childData.set(_parentInstance, enumData.get({}));
+		//			}
+		//		}
+		//		ImGui::EndCombo();
+		//	}
+		//}
 		else if (type == entt::resolve<std::string>())
 		{
 			std::string currentVal = childValue.cast<std::string>();
@@ -522,6 +539,21 @@ namespace Mirage
 				strncpy(buffer, currentVal.c_str(), 255);
 				if (ImGui::InputText(name, buffer, 256))
 					_childData.set(_parentInstance, std::string(buffer));
+			}
+		}
+		else if (type == entt::resolve<AI::ResponsiveCurve>()) {
+			AI::ResponsiveCurve* curve = childValue.try_cast<AI::ResponsiveCurve>();
+			if (curve) {
+				float samples[50];
+				for (int i = 0; i < 50; i++) samples[i] = curve->Evaluate((float)i / 49.0f);
+				ImGui::PlotLines("##Curve", samples, 50, 0, nullptr, 0.0f, 1.0f, ImVec2(0, 60));
+
+				for (auto [id, curveData] : type.data()) {
+					ImGui::PushID(id);
+					DrawNestedProperty(curveData, childValue);
+					ImGui::PopID();
+				}
+				_childData.set(_parentInstance, childValue);
 			}
 		}
 		else if (type.is_sequence_container())
