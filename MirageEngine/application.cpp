@@ -23,7 +23,6 @@
 #include <Components/rigidbody.h>
 #include <Components/camera.h>
 #include <Components/mesh_renderer.h>
-#include <Components/influence_emitter.h>
 
 // Physics and physics Components
 #include <Physics/physics_manager.h>
@@ -40,6 +39,14 @@
 #include <Light/point_light.h>
 #include <Light/i_light.h>
 #include <i_uniform_buffer.h>
+
+// AI
+#include <AI/influence_grid.h>
+#include <AI/ai_action.h>
+#include <Assets/Scripts/ActionMoveTo.h> 
+#include <Components/nav_agent.h>
+#include <Components/utility_agent.h>
+#include <Components/influence_emitter.h>
 
 using namespace MirageEngine::Core::Input;
 using namespace MirageEngine::Core::EventSystem;
@@ -156,12 +163,12 @@ void Application::InitGameObject()
 
 	input->RegisterInput("Reload", GLFW_KEY_R);
 	std::function<void(CallbackInputInfo)> func = [](CallbackInputInfo info)
+	{
+		if (info.Pressed)
 		{
-			if (info.Pressed)
-			{
-				MirageEngine::Core::Scripting::ScriptManager::Instance().ReloadScript();
-			}
-		};
+			MirageEngine::Core::Scripting::ScriptManager::Instance().ReloadScript();
+		}
+	};
 
 	input->RegisterAction("Reload", func);
 
@@ -250,6 +257,58 @@ void Application::InitGameObject()
 	camera = cam.get();
 	meshRenderer = renderer1.get();
 	meshRenderer2 = renderer2.get();
+
+	// ========================================================
+	//  AI SYSTEM DEMO SETUP (HARDCODED)
+	// ========================================================
+	
+	std::shared_ptr<GameObject> gridGO = m_SceneGraph.CreateGameObject("AI_Grid", root);
+	auto globalGrid = gridGO->AddComponent<InfluenceGrid>();
+	globalGrid->SetWidth(55.0f);
+	globalGrid->SetHeight(55.0f);
+	globalGrid->SetCellSize(1.0f);
+	globalGrid->AddChannel("Fire");
+	globalGrid->Bake();
+
+	std::shared_ptr<GameObject> aiAgentGO = m_SceneGraph.CreateGameObject("Pompier", root);
+	aiAgentGO->SetPosition(Vector3(5.0f, 0.0f, 5.0f));
+
+	auto aiRenderer = aiAgentGO->AddComponent<MeshRenderer>();
+	aiRenderer->SetMesh(rm.GetMesh("cube"));
+	aiRenderer->SetMaterial(mat1);
+
+
+	auto nav = aiAgentGO->AddComponent<MirageEngine::Core::Components::NavAgent>();
+	auto utility = aiAgentGO->AddComponent<UtilityAgent>();
+
+	AI::NavProfile myProfile;
+	myProfile.InfluenceWeights.push_back(100.0f);
+	nav->SetProfile(myProfile);
+
+	auto script = scriptManager.CreateScriptByName("ActionMoveTo");
+	aiAgentGO->AddComponent(std::move(script));
+	auto moveAction = aiAgentGO->GetComponent<ActionMoveTo>();
+
+	if (moveAction) {
+		moveAction->SetTarget(Vector3(25.0f, 0.0f, 25.0f));
+
+		Consideration fireRule;
+		fireRule.source = VariableSource::Grid;
+		fireRule.variableName = "Fire";
+		fireRule.responseCurve.SetType(AI::ResponsiveCurve::CurveType::LINEAR);
+		fireRule.responseCurve.SetSlope(1.0f);
+
+		moveAction->GetConsiderations().push_back(fireRule);
+		utility->AddAction(moveAction.get());
+	}
+
+	std::shared_ptr<GameObject> fireGO = m_SceneGraph.CreateGameObject("Feu", root);
+	fireGO->SetPosition(Vector3(15.0f, 0.0f, 15.0f)); 
+	auto emitter = fireGO->AddComponent<InfluenceEmitter>();
+	emitter->SetTargetGrid(globalGrid.get());
+	emitter->SetInfluenceType("Fire");
+	emitter->SetStrength(100.0f);
+	emitter->SetRadius(5.0f);
 }
 
 void Application::RuntimeUpdate(float _dt)

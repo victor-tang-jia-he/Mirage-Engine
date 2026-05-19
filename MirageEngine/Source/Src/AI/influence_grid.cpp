@@ -27,14 +27,18 @@ namespace MirageEngine::Core::Components
     {
         if (GetOwner())
         {
-            m_Origin = GetOwner()->GetPosition();
             m_ResolutionX = static_cast<int>(m_GridWidth / m_CellSize);
             m_ResolutionY = static_cast<int>(m_GridHeight / m_CellSize);
 
-            if (m_ResolutionX <= 0)
-                m_ResolutionX = 1;
-            if (m_ResolutionY <= 0)
-                m_ResolutionY = 1;
+            if (m_ResolutionX <= 0) m_ResolutionX = 1;
+            if (m_ResolutionY <= 0) m_ResolutionY = 1;
+
+            Vector3 ownerPos = GetOwner()->GetPosition();
+            m_Origin = Vector3(
+                ownerPos.X - (m_GridWidth * 0.5f),
+                ownerPos.Y,
+                ownerPos.Z - (m_GridHeight * 0.5f)
+            );
 
             m_Cells.assign(m_ResolutionX * m_ResolutionY, InfluenceCell());
             for (InfluenceCell& cell : m_Cells)
@@ -76,27 +80,27 @@ namespace MirageEngine::Core::Components
 
     void InfluenceGrid::AddInfluenceArea(Vector3 pos, float radius, float value, int _channelIndex)
     {
-        if (IsInBounds(pos.X, pos.Z))
-        {
-            int centerX, centerY;
-            WorldToGrid(pos, centerX, centerY);
-            int radiusInCells = static_cast<int>(radius / m_CellSize);
-            for (int y = -radiusInCells; y <= radiusInCells; y++)
-            {
-                for (int x = -radiusInCells; x <= radiusInCells; x++)
-                {
-                    int cellX = centerX + x;
-                    int cellY = centerY + y;
-                    if (IsInBounds(cellX, cellY))
-                    {
-                        float distSq = (x * x + y * y) * (m_CellSize * m_CellSize);
-                        float distance = sqrtf(distSq);
+        int centerX, centerY;
+        WorldToGrid(pos, centerX, centerY);
+        if (!IsInBounds(centerX, centerY))
+            return;
 
-                        if (distance <= radius)
-                        {
-                            float influenceValue = value * (1.0f - (distance / radius));
-                            AddInfluence(cellX, cellY, _channelIndex, influenceValue);
-                        }
+        int radiusInCells = static_cast<int>(radius / m_CellSize);
+        for (int y = -radiusInCells; y <= radiusInCells; y++)
+        {
+            for (int x = -radiusInCells; x <= radiusInCells; x++)
+            {
+                int cellX = centerX + x;
+                int cellY = centerY + y;
+                if (IsInBounds(cellX, cellY))
+                {
+                    float distSq = (x * x + y * y) * (m_CellSize * m_CellSize);
+                    float distance = sqrtf(distSq);
+
+                    if (distance <= radius)
+                    {
+                        float influenceValue = value * (1.0f - (distance / radius));
+                        AddInfluence(cellX, cellY, _channelIndex, influenceValue);
                     }
                 }
             }
@@ -134,32 +138,18 @@ namespace MirageEngine::Core::Components
 
     void InfluenceGrid::RenderGrid() const
     {
-        float halfWidth = m_GridWidth * 0.5f;
-        float halfHeight = m_GridHeight * 0.5f;
+        int cols = m_ResolutionX;
+        int rows = m_ResolutionY;
 
-        int cols = static_cast<int>(m_GridWidth / m_CellSize);
-        int rows = static_cast<int>(m_GridHeight / m_CellSize);
-
-        Core::Math::Vector3 origin = m_Origin;
-
-        for (int y = 0; y <= rows; ++y)
-        {
-            float py = -halfHeight + y * m_CellSize;
-
-            Core::Math::Vector3 a = origin + Core::Math::Vector3(-halfWidth, 0.0f, py);
-            Core::Math::Vector3 b = origin + Core::Math::Vector3(halfWidth, 0.0f, py);
-
-            Debug_Draw.Line(a, b, { 1, 1, 1, 1 });
+        for (int x = 0; x <= cols; ++x) {
+            Vector3 a = m_Origin + Vector3(x * m_CellSize, 0.1f, 0.0f);
+            Vector3 b = m_Origin + Vector3(x * m_CellSize, 0.1f, rows * m_CellSize);
+            Debug_Draw.Line(a, b, { 1, 1, 1, 0.5f });
         }
-
-        for (int x = 0; x <= cols; ++x)
-        {
-            float px = -halfWidth + x * m_CellSize;
-
-            Core::Math::Vector3 a = origin + Core::Math::Vector3(px, 0.0f, -halfHeight);
-            Core::Math::Vector3 b = origin + Core::Math::Vector3(px, 0.0f, halfHeight);
-
-            Debug_Draw.Line(a, b, { 1, 1, 1, 1 });
+        for (int y = 0; y <= rows; ++y) {
+            Vector3 a = m_Origin + Vector3(0.0f, 0.1f, y * m_CellSize);
+            Vector3 b = m_Origin + Vector3(cols * m_CellSize, 0.1f, y * m_CellSize);
+            Debug_Draw.Line(a, b, { 1, 1, 1, 0.5f });
         }
     }
 } // namespace MirageEngine::Core::Components
