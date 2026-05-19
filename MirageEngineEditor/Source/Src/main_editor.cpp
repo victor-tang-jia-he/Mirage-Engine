@@ -45,7 +45,7 @@ int main()
 		application.BeginRender(editor.GetEditorCamera());
 
 		// Display the editor panels and pass the framebuffer texture ID to the viewport for rendering the scene
-		editor.OnUpdate(application.GetFramebufferTextureID());
+		editor.OnUpdate(application.GetEditorFBO(), application.GetFramebufferTextureID());
 		application.EndRender();
 	}
 

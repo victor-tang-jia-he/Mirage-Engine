@@ -18,7 +18,7 @@ namespace MirageEngine::Core::Components
             Application* app = Application::Instance();
             if (app)
             {
-                m_Grid = app->GetSceneGraph()->FindComponentInScene<InfluenceGrid>();
+                m_Grid = app->GetSceneGraph()->FindComponentInScene<InfluenceGrid>().get();
                 if (m_Grid)
                 {
                     std::cout << "[ENGINE] SUCCESS: Grid found by Lazy Loading! Address: " << m_Grid << std::endl;

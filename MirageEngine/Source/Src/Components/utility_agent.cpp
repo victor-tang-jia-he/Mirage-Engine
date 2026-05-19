@@ -29,7 +29,7 @@ namespace MirageEngine::Core::Components
 			Application* app = Application::Instance();
 			if (app)
 			{
-				m_Grid = app->GetSceneGraph()->FindComponentInScene<InfluenceGrid>();
+				m_Grid = app->GetSceneGraph()->FindComponentInScene<InfluenceGrid>().get();
 			}
 		}
 
@@ -41,7 +41,7 @@ namespace MirageEngine::Core::Components
 		if (m_Grid == nullptr)
 		{
 			Application* app = Application::Instance();
-			if (app) m_Grid = app->GetSceneGraph()->FindComponentInScene<InfluenceGrid>();
+			if (app) m_Grid = app->GetSceneGraph()->FindComponentInScene<InfluenceGrid>().get();
 		}
 
 		if (m_Grid)

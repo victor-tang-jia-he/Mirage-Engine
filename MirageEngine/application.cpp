@@ -161,7 +161,7 @@ void Application::InitGameObject()
 	std::shared_ptr<InputMapping> input = cameraGO->GetComponent<InputMapping>();
 	std::shared_ptr<MeshRenderer> renderer1 = cameraGO->GetComponent<MeshRenderer>();
 
-	m_SceneGraph.SetEditorCamera(cam);
+	m_SceneGraph.SetActiveCamera(cam);
 
 	input->RegisterInput("Reload", GLFW_KEY_INSERT);
 	std::function<void(CallbackInputInfo)> func = [](CallbackInputInfo info)
@@ -337,9 +337,16 @@ void Application::EditorUpdate()
 
 void Application::BeginRender(std::shared_ptr<MirageEngine::Core::ICamera> camera)
 {
+	// Editor Cam
 	m_Renderer.BeginFrame();
 	m_Renderer.RenderScene(m_SceneGraph, camera);
 	m_Renderer.RenderLine();
+	m_Renderer.EndFrame();
+	m_EditorFBO = m_Renderer.GetFramebufferTextureID();
+	// Game Cam
+	m_Renderer.BeginFrame();
+	m_Renderer.RenderScene(m_SceneGraph, GetSceneGraph()->GetActiveCamera());
+	m_Renderer.EndFrame();
 	m_Renderer.RenderScreen();
 }
 void Application::EndRender()

@@ -76,6 +76,7 @@ bool Renderer::IsRunning() const { return !glfwWindowShouldClose(m_Window); }
 
 void Renderer::BeginFrame()
 {
+	m_SwapChain->IsScreenResized(m_Surface);
 	uint32_t currentFBO = m_SwapChain->AcquireCurrentFBO();
 	m_CommandBuffer->BeginDraw(m_RenderPass, currentFBO);
 }

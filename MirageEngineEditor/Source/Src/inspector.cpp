@@ -468,7 +468,7 @@ namespace Mirage
 			{
 				InfluenceGrid* grid = nullptr;
 				auto app = Application::Instance();
-				if (app) grid = app->GetSceneGraph()->FindComponentInScene<InfluenceGrid>();
+				if (app) grid = app->GetSceneGraph()->FindComponentInScene<InfluenceGrid>().get();
 
 				if (grid && ImGui::BeginCombo(name, currentVal.c_str()))
 				{
@@ -506,7 +506,7 @@ namespace Mirage
 			{
 				InfluenceGrid* grid = nullptr;
 				auto app = Application::Instance();
-				if (app) grid = app->GetSceneGraph()->FindComponentInScene<InfluenceGrid>();
+				if (app) grid = app->GetSceneGraph()->FindComponentInScene<InfluenceGrid>().get();
 
 				int index = 0;
 				int indexToModify = -1;
@@ -629,7 +629,7 @@ namespace Mirage
 
 			if (!grid) {
 				auto app = Application::Instance();
-				if (app) grid = app->GetSceneGraph()->FindComponentInScene<InfluenceGrid>();
+				if (app) grid = app->GetSceneGraph()->FindComponentInScene<InfluenceGrid>().get();
 			}
 
 			// Si on a une grille, on dessine le combo

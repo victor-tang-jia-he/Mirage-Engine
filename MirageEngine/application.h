@@ -26,6 +26,8 @@ class ENGINE_API Application
         MirageEngine::Renderer m_Renderer;
         MirageEngine::SceneGraph m_SceneGraph;
 
+        uint32_t m_EditorFBO;
+
         // TODO : Edit in map
         std::shared_ptr<MirageEngine::Core::Input::InputMapping> m_EditorMapping = nullptr;
         std::shared_ptr<MirageEngine::Core::Input::InputMapping> m_PlayMapping = nullptr;
@@ -40,6 +42,7 @@ class ENGINE_API Application
 		const float m_FixedDeltaTime = 0.02f;
 
     public:
+        std::vector<std::shared_ptr<MirageEngine::Core::Components::Camera>> m_GameCameras;
 
         void InitApp();
 		void RuntimeUpdate(float _dt);
@@ -56,6 +59,7 @@ class ENGINE_API Application
 		void* GetWindowHandle() const { return m_Renderer.GetWindowHandle(); }
 		MirageEngine::Renderer* GetRenderer() { return &m_Renderer; }
 		uint32_t GetFramebufferTextureID() const { return m_Renderer.GetFramebufferTextureID(); }
+		uint32_t GetEditorFBO() const { return m_EditorFBO; }
 
     private:
 

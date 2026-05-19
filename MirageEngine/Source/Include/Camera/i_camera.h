@@ -32,7 +32,10 @@ namespace MirageEngine
             void SetRotation(Math::Vector3 _rotation) { m_Rotation = _rotation; }
             void SetNear(float _near) { m_Near = _near; }
             void SetFar(float _far) { m_Far = _far; }
-            void SetWidth(unsigned int _width) { m_Width = _width; }
+            void SetWidth(unsigned int _width) 
+            { 
+                m_Width = _width;
+            }
             void SetHeight(unsigned int _height) { m_Height = _height; }
             void SetFov(float _fov) { m_Fov = _fov; }
 

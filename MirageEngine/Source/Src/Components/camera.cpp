@@ -26,6 +26,12 @@ Camera::Camera(unsigned int _width, unsigned int _height, float _fov, float _nea
     : ICamera(_width, _height, _fov, _near, _far, _position)
 {}
 
+void MirageEngine::Core::Components::Camera::OnUpdate(float dt)
+{
+	if (GetOwner() == nullptr) return;
+	SetPosition(GetOwner()->GetPosition());
+}
+
 void MirageEngine::Core::Components::Camera::AttachMeta(std::shared_ptr<GameObject> _Owner)
 {
     std::shared_ptr<Camera> compPtr = std::make_shared<Camera>(*this);

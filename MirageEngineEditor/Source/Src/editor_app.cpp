@@ -25,7 +25,8 @@ namespace Mirage
 
 		m_SceneGraph = _engineSceneGraph;
 
-		m_PanelList.push_back(std::make_unique<Viewport>("Viewport"));
+		m_PanelList.push_back(std::make_unique<Viewport>("Game", Viewport::Type::Editor));
+		m_PanelList.push_back(std::make_unique<Viewport>("Viewport", Viewport::Type::Game));
 		m_PanelList.push_back(std::make_unique<Hierarchy>("Hierarchy", m_SceneGraph, _renderer));
 		m_PanelList.push_back(std::make_unique<Inspector>("Inspector", m_SceneGraph));
 		m_PanelList.push_back(std::make_unique<Console>("Console"));
@@ -41,16 +42,25 @@ namespace Mirage
 		m_EditorCamera->BindDefaultInput();
 	}
 
-	void Mirage::EditorApp::OnUpdate(uint32_t _textureID)
+	void Mirage::EditorApp::OnUpdate(uint32_t _editorTextureID, uint32_t _gameTextureID)
 	{
 		UIWrapper::BeginFrame();
 		m_MainMenuBar.DrawBar();
 
 		for (auto& panel : m_PanelList)
 		{
-			if (panel->IsPanelActive())
+			if (auto* vp = dynamic_cast<Viewport*>(panel.get()))
 			{
-				panel->DrawPanel(_textureID);
+				if (vp->GetViewportType() == Viewport::Type::Game)
+					vp->DrawPanel(_gameTextureID);
+				else
+				{
+					vp->DrawPanel(_editorTextureID);
+				}
+			}
+			else
+			{
+				panel->DrawPanel(_editorTextureID);
 			}
 		}
 
