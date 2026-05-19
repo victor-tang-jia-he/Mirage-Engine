@@ -522,4 +522,12 @@ void RegisterMeta::RegisterAIActionMeta()
     action.base<Core::Scripting::IScript>();
 
     action.data<&AI::AIAction::SetConsiderations, &AI::AIAction::GetConsiderations>("Considerations");
+
+	auto statDef = entt::meta_factory<StatDefinition>();
+	statDef.type(entt::type_id<StatDefinition>().hash(), "StatDefinition");
+	statDef.data<&StatDefinition::name>("Name");
+	statDef.data<&StatDefinition::initialValue>("Value");
+
+	auto agent = entt::meta_factory<UtilityAgent>();	
+	agent.data<&UtilityAgent::SetDefaultStats, &UtilityAgent::GetDefaultStats>("Default Stats");
 }

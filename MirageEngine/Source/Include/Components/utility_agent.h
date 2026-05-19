@@ -81,6 +81,7 @@ namespace MirageEngine::Core::Components
         const std::vector<float>& GetSensors() const { return m_CurrentCellIntensity; }
         const std::unordered_map<std::string, float>& GetInternalStatsMap() const { return m_InternalStats; }
         InfluenceGrid* GetTargetGrid() { return m_Grid; }
+		std::vector<StatDefinition>& GetDefaultStats() { return m_DefaultStats; }
 
 		// Setters
 		void SetDecisionInterval(float _newDecisionInterval) { m_DecisionInterval = _newDecisionInterval; }
@@ -89,5 +90,6 @@ namespace MirageEngine::Core::Components
 		void SetInternalStat(const std::string& _name, float _value) { m_InternalStats[_name] = _value; }
 		void SetTargetGrid(InfluenceGrid* _grid) { m_Grid = _grid; }
 		void SetActions(const std::vector<AI::AIAction*>& _newActions);
+		void SetDefaultStats(const std::vector<StatDefinition>& _stats) { m_DefaultStats = _stats; }
 	};
 }

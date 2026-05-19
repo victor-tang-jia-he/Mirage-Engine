@@ -98,6 +98,27 @@ namespace Mirage
 							DrawPropertyDirect(type, data, (void*)comp.get());
 							ImGui::PopItemWidth();
 						}
+						for (auto [base_id, base_meta] : type.base())
+						{
+							auto base_type = entt::resolve(base_id);
+							if (base_meta && base_type)
+							{
+								for (auto [id_data, data] : base_type.data())
+								{
+									ImGui::TableNextRow();
+									ImGui::TableNextColumn();
+
+									ImGui::TextDisabled("[B] %s", data.name());
+
+									ImGui::TableNextColumn();
+									ImGui::PushItemWidth(-1);
+
+									DrawPropertyDirect(base_type, data, (void*)comp.get());
+
+									ImGui::PopItemWidth();
+								}
+							}
+						}
 						ImGui::TableNextRow();
 						ImGui::TableNextColumn();
 						ImGui::TableNextColumn();
@@ -253,6 +274,13 @@ namespace Mirage
                         entt::meta_any nullAny{ nullAction };
                         view.insert(view.end(), nullAny);
                     }
+					else
+					{
+						auto newItem = itemType.construct(); 
+						if (newItem) {
+							view.insert(view.end(), newItem);
+						}
+					}
 
 					_data.set(instance, value);
 				}
@@ -379,6 +407,7 @@ namespace Mirage
 						{
 							if (ImGui::TreeNode(("Element " + std::to_string(index)).c_str()))
 							{
+								ImGui::PushID(index);
 								for (auto [id, childData] : itemType.data())
 								{
 									ImGui::TableNextRow();
@@ -391,6 +420,7 @@ namespace Mirage
 
 									ImGui::PopItemWidth();
 								}
+								ImGui::PopID();
 								it = view.erase(it);
 								it = view.insert(it, item);
 								_data.set(instance, value);
@@ -401,7 +431,6 @@ namespace Mirage
 						++it;
 						index++;
 					}
-
 					ImGui::PopID();
 				}
 				ImGui::TreePop();
