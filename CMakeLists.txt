@@ -474,6 +474,20 @@ message("")
 message(STATUS "Adding mirage_engine_editor project...")
 add_subdirectory(MirageEngineEditor)
 
+# ============================================================================
+# Copy imgui.ini configuration file
+# ============================================================================
+set(IMGUI_INI_SOURCE "${CMAKE_SOURCE_DIR}/imgui.ini")
+set(IMGUI_INI_DEST "${MIRAGE_BIN_OUTPUT_DIR}imgui.ini")
+
+if(EXISTS "${IMGUI_INI_SOURCE}")
+    file(COPY "${IMGUI_INI_SOURCE}" 
+         DESTINATION "${MIRAGE_BIN_OUTPUT_DIR}")
+    message(STATUS "Copied imgui.ini to ${MIRAGE_BIN_OUTPUT_DIR}")
+else()
+    message(WARNING "imgui.ini not found at ${CMAKE_SOURCE_DIR}/imgui.ini")
+endif()
+
 # Final Log
 message(STATUS "")
 message(STATUS "================================================================================")
