@@ -6,21 +6,17 @@ DECLARE_LOG_CATEGORY_EXTERN(LogPointLight)
 
 namespace MirageEngine
 {
-	class ENGINE_API PointLight : public Light, public Core::Components::Component, public std::enable_shared_from_this<PointLight>
+	class ENGINE_API PointLight : public Light
 	{
 	private:
 		Core::Math::Vector3 m_Position = { 0, 0, 0 };
 
 	public:
+		std::function<Core::Math::Vector3()> GetParentWorldPosition;
+
 		PointLight();
-		PointLight(GameObject* _owner);
 		~PointLight() = default;
 
-		static void AttachNew(std::shared_ptr<GameObject> _owner);
-
-		void OnStart() override;
-
-		entt::id_type GetType() const override;
 		Core::Math::Vector3 GetPosition() const { return m_Position; }
 
 		void SetPosition(const Core::Math::Vector3& _position) { m_Position = _position; }

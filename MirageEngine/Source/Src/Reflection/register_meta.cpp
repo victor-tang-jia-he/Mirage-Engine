@@ -15,9 +15,8 @@
 #include <Components/utility_agent.h>
 
 // Lights includes
-#include <Light/directional_light.h>
-#include <Light/point_light.h>
-#include <Light/spot_light.h>
+#include <Components/directional_light_component.h>
+#include <Components/point_light_component.h>
 
 // Input includes
 #include <Input/input_mapping.h>
@@ -77,7 +76,6 @@ void RegisterMeta::RegisterAllMeta(entt::locator<entt::meta_ctx>::node_type hand
 
 	RegisterDirectionalLightMeta();
 	RegisterPointLightMeta();
-	RegisterSpotLightMeta();
 
 	RegisterBoxColliderMeta();
 	RegisterSphereColliderMeta();
@@ -196,55 +194,34 @@ void RegisterMeta::RegisterInputMappingMeta()
 
 void RegisterMeta::RegisterDirectionalLightMeta()
 {
-	entt::meta_factory<DirectionalLight> directionalLight{};
+	entt::meta_factory<DirectionalLightComponent> directionalLight{};
 
-	directionalLight.type(entt::type_id<DirectionalLight>().hash(), "DirectionalLight");
+	directionalLight.type(entt::type_id<DirectionalLightComponent>().hash(), "DirectionalLightComponent");
 	directionalLight.ctor<GameObject*>();
 
 	directionalLight.base<Component>();
 
-	directionalLight.data<&DirectionalLight::SetColor, &DirectionalLight::GetColor>("Color");
-	directionalLight.data<&DirectionalLight::SetIntensity, &DirectionalLight::GetIntensity>("Intensity");
-	directionalLight.data<&DirectionalLight::SetDirection, &DirectionalLight::GetDirection>("Direction");
+	directionalLight.data<&DirectionalLightComponent::SetColor, &DirectionalLightComponent::GetColor>("Color");
+	directionalLight.data<&DirectionalLightComponent::SetIntensity, &DirectionalLightComponent::GetIntensity>("Intensity");
+	directionalLight.data<&DirectionalLightComponent::SetDirection, &DirectionalLightComponent::GetDirection>("Direction");
 
-	directionalLight.func<&DirectionalLight::AttachNew>("AttachNew"_hs);
+	directionalLight.func<&DirectionalLightComponent::AttachNew>("AttachNew"_hs);
 }
 
 void RegisterMeta::RegisterPointLightMeta()
 {
-	entt::meta_factory<PointLight> pointLight{};
+	entt::meta_factory<PointLightComponent> pointLight{};
 
-	pointLight.type(entt::type_id<PointLight>().hash(), "PointLight");
+	pointLight.type(entt::type_id<PointLightComponent>().hash(), "PointLightComponent");
 	pointLight.ctor<GameObject*>();
 
 	pointLight.base<Component>();
-	pointLight.base<Light>();
 
-	pointLight.data<&PointLight::SetColor, &PointLight::GetColor>("Color");
-	pointLight.data<&PointLight::SetIntensity, &PointLight::GetIntensity>("Intensity");
-	pointLight.data<&PointLight::SetPosition, &PointLight::GetPosition>("Position");
+	pointLight.data<&PointLightComponent::SetColor, &PointLightComponent::GetColor>("Color");
+	pointLight.data<&PointLightComponent::SetIntensity, &PointLightComponent::GetIntensity>("Intensity");
+	pointLight.data<&PointLightComponent::SetPosition, &PointLightComponent::GetPosition>("Position");
 
-	pointLight.func<&PointLight::AttachNew>("AttachNew"_hs);
-}
-
-void RegisterMeta::RegisterSpotLightMeta()
-{
-	entt::meta_factory<SpotLight> spotLight{};
-
-	spotLight.type(entt::type_id<SpotLight>().hash(), "SpotLight");
-	spotLight.ctor<GameObject*>();
-
-	spotLight.base<Component>();
-	spotLight.base<Light>();
-
-	spotLight.data<&SpotLight::SetColor, &SpotLight::GetColor>("Color");
-	spotLight.data<&SpotLight::SetIntensity, &SpotLight::GetIntensity>("Intensity");
-	spotLight.data<&SpotLight::SetPosition, &SpotLight::GetPosition>("Position");
-	spotLight.data<&SpotLight::SetDirection, &SpotLight::GetDirection>("Direction");
-	spotLight.data<&SpotLight::SetInnerCutoff, &SpotLight::GetInnerCutoff>("InnerCutoff");
-	spotLight.data<&SpotLight::SetOuterCutoff, &SpotLight::GetOuterCutoff>("OuterCutoff");
-
-	spotLight.func<&SpotLight::AttachNew>("AttachNew"_hs);
+	pointLight.func<&PointLightComponent::AttachNew>("AttachNew"_hs);
 }
 
 void RegisterMeta::RegisterBoxColliderMeta()
