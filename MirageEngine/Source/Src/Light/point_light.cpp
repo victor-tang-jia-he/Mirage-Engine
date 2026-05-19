@@ -11,12 +11,14 @@ namespace MirageEngine
     PointLight::PointLight()
     {
         p_Type = LightType::POINT;
+        LOG(logTemp, LogPointLight, "Point light created");
     }
 
     PointLight::PointLight(GameObject* _owner)
 		: Component(_owner)
     {
         p_Type = LightType::POINT;
+        LOG(logTemp, LogPointLight, "Point light created");
     }
 
     void PointLight::AttachNew(std::shared_ptr<GameObject> _owner)
@@ -28,8 +30,6 @@ namespace MirageEngine
 
     void PointLight::OnStart()
     {
-        LOG(logTemp, LogPointLight, "Point light created");
-        LightManager::Instance().AddPointLight(shared_from_this());
     }
 
     entt::id_type PointLight::GetType() const { return entt::type_id<PointLight>().hash(); }

@@ -104,7 +104,6 @@ namespace MirageEngine::DebugDraw
     {
         if (m_Lines.empty())
             return;
-
         m_VertexBufferObject->Update(m_Lines.data(), m_Lines.size() * sizeof(LineVertex));
     }
 

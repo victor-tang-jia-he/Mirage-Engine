@@ -100,17 +100,21 @@ namespace MirageEngine
             [_obj](const std::weak_ptr<GameObject>& weakObj) {
                 return weakObj.lock() == _obj;
             }), m_CallGameObjectOnStart.end());
-        if (m_SelectedObject == _obj)
-            m_SelectedObject = nullptr;
+        if (m_SelectedObject.lock() == _obj)
+            m_SelectedObject.reset();
 
-        _obj.reset();
+        for (std::shared_ptr<Core::Components::Component> comp : _obj->GetComponents())
+        {
+			_obj->RemoveComponent(comp);
+        }
     }
 
     void SceneGraph::ClearScene()
     {
-        std::vector<std::shared_ptr<GameObject>> rootsCopy = m_RootsList;
-        for (std::shared_ptr<GameObject> obj : rootsCopy)
+        //std::vector<std::shared_ptr<GameObject>> rootsCopy = m_RootsList;
+        while (!m_RootsList.empty())
         {
+            std::shared_ptr<GameObject> obj = m_RootsList.back();
             RemoveGameObject(obj);
         }
         m_Registry.clear();

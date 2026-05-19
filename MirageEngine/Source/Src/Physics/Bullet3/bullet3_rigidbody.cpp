@@ -25,7 +25,7 @@ Bullet3RigidBody::~Bullet3RigidBody()
 bool Bullet3RigidBody::Create(std::shared_ptr<ICollider> _shape, ERigidBodyType _type, MirageEngine::Core::Components::Transform& _newTransform)
 {
     m_Type = _type;
-    m_bIsDirty = false;
+    m_bIsDirty = true;
 
     if (!_shape)
     {
@@ -124,6 +124,7 @@ bool Bullet3RigidBody::Create(std::shared_ptr<ICollider> _shape, ERigidBodyType 
         m_CollisionGroup
     );
 
+    m_RigidBody->setActivationState(DISABLE_DEACTIVATION);
     return true;
 }
 
@@ -140,10 +141,6 @@ void Bullet3RigidBody::UpdateTransform(MirageEngine::Core::Components::Transform
     // Update all compount
     if (m_bIsDirty)
         UpdateCompound();
-
-    btVector3 velocity(0, 0, 0);
-    velocity.setY(-9.81f);
-    //m_RigidBody->setLinearVelocity(velocity);
 
     // Update GameObject
     btVector3 position = m_RigidBody->getWorldTransform().getOrigin();
@@ -164,7 +161,6 @@ void Bullet3RigidBody::OnTransformChanged(MirageEngine::Core::Components::Transf
     btTransform btTrans;
     btTrans.setOrigin(btVector3(_newTransform.GetPosition().X, _newTransform.GetPosition().Y, _newTransform.GetPosition().Z));
     btTrans.setRotation(btQuaternion(_newTransform.GetRotation().X, _newTransform.GetRotation().Y, _newTransform.GetRotation().Z, _newTransform.GetRotation().W));
-
     SetScale(_newTransform.GetScale());
 
     m_RigidBody->setWorldTransform(btTrans);

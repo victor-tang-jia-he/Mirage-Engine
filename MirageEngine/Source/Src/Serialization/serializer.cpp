@@ -319,7 +319,8 @@ json MirageEngine::Serializer::SerializeQuaternion(Core::Math::Quaternion _quate
 
 bool MirageEngine::Serializer::ConvertJsonVarToJsonFile(json _jTarget)
 {
-    std::ofstream file("scene.json");
+	std::filesystem::create_directories("Assets/Scenes");
+    std::ofstream file("Assets/Scenes/scene.json");
     file.clear();
     file << _jTarget.dump(4);
     file.flush();

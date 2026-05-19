@@ -7,6 +7,8 @@
 #include <Physics/Bullet3/bullet3_sphere_collider.h>
 #include <Physics/Bullet3/bullet3_capsule_collider.h>
 
+#include <Scripting/engine_script_api.h>
+
 DECLARE_LOG_CATEGORY_EXTERN(LogPhysics);
 
 namespace MirageEngine::Core::Physics
@@ -15,7 +17,7 @@ namespace MirageEngine::Core::Physics
     class ICollider;
     class IRigidBody;
 
-    class PhysicsManager
+    class ENGINE_API PhysicsManager
     {
         private:
             EPhysicsEngine m_PhysicsEngine = EPhysicsEngine::BULLET_3;
@@ -31,6 +33,7 @@ namespace MirageEngine::Core::Physics
             ~PhysicsManager() = default;
             void Initialize(EPhysicsEngine _physicsEngine = EPhysicsEngine::BULLET_3);
             void Update(float _deltaTime);
+			void DebugDraw();
 
             std::weak_ptr<IWorldPhysics> GetWorldPhysics() const { return m_WorldPhysics; }
 

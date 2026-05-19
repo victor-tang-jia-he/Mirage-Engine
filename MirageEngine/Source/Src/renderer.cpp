@@ -285,19 +285,6 @@ void Renderer::ComputeLights()
         p.Intensity = light->GetIntensity();
     }
 
-    //for (std::weak_ptr<SpotLight>& weak : spotList)
-    //{
-    //    if (weak.expired())
-    //        continue;
-    //    std::shared_ptr<SpotLight> light = weak.lock();
-    //    MirageRHI::SpotLightData& s = data.spotLights[data.spotCount++];
-    //    s.color = light->Color;
-    //    s.position = light->GetOwner()->Transform.GetWorldMatrix().GetTranslation();
-    //    s.direction = light->Direction;
-    //    s.intensity = light->Intensity;
-    //    s.innerCutoff = light->InnerCutoff;
-    //    s.outerCutoff = light->OuterCutoff;
-    //}
     m_LightUBO->Upload(&data, sizeof(MirageRHI::LightUBOData));
 }
 
