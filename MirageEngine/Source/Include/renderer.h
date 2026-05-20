@@ -39,6 +39,8 @@ namespace MirageEngine
         std::shared_ptr<MirageRHI::IRenderPass> m_RenderPass = nullptr;
         std::shared_ptr<MirageRHI::IPipelineParameters> m_ScreenPipelineParameters = nullptr;
         std::shared_ptr<MirageRHI::IPipeline> m_ScreenPipeline = nullptr;
+        std::shared_ptr<MirageRHI::IPipelineParameters> m_SkySpherePipelineParameters = nullptr;
+        std::shared_ptr<MirageRHI::IPipeline> m_SkySpherePipeline = nullptr;
         std::shared_ptr<MirageRHI::IUniformBuffer> m_PerFrameUBO = nullptr;
         std::shared_ptr<MirageRHI::IUniformBuffer> m_PerObjectUBO = nullptr;
         std::shared_ptr<MirageRHI::IUniformBuffer> m_LightUBO = nullptr;
@@ -53,8 +55,10 @@ namespace MirageEngine
         bool IsRunning() const;
         // Manages the beginning of the frame, such as polling events and acquiring the current framebuffer
         void BeginFrame();
+        // Setup the UBO
+        void SetupFrameUBO(std::shared_ptr<Core::ICamera> _camera);
         // Renders the given SceneGraph, by rendering all its root GameObjects and their children recursively
-        void RenderScene(SceneGraph _sceneGraph, std::shared_ptr<Core::ICamera> _camera);
+        void RenderScene(SceneGraph _sceneGraph);
         // Sets the current framebuffer as the render target and displays the rendered image on the screen
         void RenderScreen();
         // Manages the end of the frame, such as presenting the rendered image and swapping buffers
@@ -68,6 +72,8 @@ namespace MirageEngine
         // Used to display the scene in the editor viewport
         uint32_t GetFramebufferTextureID() const;
 
+            // Render SkySphere
+			void RenderSkySphere();
         void* GetWindowHandle() const { return static_cast<void*>(m_Window); }
 
         // Used by the resource manager to create GPU resources with the correct RHI API
@@ -85,6 +91,7 @@ namespace MirageEngine
         void ClassCreation();
         // Create the pipeline used for screen rendering (post processing, UI, etc...)
         void ScreenPipelineCreation();
+        void SkySpherePipelineCreation();
 
         // --- Rendering Internal ---
         // Renders a GameObject and all its children recursively

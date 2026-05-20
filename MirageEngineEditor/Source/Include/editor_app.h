@@ -30,7 +30,7 @@ namespace Mirage
 		// Play mode variables
 		bool m_IsPlaying = false;
 		bool m_IsPaused = false;
-		bool m_IsStoped = false;
+		bool m_IsStopped = false;
 
 		int m_GameCameraIndex = 0;
 
@@ -42,12 +42,21 @@ namespace Mirage
 
 		void HandleSaveLoad();
 		void HandlePlayMode();
+		void PlayGame();
+		void StopGame();
 
 		void SetSelectedObject(std::shared_ptr<MirageEngine::GameObject> _object) { m_SelectedObject = _object; };
+		
+		// Getters
 		std::shared_ptr<MirageEngine::GameObject> GetSelectedObject() const { return m_SelectedObject; };
-		bool IsPlaying() const { return m_IsPlaying; }
-		bool IsPaused() const { return m_IsPaused; }
-		bool IsStopped() const { return m_IsStoped; }
+		bool GetIsPlaying() const { return m_IsPlaying; }
+		bool GetIsPaused() const { return m_IsPaused; }
+		bool GetIsStopped() const { return m_IsStopped; }
+		
+		// Setters
+		void SetIsPlaying(bool _isPlaying) { m_IsPlaying = _isPlaying; }
+		void SetIsPaused(bool _isPaused) { m_IsPaused = _isPaused; }
+		void SetIsStopped(bool _isStopped) { m_IsStopped = _isStopped; }
 
 		std::shared_ptr <MirageEditor::EditorCamera> GetEditorCamera() const { return EditorCamera; }
 	};

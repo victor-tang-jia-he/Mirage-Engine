@@ -216,8 +216,7 @@ std::shared_ptr<Mesh> ResourceManager::CreateMesh(const std::string& _name, cons
     return mesh;
 }
 
-std::shared_ptr<Material>
-    ResourceManager::CreateMaterial(const std::string& _name, const std::string& _pathVertex, const std::string& _pathFrag, size_t _uniformBufferSize, std::vector<MirageRHI::UBOBlockInfo> _shader_blocks)
+std::shared_ptr<Material>ResourceManager::CreateMaterial(const std::string& _name, const std::string& _pathVertex, const std::string& _pathFrag, size_t _uniformBufferSize, std::vector<MirageRHI::UBOBlockInfo> _shader_blocks)
 {
     ResourceManager& rm = ResourceManager::Instance();
 

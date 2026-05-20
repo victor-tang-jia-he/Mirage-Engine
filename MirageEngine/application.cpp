@@ -107,6 +107,7 @@ void Application::InitGameObject()
 	std::shared_ptr<GameObject> floorGO = m_SceneGraph.CreateGameObject("Lin", nullptr);
 	std::shared_ptr<GameObject> child1 = m_SceneGraph.CreateGameObject("Monin", floorGO);
 	std::shared_ptr<GameObject> child2 = m_SceneGraph.CreateGameObject("Tang", child1);
+
 	ResourceManager::Instance().GetMesh("cube")->Bind();
 	ResourceManager::Instance().GetMesh("sphere")->Bind();
 	ResourceManager::Instance().GetMesh("cylinder")->Bind();
@@ -326,13 +327,17 @@ void Application::BeginRender(std::shared_ptr<MirageEngine::Core::ICamera> camer
 {
 	// Editor Cam
 	m_Renderer.BeginFrame();
-	m_Renderer.RenderScene(m_SceneGraph, camera);
+	m_Renderer.SetupFrameUBO(camera);
+	m_Renderer.RenderSkySphere();
+	m_Renderer.RenderScene(m_SceneGraph);
 	m_Renderer.RenderLine();
 	m_Renderer.EndFrame();
 	m_EditorFBO = m_Renderer.GetFramebufferTextureID();
 	// Game Cam
 	m_Renderer.BeginFrame();
-	m_Renderer.RenderScene(m_SceneGraph, GetSceneGraph()->GetActiveCamera());
+	m_Renderer.SetupFrameUBO(GetSceneGraph()->GetActiveCamera());
+	m_Renderer.RenderSkySphere();
+	m_Renderer.RenderScene(m_SceneGraph);
 	m_Renderer.EndFrame();
 	m_Renderer.RenderScreen();
 }
