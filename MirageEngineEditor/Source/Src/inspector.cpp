@@ -159,17 +159,12 @@ namespace Mirage
 
 		float width = ImGui::GetWindowWidth();
 		ImGui::SetCursorPosX(width * 0.2f);
-		if (ImGui::Button("Component", ImVec2(width * 0.5f, 30)))
+		if (ImGui::Button("Component", ImVec2(width * 0.6f, 30)))
 		{
 			ImGui::OpenPopup("AddComponentPopup");
 		}
 		ImGui::SetCursorPosX(width * 0.2f);
-		if (ImGui::Button("Remove Component", ImVec2(width * 0.5f, 30)))
-		{
-			ImGui::OpenPopup("RemoveComponentPopup");
-		}
-
-		if (ImGui::Button("Remove Component", ImVec2(width * 0.8f, 30)))
+		if (ImGui::Button("Remove Component", ImVec2(width * 0.6f, 30)))
 		{
 			ImGui::OpenPopup("RemoveComponentPopup");
 		}
