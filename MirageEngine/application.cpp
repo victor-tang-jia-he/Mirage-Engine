@@ -108,7 +108,7 @@ void Application::InitGameObject()
 	// =========================
 	//  Scene graph
 	// =========================
-	std::shared_ptr<GameObject> root = m_SceneGraph.CreateGameObject("Root", nullptr);
+	std::shared_ptr<GameObject> root = m_SceneGraph.CreateGameObject("GameObject", nullptr);
 	std::shared_ptr<GameObject> cameraGO = m_SceneGraph.CreateGameObject("Commelin", root);
 	std::shared_ptr<GameObject> floorGO = m_SceneGraph.CreateGameObject("Lin", root);
 	std::shared_ptr<GameObject> child1 = m_SceneGraph.CreateGameObject("Monin", floorGO);
@@ -249,7 +249,8 @@ void Application::InitGameObject()
 	// =========================
 	//  Root transform
 	// =========================
-	root->SetPosition(Vector3(0, 0, -10));
+
+	m_SceneGraph.GetActiveCamera()->SetPosition(Vector3(0, 0, -5));
 
 	// =========================
 	//  Cache members

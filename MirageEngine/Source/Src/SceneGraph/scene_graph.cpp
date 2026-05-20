@@ -318,11 +318,6 @@ namespace MirageEngine
             const Core::Math::Matrix4 localMat = _obj->Transform.GetMatrix();
             worldMatrix = _parentMatrix * localMat;
             _obj->Transform.SetWorldMatrix(worldMatrix);
-
-            if (auto rb = _obj->GetComponent<MirageEngine::Core::Components::Rigidbody>())
-                rb->OnTransformChanged(_obj->Transform);
-
-            _obj->SetDirty(false);
         }
         else
         {
