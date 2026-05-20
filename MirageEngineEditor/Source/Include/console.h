@@ -1,6 +1,6 @@
 #pragma once
-#include "i_panel.h"
-#include "imgui.h"
+#include <i_panel.h>
+#include <imgui.h>
 #include <vector>
 #include <string>
 
@@ -11,15 +11,15 @@ namespace Mirage
 {
     enum class LogLevel
     {
-        Info,
-        Warning,
-        Error
+        INFO,
+        WARNING,
+        LOG_ERROR
     };
 
     struct LogInfo
     {
         std::string Message;
-        LogLevel Level = LogLevel::Info;
+        LogLevel Level = LogLevel::INFO;
     };
 
     class Console : public IPanel

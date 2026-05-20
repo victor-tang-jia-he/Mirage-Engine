@@ -1,9 +1,8 @@
-
-#include "Components/influence_emitter.h"
-#include "AI/influence_grid.h"
-#include "GameObject/game_object.h"
-#include "time_manager.h"
-#include "application.h"
+#include <Components/influence_emitter.h>
+#include <AI/influence_grid.h>
+#include <GameObject/game_object.h>
+#include <time_manager.h>
+#include <application.h>
 #include <entt/entt.hpp>
 
 using namespace MirageEngine::Core::Math;
@@ -19,7 +18,7 @@ namespace MirageEngine::Core::Components
             Application* app = Application::Instance();
             if (app)
             {
-                m_Grid = app->GetSceneGraph()->FindComponentInScene<InfluenceGrid>();
+                m_Grid = app->GetSceneGraph()->FindComponentInScene<InfluenceGrid>().get();
                 if (m_Grid)
                 {
                     std::cout << "[ENGINE] SUCCESS: Grid found by Lazy Loading! Address: " << m_Grid << std::endl;

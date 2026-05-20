@@ -1,10 +1,7 @@
 #pragma once 
-#include <iostream>
-#include <vector>
-#include <unordered_map>
-#include <string>
-#include "Components/component.h" 
-#include "AI/influence_grid.h"
+
+#include <Components/component.h>
+#include <AI/influence_grid.h>
 
 namespace MirageEngine::AI
 {
@@ -13,9 +10,18 @@ namespace MirageEngine::AI
 	
 namespace MirageEngine::Core::Components
 {
+	using namespace MirageEngine::AI;
+
+	struct StatDefinition {
+		std::string name;
+		float initialValue;
+	};
+
 	class UtilityAgent : public Component, public std::enable_shared_from_this<UtilityAgent>
 	{
 	private:
+		bool m_StatsInitialized = false;
+
 		/* Configs */
 		// DecisionInterval determines how often the agent re-evaluates it's actions
 		float m_DecisionInterval = 0.3f;
@@ -34,6 +40,7 @@ namespace MirageEngine::Core::Components
 		float m_DecisionTimer = 0.0f;
 		// Memory of information like stress/stamina/health
 		std::unordered_map<std::string, float> m_InternalStats;
+		std::vector<StatDefinition> m_DefaultStats;
 
 		/* Feedback */
 		// Stores the reason for the last decision
@@ -74,6 +81,7 @@ namespace MirageEngine::Core::Components
         const std::vector<float>& GetSensors() const { return m_CurrentCellIntensity; }
         const std::unordered_map<std::string, float>& GetInternalStatsMap() const { return m_InternalStats; }
         InfluenceGrid* GetTargetGrid() { return m_Grid; }
+		std::vector<StatDefinition>& GetDefaultStats() { return m_DefaultStats; }
 
 		// Setters
 		void SetDecisionInterval(float _newDecisionInterval) { m_DecisionInterval = _newDecisionInterval; }
@@ -82,5 +90,6 @@ namespace MirageEngine::Core::Components
 		void SetInternalStat(const std::string& _name, float _value) { m_InternalStats[_name] = _value; }
 		void SetTargetGrid(InfluenceGrid* _grid) { m_Grid = _grid; }
 		void SetActions(const std::vector<AI::AIAction*>& _newActions);
+		void SetDefaultStats(const std::vector<StatDefinition>& _stats) { m_DefaultStats = _stats; }
 	};
 }

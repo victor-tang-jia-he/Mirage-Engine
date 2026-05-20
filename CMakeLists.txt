@@ -26,13 +26,6 @@ set(CMAKE_C_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-# ONLY VICTOR TANG
-cmake_host_system_information(RESULT HOSTNAME QUERY HOSTNAME)
-if ("${HOSTNAME}" STREQUAL "TheDarkPhoenix" )
-    set(CMAKE_JOB_POOL_COMPILE compile_pool)
-    set_property(GLOBAL PROPERTY JOB_POOLS compile_pool=24)
-endif()
-
 message(STATUS "Adding external Libraries...")
 message("")
 
@@ -53,7 +46,10 @@ set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)
 set(GLFW_BUILD_TESTS OFF CACHE BOOL "" FORCE)
 set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
 set(GLFW_INSTALL OFF CACHE BOOL "" FORCE)
+
+set(SAVED_BUILD_SHARED_LIBS ${BUILD_SHARED_LIBS})
 set(BUILD_SHARED_LIBS ON)
+
 if(NOT EXISTS "${GLFW_SOURCE}/CMakeLists.txt")
     message(STATUS "Fetching GLFW...")
     FetchContent_Declare(
@@ -67,7 +63,8 @@ else()
     message(STATUS "Using local GLFW")
     add_subdirectory(${GLFW_SOURCE} ${CMAKE_BINARY_DIR}/GLFW)
 endif()
-set(BUILD_SHARED_LIBS OFF)
+
+set(BUILD_SHARED_LIBS ${SAVED_BUILD_SHARED_LIBS})
 
 message(STATUS "GLFW created successfully")
 message(STATUS "================================================================================")
@@ -110,6 +107,8 @@ message("")
 # ============================================================================
 message(STATUS "================================================================================")
 message(STATUS "IMGUI")
+
+find_package(OpenGL REQUIRED)
 
 set(IMGUI_DIR "${CMAKE_SOURCE_DIR}/Libraries/ImGui")
 set(IMGUI_BACKENDS_DIR "${CMAKE_SOURCE_DIR}/Libraries/ImGui/backends")
@@ -165,7 +164,6 @@ target_include_directories(imgui
 )
 
 # Linking dependencies
-find_package(OpenGL REQUIRED)
 target_link_libraries(imgui
     PUBLIC
         glfw          # GLFW must be PUBLIC because it is used in the backend headers
@@ -206,19 +204,8 @@ if(NOT EXISTS ${IMGUIZMO_DIR} OR IMGUIZMO_CONTENT_COUNT EQUAL 0)
     FetchContent_MakeAvailable(imguizmo)
 else()
     message(STATUS "Using local ImGuizmo")
+    add_subdirectory(${IMGUIZMO_DIR} ${CMAKE_BINARY_DIR}/ImGuizmo)
 endif()
-
-set(IMGUIZMO_SOURCES
-    ${IMGUIZMO_DIR}/src/ImGuizmo.cpp
-)
-
-# Combine all sources
-set(IMGUIZMO_ALL_SOURCES
-    ${IMGUIZMO_SOURCES}
-)
-
-# Create the ImGui library
-add_library(imguizmo STATIC ${IMGUIZMO_ALL_SOURCES})
 
 target_include_directories(imguizmo
     PUBLIC
@@ -297,18 +284,8 @@ set(STB_IMAGE_CORE_SOURCES
     ${STB_IMAGE_DIR}/deprecated/stb_image.c
 )
 
-set(STB_IMAGE_CORE_HEADERS
-    ${STB_IMAGE_DIR}/stb_image.h
-)
-
-# Combine all sources
-set(STB_IMAGE_ALL_SOURCES
-    ${STB_IMAGE_CORE_SOURCES}
-    ${STB_IMAGE_CORE_HEADERS}
-)
-
 # Create the STB Image library
-add_library(stb_image STATIC ${STB_IMAGE_ALL_SOURCES})
+add_library(stb_image STATIC ${STB_IMAGE_CORE_SOURCES})
 
 target_include_directories(stb_image
     PUBLIC
@@ -489,6 +466,20 @@ add_subdirectory(MirageEngine)
 message("")
 message(STATUS "Adding mirage_engine_editor project...")
 add_subdirectory(MirageEngineEditor)
+
+# ============================================================================
+# Copy imgui.ini configuration file
+# ============================================================================
+set(IMGUI_INI_SOURCE "${CMAKE_SOURCE_DIR}/imgui.ini")
+set(IMGUI_INI_DEST "${MIRAGE_BIN_OUTPUT_DIR}imgui.ini")
+
+if(EXISTS "${IMGUI_INI_SOURCE}")
+    file(COPY "${IMGUI_INI_SOURCE}" 
+         DESTINATION "${MIRAGE_BIN_OUTPUT_DIR}")
+    message(STATUS "Copied imgui.ini to ${MIRAGE_BIN_OUTPUT_DIR}")
+else()
+    message(WARNING "imgui.ini not found at ${CMAKE_SOURCE_DIR}/imgui.ini")
+endif()
 
 # Final Log
 message(STATUS "")

@@ -44,7 +44,6 @@ MirageEngine::GameObject::GameObject(std::shared_ptr<GameObject> _parent, std::s
 
 MirageEngine::GameObject::~GameObject()
 {
-    ScriptManager::Instance().Unsubscribe(this);
     m_Components.clear();
 }
 
@@ -56,7 +55,7 @@ void MirageEngine::GameObject::AddChild(std::shared_ptr<GameObject> _child, bool
     _child->m_bIsActive = _isActive;
 }
 
-void MirageEngine::GameObject::AddComponent(std::shared_ptr<MirageEngine::Core::Components::Component> _component)
+std::shared_ptr<MirageEngine::Core::Components::Component> MirageEngine::GameObject::AddComponent(std::shared_ptr<MirageEngine::Core::Components::Component> _component)
 {
     _component->m_Owner = this;
     if (auto* script = dynamic_cast<Core::Scripting::IScript*>(_component.get()))
@@ -64,6 +63,8 @@ void MirageEngine::GameObject::AddComponent(std::shared_ptr<MirageEngine::Core::
         m_ScriptNames.push_back(script->GetName());
     }
     m_Components.push_back(_component);
+
+	return _component;
 }
 
 void MirageEngine::GameObject::AddComponentFromMeta(entt::meta_any& _compInstance)
@@ -90,12 +91,35 @@ void MirageEngine::GameObject::RemoveComponent(std::shared_ptr<MirageEngine::Cor
     m_Components.erase(std::remove(m_Components.begin(), m_Components.end(), _component), m_Components.end());
 }
 
+std::shared_ptr<MirageEngine::Core::Components::Component> MirageEngine::GameObject::AddComponentByMeta(entt::meta_type _type)
+{
+    if (!_type)
+        return nullptr;
+    entt::meta_any compAny = _type.construct();
+
+    if (compAny)
+    {
+        auto comp = compAny.cast<std::shared_ptr<Core::Components::Component>>();
+        if (comp)
+        {
+            this->AddComponent(comp);
+            return comp;
+        }
+    }
+    return nullptr;
+}
+
 void MirageEngine::GameObject::RemoveChild(std::shared_ptr<GameObject> _child) { m_Children.erase(std::remove(m_Children.begin(), m_Children.end(), _child), m_Children.end()); }
 
 void MirageEngine::GameObject::SetRotation(MirageEngine::Core::Math::Quaternion _rotation)
 {
     m_bIsDirty = true;
     Transform.SetRotation(_rotation);
+    for (std::shared_ptr<GameObject> child : m_Children)
+    {
+        if (!child->GetIsStatic())
+            child->SetDirty(true);
+	}
     if (auto rb = GetComponent<MirageEngine::Core::Components::Rigidbody>())
         rb->OnTransformChanged(Transform);
 }
@@ -103,6 +127,11 @@ void MirageEngine::GameObject::SetRotation(MirageEngine::Core::Math::Quaternion 
 void MirageEngine::GameObject::SetPosition(MirageEngine::Core::Math::Vector3 _pos)
 {
     m_bIsDirty = true;
+    for (std::shared_ptr<GameObject> child : m_Children)
+    {
+        if (!child->GetIsStatic())
+            child->SetDirty(true);
+    }
     Transform.SetPosition(_pos);
     if (auto rb = GetComponent<MirageEngine::Core::Components::Rigidbody>())
         rb->OnTransformChanged(Transform);
@@ -111,6 +140,11 @@ void MirageEngine::GameObject::SetPosition(MirageEngine::Core::Math::Vector3 _po
 void MirageEngine::GameObject::SetScale(MirageEngine::Core::Math::Vector3 _scale)
 {
     m_bIsDirty = true;
+    for (std::shared_ptr<GameObject> child : m_Children)
+    {
+        if (!child->GetIsStatic())
+            child->SetDirty(true);
+    }
     Transform.SetScale(_scale);
     if (auto rb = GetComponent<MirageEngine::Core::Components::Rigidbody>())
         rb->OnTransformChanged(Transform);

@@ -1,6 +1,10 @@
 #pragma once
 
 #include <Components/component.h>
+#include <iostream>
+
+#include <entt/entt.hpp>
+#include <entt/meta/meta.hpp>
 
 namespace MirageEngine::Core::Scripting
 {
@@ -10,10 +14,11 @@ namespace MirageEngine::Core::Scripting
 
             virtual ~IScript() = default;
 
-            virtual void OnStart() override {};
-            virtual void OnUpdate(float dt) override {};
-            virtual void OnFixedUpdate(float dt) override {};
-            virtual void OnDestroy() override {};
+            virtual void RegisteMeta(entt::locator<entt::meta_ctx>::node_type handle) { std::cout << "Not Override" << std::endl; };
+            virtual void OnStart() {};
+            virtual void OnUpdate(float dt) {};
+            virtual void OnFixedUpdate(float dt) {};
+            virtual void OnDestroy() {};
 
             virtual const char* GetName() const = 0;
 

@@ -1,13 +1,15 @@
 #pragma once
 
-#include <iostream>
-
-#include <Components/component.h>
 #include <Components/transform.h>
 #include <Components/mesh_renderer.h>
 #include <Scripting/engine_script_api.h>
 
 DECLARE_LOG_CATEGORY_EXTERN(LogGameObject)
+
+namespace entt
+{
+    class meta_type;
+}
 
 namespace MirageEngine
 {
@@ -37,6 +39,7 @@ namespace MirageEngine
         bool m_bIsActive = true;  // Do components update every frame
         bool m_bIsStatic = false; // Does transform update every frame
         bool m_bIsDirty = false;
+        bool m_bIsPendingDestroy = false;
 
         bool m_bIsRoot = false;
 
@@ -48,8 +51,10 @@ namespace MirageEngine
             void AddChild(std::shared_ptr<GameObject> _child, bool _isStatic = false, bool _isActive = true);
 
 			void AddComponentFromMeta(entt::meta_any& _compInstance);
-            void AddComponent(std::shared_ptr<Core::Components::Component> _component);
+            std::shared_ptr<MirageEngine::Core::Components::Component> AddComponent(std::shared_ptr<Core::Components::Component> _component);
             void RemoveComponent(std::shared_ptr<Core::Components::Component> _component);
+
+            std::shared_ptr<Core::Components::Component> AddComponentByMeta(entt::meta_type _type);
 
             // Game Object Public Methods
             bool IsRoot() const { return m_Parent.expired(); };
@@ -60,6 +65,9 @@ namespace MirageEngine
             // Hot reload
             void OnPreReload();
             void OnPostReload();
+
+            void Destroy() { m_bIsPendingDestroy = true; }
+            bool IsPendingDestroy() const { return m_bIsPendingDestroy; }
 
             // Getters
             std::string GetName() const { return m_Name; }
@@ -91,6 +99,7 @@ namespace MirageEngine
 
             template <typename T> std::shared_ptr<T> AddComponent();
             template <typename T> void AddComponent(std::shared_ptr<Core::Components::Component> _component);
+            template <typename T> bool RemoveComponent();
             template <typename T> std::shared_ptr<T> GetComponent();
 
     }; // namespace MirageEngine

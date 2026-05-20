@@ -1,4 +1,3 @@
-#include <Resources/resource_manager.h>
 #include <RHI/OpenGL/openGL_render_interface.h>
 
 #include <Resources/mesh.h>
@@ -7,10 +6,14 @@
 #include <Resources/material.h>
 #include <Resources/shader.h>
 #include <Resources/pipeline.h>
+#include <Resources/resource_manager.h>
+
 #define TINYOBJLOADER_IMPLEMENTATION
 #include <TinyObjLoader/tiny_obj_loader.h>
+
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
+
 #include <Logs/log.h>
 
 constexpr int OPENGL_RGBA = 0x1908;
@@ -48,6 +51,18 @@ void ResourceManager::PreLoadResources()
     CreateShader("DefaultVertex", "Assets/Defaults/default.vert", MirageRHI::IShader::ShaderType::VERTEX);
     CreateShader("DefaultFragment", "Assets/Defaults/default.frag", MirageRHI::IShader::ShaderType::FRAGMENT);
     CreateTexture("DefaultTexture", "Assets/Defaults/default.png")->Bind();
+
+    // Create default Material 
+    std::shared_ptr<Material> mat = CreateMaterial(
+        "DefaultMaterial", "Assets/Shaders/light.vert", "Assets/Shaders/light.frag", 0,
+        {
+            { "PerFrame",   MirageRHI::UBOBinding::PER_FRAME },
+            { "PerObject",  MirageRHI::UBOBinding::PER_OBJECT },
+            { "LightBlock", MirageRHI::UBOBinding::LIGHTS },
+        });
+
+    std::shared_ptr<MaterialInstance> matInstance = CreateMaterialInstance("DefaultMaterialInstance", mat);
+	matInstance->SetTexture("albedoMap", GetTexture("DefaultTexture"));
 
     LOG(logInfo, LogResourceManager, "Preloading default resources completed.");
     LOG(logInfo, LogResourceManager, "Preloading resources...");
@@ -201,8 +216,7 @@ std::shared_ptr<Mesh> ResourceManager::CreateMesh(const std::string& _name, cons
     return mesh;
 }
 
-std::shared_ptr<Material>
-    ResourceManager::CreateMaterial(const std::string& _name, const std::string& _pathVertex, const std::string& _pathFrag, size_t _uniformBufferSize, std::vector<MirageRHI::UBOBlockInfo> _shader_blocks)
+std::shared_ptr<Material>ResourceManager::CreateMaterial(const std::string& _name, const std::string& _pathVertex, const std::string& _pathFrag, size_t _uniformBufferSize, std::vector<MirageRHI::UBOBlockInfo> _shader_blocks)
 {
     ResourceManager& rm = ResourceManager::Instance();
 
@@ -506,11 +520,6 @@ std::shared_ptr<Mesh> ResourceManager::GetMesh(const std::string& _name)
             return resource;
         LOG(logWarning, LogResourceManager, "Resource type mismatch for name: ", _name);
     }
-    // else
-    //{
-    //     LOG(logWarning, LogResourceManager, "Resource not found: ", _name);
-    //     return resourceManager.PrivateGet<Mesh>("DefaultMesh"); // Return default mesh if not found
-    // }
     LOG(logFatal, LogResourceManager, "Resource not found: ", _name);
     return nullptr;
 }

@@ -6,7 +6,7 @@ namespace MirageEngine
 {
     enum class LightType
     {
-        DIRECTIONNAL,
+        DIRECTIONAL,
         SPOT,
         POINT,
         NONE
@@ -21,7 +21,7 @@ namespace MirageEngine
 
     public:
         Light() = default;
-        ~Light() = default;
+        virtual ~Light() = default;
 
 		LightType GetType() const { return p_Type; }
         Core::Math::Vector4 GetColor() const { return p_Color; }

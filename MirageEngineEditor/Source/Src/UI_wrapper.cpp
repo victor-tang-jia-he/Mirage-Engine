@@ -31,7 +31,6 @@ namespace Mirage
 		io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
 		io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;
 		io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
-		//io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
 		ImGui::StyleColorsDark();
 		ApplyThemeColors();
 
@@ -70,25 +69,12 @@ namespace Mirage
 		ImGui::NewFrame();
 		ImGuizmo::BeginFrame();
 		ImGui::DockSpaceOverViewport(0, ImGui::GetMainViewport(), ImGuiDockNodeFlags_PassthruCentralNode);
-		//ImGui::ShowDemoWindow();
-		ShowThemeColorEditor();
 	}
 
 	void UIWrapper::EndFrame()
 	{
 		ImGui::Render();
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-
-		//ImGuiIO& io = ImGui::GetIO();
-		//if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
-		//{
-		//	GLFWwindow* backup_current_context = glfwGetCurrentContext();
-
-		//	ImGui::UpdatePlatformWindows();
-		//	ImGui::RenderPlatformWindowsDefault();
-
-		//	glfwMakeContextCurrent(backup_current_context);
-		//}
 	}
 
 	bool UIWrapper::BeginWindow(const char* _windowName, bool* _isOpen)
@@ -163,7 +149,7 @@ namespace Mirage
 		ImGui::TableNextColumn();
 		ImGui::PushID(_name);
 		
-		WidgetAction action = WidgetAction::None;
+		WidgetAction action = WidgetAction::NONE;
 
 		// Get the starting position of the tile
 		ImVec2 startPos = ImGui::GetCursorPos();
@@ -206,14 +192,14 @@ namespace Mirage
 		ImGui::SetCursorPos(startPos);
 		if (ImGui::Selectable("##selectable", _isSelected, ImGuiSelectableFlags_AllowDoubleClick, tileSize))
 		{
-			// Clic
+			// Click
 		}
 
 		if (ImGui::IsItemHovered())
 		{
-			if (ImGui::IsMouseDoubleClicked(0)) action = WidgetAction::DoubleClicked;
-			else if (ImGui::IsItemClicked(0)) action = WidgetAction::Clicked;
-			else if (ImGui::IsItemClicked(1)) action = WidgetAction::RightClicked;
+			if (ImGui::IsMouseDoubleClicked(0)) action = WidgetAction::DOUBLE_CLICKED;
+			else if (ImGui::IsItemClicked(0)) action = WidgetAction::CLICKED;
+			else if (ImGui::IsItemClicked(1)) action = WidgetAction::RIGHT_CLICKED;
 		}
 
 		ImGui::SetCursorPos(ImVec2(startPos.x, startPos.y + tileSize.y));
@@ -251,198 +237,16 @@ namespace Mirage
 		style.Colors[ImGuiCol_WindowBg]						= Color(33, 21, 64, 255);
 		style.Colors[ImGuiCol_ChildBg]						= Color(21, 13, 40, 255);
 		style.Colors[ImGuiCol_PopupBg]						= Color(20, 20, 20, 255);
-		// style.Colors[ImGuiCol_Border];
-		// style.Colors[ImGuiCol_BorderShadow];
 		style.Colors[ImGuiCol_FrameBg]						= Color(29, 0, 76, 255);
-		// style.Colors[ImGuiCol_MenuBarBg];
-		style.Colors[ImGuiCol_ScrollbarBg];
 		style.Colors[ImGuiCol_TitleBg]						= Color(43, 27, 39, 255);
-		style.Colors[ImGuiCol_TitleBgActive];
-		style.Colors[ImGuiCol_TitleBgCollapsed];
 
 		// Interactive elements - hover/active states
 		style.Colors[ImGuiCol_FrameBgHovered]				= Color(250, 150, 250, 102);
-		style.Colors[ImGuiCol_FrameBgActive];
 		style.Colors[ImGuiCol_ScrollbarGrab]				= Color(81, 79, 96, 255);
 		style.Colors[ImGuiCol_ScrollbarGrabHovered]			= Color(81, 79, 96, 255);
-		style.Colors[ImGuiCol_ScrollbarGrabActive];
-		style.Colors[ImGuiCol_SliderGrab];
-		style.Colors[ImGuiCol_SliderGrabActive];
-
-		// Buttons
-		style.Colors[ImGuiCol_Button];
-		style.Colors[ImGuiCol_ButtonHovered];
-		style.Colors[ImGuiCol_ButtonActive];
-
-		// Headers and separators
-		style.Colors[ImGuiCol_Header];
-		style.Colors[ImGuiCol_HeaderHovered];
-		style.Colors[ImGuiCol_HeaderActive];
-		style.Colors[ImGuiCol_Separator];
-		style.Colors[ImGuiCol_SeparatorHovered];
-		style.Colors[ImGuiCol_SeparatorActive];
 
 		// Tabs
-		style.Colors[ImGuiCol_Tab];
-		// style.Colors[ImGuiCol_TabHovered]					= Color(255, 128, 16, 185);
-		// style.Colors[ImGuiCol_TabSelected]					= Color(228, 35, 31, 211);
-		style.Colors[ImGuiCol_TabUnfocusedActive];
-		style.Colors[ImGuiCol_TabSelectedOverline];
-		style.Colors[ImGuiCol_TabDimmed];
 		style.Colors[ImGuiCol_TabDimmedSelected]			= Color(47, 11, 146, 180);
-		style.Colors[ImGuiCol_TabDimmedSelectedOverline];
-
-		// Resize grip
-		style.Colors[ImGuiCol_ResizeGrip];
-		style.Colors[ImGuiCol_ResizeGripHovered];
-		style.Colors[ImGuiCol_ResizeGripActive];
-
-		// Plots and tables
-		style.Colors[ImGuiCol_PlotLines];
-		style.Colors[ImGuiCol_PlotLinesHovered];
-		style.Colors[ImGuiCol_PlotHistogram];
-		style.Colors[ImGuiCol_PlotHistogramHovered];
-		style.Colors[ImGuiCol_TableHeaderBg];
-		style.Colors[ImGuiCol_TableBorderStrong];
-		style.Colors[ImGuiCol_TableBorderLight];
-		style.Colors[ImGuiCol_TableRowBg];
-		style.Colors[ImGuiCol_TableRowBgAlt];
-
-		// Docking
-		style.Colors[ImGuiCol_DockingPreview];
-		style.Colors[ImGuiCol_DockingEmptyBg];
-
-		// Navigation and modals
-		style.Colors[ImGuiCol_CheckMark];
-		style.Colors[ImGuiCol_DragDropTarget];
-		style.Colors[ImGuiCol_DragDropTargetBg];
-		style.Colors[ImGuiCol_NavHighlight];
-		style.Colors[ImGuiCol_NavCursor];
-		style.Colors[ImGuiCol_NavWindowingHighlight];
-		style.Colors[ImGuiCol_NavWindowingDimBg];
-		style.Colors[ImGuiCol_ModalWindowDimBg];
-
-		// Text colors
-		style.Colors[ImGuiCol_Text];
-		style.Colors[ImGuiCol_TextDisabled];
-		style.Colors[ImGuiCol_TextLink];
-		style.Colors[ImGuiCol_TextSelectedBg];
-		style.Colors[ImGuiCol_TreeLines];
-		style.Colors[ImGuiCol_UnsavedMarker];
-		style.Colors[ImGuiCol_InputTextCursor];
-	}
-
-	void UIWrapper::ShowThemeColorEditor()
-	{
-        UIWrapper::BeginWindow("ImGui Color Editor");
-
-		ImGuiStyle& style = ImGui::GetStyle();
-		ImVec4* colors = style.Colors;
-
-		// Array of all ImGuiCol enum names
-		static const char* colorNames[] = {
-			"Text",
-			"TextDisabled",
-			"WindowBg",
-			"ChildBg",
-			"PopupBg",
-			"Border",
-			"BorderShadow",
-			"FrameBg",
-			"FrameBgHovered",
-			"FrameBgActive",
-			"TitleBg",
-			"TitleBgActive",
-			"TitleBgCollapsed",
-			"MenuBarBg",
-			"ScrollbarBg",
-			"ScrollbarGrab",
-			"ScrollbarGrabHovered",
-			"ScrollbarGrabActive",
-			"CheckMark",
-			"CheckboxSelectedBg",
-			"SliderGrab",
-			"SliderGrabActive",
-			"Button",
-			"ButtonHovered",
-			"ButtonActive",
-			"Header",
-			"HeaderHovered",
-			"HeaderActive",
-			"Separator",
-			"SeparatorHovered",
-			"SeparatorActive",
-			"ResizeGrip",
-			"ResizeGripHovered",
-			"ResizeGripActive",
-			"InputTextCursor",
-			"TabHovered",
-			"Tab",
-			"TabSelected",
-			"TabSelectedOverline",
-			"TabDimmed",
-			"TabDimmedSelected",
-			"TabDimmedSelectedOverline",
-			"DockingPreview",
-			"DockingEmptyBg",
-			"PlotLines",
-			"PlotLinesHovered",
-			"PlotHistogram",
-			"PlotHistogramHovered",
-			"TableHeaderBg",
-			"TableBorderStrong",
-			"TableBorderLight",
-			"TableRowBg",
-			"TableRowBgAlt",
-			"TextLink",
-			"TextSelectedBg",
-			"TreeLines",
-			"DragDropTarget",
-			"DragDropTargetBg",
-			"UnsavedMarker",
-			"NavCursor",
-			"NavWindowingHighlight",
-			"NavWindowingDimBg",
-			"ModalWindowDimBg",
-		};
-
-		if (ImGui::BeginTable("ColorEditorTable", 2, ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg))
-		{
-			ImGui::TableSetupColumn("Color Name", ImGuiTableColumnFlags_WidthStretch, 0.4f);
-			ImGui::TableSetupColumn("Color Picker", ImGuiTableColumnFlags_WidthStretch, 0.6f);
-			ImGui::TableHeadersRow();
-
-			for (int i = 0; i < ImGuiCol_COUNT; i++)
-			{
-				ImGui::TableNextRow();
-				ImGui::TableSetColumnIndex(0);
-				ImGui::Text("%s", colorNames[i]);
-
-				ImGui::TableSetColumnIndex(1);
-				ImGui::PushID(i);
-				ImGui::ColorEdit4(
-					"##color_edit",
-					(float*)&colors[i],
-					ImGuiColorEditFlags_AlphaBar |
-					ImGuiColorEditFlags_DisplayRGB |
-					ImGuiColorEditFlags_NoLabel
-				);
-				ImGui::PopID();
-			}
-
-			ImGui::EndTable();
-		}
-
-		// Reset button
-		ImGui::Spacing();
-		ImGui::Separator();
-		if (ImGui::Button("Reset to Dark Theme", ImVec2(-1, 0)))
-		{
-			ImGui::StyleColorsDark();
-			ApplyThemeColors();
-		}
-
-		ImGui::End();
 	}
 
 	ImVec4 UIWrapper::Color(unsigned char _r, unsigned char _g, unsigned char _b, unsigned char _a)

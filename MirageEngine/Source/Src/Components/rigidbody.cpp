@@ -1,11 +1,17 @@
 #include <Components/rigidbody.h>
 #include <Components/transform.h>
-#include <Physics/physics_manager.h>
-#include <Physics/common_enum.h>
 #include <Components/box_collider.h>
 #include <Components/sphere_collider.h>
 #include <Components/capsule_collider.h>
+
+#include <Physics/physics_manager.h>
+#include <Physics/common_enum.h>
+#include <Physics/i_rigidbody.h>
+
+#include <GameObject/game_object.h>
+
 #include <entt/entt.hpp>
+
 #include <Logs/log.h>
 
 DEFINE_LOG_CATEGORY(LogComponentRigidBody)
@@ -18,6 +24,9 @@ Rigidbody::Rigidbody(ICCollider* _shape, Physics::ERigidBodyType _type)
     m_Rigidbody = Physics::PhysicsManager::Instance().CreateRigidBody(_shape->GetCollision(), _type);
     m_Rigidbody->OnSimulated = [this]()
         {
+            if (!m_Owner)
+				return;
+
             m_Rigidbody->UpdateTransform(m_Owner->Transform);
         };
 }
@@ -25,25 +34,23 @@ Rigidbody::Rigidbody(ICCollider* _shape, Physics::ERigidBodyType _type)
 MirageEngine::Core::Components::Rigidbody::Rigidbody(GameObject* _owner)
     : Component(_owner)
 {
-    std::shared_ptr<ICCollider> shape = m_Owner->GetComponent<BoxCollider>();
+    std::shared_ptr<ICCollider> shape = m_Owner->GetComponent<ICCollider>();
     if (!shape)
     {
-        shape = m_Owner->GetComponent<SphereCollider>();
-        if (!shape)
-        {
-            shape = m_Owner->GetComponent<CapsuleCollider>();
-            if (!shape)
-            {
-                shape = m_Owner->AddComponent<BoxCollider>();
-            }
-        }
+        shape = m_Owner->AddComponent<BoxCollider>();
     }
-    m_Rigidbody = Physics::PhysicsManager::Instance().CreateRigidBody(shape->GetCollision(), Physics::ERigidBodyType::DYNAMIC, m_Owner->Transform);
+
+    m_Rigidbody = Physics::PhysicsManager::Instance().CreateRigidBody(shape->GetCollision(), Physics::ERigidBodyType::DYNAMIC);
 
     m_Rigidbody->OnSimulated = [this]()
         {
+            if (!m_Owner)
+                return;
+
             m_Rigidbody->UpdateTransform(m_Owner->Transform);
         };
+
+    m_Rigidbody->OnTransformChanged(m_Owner->Transform);
 }
 
 MirageEngine::Core::Components::Rigidbody::~Rigidbody()
@@ -74,7 +81,7 @@ void Rigidbody::SetRigidBodyType(Physics::ERigidBodyType _type) { m_Rigidbody->S
 
 void Rigidbody::AddCollider(ICCollider* _newCollider) { m_Rigidbody->AddCollider(_newCollider->GetCollision()); }
 
-void Rigidbody::RemoveCollider(ICCollider* _collider) { m_Rigidbody->RemoveCollider(_collider->GetCollision().get()); }
+void Rigidbody::RemoveCollider(ICCollider* _collider) { m_Rigidbody->RemoveCollider(_collider->GetCollision()); }
 
 void Rigidbody::SetMass(float _mass) { m_Rigidbody->SetMass(_mass); }
 

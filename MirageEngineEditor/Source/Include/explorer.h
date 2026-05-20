@@ -1,5 +1,5 @@
 #pragma once
-#include "i_panel.h"
+#include <i_panel.h>
 #include <string>
 #include <filesystem>
 
@@ -14,13 +14,13 @@ DECLARE_LOG_CATEGORY_EXTERN(LogExplorerInfo)
 namespace Mirage
 {
 	enum class AssetType {
-		Folder	= 0,
-		Texture = 1,
-		Model	= 2,
-		Script	= 3,
-		Shader	= 4,
-		Scene	= 5,
-		Unknown = 6
+		FOLDER	= 0,
+		TEXTURE = 1,
+		MODEL	= 2,
+		SCRIPT	= 3,
+		SHADER	= 4,
+		SCENE	= 5,
+		UNKNOW	= 6
 	};
 
 	struct AssetEntry

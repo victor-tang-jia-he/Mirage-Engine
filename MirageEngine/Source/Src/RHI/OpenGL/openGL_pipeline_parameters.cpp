@@ -1,4 +1,4 @@
-#include "OpenGL/openGL_pipeline_parameters.h"
+#include <OpenGL/openGL_pipeline_parameters.h>
 #include <Logs/log.h>
 
 DEFINE_LOG_CATEGORY(LogRHIPipelineParameters)

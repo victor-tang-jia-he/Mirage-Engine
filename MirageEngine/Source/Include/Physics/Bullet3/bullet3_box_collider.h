@@ -1,12 +1,11 @@
 #pragma once
 
-#include "bullet3_pch.h"
-#include "../i_collider.h"
+#include <Physics/Bullet3/bullet3_pch.h>
+#include <Physics/Bullet3/i_bullet3_collider_data.h>
+#include <Physics/i_collider.h>
 
 namespace MirageEngine::Core::Physics
 {
-    class Bullet3RigidBody;
-
     class Bullet3BoxCollider : public ICollider, public IBulletColliderData, public IBoxCollider
     {
         using Vector3 = MirageEngine::Core::Math::Vector3;
@@ -30,7 +29,5 @@ namespace MirageEngine::Core::Physics
         btTransform GetTransform() override;
 
         btCollisionShape* GetShape() override { return m_CollisionShape; }
-
-        IBulletColliderData* AsBullet3Collider() override { return this; }
     };
 } // namespace MirageEngine::Core::Physics

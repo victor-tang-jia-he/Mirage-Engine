@@ -1,5 +1,6 @@
 #include <Physics/Bullet3/bullet3_sphere_collider.h>
 #include <Physics/Bullet3/bullet3_rigidbody.h>
+
 using namespace MirageEngine::Core::Physics;
 
 Bullet3SphereCollider::~Bullet3SphereCollider()

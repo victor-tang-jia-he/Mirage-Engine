@@ -38,9 +38,9 @@ inline void UnloadSharedLibrary(LibHandle lib)
     }
 }
 #if defined(_WIN32)
-    #define MRG_POPEN  _popen
-    #define MRG_PCLOSE _pclose
+#    define MRG_POPEN _popen
+#    define MRG_PCLOSE _pclose
 #else
-    #define MRG_POPEN  popen
-    #define MRG_PCLOSE pclose
+#    define MRG_POPEN popen
+#    define MRG_PCLOSE pclose
 #endif

@@ -1,11 +1,11 @@
 #include <cstdlib>
 #include <vector3.h>
 #include <string>
-#include "Components/utility_agent.h"
-#include "GameObject/game_object.h"
-#include "application.h"
-#include "time_manager.h"
-#include "AI/ai_action.h"
+#include <Components/utility_agent.h>
+#include <GameObject/game_object.h>
+#include <application.h>
+#include <time_manager.h>
+#include <AI/ai_action.h>
 #include <entt/entt.hpp>
 
 using namespace MirageEngine::Core::Math;
@@ -14,9 +14,6 @@ namespace MirageEngine::Core::Components
 {
 	UtilityAgent::~UtilityAgent()
 	{
-		for (AI::AIAction* action : m_actions) {
-			delete action;
-		}
 		m_actions.clear();
 	}
 
@@ -29,7 +26,7 @@ namespace MirageEngine::Core::Components
 			Application* app = Application::Instance();
 			if (app)
 			{
-				m_Grid = app->GetSceneGraph()->FindComponentInScene<InfluenceGrid>();
+				m_Grid = app->GetSceneGraph()->FindComponentInScene<InfluenceGrid>().get();
 			}
 		}
 
@@ -41,24 +38,35 @@ namespace MirageEngine::Core::Components
 		if (m_Grid == nullptr)
 		{
 			Application* app = Application::Instance();
-			if (app)
+			if (app) m_Grid = app->GetSceneGraph()->FindComponentInScene<InfluenceGrid>().get();
+		}
+
+		if (m_Grid)
+		{
+			size_t actualChannelCount = m_Grid->GetChannelsNames().size();
+			if (m_CurrentCellIntensity.size() != actualChannelCount)
 			{
-				m_Grid = app->GetSceneGraph()->FindComponentInScene<InfluenceGrid>();
+				m_CurrentCellIntensity.assign(actualChannelCount, 0.0f);
 			}
 		}
 
-		 if (m_actions.empty())
-         {
-             auto allComps = GetOwner()->GetComponents();
-             for (auto& comp : allComps)
-             {
-                 AI::AIAction* action = dynamic_cast<AI::AIAction*>(comp.get());
-                 if (action)
-                 {
-                     AddAction(action);
-                 }
-             }
-         }
+		if (!m_StatsInitialized)
+		{
+			m_actions.clear();
+			auto allComps = GetOwner()->GetComponents();
+			for (auto& comp : allComps)
+			{
+				AI::AIAction* action = dynamic_cast<AI::AIAction*>(comp.get());
+				if (action) AddAction(action);
+			}
+
+			for (const auto& stat : m_DefaultStats)
+			{
+				m_InternalStats[stat.name] = stat.initialValue;
+			}
+
+			m_StatsInitialized = true;
+		}
 
 		m_DecisionTimer -= _dt;
 		if (m_DecisionTimer <= 0.0f)
@@ -66,8 +74,9 @@ namespace MirageEngine::Core::Components
 			Decide();
 			m_DecisionTimer = m_DecisionInterval;
 		}
+
 		if (m_CurrentAction != nullptr)
-			m_CurrentAction->Execute(TimeManager::GetDeltaTime());
+			m_CurrentAction->Execute(_dt); 
 	}
 
 	void UtilityAgent::AttachMeta(std::shared_ptr<GameObject> _Owner)

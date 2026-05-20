@@ -1,16 +1,13 @@
 #pragma once
-#include "bullet3_pch.h"
-#include "../i_rigidbody.h"
+#include <Physics/Bullet3/bullet3_pch.h>
+#include <Physics/i_rigidbody.h>
 
 DECLARE_LOG_CATEGORY_EXTERN(LogBullet3Rigidbody)
 
 namespace MirageEngine::Core::Physics
 {
-    class Bullet3BoxCollider;
-
     class Bullet3RigidBody : public IRigidBody, public std::enable_shared_from_this<Bullet3RigidBody>
     {
-        friend class Bullet3BoxCollider;
         using Transform = Components::Transform;
 
     private:
@@ -32,12 +29,10 @@ namespace MirageEngine::Core::Physics
         void SetScale(const Vector3& scale);
 
         void AddCollider(std::shared_ptr<ICollider> _newCollider) override;
-        void RemoveCollider(ICollider* _collider) override;
+        void RemoveCollider(std::shared_ptr<ICollider> _collider) override;
 
         void UpdateCompound();
 
-        btRigidBody* GetBullet3RigidBody() const { return m_RigidBody.get(); }
-
-        Bullet3RigidBody& API_Bullet3() override { return *this; }
+        std::shared_ptr<btRigidBody> GetBullet3RigidBody() const { return m_RigidBody; }
     };
 } // namespace MirageEngine::Core::Physics

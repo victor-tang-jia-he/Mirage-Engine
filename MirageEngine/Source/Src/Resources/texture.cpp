@@ -1,7 +1,7 @@
 #include <Resources/texture.h>
+#include <Resources/resource_manager.h>
 #include <RHI/i_texture.h>
 #include <string>
-#include <Resources/resource_manager.h>
 #include <Logs/log.h>
 
 DEFINE_LOG_CATEGORY(LogTexture)

@@ -4,6 +4,7 @@
 #include "SceneGraph/scene_graph.h"
 #include "GameObject/game_object.h"
 #include "imgui.h"
+#include "editor_app.h"
 
 #include <Logs/log.h>
 
@@ -80,7 +81,7 @@ namespace Mirage
 		uint64_t id = _obj->GetID();
 		std::string idStr = std::to_string(id);
 		bool bisLeaf = _obj->GetChildren().empty();
-		bool bisSelected = (m_Context->GetSelectedObject() == _obj);
+		bool bisSelected = (m_Context->GetSelectedObject().lock() == _obj);
 
 		if (UIWrapper::BeginFolderNode(name.c_str(), idStr.c_str(), bisSelected, bisLeaf))
 		{
@@ -140,7 +141,7 @@ namespace Mirage
 	{
 		if (ImGui::BeginPopup("HierarchyItemMenu"))
 		{
-			std::shared_ptr<MirageEngine::GameObject> selected = m_Context->GetSelectedObject();
+			std::shared_ptr<MirageEngine::GameObject> selected = m_Context->GetSelectedObject().lock();
 			if (selected)
 			{
 				if (ImGui::MenuItem("Rename", "F2"))
@@ -187,6 +188,14 @@ namespace Mirage
 				{
 					m_Context->CreateCamera("New Camera", selected);
 					m_NextModalToOpen = "CreateObjectModal";
+				}
+				ImGui::Separator();
+				if (ImGui::MenuItem("Teleport to game object"))
+				{
+					if (m_Context->GetSelectedObject().lock())
+					{
+						Mirage::EditorApp::EditorCamera->SetPosition(selected->GetPosition());
+					}
 				}
 				ImGui::Separator();
 				if (ImGui::MenuItem("Delete", "Del")) 
@@ -254,7 +263,7 @@ namespace Mirage
 	{
 		if (ImGui::IsWindowFocused())
 		{
-			if (m_Context->GetSelectedObject() != nullptr)
+			if (!m_Context->GetSelectedObject().expired())
 			{
 				if (ImGui::IsKeyPressed(ImGuiKey_Delete))
 				{
@@ -307,7 +316,7 @@ namespace Mirage
 
 			if (ImGui::Button("OK", ImVec2(120, 0)))
 			{
-				m_Context->GetSelectedObject()->SetName(m_RenameBuffer);
+				m_Context->GetSelectedObject().lock()->SetName(m_RenameBuffer);
 				m_RenameBuffer[0] = '\0';
 				ImGui::CloseCurrentPopup();
 			}
@@ -334,9 +343,9 @@ namespace Mirage
 
 			if (ImGui::Button("OK", ImVec2(120, 0)))
 			{
-				if (m_Context->GetSelectedObject())
+				if (m_Context->GetSelectedObject().lock())
 				{
-					m_Context->RemoveGameObject(m_Context->GetSelectedObject());
+					m_Context->RemoveGameObject(m_Context->GetSelectedObject().lock());
 					m_Context->SetSelectedObject(nullptr);
 				}
 				ImGui::CloseCurrentPopup();

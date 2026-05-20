@@ -9,6 +9,10 @@
 #include <Events/event.h>
 #include <Scripting/engine_script_api.h>
 
+
+#include <entt/entt.hpp>
+#include <entt/meta/meta.hpp>
+
 DECLARE_LOG_CATEGORY_EXTERN(LogScriptManager)
 
 namespace MirageEngine::Core::Scripting
@@ -33,10 +37,10 @@ namespace MirageEngine::Core::Scripting
             typedef IScript* (*PFN_CreateScriptByName)(const char*);
             typedef void (*PFN_DestroyScript)(IScript*);
 
-            PFN_GetScriptCount       m_GetScriptCountDLL = nullptr;
-            PFN_GetScriptName        m_GetScriptNameDLL = nullptr;
-            PFN_CreateScriptByName   m_CreateScriptByNameDLL = nullptr;
-            PFN_DestroyScript        m_DestroyScriptDLL = nullptr;
+            PFN_GetScriptCount m_GetScriptCountDLL = nullptr;
+            PFN_GetScriptName m_GetScriptNameDLL = nullptr;
+            PFN_CreateScriptByName m_CreateScriptByNameDLL = nullptr;
+            PFN_DestroyScript m_DestroyScriptDLL = nullptr;
 
             // handle
             LibHandle hScripts = nullptr;
@@ -72,6 +76,8 @@ namespace MirageEngine::Core::Scripting
                 static ScriptManager instance;
                 return instance;
             }
+
+            void SetMetaContext(entt::locator<entt::meta_ctx>::node_type handle);
 
             // For GameObject
             void SubscribePreReload(GameObject* _go, std::function<void()> _func);

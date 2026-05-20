@@ -1,4 +1,4 @@
-#include "Serialization/serializer.h"
+#include <Serialization/serializer.h>
 
 #include <SceneGraph/scene_graph.h>
 
@@ -6,13 +6,13 @@
 #include <Components/component.h>
 #include <Components/transform.h>
 #include <Components/nav_agent.h>
+#include <AI/ai_action.h>
 
 #include <Physics/common_enum.h>
 
 #include <Resources/mesh.h>
 #include <Resources/material.h>
 
-#include <vector3.h>
 #include <quaternion.h>
 #include <Logs/log.h>
 
@@ -211,6 +211,19 @@ json MirageEngine::Serializer::SerializeMetaData(entt::meta_type _type, entt::me
             return jMetaData;
         }
     }
+    else if (actualType == entt::resolve<std::vector<AI::AIAction*>>())
+    {
+        if (std::vector<AI::AIAction*>* aiActionVector = value.try_cast<std::vector<AI::AIAction*>>())
+        {
+			jMetaData = json::array();
+            for(AI::AIAction* action : *aiActionVector)
+            {
+                LOG(logTemp, LogSerializer, "Serializing AI Action : ", action->GetName());
+				jMetaData.push_back(SerializeAIAction(action));
+			}
+            return jMetaData;
+        }
+    }
 	// = Math types =
     else if (actualType == entt::resolve<Math::Vector3>())
     {
@@ -283,6 +296,55 @@ json MirageEngine::Serializer::SerializeNavProfile(AI::NavProfile _navProfile)
     return jNavProfile;
 }
 
+json MirageEngine::Serializer::SerializeAIAction(AI::AIAction* _action)
+{
+	json jAIAction;
+
+	jAIAction["TypeName"] = std::string(_action->GetName());
+    jAIAction["ClassName"] = std::string(_action->GetFullName());
+	jAIAction["Considerations"] = json::array();
+
+    for (const Consideration& consideration : _action->GetConsiderations())
+    {
+        jAIAction["Considerations"].push_back(SerializeConsideration(consideration));
+    }
+
+    entt::meta_type type = entt::resolve(_action->GetType());
+    if (type)
+    {
+        for (auto [id, data] : type.data())
+        {
+            jAIAction[data.name()] = (SerializeMetaData(type, data, (void*)_action));
+        }
+    }
+
+    return jAIAction;
+}
+
+json MirageEngine::Serializer::SerializeConsideration(Consideration _consideration)
+{
+	json jConsideration;
+
+	jConsideration["Source"] = static_cast<int>(_consideration.source);
+	jConsideration["VariableName"] = _consideration.variableName;
+
+	json jResponseCurveData;
+
+    entt::hashed_string hashed{ typeid(AI::ResponsiveCurve).name() };
+    entt::meta_type responseCurveType = entt::resolve(hashed);
+    if (responseCurveType)
+    {
+        for (auto [id, data] : responseCurveType.data())
+        {
+            jResponseCurveData[data.name()] = (SerializeMetaData(responseCurveType, data, (void*)&_consideration.responseCurve));
+        }
+    }
+
+	jConsideration["ResponseCurve"] = jResponseCurveData;
+
+    return jConsideration;
+}
+
 json MirageEngine::Serializer::SerializeVector3(Core::Math::Vector3 _vector3)
 {
     json jVector3;
@@ -320,7 +382,8 @@ json MirageEngine::Serializer::SerializeQuaternion(Core::Math::Quaternion _quate
 
 bool MirageEngine::Serializer::ConvertJsonVarToJsonFile(json _jTarget)
 {
-    std::ofstream file("scene.json");
+	std::filesystem::create_directories("Assets/Scenes");
+    std::ofstream file("Assets/Scenes/scene.json");
     file.clear();
     file << _jTarget.dump(4);
     file.flush();

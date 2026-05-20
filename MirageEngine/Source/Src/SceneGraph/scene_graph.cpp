@@ -1,19 +1,20 @@
-#include "SceneGraph/scene_graph.h"
+#include <SceneGraph/scene_graph.h>
 #include <matrix4.h>
-#include <vector3.h>
 
-#include "Resources/resource_manager.h"
-#include "Components/mesh_renderer.h"
+#include <Components/mesh_renderer.h>
+
 #include <Resources/material.h>
 #include <Resources/texture.h>
 #include <Resources/shader.h>
+#include <Resources/resource_manager.h>
 
-#include "renderer.h"
+#include <renderer.h>
 
-#include "Components/camera.h"
+#include <Components/camera.h>
 #include <i_uniform_buffer.h>
 
 #include <Logs/log.h>
+#include <Components/rigidbody.h>
 
 DEFINE_LOG_CATEGORY(LogSceneGraph);
 
@@ -100,21 +101,42 @@ namespace MirageEngine
             [_obj](const std::weak_ptr<GameObject>& weakObj) {
                 return weakObj.lock() == _obj;
             }), m_CallGameObjectOnStart.end());
-        if (m_SelectedObject == _obj)
-            m_SelectedObject = nullptr;
+        if (m_SelectedObject.lock() == _obj)
+            m_SelectedObject.reset();
 
-        _obj.reset();
+        for (std::shared_ptr<Core::Components::Component> comp : _obj->GetComponents())
+        {
+			_obj->RemoveComponent(comp);
+        }
     }
 
     void SceneGraph::ClearScene()
     {
-        std::vector<std::shared_ptr<GameObject>> rootsCopy = m_RootsList;
-        for (std::shared_ptr<GameObject> obj : rootsCopy)
+        while (!m_RootsList.empty())
         {
+            std::shared_ptr<GameObject> obj = m_RootsList.back();
             RemoveGameObject(obj);
         }
         m_Registry.clear();
         m_RootsList.clear();
+    }
+
+    void SceneGraph::CleanupDeadObjects()
+    {
+        std::vector<std::shared_ptr<GameObject>> toDelete;
+
+        for (auto const& [id, obj] : m_Registry)
+        {
+            if (obj && obj->IsPendingDestroy())
+            {
+                toDelete.push_back(obj);
+            }
+        }
+
+        for (auto& obj : toDelete)
+        {
+            this->RemoveGameObject(obj);
+        }
     }
 
     std::shared_ptr<GameObject> SceneGraph::FindGameObject(uint64_t _id) const
@@ -285,14 +307,12 @@ namespace MirageEngine
             Core::Math::Matrix4 invParent = _parent->Transform.GetWorldMatrix().Inverse();
             Core::Math::Matrix4 newLoc = invParent * childWorldBefore;
 
-            //_child->Transform.SetLocalMatrix(newLoc);
             _child->SetPosition(newLoc.GetTranslation());
             _child->SetRotation(newLoc.GetRotation());
             LOG(logTemp, LogSceneGraph, "New Local calculated. Scale: ", newLoc.GetScale().X);
         }
         else
         {
-            //_child->Transform.SetLocalMatrix(childWorldBefore);
             _child->SetPosition(childWorldBefore.GetTranslation());
             _child->SetRotation(childWorldBefore.GetRotation());
         }
@@ -311,9 +331,7 @@ namespace MirageEngine
         if (mustUpdate)
         {
             const Core::Math::Matrix4 localMat = _obj->Transform.GetMatrix();
-
             worldMatrix = _parentMatrix * localMat;
-
             _obj->Transform.SetWorldMatrix(worldMatrix);
         }
         else

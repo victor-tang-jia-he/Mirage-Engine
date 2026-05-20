@@ -1,6 +1,6 @@
 #pragma once
 #include <string>
-#include "vector3.h"
+#include <vector3.h>
 #include <imgui.h>
 
 #include <explorer.h>
@@ -15,10 +15,11 @@ namespace Mirage
 {
 	enum class WidgetAction
 	{
-		None = 0,
-		Clicked,
-		DoubleClicked,
-		RightClicked
+		NONE = 0,
+		CLICKED,
+		DOUBLE_CLICKED,
+		RIGHT_CLICKED,
+		LEFT_CLICKED
 	};
 
 	class UIWrapper
@@ -45,10 +46,6 @@ namespace Mirage
 
 		static bool DrawBreadcrumbSegment(const char* _label, bool _bIsLast);
 
-		static bool AssetContextMenu(const char* _id);
-		static bool DrawContextMenuItem(const char* _label);
-
-
 		// Widgets
 		static void CreateSeparatorText(const char* _separatorName);
 		static void CreateColorPicker(Math::Vector3* _color);
@@ -56,7 +53,6 @@ namespace Mirage
 	private:
 		// Design
 		static void ApplyThemeColors();
-		static void ShowThemeColorEditor();
 		static ImVec4 Color(unsigned char _r, unsigned char _g, unsigned char _b, unsigned char _a = 255);
 	};
 }

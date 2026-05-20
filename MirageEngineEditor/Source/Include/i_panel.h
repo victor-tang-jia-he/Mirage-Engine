@@ -11,7 +11,10 @@ namespace Mirage
 
 	public:
 		virtual ~IPanel() = default;
-		IPanel(const char* _name) : p_Title(_name), p_IsActive(true) {};
+		IPanel(const char* _name)
+			: p_Title(_name),
+			p_IsActive(true)
+		{};
 
 		virtual void InitPanel() {};
 		virtual void DrawPanel(uint32_t _textureID) = 0;

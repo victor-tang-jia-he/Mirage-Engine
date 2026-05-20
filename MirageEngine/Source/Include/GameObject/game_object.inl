@@ -28,6 +28,21 @@ namespace MirageEngine
 	}
 
 	template <typename T>
+	bool GameObject::RemoveComponent()
+	{
+		for (auto it = m_Components.begin(); it != m_Components.end(); ++it)
+		{
+			if (auto casted = std::dynamic_pointer_cast<T>(*it))
+			{
+				m_Components.erase(it);
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	template <typename T>
 	std::shared_ptr<T> GameObject::GetComponent()
 	{
 		for (std::shared_ptr<MirageEngine::Core::Components::Component> component : m_Components)

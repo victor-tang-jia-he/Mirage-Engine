@@ -1,5 +1,5 @@
-#include "AI/pathfinding.h"
-#include "AI/influence_grid.h"
+#include <AI/pathfinding.h>
+#include <AI/influence_grid.h>
 #include <stdlib.h>
 #include <algorithm>
 
@@ -136,9 +136,11 @@ namespace MirageEngine::AI
 		if (m_NodePool.size() != totalSize)
 			m_NodePool.resize(totalSize);
 
-		for (PathNode& node : m_NodePool)
+		for (int i = 0; i < (int)m_NodePool.size(); ++i)
 		{
-			node.Reset();
+			m_NodePool[i].Reset();
+			m_NodePool[i].x = i % _width;
+			m_NodePool[i].y = i / _width;
 		}
 
 		m_OpenList = std::priority_queue<PathNode*, std::vector<PathNode*>, NodeComparator>();

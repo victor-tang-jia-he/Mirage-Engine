@@ -2,6 +2,7 @@
 
 // Components includes
 #include <GameObject/game_object.h>
+
 #include <Components/transform.h>
 #include <Components/mesh_renderer.h>
 #include <Components/camera.h>
@@ -9,21 +10,24 @@
 #include <Components/sphere_collider.h>
 #include <Components/capsule_collider.h>
 #include <Components/rigidbody.h>
-
-// Lights includes
-#include <Light/directional_light.h>
-#include <Light/point_light.h>
-#include <Light/spot_light.h>
-
-#include <Physics/common_enum.h>
-
-#include <AI/ai_action.h>
 #include <Components/influence_emitter.h>
-#include <AI/influence_grid.h>
-#include <Input/input_mapping.h>
-#include <AI/responsive_curve.h>
 #include <Components/nav_agent.h>
 #include <Components/utility_agent.h>
+
+// Lights includes
+#include <Components/directional_light_component.h>
+#include <Components/point_light_component.h>
+
+// Input includes
+#include <Input/input_mapping.h>
+
+// Physics includes
+#include <Physics/common_enum.h>
+
+// AI includes
+#include <AI/ai_action.h>
+#include <AI/influence_grid.h>
+#include <AI/responsive_curve.h>
 
 // Ressources includes
 #include <Resources/material.h>
@@ -34,9 +38,10 @@
 // EnTT includes
 #include <entt/entt.hpp>
 
-#include <vector3.h>
+// Math includes
 #include <quaternion.h>
 
+// Log includes
 #include <Logs/log.h>
 
 DEFINE_LOG_CATEGORY(LogRegisterMeta)
@@ -67,10 +72,10 @@ void RegisterMeta::RegisterAllMeta(entt::locator<entt::meta_ctx>::node_type hand
 	RegisterNavAgentMeta();   
 	RegisterUtilityAgentMeta();
 	RegisterResponsiveCurveMeta();
+    RegisterAIActionMeta();
 
 	RegisterDirectionalLightMeta();
 	RegisterPointLightMeta();
-	RegisterSpotLightMeta();
 
 	RegisterBoxColliderMeta();
 	RegisterSphereColliderMeta();
@@ -187,60 +192,39 @@ void RegisterMeta::RegisterInputMappingMeta()
 	inputMapping.func<&InputMapping::AttachNew>("AttachNew"_hs);
 }
 
-void MirageEngine::RegisterMeta::RegisterDirectionalLightMeta()
+void RegisterMeta::RegisterDirectionalLightMeta()
 {
-	entt::meta_factory<DirectionalLight> directionalLight{};
+	entt::meta_factory<DirectionalLightComponent> directionalLight{};
 
-	directionalLight.type(entt::type_id<DirectionalLight>().hash(), "DirectionalLight");
+	directionalLight.type(entt::type_id<DirectionalLightComponent>().hash(), "DirectionalLightComponent");
 	directionalLight.ctor<GameObject*>();
 
 	directionalLight.base<Component>();
 
-	directionalLight.data<&DirectionalLight::SetColor, &DirectionalLight::GetColor>("Color");
-	directionalLight.data<&DirectionalLight::SetIntensity, &DirectionalLight::GetIntensity>("Intensity");
-	directionalLight.data<&DirectionalLight::SetDirection, &DirectionalLight::GetDirection>("Direction");
+	directionalLight.data<&DirectionalLightComponent::SetColor, &DirectionalLightComponent::GetColor>("Color");
+	directionalLight.data<&DirectionalLightComponent::SetIntensity, &DirectionalLightComponent::GetIntensity>("Intensity");
+	directionalLight.data<&DirectionalLightComponent::SetDirection, &DirectionalLightComponent::GetDirection>("Direction");
 
-	directionalLight.func<&DirectionalLight::AttachNew>("AttachNew"_hs);
+	directionalLight.func<&DirectionalLightComponent::AttachNew>("AttachNew"_hs);
 }
 
-void MirageEngine::RegisterMeta::RegisterPointLightMeta()
+void RegisterMeta::RegisterPointLightMeta()
 {
-	entt::meta_factory<PointLight> pointLight{};
+	entt::meta_factory<PointLightComponent> pointLight{};
 
-	pointLight.type(entt::type_id<PointLight>().hash(), "PointLight");
+	pointLight.type(entt::type_id<PointLightComponent>().hash(), "PointLightComponent");
 	pointLight.ctor<GameObject*>();
 
 	pointLight.base<Component>();
-	pointLight.base<Light>();
 
-	pointLight.data<&PointLight::SetColor, &PointLight::GetColor>("Color");
-	pointLight.data<&PointLight::SetIntensity, &PointLight::GetIntensity>("Intensity");
-	pointLight.data<&PointLight::SetPosition, &PointLight::GetPosition>("Position");
+	pointLight.data<&PointLightComponent::SetColor, &PointLightComponent::GetColor>("Color");
+	pointLight.data<&PointLightComponent::SetIntensity, &PointLightComponent::GetIntensity>("Intensity");
+	pointLight.data<&PointLightComponent::SetPosition, &PointLightComponent::GetPosition>("Position");
 
-	pointLight.func<&PointLight::AttachNew>("AttachNew"_hs);
+	pointLight.func<&PointLightComponent::AttachNew>("AttachNew"_hs);
 }
 
-void MirageEngine::RegisterMeta::RegisterSpotLightMeta()
-{
-	entt::meta_factory<SpotLight> spotLight{};
-
-	spotLight.type(entt::type_id<SpotLight>().hash(), "SpotLight");
-	spotLight.ctor<GameObject*>();
-
-	spotLight.base<Component>();
-	spotLight.base<Light>();
-
-	spotLight.data<&SpotLight::SetColor, &SpotLight::GetColor>("Color");
-	spotLight.data<&SpotLight::SetIntensity, &SpotLight::GetIntensity>("Intensity");
-	spotLight.data<&SpotLight::SetPosition, &SpotLight::GetPosition>("Position");
-	spotLight.data<&SpotLight::SetDirection, &SpotLight::GetDirection>("Direction");
-	spotLight.data<&SpotLight::SetInnerCutoff, &SpotLight::GetInnerCutoff>("InnerCutoff");
-	spotLight.data<&SpotLight::SetOuterCutoff, &SpotLight::GetOuterCutoff>("OuterCutoff");
-
-	spotLight.func<&SpotLight::AttachNew>("AttachNew"_hs);
-}
-
-void MirageEngine::RegisterMeta::RegisterBoxColliderMeta()
+void RegisterMeta::RegisterBoxColliderMeta()
 {
 	entt::meta_factory<BoxCollider> boxCollider{};
 
@@ -258,7 +242,7 @@ void MirageEngine::RegisterMeta::RegisterBoxColliderMeta()
 	boxCollider.func<&BoxCollider::AttachNew>("AttachNew"_hs);
 }
 
-void MirageEngine::RegisterMeta::RegisterSphereColliderMeta()
+void RegisterMeta::RegisterSphereColliderMeta()
 {
 	entt::meta_factory<SphereCollider> sphereCollided{};
 
@@ -276,7 +260,7 @@ void MirageEngine::RegisterMeta::RegisterSphereColliderMeta()
 	sphereCollided.func<&SphereCollider::AttachNew>("AttachNew"_hs);
 }
 
-void MirageEngine::RegisterMeta::RegisterCapsuleColliderMeta()
+void RegisterMeta::RegisterCapsuleColliderMeta()
 {
 	entt::meta_factory<CapsuleCollider> capsuleCollider{};
 
@@ -295,7 +279,7 @@ void MirageEngine::RegisterMeta::RegisterCapsuleColliderMeta()
 	capsuleCollider.func<&CapsuleCollider::AttachNew>("AttachNew"_hs);
 }
 
-void MirageEngine::RegisterMeta::RegisterRigidbodyMeta()
+void RegisterMeta::RegisterRigidbodyMeta()
 {
 	entt::meta_factory<Rigidbody> rigidBody{};
 
@@ -371,7 +355,7 @@ void RegisterMeta::RegisterTextureMeta()
 	LOG(logTemp, LogRegisterMeta, "Registered Texture Meta");
 }
 
-void MirageEngine::RegisterMeta::RegisterMaterialMeta()
+void RegisterMeta::RegisterMaterialMeta()
 {
 	entt::meta_factory<Resources::Material> material{};
 	material.type("Material"_hs, "Material");
@@ -383,7 +367,7 @@ void MirageEngine::RegisterMeta::RegisterMaterialMeta()
 	material.func<&Resources::Material::GetFromManager>("Get"_hs);
 }
 
-void MirageEngine::RegisterMeta::RegisterMaterialInstanceMeta()
+void RegisterMeta::RegisterMaterialInstanceMeta()
 {
 	entt::meta_factory<Resources::MaterialInstance> materialInstance{};
 	materialInstance.type("MaterialInstance"_hs, "MaterialInstance");
@@ -396,7 +380,7 @@ void MirageEngine::RegisterMeta::RegisterMaterialInstanceMeta()
 	LOG(logTemp, LogRegisterMeta, "Registered Material Meta");
 }
 
-void MirageEngine::RegisterMeta::RegisterShaderMeta()
+void RegisterMeta::RegisterShaderMeta()
 {
 	entt::meta_factory<Resources::Shader> material{};
 	material.type("Shader"_hs, "Shader");
@@ -494,4 +478,33 @@ void RegisterMeta::RegisterUtilityAgentMeta()
     utilityAgent.data<&UtilityAgent::SetActions, &UtilityAgent::GetActionsRef>("Actions List");
 
 	utilityAgent.func<&UtilityAgent::AttachNew>("AttachNew"_hs);
+}
+
+void RegisterMeta::RegisterAIActionMeta()
+{
+    auto sourceEnum = entt::meta_factory<VariableSource>{};
+    sourceEnum.type(entt::type_id<VariableSource>().hash(), "VariableSource");
+    sourceEnum.data<VariableSource::Grid>("Grid");
+    sourceEnum.data<VariableSource::Blackboard>("Blackboard");
+
+    auto consideration = entt::meta_factory<Consideration>{};
+    consideration.type(entt::type_id<Consideration>().hash(), "Consideration");
+
+    consideration.data<&Consideration::source>("Source");
+    consideration.data<&Consideration::variableName>("Variable Name");
+    consideration.data<&Consideration::responseCurve>("Curve");
+
+    auto action = entt::meta_factory<AI::AIAction>{};
+    action.type(entt::type_id<AI::AIAction>().hash(), "AIAction");
+    action.base<Core::Scripting::IScript>();
+
+    action.data<&AI::AIAction::SetConsiderations, &AI::AIAction::GetConsiderations>("Considerations");
+
+	auto statDef = entt::meta_factory<StatDefinition>();	
+	statDef.type(entt::type_id<StatDefinition>().hash(), "StatDefinition");
+	statDef.data<&StatDefinition::name>("Name");
+	statDef.data<&StatDefinition::initialValue>("Value");
+
+	auto agent = entt::meta_factory<UtilityAgent>();	
+	agent.data<&UtilityAgent::SetDefaultStats, &UtilityAgent::GetDefaultStats>("Default Stats");
 }

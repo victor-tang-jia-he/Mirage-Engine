@@ -15,34 +15,38 @@
 
 int main()
 {
-	Loggers::EnableImmediateFlush(false);   // Enable immediate flushing of log messages for real-time output during initialization
-	Loggers::EnableFileWriting(false);      // Enable writing logs to file during initialization to capture any issues that may occur before the main loop starts.
-	Loggers::EnableTimeOnEveryLog(false);  // Disable time show as it take verbosal the log.
-	Loggers::EnableFileNameAndLine(true); // Disable file name and line of the log , can be enable if necessary.
-	Application application;               // Temp, will be replaced by Engine Handler
-	Mirage::EditorApp editor;
-	// --- Initialization ---
-	application.InitApp();
+    Loggers::EnableImmediateFlush(true);   // Enable immediate flushing of log messages for real-time output during initialization
+    Loggers::EnableFileWriting(false);      // Enable writing logs to file during initialization to capture any issues that may occur before the main loop starts.
+    Loggers::EnableTimeOnEveryLog(false);  // Disable time show as it take verbosal the log.
+    Loggers::EnableFileNameAndLine(true); // Disable file name and line of the log , can be enable if necessary.
+    Application application;               // Temp, will be replaced by Engine Handler
+    Mirage::EditorApp editor;
 
-	&entt::locator<entt::meta_ctx>::value_or(); // TODO : Remove for a better use of shared Context
-	MirageEngine::RegisterMeta().RegisterAllMeta(entt::locator<entt::meta_ctx>::handle());
-	editor.Init(application.GetWindowHandle(), application.GetRenderer(), application.GetSceneGraph());
+    // --- Initialization ---
+    MirageEngine::Core::Scripting::ScriptManager::Instance().Init();
+	&entt::locator<entt::meta_ctx>::value_or();
+    MirageEngine::Core::Scripting::ScriptManager::Instance().SetMetaContext(entt::locator<entt::meta_ctx>::handle());
+    application.InitApp();
+    MirageEngine::RegisterMeta().RegisterAllMeta(entt::locator<entt::meta_ctx>::handle());
+    editor.Init(application.GetWindowHandle(), application.GetRenderer(), application.GetSceneGraph());
+    
 	MirageEngine::TimeManager::Init();
 	while (application.IsRunning())
 	{
 		glfwPollEvents();
 		MirageEngine::TimeManager::Update();
 		MirageEngine::Core::Input::InputSystem::UpdateHeldInput();
-		if (editor.IsPlaying() && !editor.IsPaused())
+		if (editor.GetIsPlaying() && !editor.GetIsPaused())
 		{
 			MirageEngine::Core::Physics::PhysicsManager::Instance().Update(MirageEngine::TimeManager::GetDeltaTime());
 			application.RuntimeUpdate(MirageEngine::TimeManager::GetDeltaTime());
+			application.GetSceneGraph()->CleanupDeadObjects();
 		}
-		application.EditorUpdate();
 		application.BeginRender(editor.GetEditorCamera());
+		application.EditorUpdate();
 
 		// Display the editor panels and pass the framebuffer texture ID to the viewport for rendering the scene
-		editor.OnUpdate(application.GetFramebufferTextureID());
+		editor.OnUpdate(application.GetEditorFBO(), application.GetFramebufferTextureID());
 		application.EndRender();
 	}
 

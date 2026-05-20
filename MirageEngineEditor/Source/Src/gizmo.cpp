@@ -20,10 +20,10 @@ static ImGuizmo::MODE mCurrentGizmoMode(ImGuizmo::WORLD);
 
 void MirageEditor::Gizmo::EditTransform(MirageEngine::SceneGraph* _sceneGraph, std::shared_ptr<ICamera> _camera)
 {
-	if (!_sceneGraph->GetSelectedObject())
+	if (_sceneGraph->GetSelectedObject().expired())
 		return;
 
-	MirageEngine::Core::Math::Matrix4 worldMatrix(_sceneGraph->GetSelectedObject()->Transform.GetWorldMatrix());
+	MirageEngine::Core::Math::Matrix4 worldMatrix(_sceneGraph->GetSelectedObject().lock()->Transform.GetWorldMatrix());
 
 	if (ImGui::IsKeyPressed(ImGuiKey_T))
 	{
@@ -64,19 +64,19 @@ void MirageEditor::Gizmo::EditTransform(MirageEngine::SceneGraph* _sceneGraph, s
 
 	if (manipulated)
 	{
-        std::shared_ptr<MirageEngine::GameObject> parent = _sceneGraph->GetSelectedObject()->GetParent();
+        std::shared_ptr<MirageEngine::GameObject> parent = _sceneGraph->GetSelectedObject().lock()->GetParent();
 		if (parent)
 		{
 			Math::Matrix4 parentWorld = parent->Transform.GetWorldMatrix().Inverse() *worldMatrix;
-			_sceneGraph->GetSelectedObject()->SetPosition(parentWorld.GetTranslation());
-			_sceneGraph->GetSelectedObject()->SetRotation(parentWorld.GetRotation());
-			_sceneGraph->GetSelectedObject()->SetScale(parentWorld.GetScale());
+			_sceneGraph->GetSelectedObject().lock()->SetPosition(parentWorld.GetTranslation());
+			_sceneGraph->GetSelectedObject().lock()->SetRotation(parentWorld.GetRotation());
+			_sceneGraph->GetSelectedObject().lock()->SetScale(parentWorld.GetScale());
 		}
 		else
 		{
-			_sceneGraph->GetSelectedObject()->SetPosition(worldMatrix.GetTranslation());
-			_sceneGraph->GetSelectedObject()->SetRotation(worldMatrix.GetRotation());
-			_sceneGraph->GetSelectedObject()->SetScale(worldMatrix.GetScale());
+			_sceneGraph->GetSelectedObject().lock()->SetPosition(worldMatrix.GetTranslation());
+			_sceneGraph->GetSelectedObject().lock()->SetRotation(worldMatrix.GetRotation());
+			_sceneGraph->GetSelectedObject().lock()->SetScale(worldMatrix.GetScale());
 
 		}
 	}
@@ -84,7 +84,7 @@ void MirageEditor::Gizmo::EditTransform(MirageEngine::SceneGraph* _sceneGraph, s
 
 void MirageEditor::Gizmo::EditView(MirageEngine::SceneGraph* _sceneGraph)
 {
-	/*std::shared_ptr<Components::Camera> mainCamera = _sceneGraph->GetActiveCamera();
+	std::shared_ptr<Components::Camera> mainCamera = _sceneGraph->GetActiveCamera();
 	float* view = mainCamera->GetView().ToArray().data();
 
 	ImVec2 size = ImGui::GetContentRegionAvail();
@@ -93,6 +93,4 @@ void MirageEditor::Gizmo::EditView(MirageEngine::SceneGraph* _sceneGraph)
 	ImGuizmo::ViewManipulate(view, 1, pos, size, 0);
 
 	Math::Matrix4 viewMatrix(view);
-	
-	mainCamera->Transform().SetLocalMatrix(viewMatrix.Inverse().Transpose());*/
 }

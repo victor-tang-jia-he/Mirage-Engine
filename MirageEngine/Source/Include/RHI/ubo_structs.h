@@ -58,22 +58,22 @@ namespace MirageRHI
 
     struct ALIGN16 LightUBOData
     {
-            DirectionalLightData dirLights[MAX_DIR_LIGHTS];
-            PointLightData pointLights[MAX_POINT_LIGHTS];
-            SpotLightData spotLights[MAX_SPOT_LIGHTS];
-            int dirCount;
-            int pointCount;
-            int spotCount;
-            float padding;
+        DirectionalLightData dirLights[MAX_DIR_LIGHTS];
+        PointLightData pointLights[MAX_POINT_LIGHTS];
+        SpotLightData spotLights[MAX_SPOT_LIGHTS];
+        int dirCount;
+        int pointCount;
+        int spotCount;
+        float padding;
     };
 
     // Mat
-    struct ALIGN8 MaterialData
+    struct ALIGN8 MaterialInstanceData
     {
-            Vector3 albedo;
-            float metallic;
-            float roughness;
-            float ao;
-            float _pad[2];
+        Vector3 albedo;
+        float metallic;
+        float roughness;
+        float ao;
+        float _pad[2];
     };
 } // namespace MirageRHI

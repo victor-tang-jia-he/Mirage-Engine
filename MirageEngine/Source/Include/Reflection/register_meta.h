@@ -25,7 +25,6 @@ namespace MirageEngine
 		// Lights
         void RegisterDirectionalLightMeta();
         void RegisterPointLightMeta();
-		void RegisterSpotLightMeta();
 
 		// Physics
         void RegisterBoxColliderMeta();
@@ -39,6 +38,7 @@ namespace MirageEngine
         void RegisterResponsiveCurveMeta();
         void RegisterNavAgentMeta();
         void RegisterUtilityAgentMeta();
+        void RegisterAIActionMeta();
 
 		// Resources
         void RegisterMeshMeta();

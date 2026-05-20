@@ -2,6 +2,21 @@
 
 #include <entt/entt.hpp>
 #include <GameObject/game_object.h>
+#include <Resources/resource_manager.h>
+
+MirageEngine::Core::Components::MeshRenderer::MeshRenderer()
+{
+	using namespace MirageEngine::Core::Resources;
+	m_Mesh = ResourceManager::Instance().GetMesh("cube");
+	m_Material = ResourceManager::Instance().GetMaterialInstance("DefaultMaterialInstance");
+}
+
+MirageEngine::Core::Components::MeshRenderer::MeshRenderer(GameObject* _owner)
+{
+	using namespace MirageEngine::Core::Resources;
+	m_Mesh = ResourceManager::Instance().GetMesh("cube");
+	m_Material = ResourceManager::Instance().GetMaterialInstance("DefaultMaterialInstance");
+}
 
 void MirageEngine::Core::Components::MeshRenderer::AttachMeta(std::shared_ptr<GameObject> _Owner)
 {

@@ -8,6 +8,8 @@
 
 using id_type = std::uint32_t;
 
+#include <Components/utility_agent.h>
+
 namespace MirageEngine::Core::Scripting
 {
     class IScript;

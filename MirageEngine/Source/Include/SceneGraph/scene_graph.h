@@ -2,7 +2,7 @@
 
 #include <iostream>
 
-#include "GameObject/game_object.h"
+#include <GameObject/game_object.h>
 #include <Scripting/engine_script_api.h>
 DECLARE_LOG_CATEGORY_EXTERN(LogSceneGraph)
 
@@ -21,8 +21,7 @@ namespace MirageEngine
     private:
         std::vector<std::shared_ptr<GameObject>> m_RootsList;
         std::unordered_map<uint64_t, std::shared_ptr<MirageEngine::GameObject>> m_Registry;
-        std::shared_ptr<GameObject> m_SelectedObject = nullptr;
-        std::shared_ptr<MirageEngine::Core::Components::Camera> m_EditorCamera = nullptr;
+        std::weak_ptr<GameObject> m_SelectedObject;
         std::shared_ptr<MirageEngine::Core::Components::Camera> m_ActiveCamera = nullptr;
         std::shared_ptr<GameObject> m_LastCreatedObject = nullptr;
 		std::vector<std::weak_ptr<GameObject>> m_CallGameObjectOnStart;
@@ -36,6 +35,7 @@ namespace MirageEngine
         void RemoveGameObject(std::shared_ptr<GameObject> _obj);
 
         void ClearScene();
+        void CleanupDeadObjects();
 
         std::shared_ptr<GameObject> FindGameObject(uint64_t _id) const;
         std::shared_ptr<GameObject> CreateCamera(const std::string& _name = "Camera", std::shared_ptr<GameObject> _parent = nullptr);
@@ -52,7 +52,7 @@ namespace MirageEngine
         // Manages all the logic of change of parenting.
         bool SetParent(std::shared_ptr<GameObject> _parent, std::shared_ptr<GameObject> child);
 
-        template <typename T> T* FindComponentInScene()
+        template <typename T> std::shared_ptr<T> FindComponentInScene()
         {
             for (auto const& [id, gameObject] : m_Registry)
             {
@@ -60,7 +60,7 @@ namespace MirageEngine
                 {
                     std::shared_ptr<T> comp = gameObject->GetComponent<T>();
                     if (comp)
-                        return comp.get();
+                        return comp;
                 }
             }
             return nullptr;
@@ -68,13 +68,12 @@ namespace MirageEngine
 
         void SetSelectedObject(std::shared_ptr<GameObject> _obj) { m_SelectedObject = _obj; }
 
-        std::shared_ptr<GameObject> GetSelectedObject() { return m_SelectedObject; }
+        std::weak_ptr<GameObject> GetSelectedObject() { return m_SelectedObject; }
         const std::vector<std::shared_ptr<GameObject>>& GetRootObjects() const { return m_RootsList; }
         std::vector<std::shared_ptr<GameObject>> GetChildren(std::shared_ptr<GameObject> _parent) const;
 
-        void SetEditorCamera(std::shared_ptr<MirageEngine::Core::Components::Camera> _cam)
+        void SetActiveCamera(std::shared_ptr<MirageEngine::Core::Components::Camera> _cam)
         {
-            m_EditorCamera = _cam;
             m_ActiveCamera = _cam;
         }
 
@@ -86,7 +85,6 @@ namespace MirageEngine
 
         void WorldMatrixRecursive(std::shared_ptr<GameObject> _obj, Core::Math::Matrix4& _parentMatrix, bool _forceUpdate);
 
-        void CallAllOnStartRecursive(std::shared_ptr<GameObject> _obj);
         void CallAllUpdateRecursive(std::shared_ptr<GameObject> _obj, float dt);
         void CallAllLateUpdateRecursive(std::shared_ptr<GameObject> _obj, float dt);
         void CallAllFixedUpdateRecursive(std::shared_ptr<GameObject> _obj, float dt);

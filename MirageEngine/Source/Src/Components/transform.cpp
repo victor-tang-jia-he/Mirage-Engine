@@ -1,5 +1,4 @@
 #include <Components/transform.h>
-#include <matrix4.h>
 
 #include <GameObject/game_object.h>
 
@@ -37,7 +36,6 @@ Matrix4 Transform::GetMatrix()
 Vector3 Transform::Rotate(const Quaternion& _q, const Vector3& _v) const
 {
     // Encode the 3D vector as a pure quaternion (real part = 0)
-    // qv = (0, vx, vy, vz)
     Quaternion qv(0.f, _v.X, _v.Y, _v.Z);
 
     // Quaternion rotation formula : v' = q * v * q-1
@@ -70,6 +68,7 @@ void Transform::LookAt(const Vector3& _target)
     result(2, 2) = f.Z;
 
     m_LocalRotation = Quaternion(result);
+    m_bDirty = true;
 }
 
 Vector3 Transform::Forward() const { return Rotate(m_LocalRotation, Vector3(0.f, 0.f, -1.f)); }

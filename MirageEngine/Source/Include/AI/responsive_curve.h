@@ -1,7 +1,4 @@
 #pragma once
-#include <iostream>
-#include <vector>
-#include <string>
 
 namespace MirageEngine::AI
 {
@@ -28,12 +25,12 @@ namespace MirageEngine::AI
 		float Evaluate(float _x);
 
 		// Getters
-		float GetSlope() { return m_Slope; }
-		float GetExponent() { return m_Exponent; }
-		float GetXOffset() { return m_XOffset; }
-		float GetYOffset() { return m_YOffset; }
-		bool GetInverted() { return m_Inverted; }
-		CurveType GetType() { return m_Type; }
+		float GetSlope() const { return m_Slope; }
+		float GetExponent() const { return m_Exponent; }
+		float GetXOffset() const { return m_XOffset; }
+		float GetYOffset() const { return m_YOffset; }
+		bool GetInverted() const { return m_Inverted; }
+		CurveType GetType() const { return m_Type; }
 
 		// Setters
 		void SetSlope(float _newValue) { m_Slope = _newValue; }

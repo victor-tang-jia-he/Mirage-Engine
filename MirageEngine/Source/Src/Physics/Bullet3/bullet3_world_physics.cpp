@@ -1,6 +1,9 @@
+#include <Physics/physics_manager.h>
+
 #include <Physics/Bullet3/bullet3_rigidbody.h>
 #include <Physics/Bullet3/bullet3_world_physics.h>
-#include <Physics/physics_manager.h>
+#include <Physics/Bullet3/bullet3_debug_draw.h>
+
 #include <Logs/log.h>
 
 DEFINE_LOG_CATEGORY(LogBullet3WorldPhysics)
@@ -14,15 +17,21 @@ MirageEngine::Core::Physics::Bullet3WorldPhysics::Bullet3WorldPhysics()
 	m_Solver = new btSequentialImpulseConstraintSolver();
 	m_World = new btDiscreteDynamicsWorld(m_Dispatcher, m_Broadphase, m_Solver, m_CollisionConfig);
 	m_World->setGravity(btVector3(0, -9.81f, 0)); // default gravity
+
+	m_DebugDrawer = new BulletDebugDrawer();
+	m_DebugDrawer->setDebugMode(btIDebugDraw::DBG_DrawWireframe);
+	m_World->setDebugDrawer(m_DebugDrawer);
+
 	LOG(logInfo, LogBullet3WorldPhysics, "Create New physics world");
 }
 MirageEngine::Core::Physics::Bullet3WorldPhysics::~Bullet3WorldPhysics()
 {
-	delete m_CollisionConfig;
+	delete	m_CollisionConfig;
 	delete	m_Dispatcher;
 	delete	m_Broadphase;
 	delete	m_Solver;
 	delete	m_World;
+	delete	m_DebugDrawer;
 	LOG(logInfo, LogBullet3WorldPhysics, "Destroy physics world");
 }
 void Bullet3WorldPhysics::AddRigidBody(std::shared_ptr<IRigidBody> _body, ECollisionGroup _group, ECollisionGroup _mask)
@@ -35,7 +44,7 @@ void Bullet3WorldPhysics::AddRigidBody(std::shared_ptr<IRigidBody> _body, EColli
 	}
 
 	// Add the rigid body to the Bullet3 world
-	m_World->addRigidBody(_body->API_Bullet3().GetBullet3RigidBody(), +_group, +_mask);
+	m_World->addRigidBody(_body->As<Bullet3RigidBody>()->GetBullet3RigidBody().get(), +_group, +_mask);
 }
 
 void Bullet3WorldPhysics::RemoveRigidBody(IRigidBody* _body)
@@ -47,5 +56,10 @@ void Bullet3WorldPhysics::RemoveRigidBody(IRigidBody* _body)
 		return;
 	}
 	// Remove the rigid body from the Bullet3 world
-	m_World->removeRigidBody(_body->API_Bullet3().GetBullet3RigidBody());
+	m_World->removeRigidBody(_body->As<Bullet3RigidBody>()->GetBullet3RigidBody().get());
+}
+
+void MirageEngine::Core::Physics::Bullet3WorldPhysics::DebugDraw()
+{
+	m_World->debugDrawWorld();
 }

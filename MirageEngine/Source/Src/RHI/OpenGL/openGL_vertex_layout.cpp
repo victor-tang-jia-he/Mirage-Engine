@@ -1,8 +1,8 @@
-#include <OpenGL/openGL_vertex_layout.h>
-#include <Logs/log.h>
-
 #include <Glad/glad.h>
 #include <GLFW/glfw3.h>
+
+#include <OpenGL/openGL_vertex_layout.h>
+#include <Logs/log.h>
 
 DEFINE_LOG_CATEGORY(LogRHIVertexLayout)
 

@@ -1,7 +1,6 @@
 #pragma once
 
 #include <Components/physics_components_interface.h>
-#include <Components/component.h>
 #include <Scripting/engine_script_api.h>
 
 namespace MirageEngine

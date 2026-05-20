@@ -18,6 +18,8 @@ DEFINE_LOG_CATEGORY_WITH_COLOR(LogEditorApp, Loggers::Color::CYAN);
 
 namespace Mirage
 {
+	std::shared_ptr<MirageEditor::EditorCamera> EditorApp::EditorCamera = nullptr;
+
 	void Mirage::EditorApp::Init(void* _windowHandle, MirageEngine::Renderer* _renderer, MirageEngine::SceneGraph* _engineSceneGraph)
 	{
 		m_WindowHandle = _windowHandle;;
@@ -25,7 +27,8 @@ namespace Mirage
 
 		m_SceneGraph = _engineSceneGraph;
 
-		m_PanelList.push_back(std::make_unique<Viewport>("Viewport"));
+		m_PanelList.push_back(std::make_unique<Viewport>("Game", Viewport::Type::Editor));
+		m_PanelList.push_back(std::make_unique<Viewport>("Viewport", Viewport::Type::Game));
 		m_PanelList.push_back(std::make_unique<Hierarchy>("Hierarchy", m_SceneGraph, _renderer));
 		m_PanelList.push_back(std::make_unique<Inspector>("Inspector", m_SceneGraph));
 		m_PanelList.push_back(std::make_unique<Console>("Console"));
@@ -37,27 +40,34 @@ namespace Mirage
 			LOG(logTemp, LogEditorApp, "Initializing panel: ", panel->GetTitle());
 		}
 
-		m_EditorCamera = std::make_shared<MirageEditor::EditorCamera>();
-		m_EditorCamera->BindDefaultInput();
+		EditorCamera = std::make_shared<MirageEditor::EditorCamera>();
+		EditorCamera->BindDefaultInput();
+		EditorCamera->SetPosition({ 0.f, 0.f, 5.f });
 	}
 
-	void Mirage::EditorApp::OnUpdate(uint32_t _textureID)
+	void Mirage::EditorApp::OnUpdate(uint32_t _editorTextureID, uint32_t _gameTextureID)
 	{
 		UIWrapper::BeginFrame();
-		m_MainMenuBar.DrawBar();
+		m_MainMenuBar.DrawBar(this);
 
 		for (auto& panel : m_PanelList)
 		{
-			if (panel->IsPanelActive())
+			if (auto* vp = dynamic_cast<Viewport*>(panel.get()))
 			{
-				panel->DrawPanel(_textureID);
+				if (vp->GetViewportType() == Viewport::Type::Game)
+					vp->DrawPanel(_gameTextureID);
+				else
+				{
+					vp->DrawPanel(_editorTextureID);
+				}
+			}
+			else
+			{
+				panel->DrawPanel(_editorTextureID);
 			}
 		}
 
-		MirageEditor::Gizmo::EditView(m_SceneGraph); // Disabled
-		MirageEditor::Gizmo::EditTransform(m_SceneGraph, m_EditorCamera);
-
-		HandlePlayMode();
+		MirageEditor::Gizmo::EditTransform(m_SceneGraph, EditorCamera);
 
 		UIWrapper::EndFrame();
 	}
@@ -73,35 +83,33 @@ namespace Mirage
 		UIWrapper::Shutdown();
 
 	}
-	void EditorApp::HandlePlayMode()
-	{
-		if (ImGui::IsKeyPressed(ImGuiKey_K) && !m_IsPlaying)
-		{
-			MirageEngine::Serializer::SaveScene(*m_SceneGraph);
-			m_IsPlaying = true;
-			LOG(logTemp, LogEditorApp, "Play mode started");
-		}
-		if (ImGui::IsKeyPressed(ImGuiKey_L) && m_IsPlaying)
-		{
-			m_IsPaused = !m_IsPaused;
-			LOG(logTemp, LogEditorApp, m_IsPaused ? "Play mode paused" : "Play mode resumed");
-		}
-		if (ImGui::IsKeyPressed(ImGuiKey_M) && m_IsPlaying)
-		{
-			m_SceneGraph->ClearScene();
-			MirageEngine::Core::Physics::PhysicsManager::Instance().Initialize();
-			MirageEngine::LightManager::Instance().ShutDown();
-			*m_SceneGraph = *MirageEngine::Deserializer::LoadSceneFromFile("scene.json");
-			m_IsStoped = true;
-			LOG(logTemp, LogEditorApp, "Play mode stopping");
-		}
 
-		if (m_IsStoped)
-		{
-			LOG(logTemp, LogEditorApp, "Play mode stopped");
-			m_IsPlaying = false;
-			m_IsPaused = false;
-			m_IsStoped = false;
-		}
+	void EditorApp::SaveScene()
+	{
+		MirageEngine::Serializer::SaveScene(*m_SceneGraph);
+	}
+
+	void EditorApp::LoadScene()
+	{
+		m_SceneGraph->ClearScene();
+		*m_SceneGraph = MirageEngine::SceneGraph();
+		MirageEngine::LightManager::Instance().ShutDown();
+		MirageEngine::Core::Physics::PhysicsManager::Instance().Initialize();
+		*m_SceneGraph = *MirageEngine::Deserializer::LoadSceneFromFile("Assets/Scenes/scene.json");
+	}
+
+	void EditorApp::PlayGame()
+	{
+		SaveScene();
+		m_IsPlaying = true;
+		LOG(logTemp, LogEditorApp, "Play mode started");
+	}
+
+	void EditorApp::StopGame()
+	{
+		LoadScene();
+		m_IsPlaying = false;
+		m_IsPaused = false;
+		LOG(logTemp, LogEditorApp, "Play mode stopping");
 	}
 }

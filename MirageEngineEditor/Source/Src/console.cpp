@@ -18,9 +18,9 @@ namespace Mirage
 {
 	void Console::InitPanel()
 	{
-		AddLog("I am a test", LogLevel::Info);
-		AddLog("I am a second test", LogLevel::Error);
-		AddLog("You know the drill", LogLevel::Warning);
+		AddLog("I am a test", LogLevel::INFO);
+		AddLog("I am a second test", LogLevel::LOG_ERROR);
+		AddLog("You know the drill", LogLevel::WARNING);
 		LOG(logTemp, logConsole, "Console Panel Initialized");
 	}
 
@@ -52,11 +52,11 @@ namespace Mirage
 		{
 			if (!m_SearchBar.PassFilter(log.Message.c_str()))
 				continue;
-			if(log.Level == LogLevel::Error && m_bDisplayError)
+			if(log.Level == LogLevel::LOG_ERROR && m_bDisplayError)
 				ImGui::TextColored(ImVec4(0.8f, 0, 0, 1), "[ERROR] %s", log.Message.c_str());
-			else if(log.Level == LogLevel::Warning && m_bDisplayWarning)
+			else if(log.Level == LogLevel::WARNING && m_bDisplayWarning)
 				ImGui::TextColored(ImVec4(0.8f, 0.8f, 0, 1), "[WARNING] %s", log.Message.c_str());
-			else if(log.Level == LogLevel::Info && m_bDisplayInfo)
+			else if(log.Level == LogLevel::INFO && m_bDisplayInfo)
 				ImGui::TextColored(ImVec4(1, 1, 1, 1), log.Message.c_str());
 		}
 

@@ -16,7 +16,7 @@ namespace Mirage
 
 	void Viewport::DrawPanel(uint32_t _textureID)
 	{
-		UIWrapper::BeginWindow("Viewport");
+		UIWrapper::BeginWindow(GetTitle());
 		ImVec2 viewportSize = ImGui::GetContentRegionAvail();
 		ImGui::Image((ImTextureID)(intptr_t)_textureID, viewportSize, ImVec2(0, 1), ImVec2(1, 0));
 

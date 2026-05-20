@@ -1,7 +1,6 @@
 #pragma once
-#include <iostream>
 
-#include "AI/influence_grid.h"
+#include <AI/influence_grid.h>
 
 namespace MirageEngine::Core::Components
 {

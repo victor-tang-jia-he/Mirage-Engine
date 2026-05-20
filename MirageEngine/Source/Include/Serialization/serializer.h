@@ -36,7 +36,10 @@ namespace MirageEngine
     namespace AI
     {
         class NavProfile;
+		class AIAction;
 	} // namespace AI
+
+    struct Consideration;
 
     class Serializer
     {
@@ -57,6 +60,8 @@ namespace MirageEngine
         static json SerializeMetaData(entt::meta_type _type, entt::meta_data _data, void* _instancePtr);
 
         static json SerializeNavProfile(AI::NavProfile _navProfile);
+		static json SerializeAIAction(AI::AIAction* _action);
+		static json SerializeConsideration(Consideration _consideration);
 
         static json SerializeVector3(Core::Math::Vector3 _vector3);
         static json SerializeVector4(Core::Math::Vector4 _vector4);

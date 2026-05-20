@@ -30,9 +30,8 @@ namespace Mirage
 		void DrawPanel(uint32_t _textureID) override;
 		void ShutdownPanel() override;
 
-		void DrawProperty(entt::meta_data _data, entt::meta_any _instance);
 		void DrawPropertyDirect(entt::meta_type _type, entt::meta_data _data, void* _instancePtr);
-		void DrawNestedProperty(entt::meta_data _childData, entt::meta_any& _parentInstance);
+		bool DrawNestedProperty(entt::meta_data _childData, entt::meta_any& _parentInstance);
 
 	private:
 		void ResolveVec3(entt::meta_any _value, const char* _label, entt::meta_data _data, entt::meta_any &_instance);
@@ -47,12 +46,8 @@ namespace Mirage
 		bool ResolveComponent(entt::meta_any _value, const char* _label, entt::meta_data _data, entt::meta_any& _instance);
 		bool ResolveResource(entt::meta_any _value, const char* _label, entt::meta_data _data, entt::meta_any& _instance);
 
-		void ResolveMesh(entt::meta_any _value);
-		void ResolveMaterial(entt::meta_any _value);
-		void ResolveTexture(entt::meta_any _value);
-		void ResolveShader(entt::meta_any _value);
-
 		void RenderAddComponentPopup(std::shared_ptr<MirageEngine::GameObject> _selectedObj);
+		void RenderRemoveComponentPopup(std::shared_ptr<MirageEngine::GameObject> _selectedObj);
 
 		void DrawAIMonitor(MirageEngine::Core::Components::UtilityAgent* _agent);
 	};

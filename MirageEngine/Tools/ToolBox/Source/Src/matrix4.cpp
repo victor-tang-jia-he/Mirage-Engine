@@ -161,7 +161,7 @@ Matrix4 Matrix4::Inverse() const
     const float det = Determinant();
 
     if (std::abs(det) < 1e-8f)
-        throw std::runtime_error("Matrix is not invertible (det == 0)");
+		return Matrix4::Identity(); // Return identity if the matrix is singular
 
     Matrix4 inv;
     const float invDet = 1.0f / det;
@@ -248,20 +248,18 @@ Matrix4 Matrix4::CreateTransformMatrix(const Vector3& _position, const Quaternio
 
 Matrix4 Matrix4::GetPerspectiveMatrix(unsigned int _width, unsigned int _height, float _near, float _far, float _fov)
 {
-    const float DEG2RAD = acos(-1.0f) / 180;
-    float tangent = tanf((_fov / 2) * DEG2RAD);
-    float right = _near * tangent;
-    float top = right * static_cast<float>(_height) / static_cast<float>(_width);
+    const float DEG2RAD = acos(-1.0f) / 180.0f;
+    float tangent = tanf((_fov / 2.0f) * DEG2RAD);
 
-    Matrix4 perspective;
+    float top = _near * tangent;                                
+    float right = top * static_cast<float>(_width) / static_cast<float>(_height);
 
+    Matrix4 perspective = Matrix4();                           
     perspective(0, 0) = _near / right;
     perspective(1, 1) = _near / top;
     perspective(2, 2) = -(_far + _near) / (_far - _near);
-    perspective(3, 2) = -1;
+    perspective(3, 2) = -1.0f;
     perspective(2, 3) = -(2.0f * _far * _near) / (_far - _near);
-    perspective(3, 3) = 0;
-
     return perspective;
 }
 
