@@ -159,12 +159,18 @@ namespace Mirage
 
 		float width = ImGui::GetWindowWidth();
 		ImGui::SetCursorPosX(width * 0.1f);
-		if (ImGui::Button("Add Component", ImVec2(width * 0.8f, 30)))
+		if (ImGui::Button("Component", ImVec2(width * 0.8f, 30)))
 		{
 			ImGui::OpenPopup("AddComponentPopup");
 		}
 
+		if (ImGui::Button("Remove Component", ImVec2(width * 0.8f, 30)))
+		{
+			ImGui::OpenPopup("RemoveComponentPopup");
+		}
+
 		RenderAddComponentPopup(selectedObj);
+		RenderRemoveComponentPopup(selectedObj);
 
 		if (ImGui::BeginDragDropTarget())
                 {
@@ -1005,6 +1011,116 @@ namespace Mirage
 			}
 			if (hasUtilityAgent && ImGui::IsItemHovered(ImGuiHoveredFlags_AllowWhenDisabled))
 				ImGui::SetTooltip("GameObject already has an Utility Agent");
+
+			ImGui::EndPopup();
+		}
+	}
+
+	void Inspector::RenderRemoveComponentPopup(std::shared_ptr<MirageEngine::GameObject> _selectedObj)
+	{
+		if (ImGui::BeginPopup("RemoveComponentPopup"))
+		{
+			ImGui::TextDisabled("Remove Component");
+			ImGui::Separator();
+
+			bool hasMesh = _selectedObj->GetComponent<MeshRenderer>() != nullptr;
+			if (ImGui::MenuItem("Mesh Renderer", nullptr, false, hasMesh))
+			{
+				_selectedObj->RemoveComponent<MeshRenderer>();
+				ImGui::CloseCurrentPopup();
+			}
+			if (!hasMesh && ImGui::IsItemHovered(ImGuiHoveredFlags_AllowWhenDisabled))
+				ImGui::SetTooltip("GameObject does not have a Mesh Renderer");
+
+			bool hasCamera = _selectedObj->GetComponent<Camera>() != nullptr;
+			if (ImGui::MenuItem("Camera", nullptr, false, hasCamera))
+			{
+				_selectedObj->RemoveComponent<Camera>();
+				ImGui::CloseCurrentPopup();
+			}
+			if (!hasCamera && ImGui::IsItemHovered(ImGuiHoveredFlags_AllowWhenDisabled))
+				ImGui::SetTooltip("GameObject does not have a Camera");
+
+			bool hasBoxCollider = _selectedObj->GetComponent<BoxCollider>() != nullptr;
+			if (ImGui::MenuItem("BoxCollider", nullptr, false, hasBoxCollider))
+			{
+				_selectedObj->RemoveComponent<BoxCollider>();
+				ImGui::CloseCurrentPopup();
+			}
+			if (!hasBoxCollider && ImGui::IsItemHovered(ImGuiHoveredFlags_AllowWhenDisabled))
+				ImGui::SetTooltip("GameObject does not have a BoxCollider");
+
+			bool hasSphereCollider = _selectedObj->GetComponent<SphereCollider>() != nullptr;
+			if (ImGui::MenuItem("SphereCollider", nullptr, false, hasSphereCollider))
+			{
+				_selectedObj->RemoveComponent<SphereCollider>();
+				ImGui::CloseCurrentPopup();
+			}
+			if (!hasSphereCollider && ImGui::IsItemHovered(ImGuiHoveredFlags_AllowWhenDisabled))
+				ImGui::SetTooltip("GameObject does not have a SphereCollider");
+
+			bool hasCapsuleCollider = _selectedObj->GetComponent<CapsuleCollider>() != nullptr;
+			if (ImGui::MenuItem("CapsuleCollider", nullptr, false, hasCapsuleCollider))
+			{
+				_selectedObj->RemoveComponent<CapsuleCollider>();
+				ImGui::CloseCurrentPopup();
+			}
+			if (!hasCapsuleCollider && ImGui::IsItemHovered(ImGuiHoveredFlags_AllowWhenDisabled))
+				ImGui::SetTooltip("GameObject does not have a CapsuleCollider");
+
+			bool hasRigidbody = _selectedObj->GetComponent<Rigidbody>() != nullptr;
+			if (ImGui::MenuItem("Rigidbody", nullptr, false, hasRigidbody))
+			{
+				_selectedObj->RemoveComponent<Rigidbody>();
+				ImGui::CloseCurrentPopup();
+			}
+			if (!hasRigidbody && ImGui::IsItemHovered(ImGuiHoveredFlags_AllowWhenDisabled))
+				ImGui::SetTooltip("GameObject does not have a Rigidbody");
+
+			bool hasInfluenceGrid = _selectedObj->GetComponent<InfluenceGrid>() != nullptr;
+			if (ImGui::MenuItem("Influence Grid", nullptr, false, hasInfluenceGrid))
+			{
+				_selectedObj->RemoveComponent<InfluenceGrid>();
+				ImGui::CloseCurrentPopup();
+			}
+			if (!hasInfluenceGrid && ImGui::IsItemHovered(ImGuiHoveredFlags_AllowWhenDisabled))
+				ImGui::SetTooltip("GameObject does not have an Influence Grid");
+
+			bool hasInfluenceEmitter = _selectedObj->GetComponent<InfluenceEmitter>() != nullptr;
+			if (ImGui::MenuItem("Influence Emitter", nullptr, false, hasInfluenceEmitter))
+			{
+				_selectedObj->RemoveComponent<InfluenceEmitter>();
+				ImGui::CloseCurrentPopup();
+			}
+			if (!hasInfluenceEmitter && ImGui::IsItemHovered(ImGuiHoveredFlags_AllowWhenDisabled))
+				ImGui::SetTooltip("GameObject does not have an Influence Emitter");
+
+			bool hasInputMapping = _selectedObj->GetComponent<MirageEngine::Core::Input::InputMapping>() != nullptr;
+			if (ImGui::MenuItem("Input Mapping", nullptr, false, hasInputMapping))
+			{
+				_selectedObj->RemoveComponent<MirageEngine::Core::Input::InputMapping>();
+				ImGui::CloseCurrentPopup();
+			}
+			if (!hasInputMapping && ImGui::IsItemHovered(ImGuiHoveredFlags_AllowWhenDisabled))
+				ImGui::SetTooltip("GameObject does not have an InputMapping");
+
+			bool hasNavAgent = _selectedObj->GetComponent<NavAgent>() != nullptr;
+			if (ImGui::MenuItem("Nav Agent", nullptr, false, hasNavAgent))
+			{
+				_selectedObj->RemoveComponent<NavAgent>();
+				ImGui::CloseCurrentPopup();
+			}
+			if (!hasNavAgent && ImGui::IsItemHovered(ImGuiHoveredFlags_AllowWhenDisabled))
+				ImGui::SetTooltip("GameObject does not have a Nav Agent");
+
+			bool hasUtilityAgent = _selectedObj->GetComponent<UtilityAgent>() != nullptr;
+			if (ImGui::MenuItem("UtilityAgent", nullptr, false, hasUtilityAgent))
+			{
+				_selectedObj->RemoveComponent<UtilityAgent>();
+				ImGui::CloseCurrentPopup();
+			}
+			if (!hasUtilityAgent && ImGui::IsItemHovered(ImGuiHoveredFlags_AllowWhenDisabled))
+				ImGui::SetTooltip("GameObject does not have a Utility Agent");
 
 			ImGui::EndPopup();
 		}
