@@ -24,7 +24,7 @@ namespace Mirage
 		void* m_WindowHandle = nullptr;
 		MainMenuBar m_MainMenuBar;
 
-		std::shared_ptr <MirageEditor::EditorCamera> m_EditorCamera;
+		
 		MirageEngine::SceneGraph* m_SceneGraph;
 
 		// Play mode variables
@@ -35,6 +35,7 @@ namespace Mirage
 		int m_GameCameraIndex = 0;
 
 	public:
+		static std::shared_ptr <MirageEditor::EditorCamera> EditorCamera;
 		void Init(void* _windowHandle, MirageEngine::Renderer* _renderer, MirageEngine::SceneGraph* _engineSceneGraph);
 		void OnUpdate(uint32_t _editorTextureID, uint32_t _gameTextureID);
 		void Shutdown();
@@ -48,6 +49,6 @@ namespace Mirage
 		bool IsPaused() const { return m_IsPaused; }
 		bool IsStopped() const { return m_IsStoped; }
 
-		std::shared_ptr <MirageEditor::EditorCamera> GetEditorCamera() const { return m_EditorCamera; }
+		std::shared_ptr <MirageEditor::EditorCamera> GetEditorCamera() const { return EditorCamera; }
 	};
 }

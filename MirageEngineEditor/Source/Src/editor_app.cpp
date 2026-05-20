@@ -18,6 +18,8 @@ DEFINE_LOG_CATEGORY_WITH_COLOR(LogEditorApp, Loggers::Color::CYAN);
 
 namespace Mirage
 {
+	std::shared_ptr<MirageEditor::EditorCamera> EditorApp::EditorCamera = nullptr;
+
 	void Mirage::EditorApp::Init(void* _windowHandle, MirageEngine::Renderer* _renderer, MirageEngine::SceneGraph* _engineSceneGraph)
 	{
 		m_WindowHandle = _windowHandle;;
@@ -38,9 +40,9 @@ namespace Mirage
 			LOG(logTemp, LogEditorApp, "Initializing panel: ", panel->GetTitle());
 		}
 
-		m_EditorCamera = std::make_shared<MirageEditor::EditorCamera>();
-		m_EditorCamera->BindDefaultInput();
-		m_EditorCamera->SetPosition({ 0.f, 0.f, 5.f });
+		EditorCamera = std::make_shared<MirageEditor::EditorCamera>();
+		EditorCamera->BindDefaultInput();
+		EditorCamera->SetPosition({ 0.f, 0.f, 5.f });
 	}
 
 	void Mirage::EditorApp::OnUpdate(uint32_t _editorTextureID, uint32_t _gameTextureID)
@@ -66,7 +68,7 @@ namespace Mirage
 		}
 
 		MirageEditor::Gizmo::EditView(m_SceneGraph); // Disabled
-		MirageEditor::Gizmo::EditTransform(m_SceneGraph, m_EditorCamera);
+		MirageEditor::Gizmo::EditTransform(m_SceneGraph, EditorCamera);
 
 		HandlePlayMode();
 		HandleSaveLoad();
