@@ -24,7 +24,6 @@ int main()
 
     // --- Initialization ---
     MirageEngine::Core::Scripting::ScriptManager::Instance().Init();
-    std::cout << "Context address: " << &entt::locator<entt::meta_ctx>::value_or() << std::endl;
     MirageEngine::Core::Scripting::ScriptManager::Instance().SetMetaContext(entt::locator<entt::meta_ctx>::handle());
     application.InitApp();
     MirageEngine::RegisterMeta().RegisterAllMeta(entt::locator<entt::meta_ctx>::handle());
