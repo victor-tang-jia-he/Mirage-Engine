@@ -26,25 +26,8 @@ Rigidbody::Rigidbody(ICCollider* _shape, Physics::ERigidBodyType _type)
         {
             if (!m_Owner)
 				return;
-            if (m_Owner->GetIsStatic() || m_Rigidbody->GetType() == Physics::ERigidBodyType::STATIC || m_Rigidbody->GetType() == Physics::ERigidBodyType::KINEMATIC)
-				return;
-            
+
             m_Rigidbody->UpdateTransform(m_Owner->Transform);
-
-            Math::Matrix4 parentWorldInverse = Math::Matrix4::Identity();
-            if (auto parent = m_Owner->GetParent())
-                parentWorldInverse = parent->Transform.GetWorldMatrix().Inverse();
-
-            Math::Matrix4 worldMat = Math::Matrix4::CreateTransformMatrix(
-                m_Owner->Transform.GetPosition(),
-                m_Owner->Transform.GetRotation(),
-                m_Owner->Transform.GetScale()
-            );
-
-            Math::Matrix4 localMat = parentWorldInverse * worldMat;
-
-            m_Owner->SetPosition(localMat.GetTranslation());
-            m_Owner->SetRotation(Math::Quaternion(localMat));
         };
 }
 
@@ -64,24 +47,7 @@ MirageEngine::Core::Components::Rigidbody::Rigidbody(GameObject* _owner)
             if (!m_Owner)
                 return;
 
-            if (m_Owner->GetIsStatic() || m_Rigidbody->GetType() == Physics::ERigidBodyType::STATIC || m_Rigidbody->GetType() == Physics::ERigidBodyType::KINEMATIC)
-                return;
             m_Rigidbody->UpdateTransform(m_Owner->Transform);
-
-            Math::Matrix4 parentWorldInverse = Math::Matrix4::Identity();
-            if (auto parent = m_Owner->GetParent())
-                parentWorldInverse = parent->Transform.GetWorldMatrix().Inverse();
-
-            Math::Matrix4 worldMat = Math::Matrix4::CreateTransformMatrix(
-                m_Owner->Transform.GetPosition(),
-                m_Owner->Transform.GetRotation(),
-                m_Owner->Transform.GetScale()
-            );
-
-            Math::Matrix4 localMat = parentWorldInverse * worldMat;
-
-            m_Owner->SetPosition(localMat.GetTranslation());
-            m_Owner->SetRotation(Math::Quaternion(localMat));
         };
 
     m_Rigidbody->OnTransformChanged(m_Owner->Transform);

@@ -40,6 +40,7 @@ namespace Mirage
 
 		m_EditorCamera = std::make_shared<MirageEditor::EditorCamera>();
 		m_EditorCamera->BindDefaultInput();
+		m_EditorCamera->SetPosition({ 0.f, 0.f, 5.f });
 	}
 
 	void Mirage::EditorApp::OnUpdate(uint32_t _editorTextureID, uint32_t _gameTextureID)

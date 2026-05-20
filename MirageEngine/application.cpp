@@ -72,7 +72,7 @@ void Application::InitApp()
 
 void Application::InitScene()
 {
-	m_EngineCamera = std::make_shared<Camera>(1920, 1080, 90.f, 0.1f, 100.f, Vector3(0.f, 0.f, -3.f));
+	//m_EngineCamera = std::make_shared<Camera>(1920, 1080, 90.f, 0.1f, 100.f, Vector3(0.f, 0.f, 5.f));
 }
 
 void Application::InitInput()
@@ -92,11 +92,6 @@ void Application::InitInput()
 	glfwSetCursorPosCallback(window, InputSystem::CursorPosCallback);
 }
 
-using namespace MirageEngine::Core::Resources;
-MeshRenderer* meshRenderer;
-MeshRenderer* meshRenderer2;
-Camera* camera;
-
 void Application::InitGameObject()
 {
 	using namespace MirageEngine;
@@ -108,7 +103,7 @@ void Application::InitGameObject()
 	// =========================
 	//  Scene graph
 	// =========================
-	std::shared_ptr<GameObject> root = m_SceneGraph.CreateGameObject("Root", nullptr);
+	std::shared_ptr<GameObject> root = m_SceneGraph.CreateGameObject("GameObject", nullptr);
 	std::shared_ptr<GameObject> cameraGO = m_SceneGraph.CreateGameObject("Commelin", root);
 	std::shared_ptr<GameObject> floorGO = m_SceneGraph.CreateGameObject("Lin", root);
 	std::shared_ptr<GameObject> child1 = m_SceneGraph.CreateGameObject("Monin", floorGO);
@@ -179,7 +174,6 @@ void Application::InitGameObject()
 	cam->SetFov(60.f);
 	cam->SetWidth(1920);
 	cam->SetHeight(1080);
-
 	InputSystem::SetCurrentMapping(input);
 
 	// =========================
@@ -249,20 +243,14 @@ void Application::InitGameObject()
 	// =========================
 	//  Root transform
 	// =========================
-	root->SetPosition(Vector3(0, 0, -10));
 
-	// =========================
-	//  Cache members
-	// =========================
-	camera = cam.get();
-	meshRenderer = renderer1.get();
-	meshRenderer2 = renderer2.get();
+	m_SceneGraph.GetActiveCamera()->SetPosition(Vector3(0, 0, 5));
 
 	// ========================================================
 	//  AI SYSTEM DEMO SETUP (HARDCODED)
 	// ========================================================
 	
-	std::shared_ptr<GameObject> gridGO = m_SceneGraph.CreateGameObject("AI_Grid");
+	std::shared_ptr<GameObject> gridGO = m_SceneGraph.CreateGameObject("AI_Grid", root);
 	auto globalGrid = gridGO->AddComponent<InfluenceGrid>();
 	globalGrid->SetWidth(55.0f);
 	globalGrid->SetHeight(55.0f);
@@ -270,7 +258,7 @@ void Application::InitGameObject()
 	globalGrid->AddChannel("Fire");
 	globalGrid->Bake();
 
-	std::shared_ptr<GameObject> aiAgentGO = m_SceneGraph.CreateGameObject("Pompier");
+	std::shared_ptr<GameObject> aiAgentGO = m_SceneGraph.CreateGameObject("Pompier", root);
 	aiAgentGO->SetPosition(Vector3(5.0f, 0.0f, 5.0f));
 
 	auto aiRenderer = aiAgentGO->AddComponent<MeshRenderer>();
@@ -302,13 +290,13 @@ void Application::InitGameObject()
 		utility->AddAction(moveAction.get());
 	}
 
-	std::shared_ptr<GameObject> fireGO = m_SceneGraph.CreateGameObject("Feu");
+	std::shared_ptr<GameObject> fireGO = m_SceneGraph.CreateGameObject("Feu", root);
 	fireGO->SetPosition(Vector3(15.0f, 0.0f, 15.0f)); 
 	auto emitter = fireGO->AddComponent<InfluenceEmitter>();
 	emitter->SetTargetGrid(globalGrid.get());
 	emitter->SetInfluenceType("Fire");
 	emitter->SetStrength(100.0f);
-	emitter->SetRadius(10.0f);
+	emitter->SetRadius(5.0f);
 }
 
 void Application::RuntimeUpdate(float _dt)

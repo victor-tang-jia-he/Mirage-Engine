@@ -155,8 +155,6 @@ void Bullet3RigidBody::UpdateTransform(MirageEngine::Core::Components::Transform
 	_transform.SetPosition(MirageEngine::Core::Math::Vector3(position.getX(), position.getY(), position.getZ()));
 	_transform.SetRotation(Quaternion(rotation.w(), rotation.x(), rotation.y(), rotation.z()));
 	m_Velocity = MirageEngine::Core::Math::Vector3(m_RigidBody->getLinearVelocity().getX(), m_RigidBody->getLinearVelocity().getY(), m_RigidBody->getLinearVelocity().getZ());
-
-	m_RigidBody->activate(true);
 }
 
 void Bullet3RigidBody::OnTransformChanged(MirageEngine::Core::Components::Transform& _newTransform)
@@ -165,13 +163,13 @@ void Bullet3RigidBody::OnTransformChanged(MirageEngine::Core::Components::Transf
 		return;
 
 
-	Vector3 position = _newTransform.GetWorldMatrix().GetTranslation();
-	Quaternion rotation = _newTransform.GetWorldMatrix().GetRotation();
+	Vector3 position = _newTransform.GetPosition();
+	Quaternion rotation = _newTransform.GetRotation();
 
 	btTransform btTrans;
 	btTrans.setOrigin(btVector3(position.X, position.Y, position.Z));
 	btTrans.setRotation(btQuaternion(rotation.X, rotation.Y, rotation.Z, rotation.W));
-	SetScale(_newTransform.GetWorldMatrix().GetScale());
+	SetScale(_newTransform.GetScale());
 
 	m_RigidBody->setWorldTransform(btTrans);
 	m_RigidBody->getMotionState()->setWorldTransform(btTrans);
