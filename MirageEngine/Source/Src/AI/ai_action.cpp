@@ -38,7 +38,7 @@ namespace MirageEngine
         void AIAction::OnUpdate(float dt) {}
 
         float AIAction::Evaluate()
-        {
+        {   
             if (m_Considerations.empty() || !m_OwnerAgent) return 0.0f;
 
             float finalScore = 1.0f;

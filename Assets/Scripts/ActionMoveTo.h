@@ -33,7 +33,7 @@ namespace MirageEngine::AI
 
             void OnUpdate(float dt) override {}
 
-            const char* GetName() const override { return "Move To Target"; }
+            const char* GetName() const override { return m_ActionName.c_str(); }
 
             entt::id_type GetType() const override;
 

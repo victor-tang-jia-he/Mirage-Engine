@@ -8,7 +8,7 @@ namespace MirageEngine::AI
     REGISTER_SCRIPT(ActionMoveTo);
     ActionMoveTo::ActionMoveTo()
     {
-        m_ActionName = "MoveTo";
+        m_ActionName = "ActionMoveTo";
     }
 
     float ActionMoveTo::Evaluate()
@@ -19,12 +19,9 @@ namespace MirageEngine::AI
     void ActionMoveTo::Execute(float dt)
     {
         auto nav = GetOwner()->GetComponent<MirageEngine::Core::Components::NavAgent>();
-        if (nav)
+        if (nav && nav->GetCurrentPath().empty()) 
         {
-            if (nav->GetCurrentPath().empty())
-            {
-                nav->SetDestination(m_Target);
-            }
+            nav->SetDestination(m_Target);
         }
     }
 
