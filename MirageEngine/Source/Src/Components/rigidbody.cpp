@@ -26,9 +26,7 @@ Rigidbody::Rigidbody(ICCollider* _shape, Physics::ERigidBodyType _type)
         {
             if (!m_Owner)
 				return;
-            if (m_Owner->GetIsStatic() || m_Rigidbody->GetType() == Physics::ERigidBodyType::STATIC || m_Rigidbody->GetType() == Physics::ERigidBodyType::KINEMATIC)
-				return;
-            
+
             m_Rigidbody->UpdateTransform(m_Owner->Transform);
 
             Math::Matrix4 parentWorldInverse = Math::Matrix4::Identity();
@@ -64,8 +62,6 @@ MirageEngine::Core::Components::Rigidbody::Rigidbody(GameObject* _owner)
             if (!m_Owner)
                 return;
 
-            if (m_Owner->GetIsStatic() || m_Rigidbody->GetType() == Physics::ERigidBodyType::STATIC || m_Rigidbody->GetType() == Physics::ERigidBodyType::KINEMATIC)
-                return;
             m_Rigidbody->UpdateTransform(m_Owner->Transform);
 
             Math::Matrix4 parentWorldInverse = Math::Matrix4::Identity();
