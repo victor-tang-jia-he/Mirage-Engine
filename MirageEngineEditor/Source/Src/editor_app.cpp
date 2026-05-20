@@ -70,9 +70,6 @@ namespace Mirage
 		MirageEditor::Gizmo::EditView(m_SceneGraph); // Disabled
 		MirageEditor::Gizmo::EditTransform(m_SceneGraph, EditorCamera);
 
-		HandlePlayMode();
-		HandleSaveLoad();
-
 		UIWrapper::EndFrame();
 	}
 
@@ -86,18 +83,6 @@ namespace Mirage
 
 		UIWrapper::Shutdown();
 
-	}
-
-	void EditorApp::HandleSaveLoad()
-	{
-		if (ImGui::IsKeyPressed(ImGuiKey_B))
-		{
-			MirageEngine::Serializer::SaveScene(*m_SceneGraph);
-		}
-		else if (ImGui::IsKeyPressed(ImGuiKey_N))
-		{
-			*m_SceneGraph = *MirageEngine::Deserializer::LoadSceneFromFile("Assets/Scenes/scene.json");
-		}
 	}
 
 	void EditorApp::SaveScene()
@@ -114,49 +99,18 @@ namespace Mirage
 		*m_SceneGraph = *MirageEngine::Deserializer::LoadSceneFromFile("Assets/Scenes/scene.json");
 	}
 
-	void EditorApp::HandlePlayMode()
-	{
-		if (ImGui::IsKeyPressed(ImGuiKey_K) && !m_IsPlaying)
-		{
-			SaveScene();
-			m_IsPlaying = true;
-			LOG(logTemp, LogEditorApp, "Play mode started");
-		}
-		if (ImGui::IsKeyPressed(ImGuiKey_L) && m_IsPlaying)
-		{
-			m_IsPaused = !m_IsPaused;
-			LOG(logTemp, LogEditorApp, m_IsPaused ? "Play mode paused" : "Play mode resumed");
-		}
-		if (ImGui::IsKeyPressed(ImGuiKey_M) && m_IsPlaying)
-		{
-			LoadScene();
-			m_IsStopped = true;
-			LOG(logTemp, LogEditorApp, "Play mode stopping");
-		}
-
-		if (m_IsStopped)
-		{
-			LOG(logTemp, LogEditorApp, "Play mode stopped");
-			m_IsPlaying = false;
-			m_IsPaused = false;
-			m_IsStopped = false;
-		}
-	}
 	void EditorApp::PlayGame()
 	{
-		MirageEngine::Serializer::SaveScene(*m_SceneGraph);
+		SaveScene();
 		m_IsPlaying = true;
 		LOG(logTemp, LogEditorApp, "Play mode started");
 	}
 
 	void EditorApp::StopGame()
 	{
-		m_SceneGraph->ClearScene();
-		*m_SceneGraph = MirageEngine::SceneGraph();
-		MirageEngine::LightManager::Instance().ShutDown();
-		MirageEngine::Core::Physics::PhysicsManager::Instance().Initialize();
-		*m_SceneGraph = *MirageEngine::Deserializer::LoadSceneFromFile("Assets/Scenes/scene.json");
-		m_IsStopped = true;
+		LoadScene();
+		m_IsPlaying = false;
+		m_IsPaused = false;
 		LOG(logTemp, LogEditorApp, "Play mode stopping");
 	}
 }
