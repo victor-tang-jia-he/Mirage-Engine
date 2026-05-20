@@ -4,6 +4,7 @@
 #include "SceneGraph/scene_graph.h"
 #include "GameObject/game_object.h"
 #include "imgui.h"
+#include "editor_app.h"
 
 #include <Logs/log.h>
 
@@ -187,6 +188,14 @@ namespace Mirage
 				{
 					m_Context->CreateCamera("New Camera", selected);
 					m_NextModalToOpen = "CreateObjectModal";
+				}
+				ImGui::Separator();
+				if (ImGui::MenuItem("Teleport to game object"))
+				{
+					if (m_Context->GetSelectedObject().lock())
+					{
+						Mirage::EditorApp::EditorCamera->SetPosition(selected->GetPosition());
+					}
 				}
 				ImGui::Separator();
 				if (ImGui::MenuItem("Delete", "Del")) 
