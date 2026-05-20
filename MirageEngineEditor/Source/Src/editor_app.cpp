@@ -100,11 +100,25 @@ namespace Mirage
 		}
 	}
 
+	void EditorApp::SaveScene()
+	{
+		MirageEngine::Serializer::SaveScene(*m_SceneGraph);
+	}
+
+	void EditorApp::LoadScene()
+	{
+		m_SceneGraph->ClearScene();
+		*m_SceneGraph = MirageEngine::SceneGraph();
+		MirageEngine::LightManager::Instance().ShutDown();
+		MirageEngine::Core::Physics::PhysicsManager::Instance().Initialize();
+		*m_SceneGraph = *MirageEngine::Deserializer::LoadSceneFromFile("Assets/Scenes/scene.json");
+	}
+
 	void EditorApp::HandlePlayMode()
 	{
 		if (ImGui::IsKeyPressed(ImGuiKey_K) && !m_IsPlaying)
 		{
-			MirageEngine::Serializer::SaveScene(*m_SceneGraph);
+			SaveScene();
 			m_IsPlaying = true;
 			LOG(logTemp, LogEditorApp, "Play mode started");
 		}
@@ -115,11 +129,7 @@ namespace Mirage
 		}
 		if (ImGui::IsKeyPressed(ImGuiKey_M) && m_IsPlaying)
 		{
-			m_SceneGraph->ClearScene();
-			*m_SceneGraph = MirageEngine::SceneGraph();
-			MirageEngine::LightManager::Instance().ShutDown();
-			MirageEngine::Core::Physics::PhysicsManager::Instance().Initialize();
-			*m_SceneGraph = *MirageEngine::Deserializer::LoadSceneFromFile("Assets/Scenes/scene.json");
+			LoadScene();
 			m_IsStopped = true;
 			LOG(logTemp, LogEditorApp, "Play mode stopping");
 		}

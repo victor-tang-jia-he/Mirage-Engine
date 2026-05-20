@@ -14,7 +14,7 @@ namespace Mirage
 		void DrawBar(Mirage::EditorApp* _editor);
 
 	private:
-		void FileMenu();
+		void FileMenu(Mirage::EditorApp* _editor);
 		void EditMenu();
 
 		void Play(Mirage::EditorApp* _editor);

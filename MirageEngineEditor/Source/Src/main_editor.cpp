@@ -41,8 +41,8 @@ int main()
 			MirageEngine::Core::Physics::PhysicsManager::Instance().Update(MirageEngine::TimeManager::GetDeltaTime());
 			application.RuntimeUpdate(MirageEngine::TimeManager::GetDeltaTime());
 		}
-		application.EditorUpdate();
 		application.BeginRender(editor.GetEditorCamera());
+		application.EditorUpdate();
 
 		// Display the editor panels and pass the framebuffer texture ID to the viewport for rendering the scene
 		editor.OnUpdate(application.GetEditorFBO(), application.GetFramebufferTextureID());

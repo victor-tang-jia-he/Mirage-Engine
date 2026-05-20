@@ -41,6 +41,8 @@ namespace Mirage
 		void Shutdown();
 
 		void HandleSaveLoad();
+		void SaveScene();
+		void LoadScene();
 		void HandlePlayMode();
 		void PlayGame();
 		void StopGame();

@@ -1,5 +1,6 @@
 #include "main_menu_bar.h"
 #include "editor_app.h"
+#
 
 #include <iostream>
 
@@ -9,17 +10,29 @@ namespace Mirage
 	{
 		if (ImGui::BeginMainMenuBar())
 		{
-			FileMenu();
+			FileMenu(_editor);
 			EditMenu();
 			Play(_editor);
 			ImGui::EndMainMenuBar();
 		}
 	}
 
-	void MainMenuBar::FileMenu()
+	void MainMenuBar::FileMenu(Mirage::EditorApp* _editor)
 	{
+		float menuBarHeight = ImGui::GetFrameHeight();
+		float buttonWidth = 200.0f;
+
 		if (ImGui::BeginMenu("File"))
 		{
+			// Save Current Scene
+			if (ImGui::Button("Quick-Save Scene", ImVec2(buttonWidth, menuBarHeight)))
+			{
+				_editor->SaveScene();
+			}
+			if (ImGui::Button("Quick-Load Scene", ImVec2(buttonWidth, menuBarHeight)))
+			{
+				_editor->LoadScene();
+			}
 			ImGui::EndMenu();
 		}
 	}
