@@ -1,4 +1,3 @@
-
 # Sources
 file(GLOB_RECURSE MIRAGE_ENGINE_SOURCES CONFIGURE_DEPENDS 
 	"application.cpp"
