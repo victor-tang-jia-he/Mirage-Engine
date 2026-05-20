@@ -315,7 +315,9 @@ AI::NavProfile MirageEngine::Deserializer::DeserializeNavProfile(json _jNavProfi
 
 AI::AIAction* MirageEngine::Deserializer::DeserializeAIAction(json _jAIAction, std::shared_ptr<GameObject> _owner)
 {
-    auto script = Scripting::ScriptManager::Instance().CreateScriptByName("ActionMoveTo");
+	std::string actionTypeName = _jAIAction["TypeName"].get<std::string>();
+    std::string actionClassName = _jAIAction["ClassName"].get<std::string>();
+    auto script = Scripting::ScriptManager::Instance().CreateScriptByName(actionTypeName.c_str());
     _owner->AddComponent(std::move(script));
     std::shared_ptr<AI::AIAction> aiAction = _owner->GetComponent<AI::AIAction>();
 
@@ -325,6 +327,15 @@ AI::AIAction* MirageEngine::Deserializer::DeserializeAIAction(json _jAIAction, s
         Consideration consideration = DeserializeConsideration(jConsideration);
         considerations.emplace_back(consideration);
 	}
+
+    entt::hashed_string hashed{ actionClassName.c_str() };
+    entt::meta_type metaType = entt::resolve(hashed);
+	entt::meta_any actionInstance = metaType.from_void(aiAction.get());
+
+    for (auto [id, data] : metaType.data())
+    {
+        DeserializeMetaData(metaType, data, actionInstance, _jAIAction, _owner);
+    }
 
     aiAction->SetConsiderations(considerations);
 	return aiAction.get();

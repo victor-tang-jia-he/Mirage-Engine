@@ -30,6 +30,7 @@ namespace MirageEngine
         {
         protected:
             std::string m_ActionName = "BaseAction";
+            std::string m_FullName = "AIAction";
             Core::Components::UtilityAgent* m_OwnerAgent = nullptr;
             std::vector<Consideration> m_Considerations;
 
@@ -48,6 +49,7 @@ namespace MirageEngine
             virtual void Execute(float _dt) = 0;
             
             const char* GetName() const override { return m_ActionName.c_str(); }
+			std::string GetFullName() const { return m_FullName; }
             void SetActionName(std::string _name) { m_ActionName = _name; }
 
             std::vector<Consideration>& GetConsiderations() { return m_Considerations; }

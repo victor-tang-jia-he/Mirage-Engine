@@ -8,7 +8,8 @@ namespace MirageEngine::AI
     REGISTER_SCRIPT(ActionMoveTo);
     ActionMoveTo::ActionMoveTo()
     {
-        m_ActionName = "MoveTo";
+        m_ActionName = "ActionMoveTo";
+		m_FullName = typeid(*this).name();
     }
 
     float ActionMoveTo::Evaluate()

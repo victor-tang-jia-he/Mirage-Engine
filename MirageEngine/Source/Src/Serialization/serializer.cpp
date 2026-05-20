@@ -300,12 +300,22 @@ json MirageEngine::Serializer::SerializeAIAction(AI::AIAction* _action)
 {
 	json jAIAction;
 
-	jAIAction["Name"] = _action->GetName();
+	jAIAction["TypeName"] = std::string(_action->GetName());
+    jAIAction["ClassName"] = std::string(_action->GetFullName());
 	jAIAction["Considerations"] = json::array();
 
     for (const Consideration& consideration : _action->GetConsiderations())
     {
         jAIAction["Considerations"].push_back(SerializeConsideration(consideration));
+    }
+
+    entt::meta_type type = entt::resolve(_action->GetType());
+    if (type)
+    {
+        for (auto [id, data] : type.data())
+        {
+            jAIAction[data.name()] = (SerializeMetaData(type, data, (void*)_action));
+        }
     }
 
     return jAIAction;

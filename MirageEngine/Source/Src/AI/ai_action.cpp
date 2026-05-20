@@ -24,6 +24,7 @@ namespace MirageEngine
             : m_ActionName("BaseAction")
             , m_OwnerAgent(nullptr)
         {
+            m_FullName = typeid(*this).name();
         }
 
         void AIAction::OnStart()

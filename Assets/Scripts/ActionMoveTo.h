@@ -24,16 +24,12 @@ namespace MirageEngine::AI
                 entt::meta_factory<ActionMoveTo>()
                     .type(entt::type_id<ActionMoveTo>().hash(), "ActionMoveTo")
                     .base<MirageEngine::AI::AIAction>()
-                    .base<MirageEngine::Core::Scripting::IScript>()
-                    .base<MirageEngine::Core::Components::Component>()
-                    .data<&ActionMoveTo::m_Target>("Target Position")
-                    .data<&ActionMoveTo::m_ArrivalDistance>("Arrival Distance")
+                    .data<&ActionMoveTo::SetTarget, &ActionMoveTo::GetTarget>("Target Position")
+                    .data<&ActionMoveTo::SetArrivalDistance, &ActionMoveTo::GetArrivalDistance>("Arrival Distance")
                     .ctor<>();
             }
 
             void OnUpdate(float dt) override {}
-
-            const char* GetName() const override { return "Move To Target"; }
 
             entt::id_type GetType() const override;
 
@@ -42,7 +38,9 @@ namespace MirageEngine::AI
             void Execute(float dt) override;
 
             void SetTarget(MirageEngine::Core::Math::Vector3 _pos) { m_Target = _pos; }
+			void SetArrivalDistance(float _distance) { m_ArrivalDistance = _distance; }
 
             MirageEngine::Core::Math::Vector3 GetTarget() const { return m_Target; }
+			float GetArrivalDistance() const { return m_ArrivalDistance; }
     };
 } // namespace MirageEngine::AI
