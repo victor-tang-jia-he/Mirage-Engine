@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Physics/Bullet3/bullet3_pch.h>
+#include <Physics/Bullet3/i_bullet3_collider_data.h>
 #include <Physics/i_collider.h>
 
 namespace MirageEngine::Core::Physics
@@ -28,13 +29,9 @@ namespace MirageEngine::Core::Physics
         void SetHeight(float _height) override;
 
         float GetRadius() const override { return m_Radius; }
-
         float GetHeight() const override { return m_Height; }
 
         btTransform GetTransform() override;
-
         btCollisionShape* GetShape() override { return m_CollisionShape; }
-
-        IBulletColliderData* AsBullet3Collider() override { return this; }
     };
 } // namespace MirageEngine::Core::Physics

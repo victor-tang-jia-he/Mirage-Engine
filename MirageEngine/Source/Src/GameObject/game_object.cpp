@@ -118,8 +118,6 @@ void MirageEngine::GameObject::SetRotation(MirageEngine::Core::Math::Quaternion 
         if (!child->GetIsStatic())
             child->SetDirty(true);
 	}
-    if (auto rb = GetComponent<MirageEngine::Core::Components::Rigidbody>())
-        rb->OnTransformChanged(Transform);
 }
 
 void MirageEngine::GameObject::SetPosition(MirageEngine::Core::Math::Vector3 _pos)
@@ -131,8 +129,6 @@ void MirageEngine::GameObject::SetPosition(MirageEngine::Core::Math::Vector3 _po
             child->SetDirty(true);
     }
     Transform.SetPosition(_pos);
-    if (auto rb = GetComponent<MirageEngine::Core::Components::Rigidbody>())
-        rb->OnTransformChanged(Transform);
 }
 
 void MirageEngine::GameObject::SetScale(MirageEngine::Core::Math::Vector3 _scale)
@@ -144,8 +140,6 @@ void MirageEngine::GameObject::SetScale(MirageEngine::Core::Math::Vector3 _scale
             child->SetDirty(true);
     }
     Transform.SetScale(_scale);
-    if (auto rb = GetComponent<MirageEngine::Core::Components::Rigidbody>())
-        rb->OnTransformChanged(Transform);
 }
 
 void MirageEngine::GameObject::SetPosition(float _x, float _y, float _z) { SetPosition(MirageEngine::Core::Math::Vector3(_x, _y, _z)); }
