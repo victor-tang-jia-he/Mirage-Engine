@@ -52,6 +52,18 @@ void ResourceManager::PreLoadResources()
     CreateShader("DefaultFragment", "Assets/Defaults/default.frag", MirageRHI::IShader::ShaderType::FRAGMENT);
     CreateTexture("DefaultTexture", "Assets/Defaults/default.png")->Bind();
 
+    // Create default Material 
+    std::shared_ptr<Material> mat = CreateMaterial(
+        "DefaultMaterial", "Assets/Shaders/light.vert", "Assets/Shaders/light.frag", 0,
+        {
+            { "PerFrame",   MirageRHI::UBOBinding::PER_FRAME },
+            { "PerObject",  MirageRHI::UBOBinding::PER_OBJECT },
+            { "LightBlock", MirageRHI::UBOBinding::LIGHTS },
+        });
+
+    std::shared_ptr<MaterialInstance> matInstance = CreateMaterialInstance("DefaultMaterialInstance", mat);
+	matInstance->SetTexture("albedoMap", GetTexture("DefaultTexture"));
+
     LOG(logInfo, LogResourceManager, "Preloading default resources completed.");
     LOG(logInfo, LogResourceManager, "Preloading resources...");
 

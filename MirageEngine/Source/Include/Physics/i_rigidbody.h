@@ -18,12 +18,14 @@ namespace MirageEngine::Core::Physics
     {
     protected:
         using Vector3 = Math::Vector3;
+        using Vector4 = Math::Vector4;
+        using Matrix4 = Math::Matrix4;
         using Transform = Components::Transform;
 
         float m_Mass = 1.f;
         Vector3 m_Velocity = Vector3(0.f);
         ERigidBodyType m_Type;
-        ECollisionGroup m_CollisionGroup = ECollisionGroup::DEFAULT;
+        ECollisionGroup m_CollisionGroup = ECollisionGroup::GROUP_1;
         ECollisionGroup m_CollisionMask = ECollisionGroup::ALL;
         ECollisionResponse m_CollisionRespond = ECollisionResponse::BLOCK;
         bool m_bIsDirty = true;

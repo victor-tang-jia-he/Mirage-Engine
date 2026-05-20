@@ -39,6 +39,8 @@ std::shared_ptr<SceneGraph> MirageEngine::Deserializer::DeserializeScene(json _j
         DeserializeGameObject(jGameObject, nullptr, savedScene);
     }
 
+	savedScene->SetActiveCamera(savedScene->FindComponentInScene<Core::Components::Camera>());
+
     LOG(logInfo, LogDeserializer, "Scene loaded successfully");
 
     return savedScene;

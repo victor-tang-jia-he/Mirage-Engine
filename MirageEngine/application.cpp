@@ -34,10 +34,8 @@
 
 // Light include
 #include <Light/light_manager.h>
-#include <Light/directional_light.h>
-#include <Light/spot_light.h>
-#include <Light/point_light.h>
-#include <Light/i_light.h>
+#include <Components/directional_light_component.h>
+#include <Components/point_light_component.h>
 #include <i_uniform_buffer.h>
 
 // AI
@@ -106,21 +104,6 @@ void Application::InitGameObject()
 
 	PhysicsManager& physics = PhysicsManager::Instance();
 
-    // =========================
-    //  Physics setup
-    // =========================
-    std::shared_ptr<SphereCollider> dynamicCollider = std::make_shared<SphereCollider>();
-    std::shared_ptr<Rigidbody> dynamicRB = std::make_shared<Rigidbody>(dynamicCollider.get(), ERigidBodyType::DYNAMIC);
-
-    dynamicRB->SetCollisionGroup(ECollisionGroup::GROUP_1);
-    dynamicRB->SetCollisionMask(ECollisionGroup::GROUP_1 | ECollisionGroup::GROUP_2 | ECollisionGroup::GROUP_3);
-    dynamicRB->SetCollisionResponse(ECollisionResponse::BLOCK);
-
-    std::shared_ptr<BoxCollider> staticCollider = std::make_shared<BoxCollider>();
-    std::shared_ptr<Rigidbody> staticRB = std::make_shared<Rigidbody>(staticCollider.get(), ERigidBodyType::STATIC);
-
-    staticRB->SetCollisionGroup(ECollisionGroup::GROUP_2);
-    staticRB->SetCollisionMask(ECollisionGroup::ALL);
 
 	// =========================
 	//  Scene graph
@@ -135,6 +118,27 @@ void Application::InitGameObject()
 	ResourceManager::Instance().GetMesh("cylinder")->Bind();
 	ResourceManager::Instance().GetMesh("plane")->Bind();
 	ResourceManager::Instance().GetMesh("cone")->Bind();
+
+    // =========================
+    //  Physics setup
+    // =========================
+    std::shared_ptr<SphereCollider> dynamicCollider = std::make_shared<SphereCollider>(cameraGO.get());
+	cameraGO->AddComponent<SphereCollider>(dynamicCollider);
+    std::shared_ptr<Rigidbody> dynamicRB = std::make_shared<Rigidbody>(cameraGO.get());
+	cameraGO->AddComponent<Rigidbody>(dynamicRB);
+
+    dynamicRB->SetCollisionGroup(ECollisionGroup::GROUP_1);
+    dynamicRB->SetCollisionMask(ECollisionGroup::GROUP_1 | ECollisionGroup::GROUP_2 | ECollisionGroup::GROUP_3);
+    dynamicRB->SetCollisionResponse(ECollisionResponse::BLOCK);
+
+    std::shared_ptr<BoxCollider> staticCollider = std::make_shared<BoxCollider>(floorGO.get());
+	floorGO->AddComponent<BoxCollider>(staticCollider);
+    std::shared_ptr<Rigidbody> staticRB = std::make_shared<Rigidbody>(floorGO.get());
+	staticRB->SetRigidBodyType(ERigidBodyType::STATIC);
+	floorGO->AddComponent<Rigidbody>(staticRB);
+
+    staticRB->SetCollisionGroup(ECollisionGroup::GROUP_2);
+    staticRB->SetCollisionMask(ECollisionGroup::ALL);
 
 	// =========================
 	//  Script
@@ -152,16 +156,14 @@ void Application::InitGameObject()
     cameraGO->AddComponent<Camera>();
     cameraGO->AddComponent<InputMapping>();
     cameraGO->AddComponent<MeshRenderer>();
-    cameraGO->AddComponent(dynamicCollider);
-    cameraGO->AddComponent<Rigidbody>(dynamicRB);
 
 	std::shared_ptr<Camera> cam = cameraGO->GetComponent<Camera>();
 	std::shared_ptr<InputMapping> input = cameraGO->GetComponent<InputMapping>();
 	std::shared_ptr<MeshRenderer> renderer1 = cameraGO->GetComponent<MeshRenderer>();
 
-	m_SceneGraph.SetEditorCamera(cam);
+	m_SceneGraph.SetActiveCamera(cam);
 
-	input->RegisterInput("Reload", GLFW_KEY_R);
+	input->RegisterInput("Reload", GLFW_KEY_INSERT);
 	std::function<void(CallbackInputInfo)> func = [](CallbackInputInfo info)
 	{
 		if (info.Pressed)
@@ -183,8 +185,6 @@ void Application::InitGameObject()
 	// =========================
 	//  Floor object
 	// =========================
-	floorGO->AddComponent<BoxCollider>(staticCollider);
-	floorGO->AddComponent<Rigidbody>(staticRB);
 	floorGO->AddComponent<MeshRenderer>();
 
 	std::shared_ptr<MeshRenderer> renderer2 = floorGO->GetComponent<MeshRenderer>();
@@ -199,11 +199,11 @@ void Application::InitGameObject()
 	//  Light object
 	// =========================
 
-	std::shared_ptr<PointLight> light1 = child2->AddComponent<PointLight>();
+	std::shared_ptr<PointLightComponent> light1 = child2->AddComponent<PointLightComponent>();
 	light1->SetIntensity(0.5f);
 	light1->SetColor({ 1, 1, 1, 1 });
 
-	std::shared_ptr<DirectionalLight> light2 = child2->AddComponent<DirectionalLight>();
+	std::shared_ptr<DirectionalLightComponent> light2 = child2->AddComponent<DirectionalLightComponent>();
 	light2->SetIntensity(0.5f);
 	light2->SetColor({ 1, 1, 1, 1 });
 
@@ -249,7 +249,7 @@ void Application::InitGameObject()
 	// =========================
 	//  Root transform
 	// =========================
-	root->Transform.SetPosition(Vector3(0, 0, -10));
+	root->SetPosition(Vector3(0, 0, -10));
 
 	// =========================
 	//  Cache members
@@ -331,14 +331,22 @@ void Application::RuntimeUpdate(float _dt)
 void Application::EditorUpdate()
 {
 	m_SceneGraph.CallAllDrawLine();
+	MirageEngine::Core::Physics::PhysicsManager::Instance().DebugDraw();
 	m_SceneGraph.UpdateAllWorldMatrices();
 }
 
 void Application::BeginRender(std::shared_ptr<MirageEngine::Core::ICamera> camera)
 {
+	// Editor Cam
 	m_Renderer.BeginFrame();
 	m_Renderer.RenderScene(m_SceneGraph, camera);
 	m_Renderer.RenderLine();
+	m_Renderer.EndFrame();
+	m_EditorFBO = m_Renderer.GetFramebufferTextureID();
+	// Game Cam
+	m_Renderer.BeginFrame();
+	m_Renderer.RenderScene(m_SceneGraph, GetSceneGraph()->GetActiveCamera());
+	m_Renderer.EndFrame();
 	m_Renderer.RenderScreen();
 }
 void Application::EndRender()

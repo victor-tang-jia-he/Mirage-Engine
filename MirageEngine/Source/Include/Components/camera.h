@@ -20,16 +20,9 @@ namespace MirageEngine
                 private:
 
                     // Clipping Planes
-                    float m_Near = 0.f;
-                    float m_Far = 0.f;
-                    unsigned int m_Width = 0;
-                    unsigned int m_Height = 0;
-                    float m_Fov = 90.f;
                     float m_CameraVelocity = 1.f;
                     float m_CameraYaw;
                     float m_CameraPitch;
-
-                    MirageEngine::Core::Components::Transform m_transform;
 
                 public:
 
@@ -37,6 +30,8 @@ namespace MirageEngine
                     Camera(GameObject* _owner);
                     Camera(unsigned int _width, unsigned int _height, float _fov, float _near, float _far, const MirageEngine::Core::Math::Vector3 _position);
                     ~Camera() = default;
+
+					void OnUpdate(float dt) override;
 
                     void AttachMeta(std::shared_ptr<GameObject> _Owner);
                     static void AttachNew(std::shared_ptr<GameObject> _owner);

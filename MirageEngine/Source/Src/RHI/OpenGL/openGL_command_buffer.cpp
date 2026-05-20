@@ -33,7 +33,6 @@ void MirageRHI::OpenGLCommandBuffer::Draw(uint32_t _indexCount, DrawMode _mode)
 {
     GLint ebo = 0;
     glGetIntegerv(GL_ELEMENT_ARRAY_BUFFER_BINDING, &ebo);
-
     GLenum glMode;
     switch (_mode)
     {
@@ -58,10 +57,10 @@ void MirageRHI::OpenGLCommandBuffer::Draw(uint32_t _indexCount, DrawMode _mode)
     {
         glDrawElements(glMode, (GLsizei)_indexCount, GL_UNSIGNED_INT, (const void*)0);
     }
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
 
 void MirageRHI::OpenGLCommandBuffer::SubmitAndPresent(std::shared_ptr<ISwapChain> _swapChain, std::shared_ptr<ISurface> _surface)
 {
     _swapChain->API_OpenGL().Present(_surface->API_OpenGL());
-    _swapChain->IsScreenResized(_surface);
 }

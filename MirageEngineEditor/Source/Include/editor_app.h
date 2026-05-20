@@ -32,9 +32,11 @@ namespace Mirage
 		bool m_IsPaused = false;
 		bool m_IsStoped = false;
 
+		int m_GameCameraIndex = 0;
+
 	public:
 		void Init(void* _windowHandle, MirageEngine::Renderer* _renderer, MirageEngine::SceneGraph* _engineSceneGraph);
-		void OnUpdate(uint32_t _textureID);
+		void OnUpdate(uint32_t _editorTextureID, uint32_t _gameTextureID);
 		void Shutdown();
 
 		void HandlePlayMode();

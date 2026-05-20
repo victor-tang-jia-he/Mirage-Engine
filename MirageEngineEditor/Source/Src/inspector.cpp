@@ -17,6 +17,10 @@
 #include <AI/responsive_curve.h>
 #include <AI/ai_action.h>
 #include <Components/nav_agent.h>
+#include <Components/rigidbody.h>
+#include <Components/box_collider.h>
+#include <Components/sphere_collider.h>
+#include <Components/capsule_collider.h>
 #include <Logs/log.h>
 
 DEFINE_LOG_CATEGORY_WITH_COLOR(LogInspector, Loggers::Color::CYAN);
@@ -38,7 +42,7 @@ namespace Mirage
 	{
 		UIWrapper::BeginWindow("Inspector");
 
-		std::shared_ptr<GameObject> selectedObj = m_Context->GetSelectedObject();
+		std::shared_ptr<GameObject> selectedObj = m_Context->GetSelectedObject().lock();
 		if (selectedObj == nullptr)
 		{
 			ImGui::TextDisabled("No object selected in Hierarchy");
@@ -548,7 +552,7 @@ namespace Mirage
 			{
 				InfluenceGrid* grid = nullptr;
 				auto app = Application::Instance();
-				if (app) grid = app->GetSceneGraph()->FindComponentInScene<InfluenceGrid>();
+				if (app) grid = app->GetSceneGraph()->FindComponentInScene<InfluenceGrid>().get();
 
 				int index = 0;
 				int indexToModify = -1;
@@ -672,7 +676,7 @@ namespace Mirage
 
 			if (!grid) {
 				auto app = Application::Instance();
-				if (app) grid = app->GetSceneGraph()->FindComponentInScene<InfluenceGrid>();
+				if (app) grid = app->GetSceneGraph()->FindComponentInScene<InfluenceGrid>().get();
 			}
 
 			if (grid)
@@ -918,6 +922,44 @@ namespace Mirage
 			}
 			if (hasCamera && ImGui::IsItemHovered(ImGuiHoveredFlags_AllowWhenDisabled))
 				ImGui::SetTooltip("GameObject already has a Camera");
+
+			bool hasCollider = _selectedObj->GetComponent<ICCollider>() != nullptr;
+			if (ImGui::MenuItem("BoxCollider", nullptr, false, !hasCollider))
+			{
+				_selectedObj->AddComponent<BoxCollider>();
+				ImGui::CloseCurrentPopup();
+			}
+			if (hasCollider && ImGui::IsItemHovered(ImGuiHoveredFlags_AllowWhenDisabled))
+				ImGui::SetTooltip("GameObject already has a Collider");
+
+			if (ImGui::MenuItem("SphereCollider", nullptr, false, !hasCollider))
+			{
+				_selectedObj->AddComponent<SphereCollider>();
+				ImGui::CloseCurrentPopup();
+			}
+			if (hasCollider && ImGui::IsItemHovered(ImGuiHoveredFlags_AllowWhenDisabled))
+				ImGui::SetTooltip("GameObject already has a Collider");
+
+			if (ImGui::MenuItem("CapsuleCollider", nullptr, false, !hasCollider))
+			{
+				_selectedObj->AddComponent<CapsuleCollider>();
+				ImGui::CloseCurrentPopup();
+			}
+			if (hasCollider && ImGui::IsItemHovered(ImGuiHoveredFlags_AllowWhenDisabled))
+				ImGui::SetTooltip("GameObject already has a Collider");
+
+			bool hasRigidbody = _selectedObj->GetComponent<Rigidbody>() != nullptr;
+			if (ImGui::MenuItem("Rigidbody", nullptr, false, !hasRigidbody))
+			{
+				std::shared_ptr<Rigidbody> rb = std::make_shared<Rigidbody>(_selectedObj.get());
+				if (rb)
+				{
+					_selectedObj->AddComponent<Rigidbody>(rb);
+				}
+				ImGui::CloseCurrentPopup();
+			}
+			if (hasRigidbody && ImGui::IsItemHovered(ImGuiHoveredFlags_AllowWhenDisabled))
+				ImGui::SetTooltip("GameObject already has a Rigidbody");
 
 			bool hasInfluenceGrid = _selectedObj->GetComponent<InfluenceGrid>() != nullptr;
 			if (ImGui::MenuItem("Influence Grid", nullptr, false, !hasInfluenceGrid))

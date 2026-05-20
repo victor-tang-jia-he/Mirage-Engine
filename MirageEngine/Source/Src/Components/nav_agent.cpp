@@ -78,7 +78,7 @@ namespace MirageEngine::Core
 			Application* app = Application::Instance();
 			if (!app) return;
 
-			InfluenceGrid* grid = app->GetSceneGraph()->FindComponentInScene<InfluenceGrid>();
+			InfluenceGrid* grid = app->GetSceneGraph()->FindComponentInScene<InfluenceGrid>().get();
 
 			if (grid)
 			{

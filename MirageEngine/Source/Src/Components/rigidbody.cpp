@@ -28,25 +28,20 @@ Rigidbody::Rigidbody(ICCollider* _shape, Physics::ERigidBodyType _type)
 MirageEngine::Core::Components::Rigidbody::Rigidbody(GameObject* _owner)
     : Component(_owner)
 {
-    std::shared_ptr<ICCollider> shape = m_Owner->GetComponent<BoxCollider>();
+    std::shared_ptr<ICCollider> shape = m_Owner->GetComponent<ICCollider>();
     if (!shape)
     {
-        shape = m_Owner->GetComponent<SphereCollider>();
-        if (!shape)
-        {
-            shape = m_Owner->GetComponent<CapsuleCollider>();
-            if (!shape)
-            {
-                shape = m_Owner->AddComponent<BoxCollider>();
-            }
-        }
+        shape = m_Owner->AddComponent<BoxCollider>();
     }
-    m_Rigidbody = Physics::PhysicsManager::Instance().CreateRigidBody(shape->GetCollision(), Physics::ERigidBodyType::DYNAMIC, m_Owner->Transform);
+
+    m_Rigidbody = Physics::PhysicsManager::Instance().CreateRigidBody(shape->GetCollision(), Physics::ERigidBodyType::DYNAMIC);
 
     m_Rigidbody->OnSimulated = [this]()
         {
             m_Rigidbody->UpdateTransform(m_Owner->Transform);
         };
+
+    m_Rigidbody->OnTransformChanged(m_Owner->Transform);
 }
 
 MirageEngine::Core::Components::Rigidbody::~Rigidbody()
