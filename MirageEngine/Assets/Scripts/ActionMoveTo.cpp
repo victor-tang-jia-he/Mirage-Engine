@@ -9,6 +9,7 @@ namespace MirageEngine::AI
     ActionMoveTo::ActionMoveTo()
     {
         m_ActionName = "MoveTo";
+        m_FullName = typeid(*this).name();
     }
 
     float ActionMoveTo::Evaluate()

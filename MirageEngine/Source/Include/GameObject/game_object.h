@@ -39,6 +39,7 @@ namespace MirageEngine
         bool m_bIsActive = true;  // Do components update every frame
         bool m_bIsStatic = false; // Does transform update every frame
         bool m_bIsDirty = false;
+        bool m_bIsPendingDestroy = false;
 
         bool m_bIsRoot = false;
 
@@ -64,6 +65,9 @@ namespace MirageEngine
             // Hot reload
             void OnPreReload();
             void OnPostReload();
+
+            void Destroy() { m_bIsPendingDestroy = true; }
+            bool IsPendingDestroy() const { return m_bIsPendingDestroy; }
 
             // Getters
             std::string GetName() const { return m_Name; }

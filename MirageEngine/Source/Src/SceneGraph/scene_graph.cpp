@@ -112,7 +112,6 @@ namespace MirageEngine
 
     void SceneGraph::ClearScene()
     {
-        //std::vector<std::shared_ptr<GameObject>> rootsCopy = m_RootsList;
         while (!m_RootsList.empty())
         {
             std::shared_ptr<GameObject> obj = m_RootsList.back();
@@ -120,6 +119,24 @@ namespace MirageEngine
         }
         m_Registry.clear();
         m_RootsList.clear();
+    }
+
+    void SceneGraph::CleanupDeadObjects()
+    {
+        std::vector<std::shared_ptr<GameObject>> toDelete;
+
+        for (auto const& [id, obj] : m_Registry)
+        {
+            if (obj && obj->IsPendingDestroy())
+            {
+                toDelete.push_back(obj);
+            }
+        }
+
+        for (auto& obj : toDelete)
+        {
+            this->RemoveGameObject(obj);
+        }
     }
 
     std::shared_ptr<GameObject> SceneGraph::FindGameObject(uint64_t _id) const

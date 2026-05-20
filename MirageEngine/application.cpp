@@ -42,6 +42,7 @@
 #include <AI/influence_grid.h>
 #include <AI/ai_action.h>
 #include <Assets/Scripts/ActionMoveTo.h> 
+#include <Assets/Scripts/ActionExtinguish.h>
 #include <Components/nav_agent.h>
 #include <Components/utility_agent.h>
 #include <Components/influence_emitter.h>
@@ -245,58 +246,76 @@ void Application::InitGameObject()
 	// =========================
 
 	m_SceneGraph.GetActiveCamera()->SetPosition(Vector3(0, 0, 5));
+	std::shared_ptr<GameObject> root = m_SceneGraph.CreateGameObject("root", nullptr);
 
 	// ========================================================
 	//  AI SYSTEM DEMO SETUP (HARDCODED)
 	// ========================================================
-	
-	std::shared_ptr<GameObject> gridGO = m_SceneGraph.CreateGameObject("AI_Grid", nullptr);
+
+	std::shared_ptr<GameObject> gridGO = m_SceneGraph.CreateGameObject("AI_Grid", root);
 	auto globalGrid = gridGO->AddComponent<InfluenceGrid>();
-	globalGrid->SetWidth(55.0f);
-	globalGrid->SetHeight(55.0f);
+	globalGrid->SetWidth(100.0f);
+	globalGrid->SetHeight(100.0f);
 	globalGrid->SetCellSize(1.0f);
 	globalGrid->AddChannel("Fire");
 	globalGrid->Bake();
 
-	std::shared_ptr<GameObject> aiAgentGO = m_SceneGraph.CreateGameObject("Pompier", nullptr);
+	std::shared_ptr<GameObject> aiAgentGO = m_SceneGraph.CreateGameObject("Pompier", root);
 	aiAgentGO->SetPosition(Vector3(5.0f, 0.0f, 5.0f));
 
 	auto aiRenderer = aiAgentGO->AddComponent<MeshRenderer>();
-	aiRenderer->SetMesh(rm.GetMesh("cube"));
+	aiRenderer->SetMesh(ResourceManager::Instance().GetMesh("cube"));
 	aiRenderer->SetMaterial(mat1);
-
 
 	auto nav = aiAgentGO->AddComponent<MirageEngine::Core::Components::NavAgent>();
 	auto utility = aiAgentGO->AddComponent<UtilityAgent>();
 
 	AI::NavProfile myProfile;
-	myProfile.InfluenceWeights.push_back(100.0f);
+	myProfile.InfluenceWeights.assign(1, 0.0f); 
 	nav->SetProfile(myProfile);
+	nav->SetMovementSpeed(4.0f);
+	utility->SetTargetGrid(globalGrid.get());
 
-	auto script = scriptManager.CreateScriptByName("ActionMoveTo");
-	aiAgentGO->AddComponent(std::move(script));
+	auto scriptMove = scriptManager.CreateScriptByName("ActionMoveTo");
+	aiAgentGO->AddComponent(std::move(scriptMove));
 	auto moveAction = aiAgentGO->GetComponent<ActionMoveTo>();
-
 	if (moveAction) {
-		moveAction->SetTarget(Vector3(25.0f, 0.0f, 25.0f));
+		moveAction->SetTarget(Vector3(35.0f, 0.0f, 35.0f));
+		utility->AddAction(moveAction.get());
+	}
+
+	auto scriptExting = scriptManager.CreateScriptByName("ActionExtinguish");
+	aiAgentGO->AddComponent(std::move(scriptExting));
+	auto extingAction = aiAgentGO->GetComponent<ActionExtinguish>();
+	if (extingAction) {
+		utility->AddAction(extingAction.get());
 
 		Consideration fireRule;
 		fireRule.source = VariableSource::Grid;
 		fireRule.variableName = "Fire";
-		fireRule.responseCurve.SetType(AI::ResponsiveCurve::CurveType::LINEAR);
-		fireRule.responseCurve.SetSlope(1.0f);
+		fireRule.responseCurve.SetType(AI::ResponsiveCurve::CurveType::EXPONENTIAL);
+		fireRule.responseCurve.SetSlope(2.5f);
+		fireRule.responseCurve.SetExponent(1.0f);
 
-		moveAction->GetConsiderations().push_back(fireRule);
-		utility->AddAction(moveAction.get());
+		extingAction->GetConsiderations().push_back(fireRule);
 	}
 
-	std::shared_ptr<GameObject> fireGO = m_SceneGraph.CreateGameObject("Feu", nullptr);
-	fireGO->SetPosition(Vector3(15.0f, 0.0f, 15.0f)); 
-	auto emitter = fireGO->AddComponent<InfluenceEmitter>();
-	emitter->SetTargetGrid(globalGrid.get());
-	emitter->SetInfluenceType("Fire");
-	emitter->SetStrength(100.0f);
-	emitter->SetRadius(5.0f);
+	for (int i = 0; i < 5; i++)
+	{
+		std::shared_ptr<GameObject> fireSphere = m_SceneGraph.CreateGameObject("Feu", root);
+		fireSphere->SetPosition(Vector3(15.0f + (i * 2.0f), 0.0f, 15.0f));
+		fireSphere->Transform.SetScale(Vector3(1.5f, 1.5f, 1.5f));
+
+		auto fireRenderer = fireSphere->AddComponent<MeshRenderer>();
+		fireRenderer->SetMesh(ResourceManager::Instance().GetMesh("sphere"));
+		fireRenderer->SetMaterial(mat2); 
+
+		auto emitter = fireSphere->AddComponent<InfluenceEmitter>();
+		emitter->SetTargetGrid(globalGrid.get());
+		emitter->SetInfluenceType("Fire");
+		emitter->SetStrength(300.0f);
+		emitter->SetRadius(5.0f);
+	}
 }
 
 void Application::RuntimeUpdate(float _dt)

@@ -20,12 +20,9 @@ namespace MirageEngine::AI
     void ActionMoveTo::Execute(float dt)
     {
         auto nav = GetOwner()->GetComponent<MirageEngine::Core::Components::NavAgent>();
-        if (nav)
+        if (nav && nav->GetCurrentPath().empty()) 
         {
-            if (nav->GetCurrentPath().empty())
-            {
-                nav->SetDestination(m_Target);
-            }
+            nav->SetDestination(m_Target);
         }
     }
 
