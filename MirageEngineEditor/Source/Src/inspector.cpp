@@ -552,10 +552,22 @@ namespace Mirage
 				for (int i = 0; i < 50; i++) samples[i] = curve->Evaluate((float)i / 49.0f);
 				ImGui::PlotLines("##Curve", samples, 50, 0, nullptr, 0.0f, 1.0f, ImVec2(0, 60));
 
-				for (auto [id, curveData] : type.data()) {
-					ImGui::PushID(id);
-					DrawNestedProperty(curveData, childValue);
-					ImGui::PopID();
+				if (ImGui::BeginTable("CurveTable", 2)) {
+					ImGui::TableSetupColumn("L", ImGuiTableColumnFlags_WidthFixed, 80.0f);
+					ImGui::TableSetupColumn("F", ImGuiTableColumnFlags_WidthStretch);
+
+					for (auto [id, curveData] : type.data()) {
+						ImGui::TableNextRow();
+						ImGui::TableNextColumn();
+						ImGui::TextUnformatted(curveData.name());
+						ImGui::TableNextColumn();
+						ImGui::PushItemWidth(-1);
+
+						DrawNestedProperty(curveData, childValue); 
+
+						ImGui::PopItemWidth();
+					}
+					ImGui::EndTable();
 				}
 				_childData.set(_parentInstance, childValue);
 			}
