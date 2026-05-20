@@ -472,8 +472,10 @@ namespace Mirage
 
 	void Inspector::DrawNestedProperty(entt::meta_data _childData, entt::meta_any& _parentInstance)
 	{
+		ImGui::PushID(_childData.name());
+
 		entt::meta_any childValue = _childData.get(_parentInstance);
-		if (!childValue) return;
+		if (!childValue) { ImGui::PopID(); return; };
 
 		auto type = childValue.type();
 		const char* name = _childData.name();
@@ -486,23 +488,25 @@ namespace Mirage
 			bool v = childValue.cast<bool>();
 			if (ImGui::Checkbox(name, &v)) _childData.set(_parentInstance, v);
 		}
-		//else if (type.is_enum()) {
-		//	std::string preview = "Unknown";
-		//	for (auto [id, enumData] : type.data()) {
-		//		if (enumData.get({}).cast<int>() == childValue.cast<int>()) {
-		//			preview = enumData.name();
-		//			break;
-		//		}
-		//	}
-		//	if (ImGui::BeginCombo("##enum", preview.c_str())) {
-		//		for (auto [id, enumData] : type.data()) {
-		//			if (ImGui::Selectable(enumData.name(), enumData.get({}).cast<int>() == childValue.cast<int>())) {
-		//				_childData.set(_parentInstance, enumData.get({}));
-		//			}
-		//		}
-		//		ImGui::EndCombo();
-		//	}
-		//}
+		else if (type.is_enum()) {
+			std::string preview = "Unknown";
+			for (auto [id, enumData] : type.data()) {
+				if (enumData.get({}) == childValue) {
+					preview = enumData.name();
+					break;
+				}
+			}
+
+			if (ImGui::BeginCombo("##enum", preview.c_str())) {
+				for (auto [id, enumData] : type.data()) {
+					bool isSelected = (enumData.get({}) == childValue);
+					if (ImGui::Selectable(enumData.name(), isSelected)) {
+						_childData.set(_parentInstance, enumData.get({}));
+					}
+				}
+				ImGui::EndCombo();
+			}
+		}
 		else if (type == entt::resolve<std::string>())
 		{
 			std::string currentVal = childValue.cast<std::string>();
@@ -619,6 +623,7 @@ namespace Mirage
 				ImGui::TreePop();
 			}
 		}
+		ImGui::PopID();
 	}
 
 	void Inspector::ResolveVec3(entt::meta_any _value, const char* _label, entt::meta_data _data, entt::meta_any& _instance)
