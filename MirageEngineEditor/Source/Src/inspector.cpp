@@ -260,178 +260,112 @@ namespace Mirage
 			if (ImGui::TreeNode(label)) {
 				auto view = value.as_sequence_container();
 				auto itemType = view.value_type();
-				int index = 0;
 
-				if (ImGui::Button("+ Add New Element"))
-				{
-                    if (itemType == entt::resolve<float>())
-                        view.insert(view.end(), 0.0f);
-                    else if (itemType == entt::resolve<std::string>())
-                        view.insert(view.end(), std::string("NewElement"));
-                    else if (itemType.is_pointer_like()) 
-                    {
-                        AI::AIAction* nullAction = nullptr;
-                        entt::meta_any nullAny{ nullAction };
-                        view.insert(view.end(), nullAny);
-                    }
-					else
-					{
-						auto newItem = itemType.construct(); 
-						if (newItem) {
-							view.insert(view.end(), newItem);
-						}
-					}
+				std::vector<entt::meta_any> tempItems;
+				for (auto item : view) { tempItems.push_back(item); }
 
-					_data.set(instance, value);
-				}
+				int indexToModify = -1;
+				int indexToDelete = -1;
+				entt::meta_any newValue;
+				bool shouldAdd = false;
+
+				if (ImGui::Button("+ Add New Element")) { shouldAdd = true; }
 				ImGui::Separator();
 
-				for (auto it = view.begin(); it != view.end(); )
+				for (int i = 0; i < (int)tempItems.size(); ++i)
 				{
-					ImGui::PushID(index);
+					ImGui::PushID(i);
+					entt::meta_any& item = tempItems[i];
 
-					bool elementDeleted = false;
-					if (ImGui::Button("X")) {
-						it = view.erase(it);
-						_data.set(instance, value);
-						elementDeleted = true;
+					if (ImGui::Button("X")) { indexToDelete = i; }
+					ImGui::SameLine();
+
+					if (itemType == entt::resolve<float>()) {
+						float val = item.cast<float>();
+						if (ImGui::DragFloat("##v", &val, 0.1f)) {
+							item = val; indexToModify = i;
+						}
 					}
-
-					if (!elementDeleted) {
-						ImGui::SameLine();
-						std::string itemLabel = "##" + std::to_string(index);
-						entt::meta_any item = *it;
-
-						if (item.type() == entt::resolve<float>()) 
-						{
-							float val = item.cast<float>();
-							if (ImGui::DragFloat(itemLabel.c_str(), &val, 0.1f)) 
-							{
-								it = view.erase(it);
-								it = view.insert(it, val); 
-								_data.set(instance, value);
-							}
+					else if (itemType == entt::resolve<std::string>()) {
+						std::string str = item.cast<std::string>();
+						char buffer[256]; memset(buffer, 0, 256); strncpy(buffer, str.c_str(), 255);
+						if (ImGui::InputText("##v", buffer, 256)) {
+							item = std::string(buffer); indexToModify = i;
 						}
-						else if (item.type() == entt::resolve<std::string>()) 
-						{
-							std::string str = item.cast<std::string>();
-							char buffer[256];
-							memset(buffer, 0, sizeof(buffer));
-							strncpy(buffer, str.c_str(), sizeof(buffer) - 1);
+					}
+					else if (itemType.is_pointer_like()) {
+						void* rawPtr = nullptr;
+						if (item) { if (auto* p = item.try_cast<void*>()) rawPtr = *p; }
 
-							if (ImGui::InputText(itemLabel.c_str(), buffer, 256)) 
-							{
-								it = view.erase(it);
-								it = view.insert(it, std::string(buffer));
-								_data.set(instance, value);
-							}
-						}
-                        else if (itemType.is_pointer_like())
-                        {
-                            void* rawPtr = nullptr;
-                            if (item)
-                            {
-                                if (auto* p = item.try_cast<void*>())
-                                    rawPtr = *p;
-                            }
+						std::string ptrLabel = rawPtr ? "Action Assigned" : "None (Drop)";
+						if (rawPtr) ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.3f, 0.5f, 0.3f, 1.0f));
+						ImGui::Button(ptrLabel.c_str(), ImVec2(-1, 0));
+						if (rawPtr) ImGui::PopStyleColor();
 
-                            std::string ptrLabel = rawPtr ? "Action Assigned" : "None (Drop)";
-
-                            if (rawPtr)
-                                ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.3f, 0.5f, 0.3f, 1.0f));
-                            ImGui::Button(ptrLabel.c_str(), ImVec2(-1, 0));
-                            if (rawPtr)
-                                ImGui::PopStyleColor();
-
-                            if (ImGui::BeginDragDropTarget())
-                            {
-								if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("HIERARCHY_ITEM"))
-                                {
-                                    GameObject* droppedGO = *(GameObject**)payload->Data;
-                                    entt::meta_type baseType = itemType.remove_pointer();
-
-                                    for (auto& comp : droppedGO->GetComponents())
-                                    {
-                                        if (entt::resolve(comp->GetType()).info().hash() == baseType.info().hash() || dynamic_cast<AI::AIAction*>(comp.get()))
-                                        {
-                                            it = view.erase(it);
-                                            view.insert(it, comp.get());
-                                            _data.set(instance, value);
-                                            break;
-                                        }
-                                    }
-                                }
-                                else if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM"))
-                                {
-                                    if (payload->Data && payload->DataSize > 0)
-                                    {
-                                        const char* rawPath = static_cast<const char*>(payload->Data);
-                                        std::filesystem::path scriptPath(rawPath);
-                                        std::string scriptName = scriptPath.stem().string();
-
-                                        entt::meta_type scriptType = entt::resolve(entt::hashed_string{ scriptName.c_str() });
-
-                                        if (scriptType)
-                                        {
-                                            UtilityAgent* agent = instance.try_cast<UtilityAgent>();
-
-                                            if (agent && agent->GetOwner())
-                                            {
-                                                auto newComp = agent->GetOwner()->AddComponentByMeta(scriptType);
-
-                                                if (newComp)
-                                                {
-                                                    AI::AIAction* actionPtr = dynamic_cast<AI::AIAction*>(newComp.get());
-
-                                                    if (actionPtr)
-                                                    {
-                                                        it = view.erase(it);
-                                                        view.insert(it, actionPtr);
-                                                        _data.set(instance, value);
-                                                        std::cout << "[IA] Script instanced and linked: " << scriptName << std::endl;
-                                                    }
-                                                }
-                                            }
-                                        }
-                                        else
-                                        {
-                                            std::cout << "[DROP] Error: Class " << scriptName << " not registered in Meta!" << std::endl;
-                                        }
-                                    }
-                                }
-                                
-                                ImGui::EndDragDropTarget();
-                            }
-                        }
-						else if (!itemType.is_arithmetic())
-						{	
-							std::string nodeLabel = "Rule " + std::to_string(index);
-							if (ImGui::TreeNode(nodeLabel.c_str()))
-							{
-								for (auto [id, childData] : itemType.data())
-								{
-									ImGui::TableNextRow();
-									ImGui::TableNextColumn();
-									ImGui::TextUnformatted(childData.name());
-									ImGui::TableNextColumn();
-									ImGui::PushItemWidth(-1);
-
-									DrawNestedProperty(childData, item);
-
-									ImGui::PopItemWidth();
+						if (ImGui::BeginDragDropTarget()) {
+							if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("HIERARCHY_ITEM")) {
+								GameObject* droppedGO = *(GameObject**)payload->Data;
+								for (auto& comp : droppedGO->GetComponents()) {
+									if (entt::resolve(comp->GetType()) == itemType.remove_pointer() || dynamic_cast<AI::AIAction*>(comp.get())) {
+										item = comp.get(); indexToModify = i; break;
+									}
 								}
-								it = view.erase(it);
-								it = view.insert(it, item);
-								_data.set(instance, value);
-
-								ImGui::TreePop();
 							}
+							else if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM")) {
+								if (payload->Data && payload->DataSize > 0) {
+									std::filesystem::path scriptPath((const char*)payload->Data);
+									auto scriptType = entt::resolve(entt::hashed_string{ scriptPath.stem().string().c_str() });
+									if (scriptType) {
+										UtilityAgent* agent = instance.try_cast<UtilityAgent>();
+										if (agent && agent->GetOwner()) {
+											auto newComp = agent->GetOwner()->AddComponentByMeta(scriptType);
+											if (newComp) {
+												if (auto* actionPtr = dynamic_cast<AI::AIAction*>(newComp.get())) {
+													item = actionPtr; indexToModify = i;
+												}
+											}
+										}
+									}
+								}
+							}
+							ImGui::EndDragDropTarget();
 						}
-						if (!elementDeleted) 
-							++it;
-						index++;
+					}
+					else if (!itemType.is_arithmetic()) {
+						std::string typeName = itemType.info().name().data();
+						size_t lastColon = typeName.find_last_of(':');
+						if (lastColon != std::string::npos) typeName = typeName.substr(lastColon + 1);
+
+						std::string nodeLabel = typeName + " " + std::to_string(i);
+							
+						if (ImGui::TreeNodeEx(nodeLabel.c_str(), ImGuiTreeNodeFlags_DefaultOpen)) {
+							bool ruleChanged = false;
+							for (auto [id, childData] : itemType.data()) {
+								ImGui::TableNextRow(); ImGui::TableNextColumn();
+								ImGui::TextUnformatted(childData.name());
+								ImGui::TableNextColumn(); ImGui::PushItemWidth(-1);
+								if (DrawNestedProperty(childData, item)) ruleChanged = true;
+								ImGui::PopItemWidth();
+							}
+							if (ruleChanged) indexToModify = i;
+							ImGui::TreePop();
+						}
 					}
 					ImGui::PopID();
+				}
+
+				if (shouldAdd || indexToDelete != -1 || indexToModify != -1) {
+					view.clear();
+					if (shouldAdd) {
+						if (itemType == entt::resolve<float>()) tempItems.push_back(0.0f);
+						else if (itemType == entt::resolve<std::string>()) tempItems.push_back(std::string("New"));
+						else if (itemType.is_pointer_like()) tempItems.push_back(nullptr);
+						else tempItems.push_back(itemType.construct());
+					}
+					if (indexToDelete != -1) tempItems.erase(tempItems.begin() + indexToDelete);
+
+					for (auto& itm : tempItems) view.insert(view.end(), itm);
+					_data.set(instance, value); 
 				}
 				ImGui::TreePop();
 			}
@@ -470,23 +404,31 @@ namespace Mirage
 		}
 	}
 
-	void Inspector::DrawNestedProperty(entt::meta_data _childData, entt::meta_any& _parentInstance)
+	bool Inspector::DrawNestedProperty(entt::meta_data _childData, entt::meta_any& _parentInstance)
 	{
+		bool changed = false;
 		ImGui::PushID(_childData.name());
 
 		entt::meta_any childValue = _childData.get(_parentInstance);
-		if (!childValue) { ImGui::PopID(); return; };
+		if (!childValue) { ImGui::PopID(); return false; };
 
 		auto type = childValue.type();
 		const char* name = _childData.name();
 
 		if (type == entt::resolve<float>()) {
 			float v = childValue.cast<float>();
-			if (ImGui::DragFloat(name, &v, 0.1f)) _childData.set(_parentInstance, v);
+			if (ImGui::DragFloat(name, &v, 0.1f)) 
+			{
+				_childData.set(_parentInstance, v);
+				changed = true;
+			}
 		}
 		else if (type == entt::resolve<bool>()) {
 			bool v = childValue.cast<bool>();
-			if (ImGui::Checkbox(name, &v)) _childData.set(_parentInstance, v);
+			if (ImGui::Checkbox(name, &v)) {
+				_childData.set(_parentInstance, v);
+				changed = true;
+			}
 		}
 		else if (type.is_enum()) {
 			std::string preview = "Unknown";
@@ -496,12 +438,13 @@ namespace Mirage
 					break;
 				}
 			}
-
+				
 			if (ImGui::BeginCombo("##enum", preview.c_str())) {
 				for (auto [id, enumData] : type.data()) {
 					bool isSelected = (enumData.get({}) == childValue);
 					if (ImGui::Selectable(enumData.name(), isSelected)) {
 						_childData.set(_parentInstance, enumData.get({}));
+						changed = true;
 					}
 				}
 				ImGui::EndCombo();
@@ -510,39 +453,61 @@ namespace Mirage
 		else if (type == entt::resolve<std::string>())
 		{
 			std::string currentVal = childValue.cast<std::string>();
-			if (std::string(name) == "Variable Name")
+			if (name && std::strcmp(name, "Variable Name") == 0)
 			{
-				InfluenceGrid* grid = nullptr;
-				auto app = Application::Instance();
-				if (app) grid = app->GetSceneGraph()->FindComponentInScene<InfluenceGrid>();
-
-				if (grid && ImGui::BeginCombo(name, currentVal.c_str()))
-				{
-					for (const auto& channelName : grid->GetChannelsNames())
-					{
-						if (ImGui::Selectable(channelName.c_str(), currentVal == channelName))
-						{
-							_childData.set(_parentInstance, channelName);
-						}
-					}
-					ImGui::EndCombo();
+				std::vector<std::string> options;
+				auto sourceData = _parentInstance.type().data("Source"_hs);
+				int sourceEnumVal = 0;
+				if (sourceData) {
+					auto srcAny = sourceData.get(_parentInstance);
+					sourceEnumVal = (int)srcAny.cast<VariableSource>();
 				}
-				else
+
+				if (sourceEnumVal == 0) { 
+					auto app = Application::Instance();
+					if (app) {
+						auto grid = app->GetSceneGraph()->FindComponentInScene<InfluenceGrid>();
+						if (grid) options = grid->GetChannelsNames();
+					}
+				}
+
+				const char* comboPreview = currentVal.empty() ? "Select Channel..." : currentVal.c_str();
+
+				if (!options.empty()) {
+					if (ImGui::BeginCombo("##varCombo", comboPreview)) {
+						for (const auto& opt : options) 
+						{
+							if (ImGui::Selectable(opt.c_str(), currentVal == opt)) 
+							{
+								_childData.set(_parentInstance, opt);
+								changed = true; 
+							}
+						}
+						ImGui::EndCombo();
+					}
+				}
+				else 
 				{
-					char buffer[256];
-					memset(buffer, 0, sizeof(buffer));
+					char buffer[256]; memset(buffer, 0, 256);
 					strncpy(buffer, currentVal.c_str(), 255);
-					if (ImGui::InputText(name, buffer, 256))
+					if (ImGui::InputText("##varInput", buffer, 256)) 
+					{
 						_childData.set(_parentInstance, std::string(buffer));
+						changed = true;
+					}
 				}
 			}
-			else 
+			else
 			{
 				char buffer[256];
-				memset(buffer, 0, sizeof(buffer));
+				memset(buffer, 0, 256);
 				strncpy(buffer, currentVal.c_str(), 255);
-				if (ImGui::InputText(name, buffer, 256))
+
+				if (ImGui::InputText("##normalString", buffer, 256))
+				{
 					_childData.set(_parentInstance, std::string(buffer));
+					changed = true;
+				}
 			}
 		}
 		else if (type == entt::resolve<AI::ResponsiveCurve>()) {
@@ -563,13 +528,17 @@ namespace Mirage
 						ImGui::TableNextColumn();
 						ImGui::PushItemWidth(-1);
 
-						DrawNestedProperty(curveData, childValue); 
+						if (DrawNestedProperty(curveData, childValue)) {
+							changed = true;
+						}
 
 						ImGui::PopItemWidth();
 					}
 					ImGui::EndTable();
 				}
-				_childData.set(_parentInstance, childValue);
+				if (changed) {
+					_childData.set(_parentInstance, childValue);
+				}
 			}
 		}
 		else if (type.is_sequence_container())
@@ -618,6 +587,7 @@ namespace Mirage
 					it = view.erase(it);   
 					view.insert(it, newValue);
 					_childData.set(_parentInstance, childValue);
+					changed = true;
 				}
 
 				if (indexToDelete != -1) {
@@ -625,17 +595,20 @@ namespace Mirage
 					for (int i = 0; i < indexToDelete; ++i) ++it;
 					view.erase(it);
 					_childData.set(_parentInstance, childValue);
+					changed = true;
 				}
 
 				if (shouldAdd) {
 					view.insert(view.end(), 0.0f);
 					_childData.set(_parentInstance, childValue);
+					changed = true;
 				}
 
 				ImGui::TreePop();
 			}
 		}
 		ImGui::PopID();
+		return changed;
 	}
 
 	void Inspector::ResolveVec3(entt::meta_any _value, const char* _label, entt::meta_data _data, entt::meta_any& _instance)
@@ -650,7 +623,6 @@ namespace Mirage
 		Math::Vector3 vec = _value.cast<Math::Vector3>();
 		if (ImGui::DragFloat3(_label, &vec.X, 0.1f))
 		{
-			// If label is Scale
 			if (_label && std::strcmp(_label, "Scale") == 0)
 			{
 				const float minAbs = EPSILON;
@@ -691,12 +663,9 @@ namespace Mirage
 		std::string currentVal = _value.cast<std::string>();
 		bool drewCombo = false;
 
-		// --- LOGIQUE COMBO (Émetteur) ---
 		if (std::strcmp(_label, "Type") == 0 || std::strcmp(_label, "Variable Name") == 0)
 		{
 			InfluenceGrid* grid = nullptr;
-
-			// On essaie de trouver la grille
 			if (auto* emitter = _instance.try_cast<InfluenceEmitter>()) {
 				grid = emitter->GetTargetGrid();
 			}
@@ -706,10 +675,8 @@ namespace Mirage
 				if (app) grid = app->GetSceneGraph()->FindComponentInScene<InfluenceGrid>();
 			}
 
-			// Si on a une grille, on dessine le combo
 			if (grid)
 			{
-				// On utilise "###" pour forcer un ID constant même si le texte change
 				std::string comboLabel = std::string(_label) + "###Combo";
 				if (ImGui::BeginCombo(comboLabel.c_str(), currentVal.c_str()))
 				{
@@ -727,14 +694,12 @@ namespace Mirage
 			}
 		}
 
-		// --- LOGIQUE ZONE DE TEXTE (Seulement si le combo n'a pas été dessiné) ---
 		if (!drewCombo)
 		{
 			char buffer[256];
 			memset(buffer, 0, sizeof(buffer));
 			std::strncpy(buffer, currentVal.c_str(), 255);
 
-			// On ajoute "###Input" pour garantir l'unicité
 			std::string inputLabel = std::string(_label) + "###Input";
 			if (ImGui::InputText(inputLabel.c_str(), buffer, sizeof(buffer)))
 			{
@@ -742,7 +707,7 @@ namespace Mirage
 			}
 		}
 
-		ImGui::PopID(); // On libère l'ID
+		ImGui::PopID();
 	}
 
 	void Inspector::ResolveInt(entt::meta_any _value, const char* _label, entt::meta_data _data, entt::meta_any& _instance)
