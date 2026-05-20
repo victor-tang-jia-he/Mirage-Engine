@@ -2,7 +2,8 @@
 #include "GameObject/game_object.h"
 #include "Components/influence_emitter.h"
 #include "Components/utility_agent.h"
-#include <MirageEngine/application.h>
+#include "Components/nav_agent.h"  
+#include <entt/entt.hpp>
 
 namespace MirageEngine::AI {
     REGISTER_SCRIPT(ActionExtinguish);
@@ -13,24 +14,35 @@ namespace MirageEngine::AI {
         return AIAction::Evaluate();
     }
 
+    void ActionExtinguish::OnStart()
+    {
+        auto nav = GetOwner()->GetComponent<MirageEngine::Core::Components::NavAgent>();
+        if (nav) {
+            nav->GetCurrentPath().clear();
+        }
+    }
+
     entt::id_type ActionExtinguish::GetType() const { return entt::type_id<ActionExtinguish>().hash(); }
 
-    void ActionExtinguish::Execute(float dt) {
-        auto nav = GetOwner()->GetComponent<NavAgent>();
-        if (nav) nav->GetCurrentPath().clear();
+    void ActionExtinguish::Execute(float dt)
+    {
+        GameObject* rootSearch = GetOwner();
 
-        auto app = Application::Instance();
-        auto children = GetOwner()->GetParent()->GetChildren();
+        while (rootSearch->GetParent() != nullptr) {
+            rootSearch = rootSearch->GetParent().get();
+        }
+        auto allPotentialTargets = rootSearch->GetChildren();
 
-        for (auto& child : children)
+        for (auto& obj : allPotentialTargets)
         {
-            if (child->GetName() == "Feu")
+            if (obj->GetName() == "Feu" && !obj->IsPendingDestroy())
             {
-                float dist = GetOwner()->GetPosition().Distance(child->GetPosition());
-                if (dist < 3.0f)
+                float dist = GetOwner()->GetPosition().Distance(obj->GetPosition());
+
+                if (dist < 4.5f)
                 {
-                    std::cout << "[IA] FEU ETEINT ! Suppression de l'objet." << std::endl;
-                    app->GetSceneGraph()->RemoveGameObject(child);
+                    std::cout << "[IA] SCRIPT: Fire sphere found in hierarchy! Destroying..." << std::endl;
+                    obj->Destroy();
                     break;
                 }
             }

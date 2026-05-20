@@ -40,6 +40,7 @@ int main()
 		{
 			MirageEngine::Core::Physics::PhysicsManager::Instance().Update(MirageEngine::TimeManager::GetDeltaTime());
 			application.RuntimeUpdate(MirageEngine::TimeManager::GetDeltaTime());
+			application.GetSceneGraph()->CleanupDeadObjects();
 		}
 		application.EditorUpdate();
 		application.BeginRender(editor.GetEditorCamera());

@@ -263,15 +263,15 @@ void Application::InitGameObject()
 	//  AI SYSTEM DEMO SETUP (HARDCODED)
 	// ========================================================
 
-	std::shared_ptr<GameObject> gridGO = m_SceneGraph.CreateGameObject("AI_Grid");
+	std::shared_ptr<GameObject> gridGO = m_SceneGraph.CreateGameObject("AI_Grid", root);
 	auto globalGrid = gridGO->AddComponent<InfluenceGrid>();
-	globalGrid->SetWidth(55.0f);
-	globalGrid->SetHeight(55.0f);
+	globalGrid->SetWidth(100.0f);
+	globalGrid->SetHeight(100.0f);
 	globalGrid->SetCellSize(1.0f);
 	globalGrid->AddChannel("Fire");
 	globalGrid->Bake();
 
-	std::shared_ptr<GameObject> aiAgentGO = m_SceneGraph.CreateGameObject("Pompier");
+	std::shared_ptr<GameObject> aiAgentGO = m_SceneGraph.CreateGameObject("Pompier", root);
 	aiAgentGO->SetPosition(Vector3(5.0f, 0.0f, 5.0f));
 
 	auto aiRenderer = aiAgentGO->AddComponent<MeshRenderer>();
@@ -282,7 +282,7 @@ void Application::InitGameObject()
 	auto utility = aiAgentGO->AddComponent<UtilityAgent>();
 
 	AI::NavProfile myProfile;
-	myProfile.InfluenceWeights.assign(1, 100.0f); 
+	myProfile.InfluenceWeights.assign(1, 0.0f); 
 	nav->SetProfile(myProfile);
 	nav->SetMovementSpeed(4.0f);
 	utility->SetTargetGrid(globalGrid.get());
@@ -305,15 +305,15 @@ void Application::InitGameObject()
 		fireRule.source = VariableSource::Grid;
 		fireRule.variableName = "Fire";
 		fireRule.responseCurve.SetType(AI::ResponsiveCurve::CurveType::EXPONENTIAL);
-		fireRule.responseCurve.SetSlope(1.5f);
-		fireRule.responseCurve.SetExponent(2.0f);
+		fireRule.responseCurve.SetSlope(2.5f);
+		fireRule.responseCurve.SetExponent(1.0f);
 
 		extingAction->GetConsiderations().push_back(fireRule);
 	}
 
 	for (int i = 0; i < 5; i++)
 	{
-		std::shared_ptr<GameObject> fireSphere = m_SceneGraph.CreateGameObject("Feu");
+		std::shared_ptr<GameObject> fireSphere = m_SceneGraph.CreateGameObject("Feu", root);
 		fireSphere->SetPosition(Vector3(15.0f + (i * 2.0f), 0.0f, 15.0f));
 		fireSphere->Transform.SetScale(Vector3(1.5f, 1.5f, 1.5f));
 
@@ -324,7 +324,7 @@ void Application::InitGameObject()
 		auto emitter = fireSphere->AddComponent<InfluenceEmitter>();
 		emitter->SetTargetGrid(globalGrid.get());
 		emitter->SetInfluenceType("Fire");
-		emitter->SetStrength(100.0f);
+		emitter->SetStrength(300.0f);
 		emitter->SetRadius(5.0f);
 	}
 }

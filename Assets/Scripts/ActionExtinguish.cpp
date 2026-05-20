@@ -2,7 +2,7 @@
 #include "GameObject/game_object.h"
 #include "Components/influence_emitter.h"
 #include "Components/utility_agent.h"
-#include "MirageEngine/application.h"
+#include "Components/utility_agent.h"
 
 namespace MirageEngine::AI {
     REGISTER_SCRIPT(ActionExtinguish);
@@ -16,21 +16,19 @@ namespace MirageEngine::AI {
     entt::id_type ActionExtinguish::GetType() const { return entt::type_id<ActionExtinguish>().hash(); }
 
     void ActionExtinguish::Execute(float dt) {
-        auto nav = GetOwner()->GetComponent<NavAgent>();
-        if (nav) nav->GetCurrentPath().clear();
+        if (!GetOwner() || !GetOwner()->GetParent()) return;
 
-        auto app = Application::Instance();
-        auto children = GetOwner()->GetParent()->GetChildren();
+        auto siblings = GetOwner()->GetParent()->GetChildren();
 
-        for (auto& child : children)    
+        for (auto& obj : siblings)
         {
-            if (child->GetName() == "Feu") 
+            if (obj && obj->GetName() == "Feu")
             {
-                float dist = GetOwner()->GetPosition().Distance(child->GetPosition());
-                if (dist < 3.0f) 
-                { 
-                    std::cout << "[IA] FEU ETEINT ! Suppression de l'objet." << std::endl;
-                    app->GetSceneGraph()->RemoveGameObject(child);
+                float dist = GetOwner()->GetPosition().Distance(obj->GetPosition());
+                if (dist < 3.0f)
+                {
+                    obj->Destroy();
+                    std::cout << "[SCRIPT] Extinguishing fire: " << obj->GetName() << std::endl;
                     break;
                 }
             }
