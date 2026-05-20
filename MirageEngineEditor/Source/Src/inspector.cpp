@@ -137,10 +137,15 @@ namespace Mirage
 		ImGui::Spacing();
 
 		float width = ImGui::GetWindowWidth();
-		ImGui::SetCursorPosX(width * 0.1f);
-		if (ImGui::Button("Add Component", ImVec2(width * 0.8f, 30)))
+		ImGui::SetCursorPosX(width * 0.2f);
+		if (ImGui::Button("Component", ImVec2(width * 0.5f, 30)))
 		{
 			ImGui::OpenPopup("AddComponentPopup");
+		}
+		ImGui::SetCursorPosX(width * 0.2f);
+		if (ImGui::Button("Remove Component", ImVec2(width * 0.5f, 30)))
+		{
+			ImGui::OpenPopup("RemoveComponentPopup");
 		}
 
 		RenderAddComponentPopup(selectedObj);
@@ -566,13 +571,6 @@ namespace Mirage
 
 	void Inspector::ResolveVec3(entt::meta_any _value, const char* _label, entt::meta_data _data, entt::meta_any& _instance)
 	{
-		static bool printed = false;
-		if (!printed)
-		{
-			LOG(logTemp, LogInspector, "Vector 3 detected in component");
-			printed = true;
-		}
-
 		Math::Vector3 vec = _value.cast<Math::Vector3>();
 		if (ImGui::DragFloat3(_label, &vec.X, 0.1f))
 		{
@@ -590,13 +588,6 @@ namespace Mirage
 
 	void Inspector::ResolveQuaternion(entt::meta_any _value, const char* _label, entt::meta_data _data, entt::meta_any& _instance)
 	{
-		static bool printed = false;
-		if (!printed)
-		{
-			LOG(logTemp, LogInspector, "Quaternion detected in component");
-			printed = true;
-		}
-
 		Math::Quaternion quat = _value.cast<Math::Quaternion>();
 		Math::Vector3 euler = quat.ToEulerAngle() * 180.0f / PI;
 		if (ImGui::DragFloat3(_label, &euler.X, 0.1f))
@@ -617,7 +608,7 @@ namespace Mirage
 		std::string currentVal = _value.cast<std::string>();
 		bool drewCombo = false;
 
-		// --- LOGIQUE COMBO (Émetteur) ---
+		// --- LOGIQUE COMBO (ï¿½metteur) ---
 		if (std::strcmp(_label, "Type") == 0 || std::strcmp(_label, "Variable Name") == 0)
 		{
 			InfluenceGrid* grid = nullptr;
@@ -635,7 +626,7 @@ namespace Mirage
 			// Si on a une grille, on dessine le combo
 			if (grid)
 			{
-				// On utilise "###" pour forcer un ID constant même si le texte change
+				// On utilise "###" pour forcer un ID constant mï¿½me si le texte change
 				std::string comboLabel = std::string(_label) + "###Combo";
 				if (ImGui::BeginCombo(comboLabel.c_str(), currentVal.c_str()))
 				{
@@ -653,7 +644,7 @@ namespace Mirage
 			}
 		}
 
-		// --- LOGIQUE ZONE DE TEXTE (Seulement si le combo n'a pas ét?dessin? ---
+		// --- LOGIQUE ZONE DE TEXTE (Seulement si le combo n'a pas ï¿½t?dessin? ---
 		if (!drewCombo)
 		{
 			char buffer[256];
@@ -668,19 +659,14 @@ namespace Mirage
 			}
 		}
 
-		ImGui::PopID(); // On libère l'ID
+		ImGui::PopID(); // On libï¿½re l'ID
 	}
 
 	void Inspector::ResolveInt(entt::meta_any _value, const char* _label, entt::meta_data _data, entt::meta_any& _instance)
 	{
-		static bool printed = false;
-		if (!printed)
-		{
-			LOG(logTemp, LogInspector, "Int detected in component");
-			printed = true;
-		}
-
 		int val = _value.cast<int>();
+		ImGui::SetCursorPosX(120);
+		ImGui::SetNextItemWidth(120);
 		if (ImGui::DragInt(_label, &val, 1))
 		{
 			_data.set(_instance, val);
@@ -689,14 +675,9 @@ namespace Mirage
 
 	void Inspector::ResolveFloat(entt::meta_any _value, const char* _label, entt::meta_data _data, entt::meta_any& _instance)
 	{
-		static bool printed = false;
-		if (!printed)
-		{
-			LOG(logTemp, LogInspector, "Float detected in component");
-			printed = true;
-		}
-
 		float val = _value.cast<float>();
+		ImGui::SetCursorPosX(120);
+		ImGui::SetNextItemWidth(120);
 		if (ImGui::DragFloat(_label, &val, 0.1f))
 		{
 			_data.set(_instance, val);
@@ -705,14 +686,8 @@ namespace Mirage
 
 	void Inspector::ResolveBool(entt::meta_any _value, const char* _label, entt::meta_data _data, entt::meta_any& _instance)
 	{
-		static bool printed = false;
-		if (!printed)
-		{
-			LOG(logTemp, LogInspector, "Bool detected in component");
-			printed = true;
-		}
-
 		bool val = _value.cast<bool>();
+		ImGui::SetCursorPosX(120);
 		if (ImGui::Checkbox(_label, &val))
 		{
 			_data.set(_instance, val);
@@ -721,14 +696,9 @@ namespace Mirage
 
 	void Inspector::ResolveUnsignedInt(entt::meta_any _value, const char* _label, entt::meta_data _data, entt::meta_any& _instance)
 	{
-		static bool printed = false;
-		if (!printed)
-		{
-			LOG(logTemp, LogInspector, "Unsign Int detected in component");
-			printed = true;
-		}
-
 		unsigned int val = _value.cast<unsigned int>();
+		ImGui::SetCursorPosX(120);
+		ImGui::SetNextItemWidth(120);
 		if (ImGui::DragScalar(_label, ImGuiDataType_U32, &val, 1.0f))
 		{
 			_data.set(_instance, val);
@@ -756,8 +726,11 @@ namespace Mirage
                 {
                     entt::meta_any inner = *_value;                    
                     hasValue = (bool)inner;                          
+
                     if (hasValue)
+                    {
                         btnLabel = std::string(ptrType.info().name());
+                    }
                 }
             }
 
