@@ -1,6 +1,12 @@
-#include <Components/capsule_collider.h>
 #include <quaternion.h>
+
+#include <Components/capsule_collider.h>
+
 #include <Physics/physics_manager.h>
+#include <Physics/i_collider.h>
+
+#include <GameObject/game_object.h>
+
 #include <entt/entt.hpp>
 
 using namespace MirageEngine::Core::Components;

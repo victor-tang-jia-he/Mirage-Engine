@@ -1,6 +1,5 @@
 #pragma once
 
-#include <iostream>
 #include <vector3.h>
 
 namespace MirageEngine

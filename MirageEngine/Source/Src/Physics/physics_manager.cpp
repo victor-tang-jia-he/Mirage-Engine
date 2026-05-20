@@ -1,5 +1,13 @@
 #include <Physics/physics_manager.h>
 
+// Bullet 3
+#include <Physics/Bullet3/bullet3_physics_factory.h>
+
+// Global includes
+#include <Physics/i_rigidbody.h>
+#include <Physics/i_collider.h>
+#include <Physics/i_world_physics.h>
+
 #include <Logs/log.h>
 
 DEFINE_LOG_CATEGORY(LogPhysics);
@@ -10,11 +18,11 @@ PhysicsManager* m_Instance = nullptr;
 
 PhysicsManager& PhysicsManager::Instance()
 {
-    if (m_Instance == nullptr)
-    {
-        m_Instance = new PhysicsManager();
-    }
-    return *m_Instance;
+	if (m_Instance == nullptr)
+	{
+		m_Instance = new PhysicsManager();
+	}
+	return *m_Instance;
 }
 
 void PhysicsManager::Shutdown()
@@ -52,8 +60,17 @@ void PhysicsManager::Initialize(EPhysicsEngine _physicsEngine)
 	LOG(logInfo, LogPhysics, "Physics Engine initialized : ", m_PhysicsEngine == EPhysicsEngine::BULLET_3 ? "Bullet physics" : "Undefined physics Engine");
 	switch (m_PhysicsEngine)
 	{
-	case EPhysicsEngine::BULLET_3: m_WorldPhysics = std::make_shared<Bullet3WorldPhysics>(); break;
+	case EPhysicsEngine::BULLET_3: m_PhysicsFactory = std::make_shared<Bullet3PhysicsFactory>(); break;
 	default: break;
+	}
+
+	if (m_PhysicsFactory)
+	{
+		m_WorldPhysics = m_PhysicsFactory->CreateWorld();
+	}
+	else
+	{
+		LOG(logError, LogPhysics, "Failed to initialize physics engine : no valid factory found");
 	}
 }
 
@@ -79,8 +96,6 @@ void PhysicsManager::Update(float _deltaTime)
 	}
 
 	m_WorldPhysics->Update(_deltaTime);
-	int simulatedCount = 0;
-	int skippedCount = 0;
 
 	for (IRigidBody* rb : m_WorldRigidbodys)
 	{
@@ -92,12 +107,7 @@ void PhysicsManager::Update(float _deltaTime)
 
 		if (rb->OnSimulated)
 		{
-			simulatedCount++;
 			rb->OnSimulated();
-		}
-		else
-		{
-			skippedCount++;
 		}
 	}
 }
@@ -112,15 +122,7 @@ std::shared_ptr<IRigidBody> PhysicsManager::CreateRigidBody(std::shared_ptr<ICol
 		LOG(logWarning, LogPhysics, "Cannot create rigid body : shape is null");
 		return nullptr;
 	}
-	std::shared_ptr<Physics::IRigidBody> body;
-	switch (m_PhysicsEngine)
-	{
-	case EPhysicsEngine::BULLET_3:
-		body = std::make_shared<Bullet3RigidBody>();
-		break;
-	default:
-		break;
-	}
+	std::shared_ptr<Physics::IRigidBody> body = m_PhysicsFactory->CreateRigidBody();
 	if (body != nullptr) { body->Create(_shape, _type, _newTransform); }
 	else
 	{
@@ -132,28 +134,11 @@ std::shared_ptr<IRigidBody> PhysicsManager::CreateRigidBody(std::shared_ptr<ICol
 
 std::shared_ptr<ICollider> PhysicsManager::CreateCollider(ECollisionShapeType _shapeType)
 {
-	std::shared_ptr<Physics::ICollider> collider;
-	switch (m_PhysicsEngine)
-	{
-	case EPhysicsEngine::BULLET_3:
-		switch (_shapeType)
-		{
-		case ECollisionShapeType::BOX:
-			collider = std::make_shared<Bullet3BoxCollider>();
-			break;
-		case ECollisionShapeType::SPHERE:
-			collider = std::make_shared<Bullet3SphereCollider>();
-			break;
-		case ECollisionShapeType::CAPSULE:
-			collider = std::make_shared<Bullet3CapsuleCollider>();
-			break;
-		default:
-			break;
-		}
-		break;
-	default: break;
+	std::shared_ptr<Physics::ICollider> collider = m_PhysicsFactory->CreateCollider(_shapeType);
+	if (collider.get() != nullptr) 
+	{ 
+		collider->Create(); 
 	}
-	if (collider.get() != nullptr) { collider->Create(); }
 
 	return collider;
 }

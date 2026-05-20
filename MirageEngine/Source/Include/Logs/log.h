@@ -137,7 +137,7 @@ namespace Loggers
 	private:
 
 		static constexpr size_t BUFFER_SIZE = 4096; // Flush buffer when it exceeds this size (in bytes)
-		std::ostringstream m_Buffer;                // String stream used as the temporary message accumulator
+		std::string m_Buffer;                // String stream used as the temporary message accumulator
 		std::mutex m_Mutex;                         // Protects the buffer against concurrent writes
 		std::string m_LogFileName = "log.txt";
 		std::string m_LogFileLocation = "Logs/";    // Default log file location, can be changed by the user. We will ensure this directory exists before writing logs.
@@ -195,57 +195,76 @@ namespace Loggers
 
 		void Append(const std::string& msg)
 		{
+			bool needFlush = false;
+
 			{
 				std::lock_guard<std::mutex> lock(m_Mutex);
-				m_Buffer << msg;
+
+				m_Buffer += msg;
+
+				if (m_Buffer.size() >= BUFFER_SIZE)
+					needFlush = true;
 			}
-			// If the buffer grows too large we flush immediately.
-			// This prevents excessive memory growth.
-			if (m_Buffer.tellp() > BUFFER_SIZE)
-				Flush();
+
 			if (GetLogConfig().FlushEveryLog.load())
-				Flush(); // For testing and debugging purposes, we can enable immediate flushing of every log message to ensure they are output in real-time without buffering.
-			// This is useful for diagnosing issues where logs may be lost due to crashes or buffer overflows.
+				needFlush = true;
+
+			if (needFlush)
+				Flush();
 		}
 
 		void Flush()
 		{
-			std::string content = m_Buffer.str();
-			std::lock_guard<std::mutex> lock(m_Mutex);
-			if (content.size() > 0)
+			std::string content;
+
 			{
-				// Output the buffered log message to the console only in debug mode. In release mode, we skip this step to improve performance.
+				std::lock_guard<std::mutex> lock(m_Mutex);
+
+				if (m_Buffer.empty())
+					return;
+
+				content = std::move(m_Buffer);
+				m_Buffer.clear();
+			}
+
 #ifndef NDEBUG
-				std::clog << content;
+			std::clog << content;
 #endif
 
-				// Write the log message to the file
-				if (GetLogConfig().WriteInFile.load())
-					WriteInLogFile(content);
-
-				// Reset stream content
-				m_Buffer.str("");
-				m_Buffer.clear();
+			if (GetLogConfig().WriteInFile.load())
+			{
+				if (m_file.is_open())
+				{
+					m_file << StripAnsiCodes(content);
+					m_file.flush();
+				}
 			}
 		}
 
 		void EmergencyFlush()
 		{
+			std::string content;
+
+			{
+				std::lock_guard<std::mutex> lock(m_Mutex);
+				content = m_Buffer;
+			}
+
+			if (content.empty())
+				return;
+
+#ifndef NDEBUG
+#	ifdef _WIN32
+			_write(STDERR_FILENO, content.c_str(), (unsigned int)content.size());
+#	else
+			write(STDERR_FILENO, content.c_str(), content.size());
+#	endif
+#endif
+
 			if (m_file.is_open())
 			{
-				std::string content = m_Buffer.str();
-				if (!content.empty())
-				{
-#ifndef NDEBUG
-#    ifdef _WIN32
-					_write(STDERR_FILENO, content.c_str(), strlen(content.c_str()));
-#    else
-					write(STDERR_FILENO, content.c_str(), strlen(content.c_str()));
-#    endif
-#endif // NDEBUG
-					m_file << content;
-					m_file.flush();
-				}
+				m_file << StripAnsiCodes(content);
+				m_file.flush();
 			}
 		}
 

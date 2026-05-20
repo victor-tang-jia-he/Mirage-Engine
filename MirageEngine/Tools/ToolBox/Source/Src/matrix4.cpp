@@ -161,7 +161,7 @@ Matrix4 Matrix4::Inverse() const
     const float det = Determinant();
 
     if (std::abs(det) < 1e-8f)
-        throw std::runtime_error("Matrix is not invertible (det == 0)");
+		return Matrix4::Identity(); // Return identity if the matrix is singular
 
     Matrix4 inv;
     const float invDet = 1.0f / det;

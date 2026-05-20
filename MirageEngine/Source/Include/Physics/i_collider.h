@@ -1,14 +1,9 @@
 // i_collider.h
 #pragma once
 
-#include <iostream>
 #include <Physics/common_enum.h>
 #include <Components/component.h>
 #include <Components/transform.h>
-
-// Forward declarations
-class btCollisionShape;
-class btTransform;
 
 namespace MirageEngine::Core::Physics
 {
@@ -45,14 +40,6 @@ namespace MirageEngine::Core::Physics
         virtual float GetHeight() const = 0;
     };
 
-    class IBulletColliderData
-    {
-    public:
-        virtual ~IBulletColliderData() = default;
-        virtual btCollisionShape* GetShape() = 0;
-        virtual btTransform GetTransform() = 0;
-    };
-
 	//=========================================================================
 	// ICollider - Base collider interface
 	//=========================================================================
@@ -64,7 +51,7 @@ namespace MirageEngine::Core::Physics
         Quaternion p_Rot = Quaternion(0.f, 0.f, 0.f, 1.f);
         ECollisionShapeType p_Type;
 
-        std::shared_ptr<IRigidBody> p_RigidBody;
+        std::weak_ptr<IRigidBody> p_RigidBody;
 
         bool p_bIsDirty = true;
 
@@ -101,8 +88,6 @@ namespace MirageEngine::Core::Physics
         Quaternion GetRotation() const { return p_Rot; }
         bool GetIsDirty() const { return p_bIsDirty; }
         ECollisionShapeType GetColliderType() const { return p_Type; }
-
-        virtual IBulletColliderData* AsBullet3Collider() { throw std::runtime_error("Bad API Call : object is not an Bullet3 Collider"); }
 
         template <typename T> T* As() { return dynamic_cast<T*>(this); }
     };
