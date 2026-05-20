@@ -44,14 +44,13 @@ namespace MirageEngine::Core
 			void SetDestination(Vector3 _newDestination);
 
 			// Getters
-			std::vector<Vector3> GetCurrentPath() { return m_CurrentPath; }
-			int GetNextWaypointIndex() { return m_NextWaypointIndex; }
-			Vector3 GetTargetDestination() { return m_TargetDestination; }
-			//AI::NavProfile GetProfile() { return m_Profile; }
-			float GetMovementSpeed() { return m_MovementSpeed; }
-			float GetRotationSpeed() { return m_RotationSpeed; }
-			float GetStoppingDistance() { return m_StoppingDistance; }
-			float GetRecalculateInterval() { return m_RecalculateInterval; }
+			std::vector<Vector3> GetCurrentPath() const { return m_CurrentPath; }
+			int GetNextWaypointIndex() const { return m_NextWaypointIndex; }
+			Vector3 GetTargetDestination() const { return m_TargetDestination; }
+			float GetMovementSpeed() const { return m_MovementSpeed; }
+			float GetRotationSpeed() const { return m_RotationSpeed; }
+			float GetStoppingDistance() const { return m_StoppingDistance; }
+			float GetRecalculateInterval() const { return m_RecalculateInterval; }
 			const AI::NavProfile& GetProfile() const { return m_Profile; }
 
 			// Setters

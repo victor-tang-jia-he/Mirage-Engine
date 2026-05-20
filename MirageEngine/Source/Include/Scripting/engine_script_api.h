@@ -12,18 +12,6 @@
 #    define ENGINE_API
 #endif
 
-//#define REGISTER_SCRIPT(ClassName)                               \
-//    inline static bool _reg_##ClassName = []()                   \
-//    {                                                            \
-//        entt::meta<ClassName>()                                  \
-//            .type(entt::type_id<ClassName>().hash(), #ClassName) \
-//            .base<MirageEngine::AI::AIAction>()                  \
-//            .base<MirageEngine::Core::Scripting::IScript>()      \
-//            .base<MirageEngine::Core::Components::Component>()   \
-//            .ctor<std::shared_ptr<ClassName>>();                 \
-//        return true;                                             \
-//    }();
-
 extern "C"
 {
 }

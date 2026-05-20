@@ -520,11 +520,6 @@ std::shared_ptr<Mesh> ResourceManager::GetMesh(const std::string& _name)
             return resource;
         LOG(logWarning, LogResourceManager, "Resource type mismatch for name: ", _name);
     }
-    // else
-    //{
-    //     LOG(logWarning, LogResourceManager, "Resource not found: ", _name);
-    //     return resourceManager.PrivateGet<Mesh>("DefaultMesh"); // Return default mesh if not found
-    // }
     LOG(logFatal, LogResourceManager, "Resource not found: ", _name);
     return nullptr;
 }

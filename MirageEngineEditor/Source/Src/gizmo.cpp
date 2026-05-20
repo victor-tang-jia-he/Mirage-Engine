@@ -84,7 +84,7 @@ void MirageEditor::Gizmo::EditTransform(MirageEngine::SceneGraph* _sceneGraph, s
 
 void MirageEditor::Gizmo::EditView(MirageEngine::SceneGraph* _sceneGraph)
 {
-	/*std::shared_ptr<Components::Camera> mainCamera = _sceneGraph->GetActiveCamera();
+	std::shared_ptr<Components::Camera> mainCamera = _sceneGraph->GetActiveCamera();
 	float* view = mainCamera->GetView().ToArray().data();
 
 	ImVec2 size = ImGui::GetContentRegionAvail();
@@ -93,6 +93,4 @@ void MirageEditor::Gizmo::EditView(MirageEngine::SceneGraph* _sceneGraph)
 	ImGuizmo::ViewManipulate(view, 1, pos, size, 0);
 
 	Math::Matrix4 viewMatrix(view);
-	
-	mainCamera->Transform().SetLocalMatrix(viewMatrix.Inverse().Transpose());*/
 }

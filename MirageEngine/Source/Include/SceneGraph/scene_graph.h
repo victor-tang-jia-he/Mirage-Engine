@@ -84,7 +84,6 @@ namespace MirageEngine
 
         void WorldMatrixRecursive(std::shared_ptr<GameObject> _obj, Core::Math::Matrix4& _parentMatrix, bool _forceUpdate);
 
-        void CallAllOnStartRecursive(std::shared_ptr<GameObject> _obj);
         void CallAllUpdateRecursive(std::shared_ptr<GameObject> _obj, float dt);
         void CallAllLateUpdateRecursive(std::shared_ptr<GameObject> _obj, float dt);
         void CallAllFixedUpdateRecursive(std::shared_ptr<GameObject> _obj, float dt);
