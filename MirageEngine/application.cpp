@@ -103,9 +103,8 @@ void Application::InitGameObject()
 	// =========================
 	//  Scene graph
 	// =========================
-	std::shared_ptr<GameObject> root = m_SceneGraph.CreateGameObject("GameObject", nullptr);
-	std::shared_ptr<GameObject> cameraGO = m_SceneGraph.CreateGameObject("Commelin", root);
-	std::shared_ptr<GameObject> floorGO = m_SceneGraph.CreateGameObject("Lin", root);
+	std::shared_ptr<GameObject> cameraGO = m_SceneGraph.CreateGameObject("Commelin", nullptr);
+	std::shared_ptr<GameObject> floorGO = m_SceneGraph.CreateGameObject("Lin", nullptr);
 	std::shared_ptr<GameObject> child1 = m_SceneGraph.CreateGameObject("Monin", floorGO);
 	std::shared_ptr<GameObject> child2 = m_SceneGraph.CreateGameObject("Tang", child1);
 	ResourceManager::Instance().GetMesh("cube")->Bind();
@@ -250,7 +249,7 @@ void Application::InitGameObject()
 	//  AI SYSTEM DEMO SETUP (HARDCODED)
 	// ========================================================
 	
-	std::shared_ptr<GameObject> gridGO = m_SceneGraph.CreateGameObject("AI_Grid", root);
+	std::shared_ptr<GameObject> gridGO = m_SceneGraph.CreateGameObject("AI_Grid", nullptr);
 	auto globalGrid = gridGO->AddComponent<InfluenceGrid>();
 	globalGrid->SetWidth(55.0f);
 	globalGrid->SetHeight(55.0f);
@@ -258,7 +257,7 @@ void Application::InitGameObject()
 	globalGrid->AddChannel("Fire");
 	globalGrid->Bake();
 
-	std::shared_ptr<GameObject> aiAgentGO = m_SceneGraph.CreateGameObject("Pompier", root);
+	std::shared_ptr<GameObject> aiAgentGO = m_SceneGraph.CreateGameObject("Pompier", nullptr);
 	aiAgentGO->SetPosition(Vector3(5.0f, 0.0f, 5.0f));
 
 	auto aiRenderer = aiAgentGO->AddComponent<MeshRenderer>();
@@ -290,7 +289,7 @@ void Application::InitGameObject()
 		utility->AddAction(moveAction.get());
 	}
 
-	std::shared_ptr<GameObject> fireGO = m_SceneGraph.CreateGameObject("Feu", root);
+	std::shared_ptr<GameObject> fireGO = m_SceneGraph.CreateGameObject("Feu", nullptr);
 	fireGO->SetPosition(Vector3(15.0f, 0.0f, 15.0f)); 
 	auto emitter = fireGO->AddComponent<InfluenceEmitter>();
 	emitter->SetTargetGrid(globalGrid.get());
