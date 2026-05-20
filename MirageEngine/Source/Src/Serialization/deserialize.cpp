@@ -4,6 +4,8 @@
 #include <Components/camera.h>
 #include <Components/rigidbody.h>
 #include <AI/pathfinding.h>
+#include <Scripting/script_manager.h>
+#include <Scripting/i_script.h>
 #include <fstream>
 
 DEFINE_LOG_CATEGORY(LogDeserializer)
@@ -73,7 +75,7 @@ void MirageEngine::Deserializer::DeserializeGameObject(json _jGameObject, std::s
     }
 }
 
-void MirageEngine::Deserializer::DeserializeComponent(json _jComponent, std::shared_ptr<GameObject> _Owner)
+void MirageEngine::Deserializer::DeserializeComponent(json _jComponent, std::shared_ptr<GameObject> _owner)
 {
     std::string typeName = _jComponent["CompName"].get<std::string>();
     entt::hashed_string hashed{ typeName.c_str() };
@@ -92,14 +94,14 @@ void MirageEngine::Deserializer::DeserializeComponent(json _jComponent, std::sha
         return;
     }
 
-    entt::meta_any result = compFunc.invoke({}, _Owner);
+    entt::meta_any result = compFunc.invoke({}, _owner);
     if (!result)
     {
         LOG(logError, LogDeserializer, "Meta Invoke failed for type : ", metaType.name());
         return;
     }
 
-    entt::meta_any compInstance = metaType.from_void(_Owner->GetLastAddedComponent().get());
+    entt::meta_any compInstance = metaType.from_void(_owner->GetLastAddedComponent().get());
     if (!compInstance) {
         LOG(logError, LogDeserializer, "Failed to construct Meta Instance for type : ", metaType.name());
         return;
@@ -108,11 +110,11 @@ void MirageEngine::Deserializer::DeserializeComponent(json _jComponent, std::sha
     for (auto [id, data] : metaType.data())
     {
         // Converts the Json data into corresponding Engine data and adds it to the Components Meta Instance
-        DeserializeMetaData(metaType, data, compInstance, _jComponent);
+        DeserializeMetaData(metaType, data, compInstance, _jComponent, _owner);
     }
 }
 
-entt::meta_any MirageEngine::Deserializer::DeserializeTransform(json _jComponent, std::shared_ptr<GameObject> _Owner)
+entt::meta_any MirageEngine::Deserializer::DeserializeTransform(json _jComponent, std::shared_ptr<GameObject> _owner)
 {
     std::string typeName = typeid(Core::Components::Transform).name();
     entt::hashed_string hashed{ typeName.c_str() };
@@ -133,18 +135,18 @@ entt::meta_any MirageEngine::Deserializer::DeserializeTransform(json _jComponent
     for (auto [id, data] : metaType.data())
     {
         // Converts the Json data into corresponding Engine data and adds it to the Components Meta Instance
-        DeserializeMetaData(metaType, data, compInstance, _jComponent);
+        DeserializeMetaData(metaType, data, compInstance, _jComponent, _owner);
     }
 
-    if (_Owner)
+    if (_owner)
     {
-        _Owner->AddComponentFromMeta(compInstance);
+        _owner->AddComponentFromMeta(compInstance);
     }
 
     return compInstance;
 }
 
-void MirageEngine::Deserializer::DeserializeMetaData(entt::meta_type _type, entt::meta_data _data, entt::meta_any& _instance, json _jComponent)
+void MirageEngine::Deserializer::DeserializeMetaData(entt::meta_type _type, entt::meta_data _data, entt::meta_any& _instance, json _jComponent, std::shared_ptr<GameObject> _owner)
 {
     entt::meta_any value = _data.get(_instance);
 
@@ -217,6 +219,19 @@ void MirageEngine::Deserializer::DeserializeMetaData(entt::meta_type _type, entt
         _data.set(_instance, navProfileInstance);
         return;
 	}
+    else if (actualType == entt::resolve<std::vector<AI::AIAction*>>())
+    {
+		std::vector<AI::AIAction*> aiActionsData;
+        json jAIActionsData = _jComponent[_data.name()];
+        for (json jAIAction : jAIActionsData)
+        {
+            AI::AIAction* aiActionInstance = DeserializeAIAction(jAIAction, _owner);
+            
+            aiActionsData.emplace_back(aiActionInstance);
+		}
+        _data.set(_instance, aiActionsData);
+        return;
+    }
     else if (actualType == entt::resolve<Core::Components::Transform>())
     {
         json transformData = _jComponent[_data.name()];
@@ -296,6 +311,50 @@ AI::NavProfile MirageEngine::Deserializer::DeserializeNavProfile(json _jNavProfi
 	navProfile.CanWalkDiagonal = _jNavProfile["Can Walk Diagonal"].get<bool>();
 
     return navProfile;
+}
+
+AI::AIAction* MirageEngine::Deserializer::DeserializeAIAction(json _jAIAction, std::shared_ptr<GameObject> _owner)
+{
+    auto script = Scripting::ScriptManager::Instance().CreateScriptByName("ActionMoveTo");
+    _owner->AddComponent(std::move(script));
+    std::shared_ptr<AI::AIAction> aiAction = _owner->GetComponent<AI::AIAction>();
+
+	std::vector<Consideration> considerations;
+    for (json jConsideration : _jAIAction["Considerations"])
+    {
+        Consideration consideration = DeserializeConsideration(jConsideration);
+        considerations.emplace_back(consideration);
+	}
+
+    aiAction->SetConsiderations(considerations);
+	return aiAction.get();
+}
+
+Consideration MirageEngine::Deserializer::DeserializeConsideration(json _jConsideration)
+{
+	Consideration consideration;
+
+	consideration.source = static_cast<VariableSource>(_jConsideration["Source"].get<int>());
+	consideration.variableName = _jConsideration["VariableName"].get<std::string>();
+
+    std::string typeName = typeid(AI::ResponsiveCurve).name();
+    entt::hashed_string hashed{ typeName.c_str() };
+    entt::meta_type metaType = entt::resolve(hashed);
+
+	AI::ResponsiveCurve* responseCurve = new AI::ResponsiveCurve();
+
+    entt::meta_any responseCurveInstance = metaType.from_void(responseCurve);
+
+    for (auto [id, data] : metaType.data())
+    {
+        DeserializeMetaData(metaType, data, responseCurveInstance, _jConsideration["ResponseCurve"], nullptr);
+	}
+
+    consideration.responseCurve = *responseCurve;
+
+	delete responseCurve;
+
+    return consideration;
 }
 
 Core::Math::Vector3 MirageEngine::Deserializer::DeserializeVector3(json _jVector3)

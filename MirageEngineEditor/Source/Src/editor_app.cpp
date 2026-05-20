@@ -68,6 +68,7 @@ namespace Mirage
 		MirageEditor::Gizmo::EditTransform(m_SceneGraph, m_EditorCamera);
 
 		HandlePlayMode();
+		HandleSaveLoad();
 
 		UIWrapper::EndFrame();
 	}
@@ -83,6 +84,19 @@ namespace Mirage
 		UIWrapper::Shutdown();
 
 	}
+
+	void EditorApp::HandleSaveLoad()
+	{
+		if (ImGui::IsKeyPressed(ImGuiKey_B))
+		{
+			MirageEngine::Serializer::SaveScene(*m_SceneGraph);
+		}
+		else if (ImGui::IsKeyPressed(ImGuiKey_N))
+		{
+			*m_SceneGraph = *MirageEngine::Deserializer::LoadSceneFromFile("Assets/Scenes/scene.json");
+		}
+	}
+
 	void EditorApp::HandlePlayMode()
 	{
 		if (ImGui::IsKeyPressed(ImGuiKey_K) && !m_IsPlaying)

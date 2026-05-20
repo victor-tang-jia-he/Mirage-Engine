@@ -6,6 +6,7 @@
 #include <Components/component.h>
 #include <Components/transform.h>
 #include <Components/nav_agent.h>
+#include <AI/ai_action.h>
 
 #include <Physics/common_enum.h>
 
@@ -210,6 +211,19 @@ json MirageEngine::Serializer::SerializeMetaData(entt::meta_type _type, entt::me
             return jMetaData;
         }
     }
+    else if (actualType == entt::resolve<std::vector<AI::AIAction*>>())
+    {
+        if (std::vector<AI::AIAction*>* aiActionVector = value.try_cast<std::vector<AI::AIAction*>>())
+        {
+			jMetaData = json::array();
+            for(AI::AIAction* action : *aiActionVector)
+            {
+                LOG(logTemp, LogSerializer, "Serializing AI Action : ", action->GetName());
+				jMetaData.push_back(SerializeAIAction(action));
+			}
+            return jMetaData;
+        }
+    }
 	// = Math types =
     else if (actualType == entt::resolve<Math::Vector3>())
     {
@@ -280,6 +294,45 @@ json MirageEngine::Serializer::SerializeNavProfile(AI::NavProfile _navProfile)
     jNavProfile["Can Walk Diagonal"] = _navProfile.CanWalkDiagonal;
 
     return jNavProfile;
+}
+
+json MirageEngine::Serializer::SerializeAIAction(AI::AIAction* _action)
+{
+	json jAIAction;
+
+	jAIAction["Name"] = _action->GetName();
+	jAIAction["Considerations"] = json::array();
+
+    for (const Consideration& consideration : _action->GetConsiderations())
+    {
+        jAIAction["Considerations"].push_back(SerializeConsideration(consideration));
+    }
+
+    return jAIAction;
+}
+
+json MirageEngine::Serializer::SerializeConsideration(Consideration _consideration)
+{
+	json jConsideration;
+
+	jConsideration["Source"] = static_cast<int>(_consideration.source);
+	jConsideration["VariableName"] = _consideration.variableName;
+
+	json jResponseCurveData;
+
+    entt::hashed_string hashed{ typeid(AI::ResponsiveCurve).name() };
+    entt::meta_type responseCurveType = entt::resolve(hashed);
+    if (responseCurveType)
+    {
+        for (auto [id, data] : responseCurveType.data())
+        {
+            jResponseCurveData[data.name()] = (SerializeMetaData(responseCurveType, data, (void*)&_consideration.responseCurve));
+        }
+    }
+
+	jConsideration["ResponseCurve"] = jResponseCurveData;
+
+    return jConsideration;
 }
 
 json MirageEngine::Serializer::SerializeVector3(Core::Math::Vector3 _vector3)

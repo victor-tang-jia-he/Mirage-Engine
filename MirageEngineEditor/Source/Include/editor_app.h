@@ -39,6 +39,7 @@ namespace Mirage
 		void OnUpdate(uint32_t _editorTextureID, uint32_t _gameTextureID);
 		void Shutdown();
 
+		void HandleSaveLoad();
 		void HandlePlayMode();
 
 		void SetSelectedObject(std::shared_ptr<MirageEngine::GameObject> _object) { m_SelectedObject = _object; };
