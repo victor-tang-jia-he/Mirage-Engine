@@ -26,7 +26,7 @@ namespace MirageEngine
 
     namespace AI
     {
-        class AIAction : public MirageEngine::Core::Scripting::IScript
+		class AIAction : public MirageEngine::Core::Scripting::IScript
         {
         protected:
             std::string m_ActionName = "BaseAction";

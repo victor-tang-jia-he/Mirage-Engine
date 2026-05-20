@@ -318,8 +318,8 @@ AI::AIAction* MirageEngine::Deserializer::DeserializeAIAction(json _jAIAction, s
 	std::string actionTypeName = _jAIAction["TypeName"].get<std::string>();
     std::string actionClassName = _jAIAction["ClassName"].get<std::string>();
     auto script = Scripting::ScriptManager::Instance().CreateScriptByName(actionTypeName.c_str());
-    _owner->AddComponent(std::move(script));
-    std::shared_ptr<AI::AIAction> aiAction = _owner->GetComponent<AI::AIAction>();
+    std::shared_ptr<Component> aiActionComponent = _owner->AddComponent(std::move(script));
+    std::shared_ptr<AI::AIAction> aiAction = std::dynamic_pointer_cast<AI::AIAction>(aiActionComponent);
 
 	std::vector<Consideration> considerations;
     for (json jConsideration : _jAIAction["Considerations"])

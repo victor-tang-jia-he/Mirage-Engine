@@ -28,7 +28,6 @@ class ENGINE_API Application
 
         uint32_t m_EditorFBO;
 
-        // TODO : Edit in map
         std::shared_ptr<MirageEngine::Core::Input::InputMapping> m_EditorMapping = nullptr;
         std::shared_ptr<MirageEngine::Core::Input::InputMapping> m_PlayMapping = nullptr;
 

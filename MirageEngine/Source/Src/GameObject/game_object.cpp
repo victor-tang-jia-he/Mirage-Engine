@@ -55,7 +55,7 @@ void MirageEngine::GameObject::AddChild(std::shared_ptr<GameObject> _child, bool
     _child->m_bIsActive = _isActive;
 }
 
-void MirageEngine::GameObject::AddComponent(std::shared_ptr<MirageEngine::Core::Components::Component> _component)
+std::shared_ptr<MirageEngine::Core::Components::Component> MirageEngine::GameObject::AddComponent(std::shared_ptr<MirageEngine::Core::Components::Component> _component)
 {
     _component->m_Owner = this;
     if (auto* script = dynamic_cast<Core::Scripting::IScript*>(_component.get()))
@@ -63,6 +63,8 @@ void MirageEngine::GameObject::AddComponent(std::shared_ptr<MirageEngine::Core::
         m_ScriptNames.push_back(script->GetName());
     }
     m_Components.push_back(_component);
+
+	return _component;
 }
 
 void MirageEngine::GameObject::AddComponentFromMeta(entt::meta_any& _compInstance)

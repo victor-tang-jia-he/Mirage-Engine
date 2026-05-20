@@ -11,7 +11,6 @@
 #include <SceneGraph/scene_graph.h>
 #include <Components/mesh_renderer.h>
 #include <Components/transform.h> // needed because DrawMesh now receives a Transform reference
-// #include "GameObject/game_object.h"
 
 #include <Resources/material.h>
 #include <Resources/material_instance.h>

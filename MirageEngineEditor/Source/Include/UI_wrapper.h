@@ -46,9 +46,6 @@ namespace Mirage
 
 		static bool DrawBreadcrumbSegment(const char* _label, bool _bIsLast);
 
-		static bool AssetContextMenu(const char* _id);
-		static bool DrawContextMenuItem(const char* _label);
-
 		// Widgets
 		static void CreateSeparatorText(const char* _separatorName);
 		static void CreateColorPicker(Math::Vector3* _color);

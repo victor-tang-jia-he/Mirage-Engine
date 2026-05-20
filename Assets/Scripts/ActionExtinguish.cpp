@@ -3,10 +3,15 @@
 #include "Components/influence_emitter.h"
 #include "Components/utility_agent.h"
 #include "Components/utility_agent.h"
+#include <entt/entt.hpp>
 
 namespace MirageEngine::AI {
     REGISTER_SCRIPT(ActionExtinguish);
-    ActionExtinguish::ActionExtinguish() { m_ActionName = "ActionExtinguish"; }
+    ActionExtinguish::ActionExtinguish() 
+    { 
+        m_ActionName = "ActionExtinguish";
+		m_FullName = typeid(*this).name();
+    }
 
     float ActionExtinguish::Evaluate() 
     {

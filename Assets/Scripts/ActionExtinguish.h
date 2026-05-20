@@ -10,11 +10,10 @@ namespace MirageEngine::AI {
 
         void RegisteMeta(entt::locator<entt::meta_ctx>::node_type handle) override
         {
+            entt::locator<entt::meta_ctx>::reset(handle);
             entt::meta_factory<ActionExtinguish>()
                 .type(entt::type_id<ActionExtinguish>().hash(), "ActionExtinguish")
-                .base < MirageEngine::AI::AIAction>()
-                .base<MirageEngine::Core::Scripting::IScript>()
-                .base<MirageEngine::Core::Components::Component>()
+                .base<MirageEngine::AI::AIAction>()
                 .ctor<>();
         }
 

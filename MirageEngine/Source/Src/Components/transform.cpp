@@ -36,7 +36,6 @@ Matrix4 Transform::GetMatrix()
 Vector3 Transform::Rotate(const Quaternion& _q, const Vector3& _v) const
 {
     // Encode the 3D vector as a pure quaternion (real part = 0)
-    // qv = (0, vx, vy, vz)
     Quaternion qv(0.f, _v.X, _v.Y, _v.Z);
 
     // Quaternion rotation formula : v' = q * v * q-1

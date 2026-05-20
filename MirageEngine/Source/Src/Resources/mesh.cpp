@@ -46,9 +46,6 @@ void Mesh::Bind()
         m_IndexBuffer->Create(m_Index.data(), m_Index.size() * sizeof(uint32_t), MirageRHI::IBuffer::BufferType::INDICES);
 
         m_VertexLayout->Create();
-        // Clear CPU-side data after uploading to GPU
-        //m_Vertex.clear();
-        //m_Index.clear();
     }
 }
 

@@ -14,9 +14,6 @@ namespace MirageEngine::Core::Components
 {
 	UtilityAgent::~UtilityAgent()
 	{
-		//for (AI::AIAction* action : m_actions) {
-		//	delete action;
-		//}
 		m_actions.clear();
 	}
 

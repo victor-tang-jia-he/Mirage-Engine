@@ -67,7 +67,6 @@ namespace Mirage
 			}
 		}
 
-		MirageEditor::Gizmo::EditView(m_SceneGraph); // Disabled
 		MirageEditor::Gizmo::EditTransform(m_SceneGraph, EditorCamera);
 
 		UIWrapper::EndFrame();

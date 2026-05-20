@@ -51,7 +51,7 @@ namespace MirageEngine
             void AddChild(std::shared_ptr<GameObject> _child, bool _isStatic = false, bool _isActive = true);
 
 			void AddComponentFromMeta(entt::meta_any& _compInstance);
-            void AddComponent(std::shared_ptr<Core::Components::Component> _component);
+            std::shared_ptr<MirageEngine::Core::Components::Component> AddComponent(std::shared_ptr<Core::Components::Component> _component);
             void RemoveComponent(std::shared_ptr<Core::Components::Component> _component);
 
             std::shared_ptr<Core::Components::Component> AddComponentByMeta(entt::meta_type _type);
