@@ -89,7 +89,7 @@ namespace MirageEngine::DebugDraw
         m_Pipelineparameter->Destroy();
         m_Pipeline->Destroy();
         m_Lines.clear();
-    }s
+    }
 
 
     // ------------------------------------------------------------------ API
